@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>History calendar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 40px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; height: 44px">
+<a href="Home.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+</div>
+<h1 style="margin: -6px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">History</h1>
+<div role="tablist" aria-label="History view" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 3px; background: #EFEBE4; border-radius: 12px">
+<button type="button" role="tab" aria-selected="true" style="height: 36px; border: 0; border-radius: 10px; background: #FFFFFF; color: #16244A; font: inherit; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(22,36,74,.1)">Calendar</button>
+<a href="Growth.dc.html" role="tab" aria-selected="false" style="height: 36px; border-radius: 10px; color: #16244A; font-size: 14px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center">Growth</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 18px 16px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-size: 15px; font-weight: 600">Last 12 months</span>
+<span style="font-size: 15px; color: #5E6782">{{yearTotal}} h</span>
+</div>
+<div style="display: flex; gap: 6px">
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 3px; padding-top: 17px; font-size: 10px; color: #5E6782">
+<span style="height: 14px; line-height: 14px"></span>
+<span style="height: 14px; line-height: 14px">Mon</span>
+<span style="height: 14px; line-height: 14px"></span>
+<span style="height: 14px; line-height: 14px">Wed</span>
+<span style="height: 14px; line-height: 14px"></span>
+<span style="height: 14px; line-height: 14px">Fri</span>
+<span style="height: 14px; line-height: 14px"></span>
+</div>
+<div role="img" aria-label="Daily practice over the last 12 months; blue squares are rest days, yellow to orange squares are practice days, darker orange means more hours" style="flex: 1 1 auto; min-width: 0; overflow-x: auto; direction: rtl">
+<div style="direction: ltr; display: inline-flex; gap: 3px">
+<sc-for list="{{weeks}}" as="w" hint-placeholder-count="20">
+<div style="display: flex; flex-direction: column; gap: 3px; width: 14px">
+<span aria-hidden="true" style="height: 14px; font-size: 10px; line-height: 14px; color: #5E6782; white-space: nowrap; overflow: visible">{{w.label}}</span>
+<sc-for list="{{w.days}}" as="d" hint-placeholder-count="7">
+<div aria-hidden="true" style="width: 14px; height: 14px; border-radius: 4px; background: {{d.fill}}; box-shadow: {{d.ring}}"></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #5E6782">
+<span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #D3DCF2"></span>Rest</span>
+<span style="display: flex; align-items: center; gap: 4px">
+<span style="margin-right: 4px">Less</span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #FFE48C"></span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #FFC53D"></span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #FF9A3C"></span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #EE6420"></span>
+<span style="margin-left: 4px">More</span>
+</span>
+</div>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 15px; font-weight: 600">Thursday, 22 October</span>
+<span style="font-size: 14px; color: #5E6782">Slow practice on the hardest passage.</span>
+</div>
+<span style="flex-shrink: 0; font-size: 17px; font-weight: 600">2 h</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 18px 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+<span style="font-size: 19px; font-weight: 600">{{current}} days</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #5E6782"><svg aria-hidden="true" width="14" height="14" viewBox="-14 -14 28 28"><path d="M0 -13V-10M0 10V13M-13 0H-10M10 0H13M-9.2 -9.2L-7 -7M7 7L9.2 9.2M-9.2 9.2L-7 7M7 -7L9.2 -9.2" stroke="#FFB627" stroke-width="2.4" stroke-linecap="round"></path><circle r="6.5" fill="#FFC93C"></circle></svg>Streak</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 1px solid #F0ECE5; border-right: 1px solid #F0ECE5">
+<span style="font-size: 19px; font-weight: 600">{{longest}} days</span>
+<span style="font-size: 13px; color: #5E6782">Longest</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+<span style="font-size: 19px; font-weight: 600">{{active}}</span>
+<span style="font-size: 13px; color: #5E6782">Active days</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fills = ['#D3DCF2','#FFE48C','#FFC53D','#FF9A3C','#EE6420'];
+const start = new Date(2025, 9, 19);
+const hoursFor = (i, dow) => {
+const r = Math.abs(Math.sin((i + 7) * 12.9898) * 43758.5453) % 1;
+if (r < 0.17) return 0;
+const h = Math.round((r * 3 + (dow === 0 || dow === 6 ? 1 : 0) + i / 371) * 2) / 2;
+return Math.min(h, 5);
+};
+const all = [];
+const weeks = [];
+let lastMonth = -1;
+for (let w = 0; w < 53; w++) {
+const days = [];
+let label = '';
+for (let d = 0; d < 7; d++) {
+const i = w * 7 + d;
+const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+if (date.getDate() <= 7 && d === 0 && date.getMonth() !== lastMonth) { label = months[date.getMonth()]; lastMonth = date.getMonth(); }
+let h = hoursFor(i, d);
+const sel = date.getMonth() === 9 && date.getDate() === 22 && date.getFullYear() === 2026;
+if (sel) h = 2;
+all.push(h);
+const lvl = h === 0 ? 0 : h < 1 ? 1 : h < 2 ? 2 : h < 3 ? 3 : 4;
+days.push({ fill: fills[lvl], ring: sel ? '0 0 0 2px #FFFFFF, 0 0 0 3.5px #16244A' : 'none' });
+}
+weeks.push({ label, days });
+}
+let total = 0, active = 0, longest = 0, run = 0;
+all.forEach((h) => { total += h; if (h > 0) { active++; run++; longest = Math.max(longest, run); } else { run = 0; } });
+let current = 0;
+for (let k = all.length - 1; k >= 0 && all[k] > 0; k--) current++;
+return { weeks, yearTotal: Math.round(total).toLocaleString('en-US'), active, longest, current };
+}
+}
+</script>
+</body>
+</html>

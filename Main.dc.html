@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your craft</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; padding: 60px 24px 40px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px">
+<svg aria-hidden="true" width="96" height="96" viewBox="0 0 200 200" style="position: absolute; right: -18px; top: 18px"><path d="M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3M100 34V18M133 42.8L146 20.3M157.2 67L171 59" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></svg>
+<div aria-label="Step 1 of 3" role="img" style="display: flex; gap: 6px">
+<div style="width: 24px; height: 4px; border-radius: 2px; background: #16244A"></div>
+<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
+<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; max-width: 260px; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">What is your craft?</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">Pick one, or type your own.</p>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; height: 52px; box-sizing: border-box; padding: 0 16px; background: #FFFFFF; border-radius: 14px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E6782" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="craft" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Your craft</label>
+<input id="craft" type="text" value="Piano" style="flex-grow: 1; min-width: 0; height: 40px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 17px; color: #16244A">
+</div>
+<div style="flex-grow: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; margin: 0 -24px; padding: 4px 24px 8px">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #5E6782">{{g.name}}</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{g.items}}" as="c" hint-placeholder-count="6">
+<sc-if value="{{c.selected}}" hint-placeholder-val="{{false}}">
+<button type="button" aria-pressed="true" style="height: 40px; padding: 0 16px; border: 0; border-radius: 20px; background: #16244A; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 500">{{c.label}}</button>
+</sc-if>
+<sc-if value="{{c.plain}}" hint-placeholder-val="{{true}}">
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border: 1px solid #E4DFD6; border-radius: 20px; background: #FFFFFF; color: #16244A; font: inherit; font-size: 15px">{{c.label}}</button>
+</sc-if>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<a href="StartYear.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Continue</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const groups = [
+['Music', ['Piano', 'Guitar', 'Violin', 'Cello', 'Drums', 'Bass', 'Saxophone', 'Flute', 'Trumpet', 'Singing', 'Composing']],
+['Visual arts & making', ['Painting', 'Drawing', 'Sculpture', 'Woodworking', 'Ceramics', 'Photography', 'Illustration', 'Printmaking', 'Textiles', 'Jewellery']],
+['Performing arts', ['Acting', 'Dance', 'Ballet', 'Directing', 'Stand-up']],
+['Words & mind', ['Writing', 'Poetry', 'Languages', 'Chess', 'Coding']],
+['Professions', ['Medicine', 'Law', 'Architecture', 'Design', 'Cooking', 'Teaching']]
+];
+return {
+groups: groups.map(([name, items]) => ({
+name,
+items: items.map((label) => ({ label, selected: label === 'Piano', plain: label !== 'Piano' }))
+}))
+};
+}
+}
+</script>
+</body>
+</html>
