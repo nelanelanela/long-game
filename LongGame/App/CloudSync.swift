@@ -6,7 +6,7 @@ import AuthenticationServices
 /// project.yml, which happens once the app is signed with an Apple Developer team
 /// that has the iCloud (CloudKit) capability. Until then the app stays local-only.
 enum CloudSync {
-    static let containerID = "iCloud.app.longgame.LongGame"
+    static let containerID = "iCloud.com.wehavesun.LongGame"
     private static let enabledKey = "sync.enabled"
 
     static var isAvailable: Bool {

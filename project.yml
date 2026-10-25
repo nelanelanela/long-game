@@ -1,6 +1,6 @@
 name: LongGame
 options:
-  bundleIdPrefix: app.longgame
+  bundleIdPrefix: com.wehavesun
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -10,6 +10,8 @@ settings:
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
     TARGETED_DEVICE_FAMILY: "1"
     MARKETING_VERSION: "1.0"
+    DEVELOPMENT_TEAM: DGB322BJZ7
+    CODE_SIGN_STYLE: Automatic
     CURRENT_PROJECT_VERSION: "1"
 targets:
   LongGame:
@@ -22,7 +24,7 @@ targets:
       - target: LongGameWidgets
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.longgame.LongGame
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
@@ -30,6 +32,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         ENABLE_PREVIEWS: YES
+        CODE_SIGN_ENTITLEMENTS: LongGame/LongGame.entitlements
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) CLOUD_SYNC"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
   LongGameWidgets:
@@ -50,7 +54,7 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.longgame.LongGame.Widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.Widgets
         SKIP_INSTALL: YES
   LongGameTests:
     type: bundle.unit-test
@@ -62,7 +66,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: app.longgame.LongGameTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameTests
 schemes:
   LongGame:
     build:
