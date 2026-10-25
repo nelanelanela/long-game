@@ -16,7 +16,7 @@ struct LongGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DesignGallery()
+            AppRoot()
                 .preferredColorScheme(.light)
         }
         .modelContainer(container)
