@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import AuthenticationServices
 
 struct SettingsView: View {
     let craft: Craft
@@ -16,6 +17,8 @@ struct SettingsView: View {
     @State private var csvURL: URL?
     @State private var confirmDelete = false
     @State private var notificationsDenied = false
+    @State private var syncOn = CloudSync.isEnabled
+    @Environment(AccountStore.self) private var account
 
     init(craft: Craft) {
         self.craft = craft
@@ -188,18 +191,49 @@ struct SettingsView: View {
         }
     }
 
+    @ViewBuilder
     private var syncCard: some View {
-        card {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text("iCloud sync").lgText(.row)
-                    Spacer()
-                    Text("Coming later").lgText(.row, color: LGColor.inkMuted)
+        if CloudSync.isAvailable {
+            card {
+                VStack(alignment: .leading, spacing: 0) {
+                    Toggle("iCloud sync", isOn: Binding(get: { syncOn }, set: { syncOn = $0; CloudSync.isEnabled = $0 }))
+                        .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                    Text(syncOn
+                         ? "Your hours are kept in your private iCloud. Close and reopen Long Game to apply the change."
+                         : "Turn on to keep your hours safe and on all your devices. Close and reopen Long Game to apply the change.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                    Divider().overlay(LGColor.divider)
+                    if account.isSignedIn {
+                        HStack {
+                            Text("Signed in with Apple").lgText(.row)
+                            Spacer()
+                            Button("Sign out") { account.signOut() }.buttonStyle(.lg(.text))
+                        }
+                        .frame(minHeight: 54)
+                    } else {
+                        SignInWithAppleButton(.signIn) { request in
+                            request.requestedScopes = []
+                        } onCompletion: { account.handle($0) }
+                            .signInWithAppleButtonStyle(.black)
+                            .frame(height: 48)
+                            .padding(.vertical, 10)
+                    }
                 }
-                Text("Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on.")
-                    .lgText(.caption, color: LGColor.inkMuted)
             }
-            .padding(.vertical, 12)
+        } else {
+            card {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack {
+                        Text("iCloud sync").lgText(.row)
+                        Spacer()
+                        Text("Coming later").lgText(.row, color: LGColor.inkMuted)
+                    }
+                    Text("Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                }
+                .padding(.vertical, 12)
+            }
         }
     }
 

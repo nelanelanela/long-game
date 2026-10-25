@@ -54,6 +54,7 @@
 		C96786528BF4F0C8F03975E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12A984DCEDA178DE7119B40 /* SettingsView.swift */; };
 		C9951326B05452D88021B2A3 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		CB64E23D7E1C7531BC2F3BA7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D3125885B8A2AC3B3EB399 /* Models.swift */; };
+		CF90919707BB7806917147DB /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB309A444D8CD7FFD6139114 /* CloudSync.swift */; };
 		DB990916743FFD71B45E59B6 /* DesignGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0EAD2429BCF420D02DB7885 /* DesignGallery.swift */; };
 		DC7E31E420B36D1893651CFB /* CraftCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320FE7319CA650CC47D5FB3D /* CraftCatalog.swift */; };
 		DE36297BDE629D8E2E80A2BD /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DBBF9A26035DE803E852B3 /* Format.swift */; };
@@ -101,6 +102,7 @@
 /* Begin PBXFileReference section */
 		0BC0EC69524DEEF95D7E386D /* OneCraftSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneCraftSheet.swift; sourceTree = "<group>"; };
 		108877712C3CCCFBF80126E2 /* StartYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartYearView.swift; sourceTree = "<group>"; };
+		1356906D56A472EC84DD4CA9 /* LongGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LongGame.entitlements; sourceTree = "<group>"; };
 		137080755F58FBE8663118CC /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		180144944789A61E483B9BA6 /* AppRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoot.swift; sourceTree = "<group>"; };
 		1A0DA036E644F90279B0F39B /* PolishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolishTests.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 		E5CFB2506660F0D493155DC2 /* LongGameTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LongGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EADE0A24B1CD339FF51F1046 /* SessionFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFormView.swift; sourceTree = "<group>"; };
 		EAFC30909A65C878821BD434 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		EB309A444D8CD7FFD6139114 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
 		EBB675DC2617545CB3E70BFF /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		F4868517769E17BDF8D13E71 /* Streaks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Streaks.swift; sourceTree = "<group>"; };
 		F6966438B9164B8F428CF4A3 /* TimerActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActivity.swift; sourceTree = "<group>"; };
@@ -189,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				180144944789A61E483B9BA6 /* AppRoot.swift */,
+				EB309A444D8CD7FFD6139114 /* CloudSync.swift */,
 				3EE9F568BE6C8C49CA7159FC /* DemoData.swift */,
 				D6C2E173BAFD97DA588372A4 /* LiveActivityManager.swift */,
 				DD4128CE14B1359C65AB6CB2 /* LongGameApp.swift */,
@@ -279,6 +283,7 @@
 		A2A7C0C4339A31C5749B9780 /* LongGame */ = {
 			isa = PBXGroup;
 			children = (
+				1356906D56A472EC84DD4CA9 /* LongGame.entitlements */,
 				2FA23B2B9522CC96F21F0097 /* App */,
 				40A5398468C074B9C877CC01 /* DesignSystem */,
 				590F6EB6F0FCAB1A46EEF439 /* Features */,
@@ -487,6 +492,7 @@
 				55308C47E3D57DE1E38AC791 /* Basics.swift in Sources */,
 				1B6F94D990B0DD43D03C45E2 /* CalendarColors.swift in Sources */,
 				A36629BF3DFE4A00E79DEB26 /* CalendarTab.swift in Sources */,
+				CF90919707BB7806917147DB /* CloudSync.swift in Sources */,
 				206B2711077F77A638D19DE8 /* Colors.swift in Sources */,
 				35F3DC7785759D0AD1E7456B /* Components.swift in Sources */,
 				DC7E31E420B36D1893651CFB /* CraftCatalog.swift in Sources */,

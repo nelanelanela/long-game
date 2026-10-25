@@ -5,11 +5,12 @@ import SwiftData
 struct LongGameApp: App {
     let container: ModelContainer
     @State private var timerStore = TimerStore()
+    @State private var account = AccountStore()
 
     init() {
         let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self])
         do {
-            container = try ModelContainer(for: schema)
+            container = try ModelContainer(for: schema, configurations: CloudSync.configuration(for: schema))
             #if DEBUG
             DemoData.seedIfRequested(ModelContext(container))
             #endif
@@ -22,6 +23,8 @@ struct LongGameApp: App {
         WindowGroup {
             AppRoot()
                 .environment(timerStore)
+                .environment(account)
+                .task { await account.refreshState() }
                 .preferredColorScheme(.light)
                 .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }
