@@ -116,3 +116,11 @@ struct FinishRuleTests {
         #expect(FinishRules.raised(3000 + 100, elapsed: 3150) == 3150)
     }
 }
+
+struct TimerTotalFormatTests {
+    @Test func totalUsesOneDecimalAndGrouping() {
+        #expect(DurationFormat.totalHours(3294.74) == "3,294.7")
+        #expect(DurationFormat.totalHours(0) == "0.0")
+        #expect(DurationFormat.totalHours(-2) == "0.0")
+    }
+}

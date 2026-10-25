@@ -142,7 +142,7 @@ The sun keeps the user company and doubles as a clock you can read at a glance.
 | Resume | Sun springs back up, rays brighten. | Spring, 400 ms |
 | Finish → Save | Sun jumps with a big smile; mini suns and petals burst around it; Home's total counts up from old to new value. | Burst 1.2 s; count-up 1.2 s |
 
-Caption under the clock: "Next ray in m:ss · golden hour in mm:ss".
+Layout under the sun, top to bottom: the overall total in large gold numbers with one decimal ("3,294.7") and "of 10,000 hours · N%", counting up live as the session runs; a short divider; "This session" with the session clock; then the caption "Next ray in m:ss · golden hour in mm:ss".
 
 **Reduced Motion:** no breathing, motes, spin or burst; rays light with a fade; the sky stays fixed. VoiceOver reads "N of 12 rays lit, M minutes into this hour" once per ray.
 

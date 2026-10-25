@@ -61,7 +61,7 @@ struct HomeView: View {
         .lgScreen()
         .toolbar(.hidden, for: .navigationBar)
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
-            TimerView(craft: craft)
+            TimerView(craft: craft, baseTotal: totalBeforeTimer)
         }
         .onChange(of: timer.finishRequested) { _, requested in
             if requested { openTimer(total: s.total) }

@@ -6,6 +6,8 @@ import UIKit
 /// the stored timestamps and the clock; nothing is counted in memory.
 struct TimerView: View {
     let craft: Craft
+    /// The overall total before this session; the running session is added on top.
+    let baseTotal: Double
 
     @Environment(TimerStore.self) private var store
     @Environment(\.modelContext) private var context
@@ -22,7 +24,7 @@ struct TimerView: View {
                 SavedScene(now: timeline.date, since: savedAt)
             } else if let state = store.state {
                 RunningScene(
-                    now: timeline.date, state: state, craftName: craft.name, reduceMotion: reduceMotion,
+                    now: timeline.date, state: state, craftName: craft.name, baseTotal: baseTotal, reduceMotion: reduceMotion,
                     onMinimise: { dismiss() },
                     onToggle: { store.togglePause() },
                     onFinish: {
@@ -89,6 +91,7 @@ private struct RunningScene: View {
     let now: Date
     let state: TimerState
     let craftName: String
+    let baseTotal: Double
     let reduceMotion: Bool
     let onMinimise: () -> Void
     let onToggle: () -> Void
@@ -125,7 +128,7 @@ private struct RunningScene: View {
         }()
 
         GeometryReader { geo in
-            let centre = CGPoint(x: geo.size.width / 2, y: geo.size.height * 0.32)
+            let centre = CGPoint(x: geo.size.width / 2, y: geo.size.height * 0.29)
             ZStack {
                 TimerSky(warmth: warmth, paused: paused)
 
@@ -199,10 +202,24 @@ private struct RunningScene: View {
 
             Spacer()
 
-            VStack(spacing: 10) {
+            let total = baseTotal + elapsed / 3600
+            VStack(spacing: 4) {
+                Text(DurationFormat.totalHours(total))
+                    .lgNumber(.timerTotal, color: LGColor.mote)
+                Text("of 10,000 hours · \(Totals.percent(total: total))%")
+                    .lgText(.row, color: .white.opacity(0.75))
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Overall total \(Totals.wholeHours(total: total).formatted()) hours, \(Totals.percent(total: total)) percent of 10,000")
+
+            Rectangle().fill(.white.opacity(0.25)).frame(width: 40, height: 1)
+                .accessibilityHidden(true)
+
+            VStack(spacing: 8) {
+                Text("This session").lgText(.caption, color: .white.opacity(0.7))
                 Text(DurationFormat.clock(seconds: elapsed))
                     .lgNumber(.timerNumber, color: .white)
-                    .accessibilityLabel(Self.spoken(elapsed))
+                    .accessibilityLabel("This session, " + Self.spoken(elapsed))
                 Text(paused ? "Paused" : sun.caption)
                     .lgText(.row, color: .white.opacity(0.75))
                     .multilineTextAlignment(.center)
@@ -286,11 +303,11 @@ private struct SavedScene: View {
             ZStack {
                 TimerSky(warmth: 1, paused: false)
                 SaveBurst(progress: p)
-                    .position(x: geo.size.width / 2, y: geo.size.height * 0.32)
+                    .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
                 SunView(face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * sin(p * .pi))
                     .frame(width: 220, height: 220)
                     .offset(y: -sin(p * .pi) * 36)
-                    .position(x: geo.size.width / 2, y: geo.size.height * 0.32)
+                    .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
                 VStack {
                     Spacer()
                     Text("Saved").lgText(.sheetTitle, color: .white)
