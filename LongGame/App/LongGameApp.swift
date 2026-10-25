@@ -10,6 +10,9 @@ struct LongGameApp: App {
         let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self])
         do {
             container = try ModelContainer(for: schema)
+            #if DEBUG
+            DemoData.seedIfRequested(ModelContext(container))
+            #endif
         } catch {
             fatalError("Could not open the local database: \(error)")
         }
