@@ -73,13 +73,14 @@ extension ButtonStyle where Self == LGButtonStyle {
 struct LGIconButton: View {
     let systemName: String
     let label: String
+    var tint: Color = LGColor.ink
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(LGColor.ink)
+                .foregroundStyle(tint)
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
         }

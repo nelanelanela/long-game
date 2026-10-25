@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct LongGameApp: App {
     let container: ModelContainer
+    @State private var timerStore = TimerStore()
 
     init() {
         let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self])
@@ -17,6 +18,7 @@ struct LongGameApp: App {
     var body: some Scene {
         WindowGroup {
             AppRoot()
+                .environment(timerStore)
                 .preferredColorScheme(.light)
         }
         .modelContainer(container)

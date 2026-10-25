@@ -11,11 +11,10 @@ struct AppRoot: View {
     var body: some View {
         Group {
             if let active {
-                HomeView(craft: active)
+                NavigationStack { HomeView(craft: active) }
             } else {
                 OnboardingFlow(showWelcome: crafts.isEmpty)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: active?.id)
     }
 }

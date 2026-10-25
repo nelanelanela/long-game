@@ -17,15 +17,39 @@ targets:
     platform: iOS
     sources:
       - LongGame
+      - Shared
+    dependencies:
+      - target: LongGameWidgets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.longgame.LongGame
+        INFOPLIST_KEY_NSSupportsLiveActivities: YES
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Long Game
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         ENABLE_PREVIEWS: YES
+  LongGameWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - LongGameWidgets
+      - Shared
+      - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Colors.swift
+      - LongGame/Logic/TimerLogic.swift
+      - LongGame/Logic/Format.swift
+    info:
+      path: LongGameWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Long Game
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.longgame.LongGame.Widgets
+        SKIP_INSTALL: YES
   LongGameTests:
     type: bundle.unit-test
     platform: iOS

@@ -16,6 +16,8 @@ struct SunView: View {
     /// Ray that is growing in right now, and how far (0...1).
     var growingRay: Int? = nil
     var growProgress: Double = 1
+    /// Reduce Motion: the new ray fades in instead of growing.
+    var growFade: Bool = false
     var raysRotation: Angle = .zero
     var raysOpacity: Double = 1
     var unlitOpacity: Double = 0.22
@@ -60,7 +62,9 @@ struct SunView: View {
     }
 
     private func rayState(_ k: Int) -> (grow: Double, opacity: Double) {
-        if k == growingRay { return (max(0.001, growProgress), 1) }
+        if k == growingRay {
+            return growFade ? (1, growProgress) : (max(0.001, growProgress), 1)
+        }
         if k < litRays { return (1, 1) }
         if k == glowingRay { return (1, glowOpacity) }
         return (1, unlitOpacity)
@@ -90,9 +94,9 @@ struct SunView: View {
             EyeArc(x: 94, y: 118, bend: 3, width: 12).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)
             BigSmile().fill(ink).opacity(face == .celebrate ? 1 : 0)
             Text("z")
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(ink)
-                .position(x: 146, y: 62)
+                .position(x: 134, y: 78)
                 .opacity(face == .sleepy ? 1 : 0)
         }
         .animation(.easeInOut(duration: 0.18), value: face)
@@ -142,8 +146,9 @@ private struct DroopyEye: Shape {
     var direction: CGFloat
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        p.move(to: CGPoint(x: x, y: 98))
-        p.addQuadCurve(to: CGPoint(x: x + 16 * direction, y: 103), control: CGPoint(x: x + 8 * direction, y: 102))
+        // outer corner sits lower than the inner one: a drooping lid
+        p.move(to: CGPoint(x: x, y: 103))
+        p.addQuadCurve(to: CGPoint(x: x + 16 * direction, y: 98), control: CGPoint(x: x + 8 * direction, y: 104))
         return p
     }
 }

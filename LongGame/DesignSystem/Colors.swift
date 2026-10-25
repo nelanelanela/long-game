@@ -18,6 +18,7 @@ enum LGColor {
     static let inkMuted = Color(hex: 0x5E6782)
     static let divider = Color(hex: 0xF0ECE5)
     static let chipBorder = Color(hex: 0xE4DFD6)
+    static let danger = Color(hex: 0xB3341A)
     static let chipFill = Color(hex: 0xF3EFE8)
     static let segmentTrack = Color(hex: 0xEFEBE4)
 
@@ -49,8 +50,4 @@ enum LGColor {
         .init(color: Color(hex: 0xE98FA3), location: 0.76),
         .init(color: Color(hex: 0xF7B46A), location: 1),
     ])
-
-    static func calendar(_ level: CalendarLevel) -> Color {
-        level == .rest ? rest : practice[level.rawValue - 1]
-    }
 }
