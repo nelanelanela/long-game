@@ -1,18 +1,27 @@
-# Screen designs
+# Long Game
 
-Each `.dc.html` file is one iPhone screen (390 × 844 pt) from the Long Game design canvas. They use a design runtime (`support.js`) that is not included, so treat them as reference markup: the inline styles give exact colours, sizes, spacing, radii and copy, and the inline SVG gives the sun mascot.
+Free iPhone app that tracks the hours you put into one craft on the way to 10,000.
+Product spec: `docs/SPEC.md`. Screen designs: `design/`.
 
-| File | Screen |
-| --- | --- |
-| Welcome.dc.html | 0 · Welcome (sunrise sky, sun, Get started) |
-| Main.dc.html | 1 · Your craft (search + grouped suggestions) |
-| StartYear.dc.html | 2 · When did you start? |
-| YearlyHours.dc.html | 3 · Hours per week, each year |
-| Home.dc.html | 4 · Home / Progress |
-| Calendar.dc.html | 5 · History — Calendar |
-| Growth.dc.html | 6 · History — Growth (forecast maths in the script block) |
-| Timer.dc.html | Timer, running state, with CSS keyframes for the animation timings |
-| LogPast.dc.html | 7 · Add past hours |
-| OneCraft.dc.html | 8 · One craft at a time sheet |
+## Open and run
 
-Living canvas (view all screens rendered): https://claude.ai/artifact/9eccVNQk6JN4hBPGe9VhU6
+1. Double-click `LongGame.xcodeproj` (Xcode 16 or newer).
+2. Pick an iPhone simulator at the top and press ▶︎.
+3. To see the app full of sample data (debug builds only): Product ▸ Scheme ▸ Edit Scheme ▸ Run ▸
+   Arguments ▸ add `-demoData`. Remove it to start fresh.
+
+If you change `project.yml` (adding targets or settings), regenerate the project with `xcodegen generate`.
+
+## Tests
+
+```bash
+xcodebuild -scheme LongGame -destination 'platform=iOS Simulator,name=iPhone 16' test
+```
+
+All the calculations (baseline, totals, pace, streaks, forecast, timer, milestones, reminders, CSV) live in
+`LongGame/Logic/` and are covered by `LongGameTests/`.
+
+## App icon
+
+`swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`
+redraws the icon from the same sun geometry as the app.

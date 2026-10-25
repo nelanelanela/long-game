@@ -19,7 +19,10 @@ struct HomeView: View {
     @Query private var sessions: [Session]
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
+    @Environment(\.modelContext) private var context
     @Environment(TimerStore.self) private var timer
+    @State private var celebrating: Int?
+    @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
     @State private var showTimer = false
     @State private var totalBeforeTimer = 0.0
@@ -65,6 +68,26 @@ struct HomeView: View {
         }
         .onAppear {
             if timer.finishRequested { openTimer(total: s.total) }
+            checkMilestones(total: s.total)
+            refreshNotifications()
+        }
+        .onChange(of: s.total) { _, total in checkMilestones(total: total) }
+        .onChange(of: sessions.count) { old, new in
+            refreshNotifications()
+            if old == 0, new == 1, !UserDefaults.standard.bool(forKey: "notifications.asked") { askAboutReminders = true }
+        }
+        .overlay {
+            if let hours = celebrating {
+                MilestoneCelebration(hours: hours, craftName: craft.name) { celebrating = nil }
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: celebrating)
+        .alert("Want a gentle nudge?", isPresented: $askAboutReminders) {
+            Button("Yes, remind me") { enableDailyReminder() }
+            Button("Not now", role: .cancel) { UserDefaults.standard.set(true, forKey: "notifications.asked") }
+        } message: {
+            Text("A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings.")
         }
         .sheet(item: $sheet) { item in
             switch item {
@@ -86,7 +109,16 @@ struct HomeView: View {
                 .lineLimit(1).minimumScaleFactor(0.6)
                 .accessibilityAddTraits(.isHeader)
             Spacer()
-            HStack(spacing: 4) {
+            HStack(spacing: 0) {
+                NavigationLink {
+                    SettingsView(craft: craft)
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 19, weight: .regular))
+                        .foregroundStyle(LGColor.ink)
+                        .frame(width: 44, height: 44)
+                }
+                .accessibilityLabel("Settings")
                 NavigationLink {
                     HistoryView(craft: craft)
                 } label: {
@@ -158,6 +190,47 @@ struct HomeView: View {
                 .padding(.horizontal, 18)
                 .lgCard()
             }
+        }
+    }
+
+    // MARK: Milestones and reminders
+
+    private func checkMilestones(total: Double) {
+        if settingsRows.isEmpty {
+            context.insert(AppSettings())
+            try? context.save()
+            return
+        }
+        guard let settings = settingsRows.first else { return }
+        let crossed = Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
+        guard let top = crossed.max() else { return }
+        settings.milestonesSeen.append(contentsOf: crossed)
+        try? context.save()
+        Task {
+            // let a saved session's count-up finish first
+            try? await Task.sleep(for: .seconds(1.6))
+            celebrating = top
+        }
+    }
+
+    private func refreshNotifications() {
+        guard let settings = settingsRows.first else { return }
+        let records = sessions.map(\.record)
+        let name = craft.name
+        let (time, days, streak) = (settings.reminderTime, settings.reminderDays, settings.streakReminder)
+        Task {
+            await NotificationPlanner.refresh(craftName: name, reminderTime: time, reminderDays: days,
+                                              streakReminder: streak, sessions: records)
+        }
+    }
+
+    private func enableDailyReminder() {
+        UserDefaults.standard.set(true, forKey: "notifications.asked")
+        Task {
+            guard await Notifications.requestAuthorization(), let settings = settingsRows.first else { return }
+            settings.reminderTime = Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date())
+            try? context.save()
+            refreshNotifications()
         }
     }
 

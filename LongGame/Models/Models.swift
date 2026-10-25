@@ -79,6 +79,7 @@ final class AppSettings {
     var reminderTime: Date?
     var reminderDays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     var syncEnabled: Bool = false
+    var streakReminder: Bool = false
     var milestonesSeen: [Int] = []
 
     init() {}

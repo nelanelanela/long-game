@@ -23,6 +23,7 @@ struct LongGameApp: App {
             AppRoot()
                 .environment(timerStore)
                 .preferredColorScheme(.light)
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }
         .modelContainer(container)
     }

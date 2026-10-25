@@ -34,8 +34,14 @@ final class OnboardingModel {
         for year in years {
             context.insert(YearEstimate(craftId: craft.id, year: year, hoursPerWeek: hoursFor(year)))
         }
-        if (try? context.fetchCount(FetchDescriptor<AppSettings>())) == 0 {
-            context.insert(AppSettings())
+        // Hours estimated at onboarding never trigger milestone celebrations.
+        let seen = Milestones.newlyCrossed(total: estimatedSoFar(now: now), seen: [])
+        if let existing = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first {
+            existing.milestonesSeen = seen
+        } else {
+            let settings = AppSettings()
+            settings.milestonesSeen = seen
+            context.insert(settings)
         }
         try? context.save()
     }
