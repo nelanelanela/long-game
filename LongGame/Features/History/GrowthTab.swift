@@ -34,10 +34,10 @@ struct GrowthTab: View {
     private func forecastCard(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Mastery forecast").lgText(.caption, color: LGColor.inkMuted)
+                Text("You'll finish the game around").lgText(.caption, color: LGColor.inkMuted)
                 Text(ForecastText.headline(s.forecast.mid, now: now))
                     .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48))
-                Text("Likely between \(ForecastText.year(s.forecast.high, now: now)) and \(ForecastText.year(s.forecast.low, now: now))")
+                Text(ForecastText.range(s.forecast, now: now))
                     .lgText(.caption, color: LGColor.inkMuted)
                 if !s.hasEnoughData {
                     Text("Forecast improves as you log more")
@@ -183,13 +183,13 @@ struct GrowthTab: View {
             HStack {
                 Text("What if I practise more?").lgText(.rowStrong)
                 Spacer()
-                Text("+\(Int(extra)) h/wk").lgText(.rowStrong)
+                Text(Labels.extraPerWeek(Int(extra))).lgText(.rowStrong)
             }
             Slider(value: $extra, in: 0...10, step: 1)
                 .tint(LGColor.ink)
                 .accessibilityLabel("Extra hours per week")
                 .accessibilityValue("\(Int(extra))")
-            Text(ForecastText.whatIf(extra: extra, total: s.total, pace: s.pace, trend: s.trend, now: now))
+            Text(ForecastText.whatIf(extra: extra, total: s.total, pace: s.forecastPace, trend: max(0, s.trend), now: now))
                 .lgText(.caption, color: LGColor.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }

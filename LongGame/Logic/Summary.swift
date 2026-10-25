@@ -7,6 +7,7 @@ struct ProgressSummary: Sendable {
     var total: Double
     var thisWeek: Double
     var pace: Double
+    var forecastPace: Double
     var trend: Double
     var yearlyRates: [YearRate]
     var forecast: Forecast
@@ -26,11 +27,15 @@ struct ProgressSummary: Sendable {
         let pace = Pace.hoursPerWeek(sessions: sessions, latestEstimate: latest, onboardingDate: onboardingDate, now: now, calendar: calendar)
         let yearly = ForecastEngine.yearlyRates(estimates: estimates, sessions: sessions, onboardingDate: onboardingDate, now: now, calendar: calendar)
         let trend = ForecastEngine.trend(yearly: yearly)
+        // The forecast runs on the lifetime average, adjusted by recent entries;
+        // a falling trend is not extrapolated into the future.
+        let forecastPace = ForecastEngine.forecastPace(total: total, estimates: estimates, sessions: sessions,
+                                                       onboardingDate: onboardingDate, now: now, calendar: calendar)
         return ProgressSummary(
             baseline: baseline, logged: logged, total: total,
             thisWeek: WeekMath.thisWeekHours(sessions, now: now, weekStart: weekStart, calendar: calendar),
-            pace: pace, trend: trend, yearlyRates: yearly,
-            forecast: ForecastEngine.forecast(total: total, pace: pace, trend: trend, extra: extra),
+            pace: pace, forecastPace: forecastPace, trend: trend, yearlyRates: yearly,
+            forecast: ForecastEngine.forecast(total: total, pace: forecastPace, trend: max(0, trend), extra: extra),
             hasEnoughData: hasTwoWeeksOfData(sessions, now: now)
         )
     }

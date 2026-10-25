@@ -13,9 +13,9 @@ struct CraftStepView: View {
             OnboardingHeader(step: 1, showsBack: false)
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("What is your craft?").lgText(.screenTitle)
+                Text("What's your game?").lgText(.screenTitle)
                     .accessibilityAddTraits(.isHeader)
-                Text("Pick one, or type your own.").lgText(.body, color: LGColor.inkMuted)
+                Text("Your craft is the game. Pick one, or type your own.").lgText(.body, color: LGColor.inkMuted)
             }
 
             HStack(spacing: 10) {

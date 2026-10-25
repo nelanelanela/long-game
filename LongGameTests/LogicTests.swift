@@ -286,3 +286,31 @@ struct ForecastTests {
         #expect(ForecastText.whatIf(extra: 10, total: 3000, pace: 10, trend: 0, now: now, calendar: utc).hasPrefix("About"))
     }
 }
+
+@Suite struct ForecastPaceTests {
+    // 1,900 h over 6 years (Jan 2020 – Jan 2026) ≈ 6.1 h/wk lifetime average.
+    @Test func lifetimeAverageIsTheStartingPace() {
+        let est = (2020...2025).map { YearRate(year: $0, hoursPerWeek: 6.09) }
+        let now = day(2026, 1, 1)
+        let total = 6.09 * 52 * 6
+        let r = ForecastEngine.forecastPace(total: total, estimates: est, sessions: [], onboardingDate: now, now: now, calendar: utc)
+        #expect(abs(r - 6.09 * 52 * 6 / (365.0 * 6 + 2) * 7) < 0.1)
+    }
+
+    @Test func recentEntriesPullThePaceTheirWay() {
+        let est = (2020...2025).map { YearRate(year: $0, hoursPerWeek: 6) }
+        let onboarding = day(2026, 1, 1), now = day(2026, 4, 1)
+        let none = ForecastEngine.forecastPace(total: 1900, estimates: est, sessions: [], onboardingDate: onboarding, now: now, calendar: utc)
+        let busy = (0..<12).map { session(day(2026, 1, 5 + $0 * 7), hours: 20) }
+        let more = ForecastEngine.forecastPace(total: 1900 + 240, estimates: est, sessions: busy, onboardingDate: onboarding, now: now, calendar: utc)
+        #expect(more > none)
+        #expect(none > 0)
+    }
+
+    @Test func slowPaceNeverReachingGoalIsConsistentWithText() {
+        let f = ForecastEngine.forecast(total: 1900, pace: 6, trend: 0)
+        #expect(f.mid.monthsToGoal == nil)
+        #expect(ForecastText.range(f, now: day(2026, 10, 25), calendar: utc).hasPrefix("Not within"))
+        #expect((f.mid.points.last?.hours ?? 0) > 5000)
+    }
+}

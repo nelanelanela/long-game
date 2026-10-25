@@ -253,7 +253,7 @@ private struct RunningScene: View {
         }
         .frame(height: 12)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(hours == 0 ? "" : "\(hours) golden \(hours == 1 ? "hour" : "hours") so far")
+        .accessibilityLabel(hours == 0 ? "" : Labels.goldenHoursSoFar(hours))
     }
 
     private func mote(_ m: (x: Double, y: Double, delay: Double, size: CGFloat), t: Double, in size: CGSize) -> some View {
@@ -281,13 +281,7 @@ private struct RunningScene: View {
     }
 
     private static func spoken(_ seconds: TimeInterval) -> String {
-        let total = Int(seconds)
-        let h = total / 3600, m = (total % 3600) / 60, s = total % 60
-        var parts: [String] = []
-        if h > 0 { parts.append("\(h) \(h == 1 ? "hour" : "hours")") }
-        if m > 0 { parts.append("\(m) \(m == 1 ? "minute" : "minutes")") }
-        if h == 0 { parts.append("\(s) \(s == 1 ? "second" : "seconds")") }
-        return parts.joined(separator: " ")
+        Labels.spoken(seconds: Int(seconds), includeSeconds: true)
     }
 }
 

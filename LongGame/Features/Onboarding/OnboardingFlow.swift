@@ -53,7 +53,7 @@ enum OnboardingStep: Hashable {
 
 /// Welcome (first launch only) followed by the three setup steps.
 struct OnboardingFlow: View {
-    /// After "Replace my craft" the welcome screen is skipped.
+    /// After "Switch to a new game" the welcome screen is skipped.
     let showWelcome: Bool
 
     @State private var model = OnboardingModel()

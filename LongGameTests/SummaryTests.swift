@@ -19,11 +19,11 @@ struct FormatTests {
     }
 
     @Test func addLabels() {
-        #expect(DurationFormat.addLabel(seconds: 0) == "Add hours")
-        #expect(DurationFormat.addLabel(seconds: 3600) == "Add 1 hour")
-        #expect(DurationFormat.addLabel(seconds: 7200) == "Add 2 hours")
-        #expect(DurationFormat.addLabel(seconds: 5400) == "Add 1 h 30 m")
-        #expect(DurationFormat.addLabel(seconds: 2700) == "Add 45 minutes")
+        #expect(Labels.addLabel(seconds: 0) == "Add hours")
+        #expect(Labels.addLabel(seconds: 3600) == "Add 1 hour")
+        #expect(Labels.addLabel(seconds: 7200) == "Add 2 hours")
+        #expect(Labels.addLabel(seconds: 5400) == "Add 1 h 30 m")
+        #expect(Labels.addLabel(seconds: 2700) == "Add 45 minutes")
     }
 
     @Test func relativeDays() {

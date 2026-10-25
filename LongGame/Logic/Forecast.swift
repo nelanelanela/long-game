@@ -39,6 +39,25 @@ enum ForecastEngine {
         }
     }
 
+    /// Pace the forecast runs on: the lifetime average (total hours ÷ weeks since
+    /// the first estimate year began), nudged towards the recent logged pace as
+    /// real entries arrive. Recent logging gets up to half the weight, reached
+    /// after 12 weeks of data.
+    static func forecastPace(total: Double, estimates: [YearRate], sessions: [SessionRecord], onboardingDate: Date,
+                             now: Date, calendar: Calendar = .current) -> Double {
+        guard let firstYear = estimates.map(\.year).min(),
+              let start = calendar.date(from: DateComponents(year: firstYear, month: 1, day: 1)) else { return 0 }
+        let weeksSinceStart = max(1, now.timeIntervalSince(start) / (7 * 86_400))
+        let lifetime = total / weeksSinceStart
+        let weeks = Pace.weeksOfData(onboardingDate: onboardingDate, now: now, calendar: calendar)
+        guard weeks > 0 else { return lifetime }
+        let endOfToday = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) ?? now
+        let windowStart = now.addingTimeInterval(-weeks * 7 * 86_400)
+        let recent = sessions.filter { $0.start >= windowStart && $0.start < endOfToday }.reduce(0) { $0 + $1.hours } / weeks
+        let weight = 0.5 * weeks / Pace.windowWeeks
+        return weight * recent + (1 - weight) * lifetime
+    }
+
     /// Least-squares slope in h/week per year, clamped to [-2, +2].
     static func trend(yearly: [YearRate]) -> Double {
         guard yearly.count >= 2 else { return 0 }
@@ -109,6 +128,17 @@ enum ForecastText {
         return "\(months[(c.month ?? 1) - 1]) \(c.year ?? 0)"
     }
 
+    /// "Likely between 2034 and 2038", or one sentence when neither edge arrives.
+    static func range(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        if forecast.high.monthsToGoal == nil {
+            return "Not within 15 years at your average pace"
+        }
+        if forecast.low.monthsToGoal == nil {
+            return "Likely from \(year(forecast.high, now: now, calendar: calendar)), possibly later"
+        }
+        return "Likely between \(year(forecast.high, now: now, calendar: calendar)) and \(year(forecast.low, now: now, calendar: calendar))"
+    }
+
     static func headline(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         guard let m = result.monthsToGoal else {
             return "After \(calendar.component(.year, from: now) + 15)"
@@ -139,7 +169,7 @@ enum ForecastText {
         if months >= 12 {
             amount = String(format: "%.1f years", (sooner / 12 * 10).rounded() / 10)
         } else {
-            amount = months == 1 ? "1 month" : "\(months) months"
+            amount = Labels.months(months)
         }
         return "About \(amount) sooner, around " + headline(with, now: now, calendar: calendar) + "."
     }

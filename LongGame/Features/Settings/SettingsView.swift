@@ -49,6 +49,9 @@ struct SettingsView: View {
                 practiceCard
                 dataCard
                 syncCard
+                #if DEBUG
+                debugCard
+                #endif
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
@@ -236,6 +239,26 @@ struct SettingsView: View {
             }
         }
     }
+
+    #if DEBUG
+    @AppStorage("debug.pretendDays") private var pretendDays = 10
+
+    private var debugCard: some View {
+        card {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Debug only").lgText(.caption, color: LGColor.inkMuted).padding(.top, 12)
+                Stepper("Pretend last session was \(Labels.days(pretendDays)) ago", value: $pretendDays, in: 7...200)
+                    .lgText(.row).frame(minHeight: 54)
+                Divider().overlay(LGColor.divider)
+                Button("Show Welcome back on Home") {
+                    DebugOptions.setPretendLastSessionDaysAgo(pretendDays)
+                    dismiss()
+                }
+                .lgText(.rowStrong).frame(minHeight: 54)
+            }
+        }
+    }
+    #endif
 
     // MARK: Helpers
 

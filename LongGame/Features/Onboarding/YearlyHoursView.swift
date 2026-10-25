@@ -12,7 +12,7 @@ struct YearlyHoursView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Hours per week, each year").lgText(.screenTitle)
                     .accessibilityAddTraits(.isHeader)
-                Text("More or less. Only focused practice.").lgText(.body, color: LGColor.inkMuted)
+                Text("This is your starting score. Only focused practice counts.").lgText(.body, color: LGColor.inkMuted)
             }
 
             if model.years.count > 8 {
@@ -21,7 +21,7 @@ struct YearlyHoursView: View {
                     Spacer()
                     Menu {
                         ForEach([0, 2, 5, 10, 15, 20], id: \.self) { value in
-                            Button("\(value) h per week") { model.years.forEach { model.hours[$0] = value } }
+                            Button(Labels.hoursPerWeek(value)) { model.years.forEach { model.hours[$0] = value } }
                         }
                     } label: {
                         Text("Choose…").lgText(.rowStrong)
@@ -60,7 +60,7 @@ struct YearlyHoursView: View {
             }
             .accessibilityElement(children: .combine)
 
-            Button("Start tracking") { model.save(in: context) }
+            Button("Start playing") { model.save(in: context) }
                 .buttonStyle(.lg(.primary))
         }
         .padding(.horizontal, 24)

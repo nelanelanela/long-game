@@ -24,7 +24,7 @@ struct WelcomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Long Game").lgText(.welcomeTitle, color: .white)
                         .accessibilityAddTraits(.isHeader)
-                    Text("Mastery takes about 10,000 hours. Choose one craft and watch every hour count.")
+                    Text("The longest game on the App Store. About 10,000 hours long, and played in real life.")
                         .lgText(.bodyLarge, color: .white.opacity(0.85))
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: 280, alignment: .leading)

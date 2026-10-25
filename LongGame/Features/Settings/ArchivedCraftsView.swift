@@ -83,7 +83,7 @@ struct ArchivedCraftDetail: View {
 
                 VStack(spacing: 4) {
                     Text(Totals.wholeHours(total: total).formatted()).lgNumber(.bigNumber)
-                    Text("hours · \(sessions.count) \(sessions.count == 1 ? "session" : "sessions")")
+                    Text("hours · \(Labels.sessions(sessions.count))")
                         .lgText(.row, color: LGColor.inkMuted)
                 }
                 .frame(maxWidth: .infinity).padding(.vertical, 24).lgCard(radius: 24)

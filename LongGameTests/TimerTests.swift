@@ -66,7 +66,7 @@ struct SunHourTests {
         let h = SunHour(elapsed: 42 * 60 + 18)
         #expect(h.litRays == 8)
         #expect(h.minutesIntoHour == 42)
-        #expect(h.caption == "Next ray in 2:42 · golden hour in 17:42")
+        #expect(h.caption == "Next ray in 2:42 · golden hour bonus in 17:42")
         #expect(h.accessibilityLabel.contains("8 of 12 rays lit: 42 minutes"))
     }
 

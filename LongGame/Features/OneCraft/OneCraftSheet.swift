@@ -14,16 +14,16 @@ struct OneCraftSheet: View {
         VStack(spacing: 20) {
             SunView(face: .happy).frame(width: 104, height: 104)
             VStack(spacing: 10) {
-                Text("One craft at a time").lgText(.sheetTitle)
+                Text("One player, one game").lgText(.sheetTitle)
                     .accessibilityAddTraits(.isHeader)
-                Text("Splitting your hours across several crafts slows every one of them down, so Long Game keeps you focused on one.")
+                Text("No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one.")
                     .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
             VStack(spacing: 4) {
-                Button("Keep my focus") { dismiss() }.buttonStyle(.lg(.primary))
-                Button("Replace my craft") { confirmReplace = true }.buttonStyle(.lg(.text))
+                Button("Keep playing") { dismiss() }.buttonStyle(.lg(.primary))
+                Button("Switch to a new game") { confirmReplace = true }.buttonStyle(.lg(.text))
             }
         }
         .padding(.horizontal, 24)
@@ -38,7 +38,7 @@ struct OneCraftSheet: View {
             Button("Cancel", role: .cancel) {}
             Button("Archive and replace", role: .destructive, action: replace)
         } message: {
-            Text("Your \(totalHours.formatted()) hours of \(craft.name) will be archived. This can't be undone.")
+            Text("Your \(Labels.hours(totalHours)) of \(craft.name) will be archived. This can't be undone.")
         }
     }
 

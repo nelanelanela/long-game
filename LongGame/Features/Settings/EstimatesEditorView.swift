@@ -43,7 +43,7 @@ struct EstimatesEditorView: View {
                     Spacer()
                     Menu {
                         ForEach([0, 2, 5, 10, 15, 20], id: \.self) { value in
-                            Button("\(value) h per week") { estimates.forEach { $0.hoursPerWeek = value } }
+                            Button(Labels.hoursPerWeek(value)) { estimates.forEach { $0.hoursPerWeek = value } }
                         }
                     } label: {
                         Text("Choose…").lgText(.rowStrong).padding(.horizontal, 14).frame(minHeight: 44)

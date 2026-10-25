@@ -61,7 +61,7 @@ struct SessionFormView: View {
                 }
                 .padding(.top, 12)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(hours) hours \(minutes) minutes")
+                .accessibilityLabel(Labels.hours(hours) + " " + Labels.minutes(minutes))
 
                 VStack(spacing: 0) {
                     row("Day") {
@@ -120,7 +120,7 @@ struct SessionFormView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
-            Button(editing == nil ? DurationFormat.addLabel(seconds: seconds) : "Save changes", action: save)
+            Button(editing == nil ? Labels.addLabel(seconds: seconds) : "Save changes", action: save)
                 .buttonStyle(.lg(.primary))
                 .disabled(!canSave)
                 .padding(.horizontal, 24).padding(.vertical, 8)

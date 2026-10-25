@@ -10,8 +10,7 @@ struct StartYearView: View {
         let n = model.currentYear - model.startYear
         switch n {
         case 0: return "This year"
-        case 1: return "1 year ago"
-        default: return "\(n) years ago"
+        default: return Labels.yearsAgo(n)
         }
     }
 
@@ -22,7 +21,7 @@ struct StartYearView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("When did you start?").lgText(.screenTitle)
                     .accessibilityAddTraits(.isHeader)
-                Text("A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
+                Text("You don't start at level one. A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
             }
 
             HStack {

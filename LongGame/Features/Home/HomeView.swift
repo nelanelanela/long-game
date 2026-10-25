@@ -21,6 +21,7 @@ struct HomeView: View {
     @Query private var settingsRows: [AppSettings]
     @Environment(\.modelContext) private var context
     @Environment(TimerStore.self) private var timer
+    @Environment(\.scenePhase) private var scenePhase
     @State private var celebrating: Int?
     @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
@@ -28,6 +29,8 @@ struct HomeView: View {
     @State private var totalBeforeTimer = 0.0
     /// While set, Home shows this instead of the real total (the count-up after a save).
     @State private var countingTotal: Double?
+    @State private var catchUpGap: CatchUp.Gap?
+    @State private var totalBeforeCatchUp = 0.0
 
     init(craft: Craft) {
         self.craft = craft
@@ -70,6 +73,13 @@ struct HomeView: View {
             if timer.finishRequested { openTimer(total: s.total) }
             checkMilestones(total: s.total)
             refreshNotifications()
+            checkCatchUp(summary: s)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { checkCatchUp(summary: summary(now: Date())) }
+        }
+        .sheet(item: $catchUpGap) { gap in
+            CatchUpSheet(craft: craft, gap: gap, pace: totalPace, onFinish: catchUpFinished)
         }
         .onChange(of: s.total) { _, total in checkMilestones(total: total) }
         .onChange(of: sessions.count) { old, new in
@@ -141,7 +151,7 @@ struct HomeView: View {
             Divider().overlay(LGColor.divider)
             stat(DurationFormat.perWeek(s.pace), "Pace")
             Divider().overlay(LGColor.divider)
-            stat(ForecastText.homeMastery(s.forecast.mid, now: now), "Mastery")
+            stat(ForecastText.homeMastery(s.forecast.mid, now: now), "Finish line")
         }
         .padding(.vertical, 18)
         .fixedSize(horizontal: false, vertical: true)
@@ -190,6 +200,44 @@ struct HomeView: View {
                 .padding(.horizontal, 18)
                 .lgCard()
             }
+        }
+    }
+
+    // MARK: Welcome back
+
+    private var totalPace: Double { summary(now: Date()).pace }
+
+    /// Offers Welcome back after a break of 7+ days, at most once every 7 days.
+    private func checkCatchUp(summary s: ProgressSummary) {
+        guard catchUpGap == nil, sheet == nil, !showTimer, !timer.isActive, celebrating == nil,
+              let settings = settingsRows.first else { return }
+        let now = Date()
+        var starts = sessions.map(\.start)
+        var force = false
+        #if DEBUG
+        if let days = DebugOptions.takePretendLastSessionDaysAgo() {
+            starts = [Calendar.current.date(byAdding: .day, value: -days, to: now) ?? now]
+            force = true
+        }
+        #endif
+        let gap = CatchUp.gap(sessionStarts: starts, onboardingDate: craft.createdAt, today: now)
+        guard force ? (gap?.days ?? 0) >= CatchUp.minGapDays
+                    : CatchUp.shouldPrompt(gap: gap, lastPromptAt: settings.lastCatchUpPromptAt, now: now) else { return }
+        // Any outcome counts as asked: adding, "No, I took a break" or dismissing.
+        settings.lastCatchUpPromptAt = now
+        try? context.save()
+        totalBeforeCatchUp = s.total
+        catchUpGap = gap
+    }
+
+    private func catchUpFinished(addedHours: Double) {
+        guard addedHours > 0 else { return }
+        let new = totalBeforeCatchUp + addedHours
+        countingTotal = totalBeforeCatchUp
+        withAnimation(.easeOut(duration: 1.2)) { countingTotal = new }
+        Task {
+            try? await Task.sleep(for: .seconds(1.4))
+            countingTotal = nil
         }
     }
 

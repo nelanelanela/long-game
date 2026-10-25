@@ -41,7 +41,7 @@ struct CalendarTab: View {
             HStack(alignment: .firstTextBaseline) {
                 Text("Last 12 months").lgText(.rowStrong)
                 Spacer()
-                Text("\(Int(windowHours.rounded()).formatted()) h").lgText(.row, color: LGColor.inkMuted)
+                Text(Labels.shortHours(Int(windowHours.rounded()))).lgText(.row, color: LGColor.inkMuted)
             }
 
             HStack(alignment: .top, spacing: 6) {
@@ -152,12 +152,13 @@ struct CalendarTab: View {
             .sorted { $0.start < $1.start }
         let seconds = daily[day] ?? 0
         let firstNote = daySessions.compactMap(\.note).first(where: { !$0.isEmpty })
+        let afterBreak = !daySessions.isEmpty && daySessions.allSatisfy { $0.source == .catchUp }
 
         return VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(RelativeDay.full(day, calendar: calendar)).lgText(.rowStrong)
-                    Text(firstNote ?? (seconds > 0 ? (daySessions.count == 1 ? "1 session" : "\(daySessions.count) sessions") : "Rest day"))
+                    Text(afterBreak ? "Added after a break" : firstNote ?? (seconds > 0 ? Labels.sessions(daySessions.count) : "Rest day"))
                         .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
                         .lineLimit(2)
                 }
@@ -192,6 +193,7 @@ struct CalendarTab: View {
     }
 
     private func sessionTitle(_ s: Session) -> String {
+        if s.source == .catchUp { return "Added after a break" }
         if s.source == .manual { return s.note.flatMap { $0.isEmpty ? nil : $0 } ?? "Added hours" }
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_GB")
@@ -207,7 +209,7 @@ struct CalendarTab: View {
         let active = Streaks.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
         return HStack(spacing: 0) {
             VStack(spacing: 4) {
-                Text("\(current) \(current == 1 ? "day" : "days")").lgNumber(.statValue)
+                Text(Labels.days(current)).lgNumber(.statValue)
                 HStack(spacing: 4) {
                     SunView(face: .happy, rayColor: LGColor.sunRays).frame(width: 14, height: 14)
                     Text("Streak").lgText(.caption, color: LGColor.inkMuted)
@@ -215,7 +217,7 @@ struct CalendarTab: View {
             }
             .frame(maxWidth: .infinity)
             Divider().overlay(LGColor.divider)
-            stat("\(longest) \(longest == 1 ? "day" : "days")", "Longest")
+            stat(Labels.days(longest), "Longest")
             Divider().overlay(LGColor.divider)
             stat("\(active)", "Active days")
         }
@@ -251,11 +253,6 @@ struct CalendarTab: View {
     static func spoken(_ day: Date, seconds: Double, calendar: Calendar) -> String {
         let date = formatter("EEEE d MMMM", calendar).string(from: day)
         guard seconds > 0 else { return "\(date), rest day" }
-        let minutes = Int((seconds / 60).rounded())
-        let h = minutes / 60, m = minutes % 60
-        var parts: [String] = []
-        if h > 0 { parts.append("\(h) \(h == 1 ? "hour" : "hours")") }
-        if m > 0 { parts.append("\(m) \(m == 1 ? "minute" : "minutes")") }
-        return "\(date), " + parts.joined(separator: " ")
+        return "\(date), " + Labels.spoken(seconds: Int((seconds / 60).rounded()) * 60, includeSeconds: false)
     }
 }

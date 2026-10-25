@@ -40,7 +40,7 @@ final class YearEstimate {
 }
 
 enum SessionSource: String, Codable, Sendable {
-    case timer, manual
+    case timer, manual, catchUp
 }
 
 @Model
@@ -81,6 +81,8 @@ final class AppSettings {
     var syncEnabled: Bool = false
     var streakReminder: Bool = false
     var milestonesSeen: [Int] = []
+    /// When Welcome back was last offered; it is asked at most once every 7 days.
+    var lastCatchUpPromptAt: Date?
 
     init() {}
 

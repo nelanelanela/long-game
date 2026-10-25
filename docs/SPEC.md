@@ -12,6 +12,7 @@ Long Game is an iPhone app that tracks the hours a person puts into one craft on
 - **One craft only.** The app never holds two active crafts; adding one means replacing the current one.
 - **Quality hours.** Copy always says to count focused practice only.
 - **Calm and simple.** Plain warm-white screens, white cards, navy text; the smiling sun is the only decoration.
+- **Game voice.** Long Game is "the longest game on the App Store — about 10,000 hours long, and played in real life." Copy uses light game language: your craft is your game, past hours are your starting score, practising is playing, the forecast date is the finish line, a full hour of rays is a golden hour bonus. Keep it warm and light, never cheesy: no lives, coins or leaderboards in the product.
 - **Free.** No price, no ads, no subscription; every feature, including iCloud sync, is included. The app is local-first: it works offline and sync is optional.
 
 **Platform and stack (recommended)**
@@ -37,7 +38,7 @@ Four stored entities; every total on screen is derived from them, never stored.
 | --- | --- | --- |
 | Craft | id, name, category, startYear, createdAt, archivedAt? | Exactly one with archivedAt = nil. Archived crafts keep their data, read-only. |
 | YearEstimate | craftId, year, hoursPerWeek (0–40, step 1) | One row per year from startYear to the onboarding year. Editable later in Settings. |
-| Session | id, craftId, start, end, durationSec, source (timer / manual), note?, createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. |
+| Session | id, craftId, start, end, durationSec, source (timer / manual / catchUp), note?, createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. |
 | Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[] | Single row. |
 
 **Derived values**
@@ -52,7 +53,7 @@ All sessions belong to the active craft; the timer and add-hours flows never ask
 
 ## Screens
 
-Ten screens: four onboarding, four in the main app, two sheets. The user always returns to Home.
+Thirteen screens: four onboarding, four in the main app, two sheets, and the three-step Welcome back catch-up. The user always returns to Home.
 
 ### 0 · Welcome (`design/Welcome.dc.html`)
 
@@ -74,7 +75,7 @@ Ten screens: four onboarding, four in the main app, two sheets. The user always 
 
 - One slider row per year from start year to now, 0–40 h/week, step 1, default 5.
 - Running "Estimated so far" total updates live using the baseline formula.
-- **Start tracking** saves Craft + YearEstimates and opens Home.
+- **Start playing** saves Craft + YearEstimates and opens Home.
 
 ### 4 · Home / Progress (`design/Home.dc.html`)
 
@@ -108,8 +109,41 @@ Ten screens: four onboarding, four in the main app, two sheets. The user always 
 ### 8 · One craft at a time — sheet (`design/OneCraft.dc.html`)
 
 - Opened from + on Home. Explains the one-craft rule with the smiling sun.
-- **Keep my focus** closes the sheet.
-- **Replace my craft** asks for confirmation ("Your N hours of Piano will be archived. This can't be undone."), archives the current craft and opens step 1. Archived crafts are listed read-only in Settings.
+- **Keep playing** closes the sheet.
+- **Switch to a new game** asks for confirmation ("Your N hours of Piano will be archived. This can't be undone."), archives the current craft and opens step 1. Archived crafts are listed read-only in Settings.
+
+### 9 · Welcome back — catch-up after a break (`design/CatchUpAsk.dc.html`, `CatchUpWeeks.dc.html`, `CatchUpAverage.dc.html`)
+
+When the app opens after a gap of 7 days or more with no session, it asks once whether the user practised, then helps add those hours as estimates spread across the calendar.
+
+**When it appears**
+
+- On app launch or return to foreground, after onboarding, when no timer is running.
+- Gap = the day after the last day with any session (or the onboarding date, if there are none) up to yesterday. Shown only when the gap is 7 days or more.
+- At most once every 7 days: store `lastCatchUpPromptAt` in Settings. Any outcome counts as asked — adding hours, "No, I took a break", or dismissing the sheet.
+
+**Screen 10 · Welcome back (sheet)**
+
+- Open-eyed happy sun, "Welcome back!", and "Your last session was on <weekday, date> — that's N weeks ago. Did you practise since then?" (N = whole weeks in the gap).
+- **Yes, let me add it** opens screen 11 or 12. **No, I took a break** closes the sheet; the days stay as rest days.
+
+**Screen 11 · Under 4 weeks (gap of 7–27 days): a slider per week**
+
+- Split the gap into 7-day blocks counting back from yesterday; leftover days (fewer than 7) join the oldest block. Example: a 22-day gap = 3–10 Oct (8 days), 11–17 Oct, 18–24 Oct.
+- One row per block: date range, slider 0–40 h (step 1, default = current pace rounded), and "N days · about H h MM m a day".
+- Running total "Adding N h" and the button "Add N hours" (disabled at 0).
+
+**Screen 12 · 4 weeks or more (gap of 28+ days): one average**
+
+- "N weeks have passed. Since <date>. On average, how many hours a week did you practise?"
+- One large slider 0–40 h/week (default = current pace rounded), with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
+
+**How the hours are stored**
+
+- Each block's hours (or the average) are divided evenly across its days: one Session per day with source `catchUp`, start = that day at 12:00, duration = hours per day, rounded to the minute (put any rounding remainder on the last day so the total matches exactly).
+- Catch-up days use the normal calendar colours; the day detail labels them "Added after a break" and they can be edited or deleted like any session.
+- Catch-up sessions count towards the total, pace, forecast and streaks like any other session. If that is not wanted for streaks, exclude source `catchUp` there (decision for Natalia).
+- Adding hours updates Home with the count-up animation and a happy sun.
 
 ## Timer (`design/Timer.dc.html`)
 
@@ -154,8 +188,8 @@ The mastery date comes from simulating three pace scenarios month by month from 
 
 **Inputs**
 
-- *r* = current pace, h/week (see Data model).
-- *s* = yearly trend: slope of a least-squares line through the weekly average of each year (YearEstimates for past years, logged data for the current year), in h/week per year. Clamp to [−2, +2].
+- *r* = forecast pace, h/week: the lifetime average (total hours ÷ weeks since 1 January of the first estimate year), blended with the recent 12-week logged pace. Recent logging gets weight 0.5 × (weeks of data ÷ 12), so up to half. This is separate from the Home "Pace" stat.
+- *s* = yearly trend: slope of a least-squares line through the weekly average of each year (YearEstimates for past years, logged data for the current year), in h/week per year. Clamp to [−2, +2]. The forecast only uses a rising trend (negative is treated as 0), and the Growth card still shows the real value.
 - *e* = extra hours from the What-if slider (0 when not used).
 
 **Scenarios** (weekly rate at *t* years from now)
@@ -171,7 +205,7 @@ Rates never go below 0. Each month adds rate × 52 ÷ 12 hours; interpolate with
 **Display rules**
 
 - Headline = Mid date as "Month YYYY"; band label = High year to Low year.
-- If a scenario does not reach 10,000 h within 15 years, show "after YYYY".
+- If a scenario does not reach 10,000 h within 15 years, show "after YYYY". If even the High scenario misses, the line under the headline reads "Not within 15 years at your average pace"; the dashed line still rises at the forecast pace.
 - Fewer than 2 weeks of logged data: show "Forecast improves as you log more" under the headline.
 - What-if text = difference between the Mid date with and without *e*, in months (under 12) or years to one decimal.
 - Recompute when a session is saved, edited or deleted, and when estimates change.

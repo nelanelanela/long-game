@@ -44,16 +44,6 @@ enum DurationFormat {
     static func perWeek(_ value: Double) -> String {
         hours(value).replacingOccurrences(of: " h", with: " h/wk")
     }
-
-    /// Label for the Add button: "Add 2 hours", "Add 1 h 30 m", "Add 45 minutes".
-    static func addLabel(seconds: Double) -> String {
-        let minutes = Int((seconds / 60).rounded())
-        let h = minutes / 60, m = minutes % 60
-        if minutes == 0 { return "Add hours" }
-        if m == 0 { return h == 1 ? "Add 1 hour" : "Add \(h) hours" }
-        if h == 0 { return "Add \(m) minutes" }
-        return "Add \(h) h \(m) m"
-    }
 }
 
 enum RelativeDay {
