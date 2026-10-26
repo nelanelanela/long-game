@@ -24,6 +24,7 @@ struct EstimatesEditorView: View {
     }
 
     var body: some View {
+        ScrollView {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
                 LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
@@ -51,15 +52,13 @@ struct EstimatesEditorView: View {
                 }
             }
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(estimates, id: \.persistentModelID) { estimate in
-                        EstimateRow(estimate: estimate)
-                        if estimate.persistentModelID != estimates.last?.persistentModelID { Divider().overlay(LGColor.divider) }
-                    }
+            VStack(spacing: 0) {
+                ForEach(estimates, id: \.persistentModelID) { estimate in
+                    EstimateRow(estimate: estimate)
+                    if estimate.persistentModelID != estimates.last?.persistentModelID { Divider().overlay(LGColor.divider) }
                 }
-                .padding(.horizontal, 18)
             }
+            .padding(.horizontal, 18)
             .lgCard()
 
             HStack(alignment: .firstTextBaseline) {
@@ -71,7 +70,8 @@ struct EstimatesEditorView: View {
             .accessibilityElement(children: .combine)
         }
         .padding(.horizontal, 24)
-        .padding(.bottom, 16)
+        .padding(.bottom, 32)
+        }
         .lgScreen()
         .toolbar(.hidden, for: .navigationBar)
         .onDisappear {
