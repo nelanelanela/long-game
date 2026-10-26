@@ -26,6 +26,7 @@ struct HomeView: View {
     @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
     @State private var showTimer = false
+    @State private var showSettings = false
     @State private var totalBeforeTimer = 0.0
     /// While set, Home shows this instead of the real total (the count-up after a save).
     @State private var countingTotal: Double?
@@ -65,6 +66,11 @@ struct HomeView: View {
         .toolbar(.hidden, for: .navigationBar)
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
             TimerView(craft: craft, baseTotal: totalBeforeTimer)
+        }
+        // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
+        // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.
+        .fullScreenCover(isPresented: $showSettings) {
+            NavigationStack { SettingsView(craft: craft) }
         }
         .onChange(of: timer.finishRequested) { _, requested in
             if requested { openTimer(total: s.total) }
@@ -120,9 +126,7 @@ struct HomeView: View {
                 .accessibilityAddTraits(.isHeader)
             Spacer()
             HStack(spacing: 0) {
-                NavigationLink {
-                    SettingsView(craft: craft)
-                } label: {
+                Button { showSettings = true } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 19, weight: .regular))
                         .foregroundStyle(LGColor.ink)
