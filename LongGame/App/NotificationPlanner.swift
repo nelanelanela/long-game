@@ -33,7 +33,7 @@ enum NotificationPlanner {
         }
 
         if streakReminder {
-            let daily = Streaks.dailySeconds(sessions, calendar: calendar)
+            let daily = Streaks.streakSeconds(sessions, calendar: calendar)
             for (i, r) in ReminderPlanner.streakReminders(daily: daily, now: now, calendar: calendar).enumerated() {
                 let content = UNMutableNotificationContent()
                 content.title = "Keep your \(r.streak)-day streak glowing."

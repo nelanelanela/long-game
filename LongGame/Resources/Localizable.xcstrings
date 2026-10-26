@@ -1,21 +1,41 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "%lld hours": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld hour"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "“%@” will be your craft." : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ h" : {
+
+    },
+    "%lld days" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld hours"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days"
                 }
               }
             }
@@ -23,21 +43,22 @@
         }
       }
     },
-    "%lld minutes": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld minute"
+    "%lld golden hours so far" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld golden hour so far"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld minutes"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld golden hours so far"
                 }
               }
             }
@@ -45,21 +66,22 @@
         }
       }
     },
-    "%lld seconds": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld second"
+    "%lld hours" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld hour"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld seconds"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld hours"
                 }
               }
             }
@@ -67,21 +89,22 @@
         }
       }
     },
-    "%lld days": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld day"
+    "%lld minutes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minute"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld days"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld minutes"
                 }
               }
             }
@@ -89,21 +112,22 @@
         }
       }
     },
-    "%lld weeks": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld week"
+    "%lld months" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld month"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld weeks"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld months"
                 }
               }
             }
@@ -111,21 +135,22 @@
         }
       }
     },
-    "%lld months": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld month"
+    "%lld seconds" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld second"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld months"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld seconds"
                 }
               }
             }
@@ -133,21 +158,22 @@
         }
       }
     },
-    "%lld years ago": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld year ago"
+    "%lld sessions" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld session"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld years ago"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld sessions"
                 }
               }
             }
@@ -155,21 +181,22 @@
         }
       }
     },
-    "%lld weeks ago": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld week ago"
+    "%lld weeks" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld week"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld weeks ago"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld weeks"
                 }
               }
             }
@@ -177,21 +204,22 @@
         }
       }
     },
-    "%lld sessions": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld session"
+    "%lld weeks ago" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld week ago"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld sessions"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld weeks ago"
                 }
               }
             }
@@ -199,21 +227,22 @@
         }
       }
     },
-    "Add %lld hours": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "Add %lld hour"
+    "%lld weeks have passed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld week has passed"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "Add %lld hours"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld weeks have passed"
                 }
               }
             }
@@ -221,21 +250,22 @@
         }
       }
     },
-    "Add %lld minutes": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "Add %lld minute"
+    "%lld years ago" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld year ago"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "Add %lld minutes"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld years ago"
                 }
               }
             }
@@ -243,21 +273,37 @@
         }
       }
     },
-    "%lld weeks have passed": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld week has passed"
+    "0" : {
+
+    },
+    "3,294" : {
+
+    },
+    "20" : {
+
+    },
+    "40" : {
+
+    },
+    "A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings." : {
+
+    },
+    "Add %lld hours" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add %lld hour"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld weeks have passed"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add %lld hours"
                 }
               }
             }
@@ -265,28 +311,231 @@
         }
       }
     },
-    "%lld golden hours so far": {
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld golden hour so far"
+    "Add %lld minutes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add %lld minute"
                 }
               },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld golden hours so far"
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add %lld minutes"
                 }
               }
             }
           }
         }
       }
+    },
+    "Adding" : {
+
+    },
+    "Archived crafts" : {
+
+    },
+    "At 8 pm, if you haven't practised and have a streak of 3 days or more." : {
+
+    },
+    "Choose…" : {
+
+    },
+    "Coming later" : {
+
+    },
+    "Delete all data" : {
+
+    },
+    "Design system" : {
+
+    },
+    "Each week's hours are spread evenly across its days in your calendar." : {
+
+    },
+    "Estimated so far" : {
+
+    },
+    "Finish session" : {
+
+    },
+    "Forecast improves as you log more" : {
+
+    },
+    "History" : {
+
+    },
+    "hours : minutes" : {
+
+    },
+    "hours · %@" : {
+
+    },
+    "hours per week" : {
+
+    },
+    "Hours per week for each year. Only focused practice." : {
+
+    },
+    "Hours per week, each year" : {
+
+    },
+    "iCloud sync" : {
+
+    },
+    "Its hours will be removed from your total." : {
+
+    },
+    "Last 12 months" : {
+
+    },
+    "Less" : {
+
+    },
+    "Long Game" : {
+
+    },
+    "Mastery · 10,000 h" : {
+
+    },
+    "Monday" : {
+
+    },
+    "More" : {
+
+    },
+    "No sessions yet. Start one, or add past hours." : {
+
+    },
+    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {
+
+    },
+    "Nothing here. Crafts you replace are kept here to look back on." : {
+
+    },
+    "Notifications are off for Long Game. Turn them on in the iPhone's Settings app." : {
+
+    },
+    "of 10,000 hours · %@%%" : {
+
+    },
+    "of 10,000 hours · 33%" : {
+
+    },
+    "One player, one game" : {
+
+    },
+    "Saved" : {
+
+    },
+    "Sessions under a minute can't be saved." : {
+
+    },
+    "Set all to" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Sign in and iCloud restore are coming in a later update. You can start tracking now." : {
+
+    },
+    "Signed in with Apple" : {
+
+    },
+    "Started %@" : {
+
+    },
+    "Streak" : {
+
+    },
+    "Sunday" : {
+
+    },
+    "That would be more than 24 hours on this day. Lower the time or pick another day." : {
+
+    },
+    "The app keeps counting. This is the beginning of the next stretch." : {
+
+    },
+    "The longest game on the App Store. About 10,000 hours long, and played in real life." : {
+
+    },
+    "The time won't be added to your hours." : {
+
+    },
+    "This is your starting score. Only focused practice counts." : {
+
+    },
+    "This session" : {
+
+    },
+    "Time" : {
+
+    },
+    "Today" : {
+
+    },
+    "Total with your sessions" : {
+
+    },
+    "Week starts on" : {
+
+    },
+    "Weekly rate by year" : {
+
+    },
+    "Welcome back!" : {
+
+    },
+    "What if I practise more?" : {
+
+    },
+    "What's your game?" : {
+
+    },
+    "When did you start?" : {
+
+    },
+    "You can trim up to what you really practised." : {
+
+    },
+    "You don't start at level one. A rough guess is fine." : {
+
+    },
+    "You'll finish the game around" : {
+
+    },
+    "Your %@ of %@ will be archived. This can't be undone." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your %1$@ of %2$@ will be archived. This can't be undone."
+          }
+        }
+      }
+    },
+    "Your craft is the game. Pick one, or type your own." : {
+
+    },
+    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {
+
+    },
+    "Your estimates" : {
+
+    },
+    "Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on." : {
+
+    },
+    "z" : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

@@ -69,7 +69,7 @@ final class Session {
         set { sourceRaw = newValue.rawValue }
     }
 
-    var record: SessionRecord { SessionRecord(start: start, durationSec: durationSec) }
+    var record: SessionRecord { SessionRecord(start: start, durationSec: durationSec, isCatchUp: source == .catchUp) }
 }
 
 /// The spec's "Settings" entity. Named AppSettings to avoid clashing with SwiftUI.

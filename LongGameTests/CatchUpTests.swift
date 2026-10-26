@@ -156,3 +156,36 @@ struct LabelTests {
         #expect(Labels.aboutPerDay(minutes: 25) == "about 25 m a day")
     }
 }
+
+struct CatchUpStreakTests {
+    private func rec(_ d: Int, hours: Double, catchUp: Bool) -> SessionRecord {
+        SessionRecord(start: day(10, d), durationSec: hours * 3600, isCatchUp: catchUp)
+    }
+
+    @Test func catchUpCountsForStreaksOnlyAboveAnHourADay() {
+        let days = Streaks.streakSeconds([
+            rec(1, hours: 1.01, catchUp: true),   // more than 1 h: counts
+            rec(2, hours: 1, catchUp: true),      // exactly 1 h (7 h a week): does not
+            rec(3, hours: 0.5, catchUp: true),
+        ], calendar: cal)
+        #expect(days[cal.startOfDay(for: day(10, 1))] != nil)
+        #expect(days[cal.startOfDay(for: day(10, 2))] == nil)
+        #expect(days[cal.startOfDay(for: day(10, 3))] == nil)
+    }
+
+    @Test func realSessionsAlwaysCountAndCatchUpAddsToThem() {
+        let days = Streaks.streakSeconds([
+            rec(1, hours: 0.2, catchUp: false),
+            rec(1, hours: 0.5, catchUp: true),
+            rec(2, hours: 0.2, catchUp: false),
+            rec(2, hours: 2, catchUp: true),
+        ], calendar: cal)
+        #expect(abs((days[cal.startOfDay(for: day(10, 1))] ?? 0) - 0.2 * 3600) < 0.001)
+        #expect(abs((days[cal.startOfDay(for: day(10, 2))] ?? 0) - 2.2 * 3600) < 0.001)
+    }
+
+    @Test func calendarColoursStillShowAllCatchUpDays() {
+        let daily = Streaks.dailySeconds([rec(1, hours: 0.5, catchUp: true)], calendar: cal)
+        #expect(daily[cal.startOfDay(for: day(10, 1))] == 1800)
+    }
+}

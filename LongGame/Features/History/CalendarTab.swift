@@ -204,8 +204,9 @@ struct CalendarTab: View {
     // MARK: Stats
 
     private func statsCard(daily: [Date: Double], windowStart: Date, now: Date) -> some View {
-        let current = Streaks.current(daily: daily, today: now, calendar: calendar)
-        let longest = Streaks.longest(daily: daily, calendar: calendar)
+        let streakDaily = Streaks.streakSeconds(sessions.map(\.record), calendar: calendar)
+        let current = Streaks.current(daily: streakDaily, today: now, calendar: calendar)
+        let longest = Streaks.longest(daily: streakDaily, calendar: calendar)
         let active = Streaks.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
         return HStack(spacing: 0) {
             VStack(spacing: 4) {

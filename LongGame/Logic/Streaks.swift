@@ -11,6 +11,25 @@ enum Streaks {
         return result
     }
 
+    /// Catch-up hours added after a break count towards a streak only on days with
+    /// more than 1 h (the same as more than 7 h a week). Real sessions always count.
+    static let catchUpStreakMinSeconds = 3600.0
+
+    /// Seconds per day for streaks: like `dailySeconds`, but a day's catch-up time
+    /// is left out unless it is more than an hour.
+    static func streakSeconds(_ sessions: [SessionRecord], calendar: Calendar = .current) -> [Date: Double] {
+        var real: [Date: Double] = [:], catchUp: [Date: Double] = [:]
+        for s in sessions {
+            let day = calendar.startOfDay(for: s.start)
+            if s.isCatchUp { catchUp[day, default: 0] += s.durationSec } else { real[day, default: 0] += s.durationSec }
+        }
+        var result = real
+        for (day, seconds) in catchUp where seconds > catchUpStreakMinSeconds {
+            result[day, default: 0] += seconds
+        }
+        return result
+    }
+
     /// Consecutive days up to today, or up to yesterday if today has nothing yet.
     static func current(daily: [Date: Double], today: Date, calendar: Calendar = .current) -> Int {
         var day = calendar.startOfDay(for: today)
