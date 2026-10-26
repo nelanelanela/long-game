@@ -26,7 +26,7 @@ a{color:#16244A}a:hover{color:#000000}
 <div style="display: flex; flex-direction: column; gap: 14px; padding: 18px 16px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <div style="display: flex; align-items: baseline; justify-content: space-between">
 <span style="font-size: 15px; font-weight: 600">Last 12 months</span>
-<span style="font-size: 15px; color: #5E6782">{{yearTotal}} h</span>
+<span style="font-size: 15px; color: #5E6782">{{yearLabel}}</span>
 </div>
 <div style="display: flex; gap: 6px">
 <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 3px; padding-top: 17px; font-size: 10px; color: #5E6782">
@@ -72,11 +72,11 @@ a{color:#16244A}a:hover{color:#000000}
 </div>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 18px 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
-<span style="font-size: 19px; font-weight: 600">{{current}} days</span>
+<span style="font-size: 19px; font-weight: 600">{{currentLabel}}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #5E6782"><svg aria-hidden="true" width="14" height="14" viewBox="-14 -14 28 28"><path d="M0 -13V-10M0 10V13M-13 0H-10M10 0H13M-9.2 -9.2L-7 -7M7 7L9.2 9.2M-9.2 9.2L-7 7M7 -7L9.2 -9.2" stroke="#FFB627" stroke-width="2.4" stroke-linecap="round"></path><circle r="6.5" fill="#FFC93C"></circle></svg>Streak</span>
 </div>
 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; border-left: 1px solid #F0ECE5; border-right: 1px solid #F0ECE5">
-<span style="font-size: 19px; font-weight: 600">{{longest}} days</span>
+<span style="font-size: 19px; font-weight: 600">{{longestLabel}}</span>
 <span style="font-size: 13px; color: #5E6782">Longest</span>
 </div>
 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
@@ -121,7 +121,7 @@ let total = 0, active = 0, longest = 0, run = 0;
 all.forEach((h) => { total += h; if (h > 0) { active++; run++; longest = Math.max(longest, run); } else { run = 0; } });
 let current = 0;
 for (let k = all.length - 1; k >= 0 && all[k] > 0; k--) current++;
-return { weeks, yearTotal: Math.round(total).toLocaleString('en-US'), active, longest, current };
+return { weeks, yearLabel: Math.round(total).toLocaleString('en-US') + ' h', active, currentLabel: current + ' days', longestLabel: longest + ' days' };
 }
 }
 </script>

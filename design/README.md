@@ -14,5 +14,8 @@ Each `.dc.html` file is one iPhone screen (390 × 844 pt) from the Long Game des
 | Timer.dc.html | Timer, running state, with CSS keyframes for the animation timings |
 | LogPast.dc.html | 7 · Add past hours |
 | OneCraft.dc.html | 8 · One craft at a time sheet |
+| CatchUpAsk.dc.html | 9 · Welcome back sheet (after a break of 7+ days) |
+| CatchUpWeeks.dc.html | 9 · Catch up, under 4 weeks: a slider per week |
+| CatchUpAverage.dc.html | 9 · Catch up, 4+ weeks: one average slider |
 
 Living canvas (view all screens rendered): https://claude.ai/artifact/9eccVNQk6JN4hBPGe9VhU6

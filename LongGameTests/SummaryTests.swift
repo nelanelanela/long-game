@@ -49,7 +49,7 @@ struct SummaryTests {
         #expect(abs(s.total - (baseline + 2)) < 0.0001)
         #expect(s.thisWeek == 2)
         #expect(s.hasEnoughData == false)
-        #expect(s.forecast.mid.monthsToGoal == nil)   // ~9,000 h to go at ~10 h/wk is beyond 15 years
+        #expect(s.forecast.mid.monthsToGoal != nil)   // ~9,000 h to go at ~10 h/wk is about 17 years
     }
 
     @Test func twoWeeksOfData() {

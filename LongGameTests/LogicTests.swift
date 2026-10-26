@@ -237,7 +237,7 @@ struct ForecastTests {
     }
 
     @Test func slowPaceDoesNotReachWithin15Years() {
-        // 1 h/wk for 15 years is 780 h
+        // 1 h/wk for 30 years is 1,560 h
         #expect(ForecastEngine.simulate(.mid, total: 3000, pace: 1, trend: 0).monthsToGoal == nil)
     }
 
@@ -280,7 +280,7 @@ struct ForecastTests {
         let now = day(2026, 10, 25)
         let r = ScenarioResult(monthsToGoal: 12, points: [])
         #expect(ForecastText.headline(r, now: now, calendar: utc).hasSuffix("2027"))
-        #expect(ForecastText.headline(ScenarioResult(monthsToGoal: nil, points: []), now: now, calendar: utc) == "After 2041")
+        #expect(ForecastText.headline(ScenarioResult(monthsToGoal: nil, points: []), now: now, calendar: utc) == "After 2056")
         #expect(ForecastText.homeMastery(r, now: now, calendar: utc) == "~2027")
         #expect(ForecastText.whatIf(extra: 0, total: 3000, pace: 10, trend: 0, now: now, calendar: utc).hasPrefix("Based on"))
         #expect(ForecastText.whatIf(extra: 10, total: 3000, pace: 10, trend: 0, now: now, calendar: utc).hasPrefix("About"))
@@ -308,7 +308,7 @@ struct ForecastTests {
     }
 
     @Test func slowPaceNeverReachingGoalIsConsistentWithText() {
-        let f = ForecastEngine.forecast(total: 1900, pace: 6, trend: 0)
+        let f = ForecastEngine.forecast(total: 1900, pace: 3, trend: 0)
         #expect(f.mid.monthsToGoal == nil)
         #expect(ForecastText.range(f, now: day(2026, 10, 25), calendar: utc).hasPrefix("Not within"))
         #expect((f.mid.points.last?.hours ?? 0) > 5000)

@@ -26,9 +26,9 @@ a{color:#16244A}a:hover{color:#000000}
 
 <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 14px 12px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
-<span style="font-size: 13px; color: #5E6782">Mastery forecast</span>
+<span style="font-size: 13px; color: #5E6782">You'll finish the game around</span>
 <span style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em">{{midDate}}</span>
-<span style="font-size: 13px; color: #5E6782">Likely between {{highDate}} and {{lowDate}}</span>
+<span style="font-size: 13px; color: #5E6782">{{rangeLabel}}</span>
 </div>
 <svg role="img" aria-label="{{chartLabel}}" width="320" height="210" viewBox="0 0 320 210" style="display: block; width: 100%; height: auto">
 <path d="M34 188H312M34 103.2H312" stroke="#F0ECE5" stroke-width="1"></path>
@@ -59,7 +59,7 @@ a{color:#16244A}a:hover{color:#000000}
 <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 18px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <div style="display: flex; align-items: baseline; justify-content: space-between">
 <span style="font-size: 15px; font-weight: 600">Weekly rate by year</span>
-<span style="font-size: 13px; color: #5E6782">+{{trend}} h/wk a year</span>
+<span style="font-size: 13px; color: #5E6782">{{trendLabel}}</span>
 </div>
 <div role="img" aria-label="Average hours per week: 3 in 2019 rising to 12 in 2026" style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; align-items: end; height: 64px">
 <sc-for list="{{bars}}" as="b" hint-placeholder-count="8">
@@ -74,7 +74,7 @@ a{color:#16244A}a:hover{color:#000000}
 <div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 18px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <div style="display: flex; align-items: baseline; justify-content: space-between">
 <label for="extra" style="font-size: 15px; font-weight: 600">What if I practise more?</label>
-<span style="font-size: 15px; font-weight: 600">+{{extra}} h/wk</span>
+<span style="font-size: 15px; font-weight: 600">{{extraLabel}}</span>
 </div>
 <input id="extra" type="range" min="0" max="10" step="1" value="{{extra}}" onChange="{{onExtra}}" style="width: 100%; margin: 0; accent-color: #16244A">
 <span style="font-size: 13px; line-height: 1.4; color: #5E6782">{{whatIf}}</span>
@@ -133,7 +133,7 @@ pastPath, pastArea, bandPath, midPath: toPath(mid.pts),
 todayY: y(total), midX: mid.end ? x(mid.end) : x(X1),
 midDate: fmt(mid.end), highDate: fmtShort(high.end), lowDate: fmtShort(low.end),
 chartLabel: 'Cumulative hours: 3,294 today. Forecast reaches 10,000 hours around ' + fmt(mid.end) + ', likely between ' + fmtShort(high.end) + ' and ' + fmtShort(low.end) + '.',
-bars, trend, whatIf
+bars, trend, whatIf, rangeLabel: 'Likely between ' + fmtShort(high.end) + ' and ' + fmtShort(low.end), trendLabel: '+' + trend + ' h/wk a year', extraLabel: '+' + extra + ' h/wk'
 };
 }
 }

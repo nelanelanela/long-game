@@ -26,14 +26,14 @@ a{color:#16244A}a:hover{color:#000000}
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">Hours per week, each year</h1>
-<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">More or less. Only focused practice.</p>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">This is your starting score. Only focused practice counts.</p>
 </div>
 <div style="flex-grow: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; padding: 4px 18px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(22,36,74,.04), 0 6px 20px rgba(22,36,74,.05)">
 <sc-for list="{{years}}" as="y" hint-placeholder-count="8">
 <div style="display: grid; grid-template-columns: 44px minmax(0, 1fr) 48px; align-items: center; gap: 12px; height: 52px; border-bottom: 1px solid #F0ECE5">
 <label for="{{y.id}}" style="font-size: 15px; font-weight: 600">{{y.year}}</label>
 <input id="{{y.id}}" type="range" min="0" max="30" step="1" value="{{y.hours}}" style="width: 100%; margin: 0; accent-color: #16244A">
-<span style="font-size: 15px; text-align: right; color: #5E6782; font-variant-numeric: tabular-nums">{{y.hours}} h</span>
+<span style="font-size: 15px; text-align: right; color: #5E6782; font-variant-numeric: tabular-nums">{{y.label}}</span>
 </div>
 </sc-for>
 </div>
@@ -41,14 +41,14 @@ a{color:#16244A}a:hover{color:#000000}
 <span style="font-size: 15px; color: #5E6782">Estimated so far</span>
 <span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">3,208 h</span>
 </div>
-<a href="Home.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Start tracking</a>
+<a href="Home.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Start playing</a>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 renderVals() {
 const data = [[2019, 3], [2020, 5], [2021, 6], [2022, 8], [2023, 10], [2024, 8], [2025, 12], [2026, 12]];
-return { years: data.map(([year, hours]) => ({ id: 'y' + year, year, hours })) };
+return { years: data.map(([year, hours]) => ({ id: 'y' + year, year, hours, label: hours + ' h' })) };
 }
 }
 </script>

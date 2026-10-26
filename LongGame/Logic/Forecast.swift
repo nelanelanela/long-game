@@ -6,7 +6,7 @@ struct ForecastPoint: Equatable, Sendable {
 }
 
 struct ScenarioResult: Equatable, Sendable {
-    /// Months from now until 10,000 h, nil if not reached within 15 years.
+    /// Months from now until 10,000 h, nil if not reached within 30 years.
     var monthsToGoal: Double?
     var points: [ForecastPoint]
 }
@@ -18,7 +18,8 @@ struct Forecast: Equatable, Sendable {
 }
 
 enum ForecastEngine {
-    static let horizonMonths = 180
+    static let horizonYears = 30
+    static let horizonMonths = horizonYears * 12
     static let daysPerMonth = 30.436875
 
     enum Scenario { case mid, high, low }
@@ -131,7 +132,7 @@ enum ForecastText {
     /// "Likely between 2034 and 2038", or one sentence when neither edge arrives.
     static func range(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
         if forecast.high.monthsToGoal == nil {
-            return "Not within 15 years at your average pace"
+            return "Not within \(ForecastEngine.horizonYears) years at your average pace"
         }
         if forecast.low.monthsToGoal == nil {
             return "Likely from \(year(forecast.high, now: now, calendar: calendar)), possibly later"
@@ -141,14 +142,14 @@ enum ForecastText {
 
     static func headline(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         guard let m = result.monthsToGoal else {
-            return "After \(calendar.component(.year, from: now) + 15)"
+            return "After \(calendar.component(.year, from: now) + ForecastEngine.horizonYears)"
         }
         return monthYear(ForecastEngine.date(afterMonths: m, from: now), calendar: calendar)
     }
 
     static func year(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         guard let m = result.monthsToGoal else {
-            return "after \(calendar.component(.year, from: now) + 15)"
+            return "after \(calendar.component(.year, from: now) + ForecastEngine.horizonYears)"
         }
         return String(calendar.component(.year, from: ForecastEngine.date(afterMonths: m, from: now)))
     }

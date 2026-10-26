@@ -184,7 +184,7 @@ Build notes: drive everything from elapsed time in a TimelineView (do not use ti
 
 ## Forecast algorithm
 
-The mastery date comes from simulating three pace scenarios month by month from today until the total reaches 10,000 h (stop at 15 years out).
+The mastery date comes from simulating three pace scenarios month by month from today until the total reaches 10,000 h (stop at 30 years out).
 
 **Inputs**
 
@@ -205,7 +205,7 @@ Rates never go below 0. Each month adds rate × 52 ÷ 12 hours; interpolate with
 **Display rules**
 
 - Headline = Mid date as "Month YYYY"; band label = High year to Low year.
-- If a scenario does not reach 10,000 h within 15 years, show "after YYYY". If even the High scenario misses, the line under the headline reads "Not within 15 years at your average pace"; the dashed line still rises at the forecast pace.
+- If a scenario does not reach 10,000 h within 30 years, show "after YYYY". If even the High scenario misses, the line under the headline reads "Not within 30 years at your average pace"; the dashed line still rises at the forecast pace.
 - Fewer than 2 weeks of logged data: show "Forecast improves as you log more" under the headline.
 - What-if text = difference between the Mid date with and without *e*, in months (under 12) or years to one decimal.
 - Recompute when a session is saved, edited or deleted, and when estimates change.
