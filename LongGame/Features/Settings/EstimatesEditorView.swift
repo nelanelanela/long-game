@@ -54,16 +54,7 @@ struct EstimatesEditorView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(estimates, id: \.persistentModelID) { estimate in
-                        HStack(spacing: 12) {
-                            Text(String(estimate.year)).lgText(.rowStrong).monospacedDigit().frame(width: 48, alignment: .leading)
-                            Slider(value: Binding(get: { Double(estimate.hoursPerWeek) }, set: { estimate.hoursPerWeek = Int($0) }),
-                                   in: 0...40, step: 1)
-                                .tint(LGColor.ink)
-                                .accessibilityLabel("\(estimate.year), hours per week")
-                            Text("\(estimate.hoursPerWeek) h").lgText(.row, color: LGColor.inkMuted).monospacedDigit()
-                                .frame(width: 48, alignment: .trailing)
-                        }
-                        .frame(minHeight: 52)
+                        EstimateRow(estimate: estimate)
                         if estimate.persistentModelID != estimates.last?.persistentModelID { Divider().overlay(LGColor.divider) }
                     }
                 }
@@ -90,6 +81,38 @@ struct EstimatesEditorView: View {
                 settings.milestonesSeen.append(contentsOf: crossed)
             }
             try? context.save()
+        }
+    }
+}
+
+/// One year's slider. It keeps its own value while dragging and only writes to the
+/// model when the whole-hour value really changes, so editing can't re-trigger itself.
+private struct EstimateRow: View {
+    let estimate: YearEstimate
+    @State private var value: Double
+
+    init(estimate: YearEstimate) {
+        self.estimate = estimate
+        _value = State(initialValue: Double(estimate.hoursPerWeek))
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(String(estimate.year)).lgText(.rowStrong).monospacedDigit().frame(width: 48, alignment: .leading)
+            Slider(value: $value, in: 0...40, step: 1)
+                .tint(LGColor.ink)
+                .accessibilityLabel("\(estimate.year), hours per week")
+            Text("\(Int(value)) h").lgText(.row, color: LGColor.inkMuted).monospacedDigit()
+                .frame(width: 48, alignment: .trailing)
+        }
+        .frame(minHeight: 52)
+        .onChange(of: value) { _, new in
+            let hours = Int(new.rounded())
+            if estimate.hoursPerWeek != hours { estimate.hoursPerWeek = hours }
+        }
+        .onChange(of: estimate.hoursPerWeek) { _, new in
+            // "Set all to" changes the model; follow it.
+            if Int(value.rounded()) != new { value = Double(new) }
         }
     }
 }
