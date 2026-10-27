@@ -66,7 +66,7 @@ struct SunHourTests {
         let h = SunHour(elapsed: 42 * 60 + 18)
         #expect(h.litRays == 8)
         #expect(h.minutesIntoHour == 42)
-        #expect(h.caption == "Next ray in 2:42 · golden hour bonus in 17:42")
+        #expect(h.caption == "Next ray in 2:42")
         #expect(h.accessibilityLabel.contains("8 of 12 rays lit: 42 minutes"))
     }
 
@@ -124,3 +124,59 @@ struct TimerTotalFormatTests {
         #expect(DurationFormat.totalHours(-2) == "0.0")
     }
 }
+
+struct TimerMomentsTests {
+    @Test func bounceStartsWhenTheTotalCrossesAWholeHour() {
+        // 3,294.9 h at the start: 0.1 h = 360 s in, the total reaches 3,295.0.
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3294.9, elapsed: 359) == nil)
+        let since = TimerMoments.secondsSinceWholeHour(baseTotal: 3294.9, elapsed: 360.3)
+        #expect(since != nil && abs(since! - 0.3) < 0.001)
+    }
+
+    @Test func winEndsAfterTheShimmer() {
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3294.9, elapsed: 360 + 0.9) == nil)
+    }
+
+    @Test func nextWinIsAnHourLater() {
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3294.9, elapsed: 360 + 3600 + 0.2) != nil)
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3294.9, elapsed: 360 + 1800) == nil)
+    }
+
+    @Test func startingExactlyOnAWholeHourIsNotACrossing() {
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3295, elapsed: 0) == nil)
+        #expect(TimerMoments.secondsSinceWholeHour(baseTotal: 3295, elapsed: 0.2) == nil)
+    }
+
+    @Test func bounceScaleFollowsTheKeyframes() {
+        #expect(TimerMoments.bounceScale(secondsSince: 0) == 1)
+        #expect(abs(TimerMoments.bounceScale(secondsSince: 0.15) - 1.14) < 0.0001)
+        #expect(abs(TimerMoments.bounceScale(secondsSince: 0.30) - 0.96) < 0.0001)
+        #expect(abs(TimerMoments.bounceScale(secondsSince: 0.45) - 1.04) < 0.0001)
+        #expect(TimerMoments.bounceScale(secondsSince: 0.7) == 1)
+    }
+
+    @Test func shimmerFadesInAndOut() {
+        #expect(TimerMoments.shimmerOpacity(secondsSince: 0) == 0)
+        #expect(abs(TimerMoments.shimmerOpacity(secondsSince: 0.4) - 1) < 0.0001)
+        #expect(TimerMoments.shimmerOpacity(secondsSince: 0.8) == 0)
+    }
+
+}
+
+#if DEBUG
+@MainActor
+struct DebugJumpTests {
+    @Test func landsTwentySecondsBelowTheNextWholeHour() {
+        let seconds = DebugOptions.secondsToJustUnderWholeHour(total: 3294.25)
+        let landed = 3294.25 + seconds / 3600
+        #expect(abs(landed - (3295 - 20.0 / 3600)) < 0.000001)
+    }
+
+    @Test func alreadyJustUnderTheHourMovesToTheNextOne() {
+        let total = 3295 - 5.0 / 3600
+        let seconds = DebugOptions.secondsToJustUnderWholeHour(total: total)
+        #expect(seconds > 0)
+        #expect(abs(total + seconds / 3600 - (3296 - 20.0 / 3600)) < 0.000001)
+    }
+}
+#endif

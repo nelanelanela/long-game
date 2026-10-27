@@ -92,11 +92,11 @@ struct SettingsView: View {
                 if on { enableNotifications { settings.reminderTime = defaultReminder(); save() } }
                 else { settings.reminderTime = nil; save() }
             })
-        let streakOn = Binding(
-            get: { settings.streakReminder },
+        let nudgeOn = Binding(
+            get: { settings.rhythmNudge },
             set: { on in
-                if on { enableNotifications { settings.streakReminder = true; save() } }
-                else { settings.streakReminder = false; save() }
+                if on { enableNotifications { settings.rhythmNudge = true; save() } }
+                else { settings.rhythmNudge = false; save() }
             })
         return card {
             VStack(spacing: 0) {
@@ -116,8 +116,8 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Streak reminder", isOn: streakOn).lgText(.row).tint(LGColor.ink)
-                    Text("At 8 pm, if you haven't practised and have a streak of 3 days or more.")
+                    Toggle("Rhythm nudge", isOn: nudgeOn).lgText(.row).tint(LGColor.ink)
+                    Text("At 7 pm on a day you usually practise, if you haven't yet. At most twice a week.")
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
                 .padding(.vertical, 10)
@@ -255,8 +255,29 @@ struct SettingsView: View {
                     dismiss()
                 }
                 .lgText(.rowStrong).frame(minHeight: 54)
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Jump total to just under a whole hour") { jumpTotalToJustUnderWholeHour() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
             }
         }
+    }
+
+    private func jumpTotalToJustUnderWholeHour() {
+        let id = craft.id
+        let estimates = (try? context.fetch(FetchDescriptor<YearEstimate>(predicate: #Predicate { $0.craftId == id }))) ?? []
+        let total = ProgressSummary.make(estimates: estimates.map(\.rate), sessions: craftSessions.map(\.record),
+                                         onboardingDate: craft.createdAt, weekStart: settings?.weekStart ?? .localeDefault,
+                                         now: Date()).total
+        let seconds = DebugOptions.secondsToJustUnderWholeHour(total: total)
+        context.insert(Session(craftId: id, start: SessionRules.manualStart(on: Date()), durationSec: seconds,
+                               source: .manual, note: "Debug: total set to just under a whole hour"))
+        try? context.save()
+        dismiss()
     }
     #endif
 
@@ -289,7 +310,7 @@ struct SettingsView: View {
     private func refreshNotifications() async {
         guard let settings else { return }
         await NotificationPlanner.refresh(craftName: craft.name, reminderTime: settings.reminderTime,
-                                          reminderDays: settings.reminderDays, streakReminder: settings.streakReminder,
+                                          reminderDays: settings.reminderDays, rhythmNudge: settings.rhythmNudge,
                                           sessions: craftSessions.map(\.record))
     }
 

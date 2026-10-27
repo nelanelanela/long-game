@@ -87,7 +87,7 @@ struct SunHour: Equatable, Sendable {
     }
 
     var caption: String {
-        "Next ray in \(DurationFormat.minutesSeconds(seconds: secondsToNextRay)) · golden hour bonus in \(DurationFormat.minutesSeconds(seconds: secondsToGoldenHour))"
+        "Next ray in \(DurationFormat.minutesSeconds(seconds: secondsToNextRay))"
     }
 
     var accessibilityLabel: String {

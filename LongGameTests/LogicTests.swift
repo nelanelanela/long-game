@@ -110,55 +110,33 @@ struct PaceTests {
     }
 }
 
-struct StreakTests {
+struct PracticeDaysTests {
     func daily(_ days: [Date]) -> [Date: Double] {
-        Streaks.dailySeconds(days.map { session($0, hours: 1) }, calendar: utc)
-    }
-
-    @Test func currentStreakIncludingToday() {
-        let d = daily([day(2026, 10, 23), day(2026, 10, 24), day(2026, 10, 25)])
-        #expect(Streaks.current(daily: d, today: day(2026, 10, 25), calendar: utc) == 3)
-    }
-
-    @Test func currentStreakSurvivesUntilEndOfToday() {
-        let d = daily([day(2026, 10, 23), day(2026, 10, 24)])
-        #expect(Streaks.current(daily: d, today: day(2026, 10, 25), calendar: utc) == 2)
-    }
-
-    @Test func gapBreaksStreak() {
-        let d = daily([day(2026, 10, 20), day(2026, 10, 24)])
-        #expect(Streaks.current(daily: d, today: day(2026, 10, 25), calendar: utc) == 1)
-        #expect(Streaks.current(daily: d, today: day(2026, 10, 27), calendar: utc) == 0)
-    }
-
-    @Test func longestStreak() {
-        let d = daily([day(2026, 1, 1), day(2026, 1, 2), day(2026, 1, 3), day(2026, 1, 10), day(2026, 1, 11)])
-        #expect(Streaks.longest(daily: d, calendar: utc) == 3)
-        #expect(Streaks.longest(daily: [:], calendar: utc) == 0)
+        Practice.dailySeconds(days.map { session($0, hours: 1) }, calendar: utc)
     }
 
     @Test func sessionsOnTheSameDayAreOneDay() {
         let d = daily([day(2026, 1, 1, hour: 8), day(2026, 1, 1, hour: 20)])
         #expect(d.count == 1)
-        #expect(Streaks.longest(daily: d, calendar: utc) == 1)
+        #expect(d[day(2026, 1, 1, hour: 0)] == 7200)
     }
 
     @Test func midnightCrossingCountsOnStartDay() {
         let s = SessionRecord(start: day(2026, 1, 1, hour: 23), durationSec: 7200)
-        let d = Streaks.dailySeconds([s], calendar: utc)
+        let d = Practice.dailySeconds([s], calendar: utc)
         #expect(d[day(2026, 1, 1, hour: 0)] == 7200)
         #expect(d[day(2026, 1, 2, hour: 0)] == nil)
     }
 
     @Test func activeDaysInWindow() {
         let d = daily([day(2026, 1, 1), day(2026, 6, 1), day(2026, 6, 2)])
-        #expect(Streaks.activeDays(daily: d, from: day(2026, 5, 1), to: day(2026, 7, 1), calendar: utc) == 2)
+        #expect(Practice.activeDays(daily: d, from: day(2026, 5, 1), to: day(2026, 7, 1), calendar: utc) == 2)
     }
 
     @Test func deletingTheOnlySessionRestoresRestDay() {
         let kept = daily([day(2026, 10, 24)])
-        #expect(Streaks.current(daily: kept, today: day(2026, 10, 25), calendar: utc) == 1)
-        #expect(Streaks.current(daily: [:], today: day(2026, 10, 25), calendar: utc) == 0)
+        #expect(Practice.activeDays(daily: kept, from: day(2026, 10, 1), to: day(2026, 10, 25), calendar: utc) == 1)
+        #expect(Practice.activeDays(daily: [:], from: day(2026, 10, 1), to: day(2026, 10, 25), calendar: utc) == 0)
     }
 }
 
@@ -312,5 +290,19 @@ struct ForecastTests {
         #expect(f.mid.monthsToGoal == nil)
         #expect(ForecastText.range(f, now: day(2026, 10, 25), calendar: utc).hasPrefix("Not within"))
         #expect((f.mid.points.last?.hours ?? 0) > 5000)
+    }
+}
+
+struct SunriseSceneTests {
+    @Test func sunRisesAsTheTotalGrows() {
+        let tops = [0.0, 1_000, 5_000, 10_000].map { SunriseScene.sunTop(total: $0) }
+        #expect(tops == tops.sorted(by: >))
+        #expect(tops.first! > tops.last!)
+    }
+
+    @Test func sunStaysInsideTheSceneAtTheEnds() {
+        #expect(SunriseScene.sunTop(total: -5) == SunriseScene.sunTop(total: 0))
+        #expect(SunriseScene.sunTop(total: 20_000) == SunriseScene.sunTop(total: 10_000))
+        #expect(SunriseScene.sunTop(total: 10_000) >= 0)
     }
 }

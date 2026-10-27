@@ -4,7 +4,7 @@ import Foundation
 struct SessionRecord: Equatable, Sendable {
     var start: Date
     var durationSec: Double
-    /// Added after a break (Welcome back); it only counts for streaks above 1 h a day.
+    /// Added after a break (Welcome back). Counts like any other session.
     var isCatchUp = false
     var hours: Double { durationSec / 3600 }
 }

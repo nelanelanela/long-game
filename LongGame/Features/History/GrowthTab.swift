@@ -24,7 +24,6 @@ struct GrowthTab: View {
 
         VStack(spacing: 14) {
             forecastCard(s: s, data: data, now: now)
-            weeklyCard(s)
             whatIfCard(s: s, now: now)
         }
     }
@@ -52,17 +51,8 @@ struct GrowthTab: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(GrowthText.chartLabel(total: s.total, forecast: s.forecast, now: now))
 
-            HStack(spacing: 14) {
-                legend("Your hours") { RoundedRectangle(cornerRadius: 2).fill(LGColor.ink).frame(width: 14, height: 3) }
-                legend("Forecast") {
-                    Line().stroke(LGColor.forecast, style: StrokeStyle(lineWidth: 3, dash: [4, 3])).frame(width: 14, height: 3)
-                }
-                legend("Likely range") { RoundedRectangle(cornerRadius: 3).fill(LGColor.forecastBand.opacity(0.3)).frame(width: 12, height: 10) }
-            }
-            .padding(.horizontal, 4)
-            .accessibilityHidden(true)
         }
-        .padding(.horizontal, 14).padding(.top, 16).padding(.bottom, 12)
+        .padding(.horizontal, 14).padding(.vertical, 16)
         .lgCard()
     }
 
@@ -92,7 +82,7 @@ struct GrowthTab: View {
                 .foregroundStyle(LGColor.ink.opacity(0.35))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
                 .annotation(position: .top, alignment: .leading, spacing: 2) {
-                    Text("Mastery · 10,000 h").lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
+                    Text("Finish line · 10,000 h").lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
                 }
             PointMark(x: .value("Date", now), y: .value("Hours", s.total))
                 .symbol {
@@ -128,54 +118,6 @@ struct GrowthTab: View {
         }
     }
 
-    private func legend<Mark: View>(_ title: String, @ViewBuilder mark: () -> Mark) -> some View {
-        HStack(spacing: 6) {
-            mark()
-            Text(title).lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
-        }
-    }
-
-    // MARK: Weekly rate
-
-    private func weeklyCard(_ s: ProgressSummary) -> some View {
-        let rates = s.yearlyRates
-        let maxRate = max(14, rates.map(\.hoursPerWeek).max() ?? 0)
-        let currentYear = Calendar.current.component(.year, from: Date())
-        return VStack(spacing: 10) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("Weekly rate by year").lgText(.rowStrong)
-                Spacer()
-                Text(GrowthText.trend(s.trend)).lgText(.caption, color: LGColor.inkMuted)
-            }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .bottom, spacing: 8) {
-                    ForEach(rates, id: \.year) { rate in
-                        VStack(spacing: 4) {
-                            RoundedRectangle(cornerRadius: 5)
-                                .fill(rate.year == currentYear ? LGColor.currentBar : LGColor.chipBorder)
-                                .frame(height: CGFloat(rate.hoursPerWeek / maxRate * 46) + 4)
-                            Text("’" + String(format: "%02d", rate.year % 100))
-                                .lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
-                        }
-                        .frame(minWidth: rates.count <= 8 ? nil : 28)
-                        .frame(maxWidth: rates.count <= 8 ? .infinity : 28)
-                    }
-                }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .bottom)
-                .frame(height: 64, alignment: .bottom)
-            }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(weeklyLabel(rates))
-        }
-        .padding(.horizontal, 18).padding(.vertical, 14)
-        .lgCard()
-    }
-
-    private func weeklyLabel(_ rates: [YearRate]) -> String {
-        guard let first = rates.first, let last = rates.last else { return "No yearly rates yet" }
-        return "Average hours per week: \(Int(first.hoursPerWeek.rounded())) in \(first.year), \(Int(last.hoursPerWeek.rounded())) in \(last.year)"
-    }
-
     // MARK: What if
 
     private func whatIfCard(s: ProgressSummary, now: Date) -> some View {
@@ -195,14 +137,5 @@ struct GrowthTab: View {
         }
         .padding(.horizontal, 18).padding(.vertical, 14)
         .lgCard()
-    }
-}
-
-private struct Line: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        p.move(to: CGPoint(x: rect.minX, y: rect.midY))
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
-        return p
     }
 }

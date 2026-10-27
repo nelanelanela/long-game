@@ -19,6 +19,8 @@ a{color:#FFFFFF}a:hover{color:#FFE08A}
 @keyframes lgWink{0%,92%,100%{opacity:0}94%,98%{opacity:1}}
 @keyframes lgWinkHide{0%,92%,100%{opacity:1}94%,98%{opacity:0}}
 @keyframes lgMote{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translateY(-150px) scale(1.1);opacity:0}}
+@keyframes lgHour{0%,88%,100%{transform:scale(1)}91%{transform:scale(1.14)}94%{transform:scale(.96)}97%{transform:scale(1.04)}}
+@keyframes lgShimmer{0%,88%,100%{opacity:0}92%{opacity:1}99%{opacity:0}}
 @keyframes lgHalo{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.85;transform:scale(1.08)}}
 .lg-sky{background:linear-gradient(180deg,#16244A 0%,#1F2A5A 40%,#3A2F6B 70%,#6E3D74 100%);background-size:100% 220%;animation:lgSky 24s ease-in-out infinite}
 .lg-breathe{transform-origin:100px 100px;transform-box:view-box;animation:lgBreathe 4s ease-in-out infinite}
@@ -26,9 +28,11 @@ a{color:#FFFFFF}a:hover{color:#FFE08A}
 .lg-next{animation:lgRayPop 1.6s ease-in-out infinite}
 .lg-wink{animation:lgWink 9s ease-in-out infinite}
 .lg-winkhide{animation:lgWinkHide 9s ease-in-out infinite}
+.lg-hour{transform-origin:100px 100px;transform-box:view-box;animation:lgHour 12s ease-out infinite}
+.lg-shimmer{animation:lgShimmer 12s ease-out infinite}
 .lg-halo{animation:lgHalo 4s ease-in-out infinite}
 .lg-mote{position:absolute;width:6px;height:6px;border-radius:3px;background:#FFE08A;box-shadow:0 0 8px 2px rgba(255,224,138,.6);animation:lgMote 5s ease-out infinite}
-@media (prefers-reduced-motion: reduce){.lg-sky,.lg-breathe,.lg-rays,.lg-next,.lg-wink,.lg-winkhide,.lg-halo,.lg-mote{animation:none}}
+@media (prefers-reduced-motion: reduce){.lg-sky,.lg-breathe,.lg-rays,.lg-next,.lg-wink,.lg-winkhide,.lg-halo,.lg-mote,.lg-hour,.lg-shimmer{animation:none}}
 </style>
 </helmet>
 <div class="lg-sky" style="width: 390px; height: 844px; position: relative; overflow: hidden; color: #FFFFFF; font-family: Inter, -apple-system, system-ui, sans-serif">
@@ -38,6 +42,7 @@ a{color:#FFFFFF}a:hover{color:#FFE08A}
 <div aria-hidden="true" class="lg-mote" style="left: 192px; top: 350px; animation-delay: 3.1s"></div>
 <div aria-hidden="true" class="lg-mote" style="left: 260px; top: 300px; animation-delay: 4.2s; width: 4px; height: 4px"></div>
 <svg role="img" aria-label="The sun is focusing with you. 8 of 12 rays lit: 42 minutes into this hour." width="220" height="220" viewBox="0 0 200 200" style="position: absolute; left: 85px; top: 160px; overflow: visible">
+<g class="lg-hour">
 <g class="lg-breathe">
 <g class="lg-rays">
 <path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7" stroke="#FFD15C" stroke-width="9" stroke-linecap="round"></path>
@@ -50,6 +55,8 @@ a{color:#FFFFFF}a:hover{color:#FFE08A}
 <path d="M76 98q8 7 16 0M92 116q8 6 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path>
 <path class="lg-winkhide" d="M108 98q8 7 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path>
 <g class="lg-wink"><circle cx="116" cy="96" r="6" fill="#16244A"></circle><circle cx="118" cy="94" r="2" fill="#FFFFFF"></circle></g>
+</g>
+<circle class="lg-shimmer" cx="100" cy="100" r="92" fill="none" stroke="#FFE08A" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"></circle>
 </g>
 </svg>
 <div style="position: absolute; inset: 0; box-sizing: border-box; padding: 16px 24px 40px; display: flex; flex-direction: column; gap: 16px">
@@ -67,7 +74,7 @@ a{color:#FFFFFF}a:hover{color:#FFE08A}
 <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
 <span style="font-size: 13px; color: rgba(255,255,255,.7)">This session</span>
 <span style="font-size: 80px; font-weight: 300; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums">42:18</span>
-<span style="font-size: 14px; color: rgba(255,255,255,.75)">Next ray in 2:42 · golden hour bonus in 17:42</span>
+<span style="font-size: 14px; color: rgba(255,255,255,.75)">Next ray in 2:42</span>
 </div>
 <div style="height: 24px"></div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">

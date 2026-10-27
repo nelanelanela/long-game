@@ -51,13 +51,19 @@ struct HomeView: View {
         let now = Date()
         let s = summary(now: now)
         ScrollView {
-            VStack(spacing: 20) {
-                header
-                SunriseCard(total: countingTotal ?? s.total, face: countingTotal == nil ? .happy : .celebrate)
+            VStack(spacing: 0) {
+                header.padding(.horizontal, 24)
+                SunriseScene(total: countingTotal ?? s.total, face: countingTotal == nil ? .happy : .celebrate)
+                    .padding(.top, 28)
+                CountingTotal(value: countingTotal ?? s.total)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 18)
+                    .accessibilityElement(children: .combine)
                 statsRow(s, now: now)
+                    .padding(.horizontal, 24).padding(.top, 36)
                 recent(now: now)
+                    .padding(.horizontal, 24).padding(.top, 8)
             }
-            .padding(.horizontal, 24)
             .padding(.top, 8)
             .padding(.bottom, 24)
         }
@@ -65,7 +71,8 @@ struct HomeView: View {
         .lgScreen()
         .toolbar(.hidden, for: .navigationBar)
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
-            TimerView(craft: craft, baseTotal: totalBeforeTimer)
+            // Read live rather than from state, so the timer never starts from a stale total.
+            TimerView(craft: craft, baseTotal: summary(now: Date()).total)
         }
         // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
         // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.
@@ -152,14 +159,12 @@ struct HomeView: View {
     private func statsRow(_ s: ProgressSummary, now: Date) -> some View {
         HStack(spacing: 0) {
             stat(DurationFormat.hours(s.thisWeek), "This week")
-            Divider().overlay(LGColor.divider)
             stat(DurationFormat.perWeek(s.pace), "Pace")
-            Divider().overlay(LGColor.divider)
             stat(ForecastText.homeMastery(s.forecast.mid, now: now), "Finish line")
         }
         .padding(.vertical, 18)
-        .fixedSize(horizontal: false, vertical: true)
-        .lgCard()
+        .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        .overlay(alignment: .bottom) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
     }
 
     private func stat(_ value: String, _ label: String) -> some View {
@@ -171,38 +176,29 @@ struct HomeView: View {
         .accessibilityElement(children: .combine)
     }
 
+    /// The last two sessions as plain rows: no heading, no card. The full list lives in History.
     @ViewBuilder
     private func recent(now: Date) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            LGSectionLabel("Recent")
-            if sessions.isEmpty {
-                VStack(spacing: 8) {
-                    SunView(face: .sleepy).frame(width: 64, height: 64)
-                    Text("No sessions yet. Start one, or add past hours.")
-                        .lgText(.row, color: LGColor.inkMuted).multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity).padding(20).lgCard()
-            } else {
-                let recent = Array(sessions.prefix(5))
-                VStack(spacing: 0) {
-                    ForEach(Array(recent.enumerated()), id: \.element.persistentModelID) { index, session in
-                        Button { sheet = .edit(session) } label: {
-                            HStack {
-                                Text(RelativeDay.label(session.start, now: now)).lgText(.row)
-                                Spacer()
-                                Text(DurationFormat.short(seconds: session.durationSec))
-                                    .lgText(.row, color: LGColor.inkMuted)
-                            }
-                            .frame(minHeight: 52)
-                            .contentShape(Rectangle())
+        if sessions.isEmpty {
+            Text("No sessions yet. Start one, or add past hours.")
+                .lgText(.row, color: LGColor.inkMuted).multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, minHeight: 96)
+        } else {
+            VStack(spacing: 0) {
+                ForEach(Array(sessions.prefix(2)), id: \.persistentModelID) { session in
+                    Button { sheet = .edit(session) } label: {
+                        HStack {
+                            Text(RelativeDay.label(session.start, now: now)).lgText(.row)
+                            Spacer()
+                            Text(DurationFormat.short(seconds: session.durationSec))
+                                .lgText(.row, color: LGColor.inkMuted)
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityHint("Edit this session")
-                        if index < recent.count - 1 { Divider().overlay(LGColor.divider) }
+                        .frame(minHeight: 48)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Edit this session")
                 }
-                .padding(.horizontal, 18)
-                .lgCard()
             }
         }
     }
@@ -269,10 +265,10 @@ struct HomeView: View {
         guard let settings = settingsRows.first else { return }
         let records = sessions.map(\.record)
         let name = craft.name
-        let (time, days, streak) = (settings.reminderTime, settings.reminderDays, settings.streakReminder)
+        let (time, days, nudge) = (settings.reminderTime, settings.reminderDays, settings.rhythmNudge)
         Task {
             await NotificationPlanner.refresh(craftName: name, reminderTime: time, reminderDays: days,
-                                              streakReminder: streak, sessions: records)
+                                              rhythmNudge: nudge, sessions: records)
         }
     }
 
@@ -307,20 +303,22 @@ struct HomeView: View {
 
     private func startTitle(at now: Date) -> String {
         guard let state = timer.state, state.craftId == craft.id else { return "Start session" }
-        return "Resume · " + DurationFormat.clock(seconds: state.elapsed(at: now))
+        // A running timer isn't waiting to be resumed: the button takes you back to it.
+        let verb = state.isPaused(at: now) ? "Resume" : "Back to session"
+        return verb + " · " + DurationFormat.clock(seconds: state.elapsed(at: now))
     }
 
     private var actionBar: some View {
-        HStack(spacing: 10) {
-            Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.secondary))
+        VStack(spacing: 4) {
             TimelineView(.periodic(from: .now, by: 1)) { timeline in
                 Button(startTitle(at: timeline.date)) { openTimer(total: summary(now: Date()).total) }
                     .buttonStyle(.lg(.primary))
             }
+            Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.text))
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)
-        .padding(.bottom, 8)
+        .padding(.bottom, 4)
         .background(LGColor.background.opacity(0.94))
     }
 }

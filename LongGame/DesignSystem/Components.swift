@@ -7,8 +7,6 @@ struct LGCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(LGColor.surface, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
-            .shadow(color: LGColor.ink.opacity(0.04), radius: 1, y: 1)
-            .shadow(color: LGColor.ink.opacity(0.05), radius: 10, y: 6)
     }
 }
 
@@ -133,5 +131,62 @@ struct LGStepBar: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Step \(step) of \(of)")
+    }
+}
+
+// MARK: Hold-to-repeat step button
+
+/// A round − or + button. One tap steps once; keeping a finger on it keeps stepping, faster the longer it is held,
+/// until the finger lifts or the button becomes disabled (the value hit its limit).
+struct LGRepeatButton: View {
+    let systemName: String
+    let label: String
+    let enabled: Bool
+    let action: () -> Void
+
+    @State private var repeatTask: Task<Void, Never>?
+    @State private var pressed = false
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(LGColor.ink)
+            .frame(width: 52, height: 52)
+            .background(LGColor.chipFill, in: Circle())
+            .scaleEffect(pressed ? 0.92 : 1)
+            .contentShape(Circle())
+            .opacity(enabled ? 1 : 0.4)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in if !pressed { begin() } }
+                    .onEnded { _ in stop() }
+            )
+            .onChange(of: enabled) { _, now in if !now { stop() } }
+            .onDisappear { stop() }
+            .accessibilityElement()
+            .accessibilityLabel(label)
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction { if enabled { action() } }
+    }
+
+    private func begin() {
+        pressed = true
+        guard enabled else { return }
+        action()
+        repeatTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(400))
+            var interval = 160.0
+            while !Task.isCancelled {
+                action()
+                try? await Task.sleep(for: .milliseconds(Int(interval)))
+                interval = max(40, interval * 0.9)
+            }
+        }
+    }
+
+    private func stop() {
+        pressed = false
+        repeatTask?.cancel()
+        repeatTask = nil
     }
 }

@@ -107,6 +107,10 @@ private struct RunningScene: View {
         let sun = SunHour(elapsed: elapsed)
         let golden = paused ? nil : sun.goldenProgress()
         let t = now.timeIntervalSinceReferenceDate
+        // Small win: the overall total (big gold number) just crossed a whole hour.
+        let win = paused ? nil : TimerMoments.secondsSinceWholeHour(baseTotal: baseTotal, elapsed: elapsed)
+        let winScale = (win.map { reduceMotion ? 1 : TimerMoments.bounceScale(secondsSince: $0) }) ?? 1
+        let sparkle = win.map { TimerMoments.shimmerOpacity(secondsSince: $0) } ?? 0
 
         let breath = reduceMotion ? 0 : (1 - cos(2 * .pi * t / (paused ? 8 : 4))) / 2
         let hop = golden.map { -sin($0 * .pi) * 34 } ?? 0
@@ -167,6 +171,10 @@ private struct RunningScene: View {
                         rayColor: LGColor.sunRaysBright,
                         raySpread: golden.map { 1 + 1.2 * sin($0 * .pi) } ?? 1)
                     .frame(width: 220, height: 220)
+                    .overlay {
+                        SparkleRing(opacity: sparkle, progress: (win ?? 0) / TimerMoments.shimmerDuration, still: reduceMotion)
+                    }
+                    .scaleEffect(winScale)
                     .offset(y: paused ? 24 : 0)
                     .animation(paused ? .easeOut(duration: 0.5) : .spring(duration: 0.4, bounce: 0.35), value: paused)
                     .scaleEffect(1 + 0.045 * breath)
@@ -181,6 +189,9 @@ private struct RunningScene: View {
         }
         .sensoryFeedback(trigger: sun.litRays) { old, new in new > old ? .impact(weight: .light) : nil }
         .sensoryFeedback(.success, trigger: sun.hoursCompleted)
+        .sensoryFeedback(trigger: Int((baseTotal + elapsed / 3600).rounded(.down))) { old, new in
+            new > old ? .impact(weight: .light) : nil
+        }
         .onChange(of: sun.litRays) { _, rays in
             AccessibilityNotification.Announcement("\(rays) of 12 rays lit, \(sun.minutesIntoHour) minutes into this hour").post()
             LiveActivityManager.sync(state, now: now)
@@ -282,6 +293,32 @@ private struct RunningScene: View {
 
     private static func spoken(_ seconds: TimeInterval) -> String {
         Labels.spoken(seconds: Int(seconds), includeSeconds: true)
+    }
+}
+
+/// A ring of gold sparkles that shimmers once around the sun.
+private struct SparkleRing: View {
+    let opacity: Double
+    /// 0...1 through the shimmer.
+    let progress: Double
+    /// Reduce Motion: the ring just fades in and out.
+    let still: Bool
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<16, id: \.self) { i in
+                let angle = Double(i) / 16 * 2 * .pi
+                Circle()
+                    .fill(LGColor.mote)
+                    .frame(width: i.isMultiple(of: 2) ? 5 : 3, height: i.isMultiple(of: 2) ? 5 : 3)
+                    .shadow(color: LGColor.mote.opacity(0.7), radius: 3)
+                    .offset(x: cos(angle) * 101, y: sin(angle) * 101)
+            }
+        }
+        .rotationEffect(.degrees(still ? 0 : 40 * progress))
+        .scaleEffect(still ? 1 : 0.94 + 0.1 * progress)
+        .opacity(opacity)
+        .accessibilityHidden(true)
     }
 }
 

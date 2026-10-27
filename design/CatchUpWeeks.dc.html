@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add hours for each week</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 32px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="CatchUpAsk.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<span style="font-size: 15px; font-weight: 600">Catch up</span>
+<div style="width: 34px"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">3 weeks have passed</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">Roughly how many hours did you practise each week?</p>
+</div>
+<div style="display: flex; flex-direction: column; padding: 4px 18px; background: #FFFFFF; border-radius: 20px">
+<sc-for list="{{weeks}}" as="w" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-bottom: {{w.border}}">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<label for="{{w.id}}" style="font-size: 15px; font-weight: 600">{{w.label}}</label>
+<span style="font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums">{{w.hoursLabel}}</span>
+</div>
+<input id="{{w.id}}" type="range" min="0" max="40" step="1" value="{{w.hours}}" onChange="{{w.set}}" style="width: 100%; margin: 0; accent-color: #16244A">
+<span style="font-size: 12px; color: #5E6782">{{w.detail}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px">
+<span style="font-size: 15px; color: #5E6782">Adding</span>
+<span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">{{totalLabel}}</span>
+</div>
+<p style="margin: 0; padding: 0 4px; font-size: 13px; line-height: 1.45; color: #5E6782">Each week's hours are spread evenly across its days in your calendar.</p>
+<div style="flex-grow: 1"></div>
+<a href="Home.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{buttonLabel}}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const base = [
+{ id: 'w1', label: '3 – 10 October', days: 8, def: 6 },
+{ id: 'w2', label: '11 – 17 October', days: 7, def: 10 },
+{ id: 'w3', label: '18 – 24 October', days: 7, def: 8 }
+];
+const st = this.state || {};
+const fmt = (h) => { const m = Math.round(h * 60); return Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' m'; };
+let total = 0;
+const weeks = base.map((w, i) => {
+const hours = st[w.id] != null ? st[w.id] : w.def;
+total += hours;
+return { id: w.id, label: w.label, days: w.days, hours, hoursLabel: hours + ' h', detail: w.days + ' days · about ' + fmt(hours / w.days) + ' a day', border: i < base.length - 1 ? '1px solid #F0ECE5' : '0', set: (e) => this.setState({ [w.id]: Number(e.target.value) }) };
+});
+return { weeks, total, totalLabel: total + ' h', buttonLabel: 'Add ' + total + ' hours' };
+}
+}
+</script>
+</body>
+</html>

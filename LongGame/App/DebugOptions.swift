@@ -13,6 +13,14 @@ enum DebugOptions {
         UserDefaults.standard.set(days, forKey: settingKey)
     }
 
+    /// How long a session must be to move the overall total to 20 seconds below the next whole
+    /// hour, so the Timer's small-win bounce shows soon after it starts.
+    static func secondsToJustUnderWholeHour(total: Double, marginSeconds: Double = 20) -> Double {
+        var target = total.rounded(.down) + 1 - marginSeconds / 3600
+        if target <= total { target += 1 }
+        return (target - total) * 3600
+    }
+
     /// Also available as a launch argument: `-debug.lastSessionDaysAgo 10` (once per launch).
     static func takePretendLastSessionDaysAgo() -> Int? {
         if UserDefaults.standard.object(forKey: settingKey) != nil {

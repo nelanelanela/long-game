@@ -12,6 +12,7 @@ struct LGTextStyle: Sendable {
     static let sheetTitle = LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48)
     static let navTitle = LGTextStyle(size: 17, weight: .semibold, relativeTo: .headline)
     static let bigNumber = LGTextStyle(size: 52, weight: .bold, relativeTo: .largeTitle, tracking: -2)
+    static let homeTotal = LGTextStyle(size: 64, weight: .bold, relativeTo: .largeTitle, tracking: -2.9)
     static let yearNumber = LGTextStyle(size: 64, weight: .bold, relativeTo: .largeTitle, tracking: -2.5)
     static let timerNumber = LGTextStyle(size: 80, weight: .light, relativeTo: .largeTitle, tracking: -3.2)
     static let timerTotal = LGTextStyle(size: 56, weight: .semibold, relativeTo: .largeTitle, tracking: -1.7)

@@ -43,6 +43,29 @@
         }
       }
     },
+    "%lld days/wk" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day/wk"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days/wk"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld golden hours so far" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -340,7 +363,7 @@
     "Archived crafts" : {
 
     },
-    "At 8 pm, if you haven't practised and have a streak of 3 days or more." : {
+    "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
 
     },
     "Choose…" : {
@@ -359,6 +382,9 @@
 
     },
     "Estimated so far" : {
+
+    },
+    "Finish line · 10,000 h" : {
 
     },
     "Finish session" : {
@@ -398,9 +424,6 @@
 
     },
     "Long Game" : {
-
-    },
-    "Mastery · 10,000 h" : {
 
     },
     "Monday" : {
@@ -451,9 +474,6 @@
     "Started %@" : {
 
     },
-    "Streak" : {
-
-    },
     "Sunday" : {
 
     },
@@ -485,9 +505,6 @@
 
     },
     "Week starts on" : {
-
-    },
-    "Weekly rate by year" : {
 
     },
     "Welcome back!" : {

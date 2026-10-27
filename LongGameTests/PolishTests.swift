@@ -21,37 +21,49 @@ struct MilestoneTests {
 }
 
 struct ReminderTests {
+    /// Wednesday 28 Oct 2026, 10:00.
+    let now = day(2026, 10, 28, hour: 10)
+
     func daily(_ days: [Date]) -> [Date: Double] {
-        Streaks.dailySeconds(days.map { session($0, hours: 1) }, calendar: utc)
+        Practice.dailySeconds(days.map { session($0, hours: 1) }, calendar: utc)
     }
 
-    @Test func remindsTonightWhenAStreakIsAtRisk() {
-        let now = day(2026, 10, 25, hour: 10)
-        let d = daily([day(2026, 10, 22), day(2026, 10, 23), day(2026, 10, 24)])
-        let r = ReminderPlanner.streakReminders(daily: d, now: now, calendar: utc)
+    /// Practised on this Wednesday-of-the-week in 3 of the last 4 weeks.
+    var usualWednesdays: [Date] { [day(2026, 10, 21), day(2026, 10, 14), day(2026, 10, 7)] }
+
+    @Test func nudgesTonightOnADayTheUserUsuallyPractises() {
+        let r = ReminderPlanner.rhythmNudges(daily: daily(usualWednesdays), now: now, calendar: utc)
         #expect(r.count == 1)
-        #expect(r.first?.streak == 3)
-        #expect(r.first?.date == day(2026, 10, 25, hour: 20))
+        #expect(r.first?.date == day(2026, 10, 28, hour: 19))
+        #expect(r.first?.weekday == 4)
     }
 
-    @Test func noReminderForShortStreaks() {
-        let now = day(2026, 10, 25, hour: 10)
-        let d = daily([day(2026, 10, 23), day(2026, 10, 24)])
-        #expect(ReminderPlanner.streakReminders(daily: d, now: now, calendar: utc).isEmpty)
+    @Test func noNudgeForADayPractisedOnlyTwiceInFourWeeks() {
+        let r = ReminderPlanner.rhythmNudges(daily: daily(Array(usualWednesdays.prefix(2))), now: now, calendar: utc)
+        #expect(r.isEmpty)
     }
 
-    @Test func afterPracticeRemindsTomorrowInstead() {
-        let now = day(2026, 10, 25, hour: 10)
-        let d = daily([day(2026, 10, 23), day(2026, 10, 24), day(2026, 10, 25)])
-        let r = ReminderPlanner.streakReminders(daily: d, now: now, calendar: utc)
-        #expect(r.count == 1)
-        #expect(r.first?.date == day(2026, 10, 26, hour: 20))
+    @Test func noNudgeOnceTodayIsPlayed() {
+        let r = ReminderPlanner.rhythmNudges(daily: daily(usualWednesdays + [day(2026, 10, 28, hour: 8)]), now: now, calendar: utc)
+        #expect(r.isEmpty)
     }
 
-    @Test func noReminderAfterEightPm() {
-        let now = day(2026, 10, 25, hour: 21)
-        let d = daily([day(2026, 10, 22), day(2026, 10, 23), day(2026, 10, 24)])
-        #expect(ReminderPlanner.streakReminders(daily: d, now: now, calendar: utc).isEmpty)
+    @Test func noNudgeAfterSevenPm() {
+        let r = ReminderPlanner.rhythmNudges(daily: daily(usualWednesdays), now: day(2026, 10, 28, hour: 20), calendar: utc)
+        #expect(r.isEmpty)
+    }
+
+    @Test func atMostTwoNudgesAWeek() {
+        // Every day practised for the last four weeks.
+        let days = (1...28).map { utc.date(byAdding: .day, value: -$0, to: day(2026, 10, 28))! }
+        let r = ReminderPlanner.rhythmNudges(daily: daily(days), now: now, calendar: utc)
+        #expect(r.count == 2)
+        #expect(r[0].date < r[1].date)
+    }
+
+    @Test func messageNamesTheWeekday() {
+        #expect(ReminderPlanner.nudgeMessage(weekday: 3, craftName: "Piano", calendar: utc)
+                == "Tuesdays usually get a little piano. The sun is up whenever you are.")
     }
 }
 

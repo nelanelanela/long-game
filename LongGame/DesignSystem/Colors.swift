@@ -36,11 +36,9 @@ enum LGColor {
     static let forecastBand = Color(hex: 0xFF9A3C)
     static let currentBar = Color(hex: 0xFFB347)
 
-    // Home sunrise card
-    static let homeSkyTop = Color(hex: 0xFFF6EC)
-    static let homeSkyBottom = Color(hex: 0xFDE6EA)
-    static let seaFill = Color(hex: 0xDCE5F7)
-    static let seaLine = Color(hex: 0x8FA6E0)
+    // Home sunrise
+    static let seaLine = Color(hex: 0xC9D3EC)
+    static let hairline = Color(hex: 0xECE7DE)
 
     // Welcome sunrise sky
     static let welcomeSky = Gradient(stops: [

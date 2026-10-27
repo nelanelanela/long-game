@@ -79,11 +79,14 @@ Thirteen screens: four onboarding, four in the main app, two sheets, and the thr
 
 ### 4 · Home / Progress (`design/Home.dc.html`)
 
+No cards on Home: everything sits directly on the warm-white background.
+
 - Header: craft name; History (calendar icon) and + buttons.
-- Sunrise card: the smiling sun over the sea; below it the total (rounded down to whole hours) and "of 10,000 hours · N%".
-- Stats row: This week, Pace (h/wk), Mastery (forecast year from the mid scenario, see Forecast).
-- Recent: last 5 sessions (relative day, duration); tap opens the edit sheet.
-- Bottom: **Add past hours** and **Start session**. If a session is running, Start session becomes "Resume · mm:ss".
+- The smiling sun rising over two thin wave lines (navy and pale blue), full width. As the total grows the sun rises higher above the waves (0% = only the top rays show, 100% = fully above the water).
+- The total, 64 pt bold (rounded down to whole hours), and "of 10,000 hours · N%".
+- Stats row between two hairlines (#ECE7DE): This week, Pace (h/wk), Finish line (forecast year from the mid scenario, see Forecast). No dividers between the three.
+- Recent: the last 2 sessions as plain rows (relative day, duration), no heading, no card; tap opens the edit sheet. The full list lives in History.
+- Bottom: one primary button **Start session**, with **Add past hours** as a text button under it. If a session is running, Start session becomes "Back to session · mm:ss" while the timer is running, or "Resume · mm:ss" if it is paused.
 
 ### 5 · History — Calendar (`design/Calendar.dc.html`)
 
@@ -91,13 +94,14 @@ Thirteen screens: four onboarding, four in the main app, two sheets, and the thr
 - Grid of the last 53 weeks, one square per day, most recent week on the right, scrolled to the end; swipe to go back.
 - Colours by daily logged hours: 0 = blue (rest); < 1 h, 1–2 h, 2–3 h, 3 h+ = yellow → deep orange. Days before onboarding use the same blue.
 - Tapping a day shows its total and sessions in the card below; sessions can be edited or deleted there.
-- Stats: **Streak** = consecutive days up to today (or yesterday, if today has nothing yet) with any logged time; **Longest** streak; **Active days** in the window.
+- Stats: **Rhythm**, **Steady for**, **Active days** in the window. There are no streaks anywhere in the app: nothing ever "breaks".
+  - **Rhythm** = the user's typical practice days per week: the median number of days with any logged time per calendar week (Monday start) over the last 8 complete weeks plus the current week. Shown as "N days/wk".
+  - **Steady for** = how many consecutive weeks, counting back from the current week, had at least (Rhythm − 1) practice days. Shown as "N weeks" ("1 week"). If Rhythm is 0, show "–".
 
 ### 6 · History — Growth (`design/Growth.dc.html`)
 
-- Chart of cumulative hours over time: solid navy line for the past, dashed orange forecast to 10,000 h, soft orange band for the likely range, a small sun at the forecast mastery point.
+- Chart of cumulative hours over time: solid navy line for the past, dashed orange forecast to 10,000 h, soft orange band for the likely range, a small sun at the forecast finish point. The dashed 10,000 h line is labelled "Finish line · 10,000 h" at its left end. No legend.
 - Headline: forecast month + year; "Likely between YYYY and YYYY".
-- Weekly rate by year: bar per year (estimates for past years, logged data for the current year), with the yearly trend in h/wk.
 - **What if I practise more?** slider, 0–10 extra h/week; the forecast, band and text update live ("About 1.4 years sooner, around May 2035"). Not saved.
 
 ### 7 · Add past hours (`design/LogPast.dc.html`)
@@ -142,7 +146,7 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 
 - Each block's hours (or the average) are divided evenly across its days: one Session per day with source `catchUp`, start = that day at 12:00, duration = hours per day, rounded to the minute (put any rounding remainder on the last day so the total matches exactly).
 - Catch-up days use the normal calendar colours; the day detail labels them "Added after a break" and they can be edited or deleted like any session.
-- Catch-up sessions count towards the total, pace, forecast and streaks like any other session. If that is not wanted for streaks, exclude source `catchUp` there (decision for Natalia).
+- Catch-up sessions count towards the total, pace, forecast and Rhythm like any other session.
 - Adding hours updates Home with the count-up animation and a happy sun.
 
 ## Timer (`design/Timer.dc.html`)
@@ -154,7 +158,7 @@ The timer is timestamp-based, survives the app being closed, and turns each sess
 - **States:** Idle → Running ⇄ Paused → Finishing → Saved, or Discarded. Only one session can exist at a time.
 - **Storage:** save startedAt, pausedAt?, and accumulated pause time. Elapsed = now − startedAt − paused time. Never count in memory alone.
 - **Background:** start a Live Activity (lock screen + Dynamic Island) showing the craft, elapsed time and the sun with its lit rays; Pause/Resume and Finish work from it.
-- **Minimise** (chevron) returns to Home; Home shows "Resume · mm:ss".
+- **Minimise** (chevron) returns to Home; Home shows "Back to session · mm:ss" (or "Resume · mm:ss" if paused).
 - **Finish** opens a sheet: duration (editable ± 5 min, cannot exceed real elapsed time), optional note, **Save** and **Discard**. Sessions under 1 minute offer Discard only.
 - **Long sessions:** after 4 h running, send a gentle notification ("Still practising?"); at 12 h auto-pause.
 - **Haptics:** light tick when a ray lights; success haptic on each golden hour and on save.
@@ -168,6 +172,7 @@ The sun keeps the user company and doubles as a clock you can read at a glance.
 | Running (always) | Sun breathes: rises 4 pt and scales to 104.5%, then settles. Doubles as a calm breathing cue. | 4 s loop, ease-in-out |
 | Running (always) | Warm halo behind the sun pulses with the breath. Tiny golden motes drift up from the sun and fade. | Halo 4 s; a mote every 1–2 s, 5 s rise |
 | Running (always) | Rays slowly turn. | One turn per 120 s |
+| Each whole hour of the overall total | When the overall total (big gold number) crosses a whole hour (e.g. 3,294.9 → 3,295.0), the sun does a small happy bounce (scale 100 → 114 → 96 → 104 → 100%) and a ring of gold sparkles around it shimmers once. Light haptic. This is separate from the session's golden hour and celebrates the small wins. | 0.6 s spring; shimmer 0.8 s |
 | Every 5 min | One more of the 12 rays lights, clockwise from the top; the next ray to light glows softly. Light haptic. | Ray grows 0 → full length, 600 ms spring |
 | Every ~9 s | The focusing sun peeks one eye open, then closes it again (a wink checking on you). | 0.5 s |
 | Over each hour | The sky slowly warms from navy to violet to rose, like dawn coming. | Tied to minutes in the hour |
@@ -176,9 +181,9 @@ The sun keeps the user company and doubles as a clock you can read at a glance.
 | Resume | Sun springs back up, rays brighten. | Spring, 400 ms |
 | Finish → Save | Sun jumps with a big smile; mini suns and petals burst around it; Home's total counts up from old to new value. | Burst 1.2 s; count-up 1.2 s |
 
-Layout under the sun, top to bottom: the overall total in large gold numbers with one decimal ("3,294.7") and "of 10,000 hours · N%", counting up live as the session runs; a short divider; "This session" with the session clock; then the caption "Next ray in m:ss · golden hour in mm:ss".
+Layout under the sun, top to bottom: the overall total in large gold numbers with one decimal ("3,294.7") and "of 10,000 hours · N%", counting up live as the session runs; a short divider; "This session" with the session clock; then the caption "Next ray in m:ss".
 
-**Reduced Motion:** no breathing, motes, spin or burst; rays light with a fade; the sky stays fixed. VoiceOver reads "N of 12 rays lit, M minutes into this hour" once per ray.
+**Reduced Motion:** no breathing, motes, spin, burst or hour bounce (the sparkle ring fades instead); rays light with a fade; the sky stays fixed. VoiceOver reads "N of 12 rays lit, M minutes into this hour" once per ray.
 
 Build notes: drive everything from elapsed time in a TimelineView (do not use timers for state). The sun is one SwiftUI view with face states: happy, focus, wink, sleepy, celebrate. The design's Timer screen shows the running state animated (CSS keyframes there are a reference for timings).
 
@@ -196,7 +201,7 @@ The mastery date comes from simulating three pace scenarios month by month from 
 
 | Scenario | Weekly rate | Cap | Used for |
 | --- | --- | --- | --- |
-| Mid | r + e + 0.5 × s × t | 1.5 × r + e | Headline date, Home "Mastery", dashed line |
+| Mid | r + e + 0.5 × s × t | 1.5 × r + e | Headline date, Home "Finish line", dashed line |
 | High | r + e + s × t | 2 × r + e | Early edge of the band |
 | Low | 0.75 × r + e | — | Late edge of the band |
 
@@ -226,7 +231,7 @@ No account is needed to use the app; signing in only adds iCloud backup and mult
 | Type | Trigger | Example copy |
 | --- | --- | --- |
 | Daily reminder | User-chosen time and days | "Time for a little piano? The sun is waiting." |
-| Streak at risk | 8 pm on a day with no session, streak ≥ 3 | "Keep your 6-day streak glowing." |
+| Rhythm nudge | 7 pm on a weekday the user usually practises (practised on it in at least 3 of the last 4 weeks) with no session yet. At most twice a week. | "Tuesdays usually get a little piano. The sun is up whenever you are." |
 | Long session | 4 h running | "Still practising?" |
 | Milestone | Total crosses a milestone | "1,000 hours of piano. Sunrise is coming." |
 
@@ -234,14 +239,14 @@ No account is needed to use the app; signing in only adds iCloud backup and mult
 
 ## Visual system
 
-Simple and calm: warm-white background, white cards, navy text, one smiling sun.
+Simple, flat and calm: warm-white background, flat white cards only where content needs grouping, navy text, one smiling sun. One primary action per screen; secondary actions are text buttons. No decorative icons next to labels.
 
 **Tokens**
 
 | Token | Value | Use |
 | --- | --- | --- |
 | background | #FAF8F4 | All light screens |
-| surface | #FFFFFF, radius 20–24, shadow 0 1 2 / 4% + 0 6 20 / 5% navy | Cards, sheets |
+| surface | #FFFFFF, radius 20–24, no shadow (flat) | Cards (sheets keep a soft top shadow) |
 | ink | #16244A | Text, primary buttons, timer background |
 | ink-muted | #5E6782 | Secondary text |
 | divider | #F0ECE5 | Lines inside cards |
@@ -282,7 +287,7 @@ Build the sun as one vector view (circle, 12 rays, face layers) so every state a
 - Time-zone or clock change during a timer: elapsed uses absolute timestamps, so it stays correct.
 - Session crossing midnight: counted on the day it started.
 - Editing YearEstimates later recalculates baseline, total, forecast and milestones (no repeat celebrations).
-- Deleting the only sessions of a day turns it back to rest in the calendar and may break the streak.
+- Deleting the only sessions of a day turns it back to rest in the calendar and updates Rhythm and Steady for.
 - Passing 10,000 h: progress shows 100%, the sun stays fully risen, totals keep growing.
 - Start year far back (e.g. 1980): onboarding list scrolls; offer "Set all to" one value at the top.
 

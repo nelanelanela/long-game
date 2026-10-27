@@ -79,7 +79,8 @@ final class AppSettings {
     var reminderTime: Date?
     var reminderDays: [Int] = [1, 2, 3, 4, 5, 6, 7]
     var syncEnabled: Bool = false
-    var streakReminder: Bool = false
+    /// A gentle 7 pm nudge on days the user usually practises (was the streak reminder).
+    @Attribute(originalName: "streakReminder") var rhythmNudge: Bool = false
     var milestonesSeen: [Int] = []
     /// When Welcome back was last offered; it is asked at most once every 7 days.
     var lastCatchUpPromptAt: Date?

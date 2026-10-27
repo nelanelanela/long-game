@@ -9,7 +9,7 @@ Each `.dc.html` file is one iPhone screen (390 × 844 pt) from the Long Game des
 | StartYear.dc.html | 2 · When did you start? |
 | YearlyHours.dc.html | 3 · Hours per week, each year |
 | Home.dc.html | 4 · Home / Progress |
-| Calendar.dc.html | 5 · History — Calendar |
+| Calendar.dc.html | 5 · History — Calendar (Rhythm stats in the script block) |
 | Growth.dc.html | 6 · History — Growth (forecast maths in the script block) |
 | Timer.dc.html | Timer, running state, with CSS keyframes for the animation timings |
 | LogPast.dc.html | 7 · Add past hours |

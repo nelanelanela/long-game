@@ -4,9 +4,9 @@ import UserNotifications
 /// Keeps scheduled reminders in step with the settings and the practice log.
 /// Safe to call often: it clears its own requests and schedules them again.
 enum NotificationPlanner {
-    private static let prefixes = ["daily-", "streak-"]
+    private static let prefixes = ["daily-", "rhythm-"]
 
-    static func refresh(craftName: String, reminderTime: Date?, reminderDays: [Int], streakReminder: Bool,
+    static func refresh(craftName: String, reminderTime: Date?, reminderDays: [Int], rhythmNudge: Bool,
                         sessions: [SessionRecord], now: Date = Date(), calendar: Calendar = .current) async {
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()
@@ -32,15 +32,14 @@ enum NotificationPlanner {
             }
         }
 
-        if streakReminder {
-            let daily = Streaks.streakSeconds(sessions, calendar: calendar)
-            for (i, r) in ReminderPlanner.streakReminders(daily: daily, now: now, calendar: calendar).enumerated() {
+        if rhythmNudge {
+            let daily = Practice.dailySeconds(sessions, calendar: calendar)
+            for (i, nudge) in ReminderPlanner.rhythmNudges(daily: daily, now: now, calendar: calendar).enumerated() {
                 let content = UNMutableNotificationContent()
-                content.title = "Keep your \(r.streak)-day streak glowing."
-                content.body = "A little practice tonight keeps it going."
-                let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: r.date)
+                content.title = ReminderPlanner.nudgeMessage(weekday: nudge.weekday, craftName: craftName, calendar: calendar)
+                let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: nudge.date)
                 let trigger = UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
-                try? await center.add(UNNotificationRequest(identifier: "streak-\(i)", content: content, trigger: trigger))
+                try? await center.add(UNNotificationRequest(identifier: "rhythm-\(i)", content: content, trigger: trigger))
             }
         }
     }

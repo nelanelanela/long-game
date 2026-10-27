@@ -7,6 +7,8 @@ enum Labels {
     static func minutes(_ n: Int) -> String { String(localized: "\(n) minutes") }
     static func seconds(_ n: Int) -> String { String(localized: "\(n) seconds") }
     static func days(_ n: Int) -> String { String(localized: "\(n) days") }
+    /// "4 days/wk"
+    static func daysPerWeek(_ n: Int) -> String { String(localized: "\(n) days/wk") }
     static func weeks(_ n: Int) -> String { String(localized: "\(n) weeks") }
     static func months(_ n: Int) -> String { String(localized: "\(n) months") }
     static func yearsAgo(_ n: Int) -> String { String(localized: "\(n) years ago") }

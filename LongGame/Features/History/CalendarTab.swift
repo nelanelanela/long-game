@@ -8,6 +8,7 @@ struct CalendarTab: View {
 
     @State private var selected = Calendar.current.startOfDay(for: Date())
     @State private var editing: Session?
+    @State private var explaining: StatInfo?
 
     private let cell: CGFloat = 14
     private let gap: CGFloat = 3
@@ -16,7 +17,7 @@ struct CalendarTab: View {
     var body: some View {
         let now = Date()
         let weeks = CalendarGrid.weeks(endingOn: now, weekStart: weekStart, calendar: calendar)
-        let daily = Streaks.dailySeconds(sessions.map(\.record), calendar: calendar)
+        let daily = Practice.dailySeconds(sessions.map(\.record), calendar: calendar)
         let windowStart = weeks.first?.first ?? now
 
         VStack(spacing: 18) {
@@ -26,6 +27,9 @@ struct CalendarTab: View {
         }
         .sheet(item: $editing) { session in
             SessionFormView(craft: craft, sessions: sessions, editing: session)
+        }
+        .sheet(item: $explaining) { info in
+            StatExplainer(info: info)
         }
     }
 
@@ -204,36 +208,36 @@ struct CalendarTab: View {
     // MARK: Stats
 
     private func statsCard(daily: [Date: Double], windowStart: Date, now: Date) -> some View {
-        let streakDaily = Streaks.streakSeconds(sessions.map(\.record), calendar: calendar)
-        let current = Streaks.current(daily: streakDaily, today: now, calendar: calendar)
-        let longest = Streaks.longest(daily: streakDaily, calendar: calendar)
-        let active = Streaks.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
+        let rhythm = Rhythm.compute(daily: daily, since: craft.createdAt, now: now, weekStart: weekStart, calendar: calendar)
+        let active = Practice.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
+        let needed = max(1, rhythm.daysPerWeek - 1)
         return HStack(spacing: 0) {
-            VStack(spacing: 4) {
-                Text(Labels.days(current)).lgNumber(.statValue)
-                HStack(spacing: 4) {
-                    SunView(face: .happy, rayColor: LGColor.sunRays).frame(width: 14, height: 14)
-                    Text("Streak").lgText(.caption, color: LGColor.inkMuted)
-                }
-            }
-            .frame(maxWidth: .infinity)
+            stat(rhythm.daysPerWeek > 0 ? Labels.daysPerWeek(rhythm.daysPerWeek) : "–", "Rhythm", info: .rhythm)
             Divider().overlay(LGColor.divider)
-            stat(Labels.days(longest), "Longest")
+            stat(rhythm.daysPerWeek > 0 ? Labels.weeks(rhythm.steadyWeeks) : "–", "Steady for",
+                 info: .steady(daysNeeded: rhythm.daysPerWeek > 0 ? needed : nil))
             Divider().overlay(LGColor.divider)
-            stat("\(active)", "Active days")
+            stat("\(active)", "Active days", info: .active)
         }
-        .padding(.vertical, 18)
+        .padding(.vertical, 6)
         .fixedSize(horizontal: false, vertical: true)
         .lgCard()
     }
 
-    private func stat(_ value: String, _ label: String) -> some View {
-        VStack(spacing: 4) {
-            Text(value).lgNumber(.statValue)
-            Text(label).lgText(.caption, color: LGColor.inkMuted)
+    /// Tapping a stat explains how it is worked out.
+    private func stat(_ value: String, _ label: String, info: StatInfo) -> some View {
+        Button { explaining = info } label: {
+            VStack(spacing: 4) {
+                Text(value).lgNumber(.statValue)
+                Text(label).lgText(.caption, color: LGColor.inkMuted)
+            }
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity)
+        .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+        .accessibilityHint("Shows how this is worked out")
     }
 
     // MARK: Formatting
@@ -255,5 +259,69 @@ struct CalendarTab: View {
         let date = formatter("EEEE d MMMM", calendar).string(from: day)
         guard seconds > 0 else { return "\(date), rest day" }
         return "\(date), " + Labels.spoken(seconds: Int((seconds / 60).rounded()) * 60, includeSeconds: false)
+    }
+}
+
+/// What each Calendar stat means, shown when it is tapped.
+enum StatInfo: Identifiable {
+    case rhythm
+    case steady(daysNeeded: Int?)
+    case active
+
+    var id: String {
+        switch self {
+        case .rhythm: "rhythm"
+        case .steady: "steady"
+        case .active: "active"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .rhythm: "Rhythm"
+        case .steady: "Steady for"
+        case .active: "Active days"
+        }
+    }
+
+    var paragraphs: [String] {
+        switch self {
+        case .rhythm:
+            ["Your typical number of practice days in a week.",
+             "For each of the last 8 full weeks, and this week so far, we count the days with any time logged. Rhythm is the middle of those numbers, so one busy or quiet week barely moves it.",
+             "Weeks from before you began aren't counted."]
+        case .steady(let needed):
+            ["How many weeks in a row, counting back from this week, you practised on at least one day fewer than your Rhythm.",
+             needed.map { "Right now that means \($0) \($0 == 1 ? "day" : "days") a week." } ?? "Once you have a Rhythm, this shows how long you've kept it up.",
+             "This week counts once it gets there, and it never ends your run while it's still going. Nothing ever breaks: a quiet week just starts a new run."]
+        case .active:
+            ["The number of days with any practice in the last 12 months, the same days you see lit up in the grid above.",
+             "Hours added after a break count like any other."]
+        }
+    }
+}
+
+private struct StatExplainer: View {
+    let info: StatInfo
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(info.title).lgText(.sheetTitle)
+                .accessibilityAddTraits(.isHeader)
+            ForEach(info.paragraphs, id: \.self) { text in
+                Text(text).lgText(.body, color: LGColor.inkMuted)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+            Button("Got it") { dismiss() }.buttonStyle(.lg(.primary))
+        }
+        .padding(.horizontal, 24).padding(.top, 28).padding(.bottom, 12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(LGColor.background)
+        .presentationDetents([.height(400), .large])
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(32)
     }
 }

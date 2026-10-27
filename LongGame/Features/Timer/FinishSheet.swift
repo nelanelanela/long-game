@@ -27,7 +27,7 @@ struct FinishSheet: View {
 
             if canSave {
                 HStack {
-                    stepper("minus", "Less time", enabled: duration > FinishRules.minimumSave) {
+                    LGRepeatButton(systemName: "minus", label: "Less time", enabled: duration > FinishRules.minimumSave) {
                         duration = FinishRules.lowered(duration)
                     }
                     Spacer()
@@ -38,7 +38,7 @@ struct FinishSheet: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(DurationFormat.short(seconds: duration))
                     Spacer()
-                    stepper("plus", "More time", enabled: duration < elapsed) {
+                    LGRepeatButton(systemName: "plus", label: "More time", enabled: duration < elapsed) {
                         duration = FinishRules.raised(duration, elapsed: elapsed)
                     }
                 }
@@ -83,18 +83,5 @@ struct FinishSheet: View {
         } message: {
             Text("The time won't be added to your hours.")
         }
-    }
-
-    private func stepper(_ icon: String, _ label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(LGColor.ink)
-                .frame(width: 52, height: 52)
-                .background(LGColor.chipFill, in: Circle())
-        }
-        .disabled(!enabled)
-        .opacity(enabled ? 1 : 0.4)
-        .accessibilityLabel(label)
     }
 }
