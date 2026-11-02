@@ -6,6 +6,8 @@ import WidgetKit
 @main
 struct LongGameWidgetsBundle: WidgetBundle {
     var body: some Widget {
+        SunWidget()
+        OverviewWidget()
         TimerLiveActivity()
     }
 }

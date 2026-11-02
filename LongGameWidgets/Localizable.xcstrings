@@ -1,0 +1,29 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ h · %lld%% of the long game" : {},
+    "%@ of %@ h" : {},
+    "%@ of %@ h this week" : {},
+    "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {},
+    "Choose the view" : {},
+    "Hours this week" : {},
+    "Open the app to begin." : {},
+    "Set up Long Game" : {},
+    "Show" : {},
+    "Show this week's hours or the long game." : {},
+    "The long game" : {},
+    "The long game, %@ of 10,000 hours, %lld%%" : {},
+    "The sun" : {},
+    "The sun rises with this week's hours, or with the long game." : {},
+    "This week" : {},
+    "This week against your weekly target, and the long game against 10,000 hours." : {},
+    "This week and the long game" : {},
+    "This week, %@ of %@ hours" : {},
+    "This week, %@ of %@ hours. The long game, %@ hours, %lld%%." : {},
+    "Today %@" : {},
+    "View" : {},
+    "of %@ this week" : {},
+    "of 10,000 · %lld%%" : {}
+  },
+  "version" : "1.0"
+}

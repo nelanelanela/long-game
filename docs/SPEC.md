@@ -375,7 +375,9 @@ WidgetKit, reading the same data through a shared App Group. No animation (not a
 | Lock Screen, rectangular | "☀ 6.5 of 12 h this week", a bar, and "3,294 h · 33% of the long game". |
 | Lock Screen, inline | "☀ 6.5 of 12 h". |
 
-- Tapping opens Home on the matching tab (deep link).
+- Two widgets: **The sun** (small, with Edit Widget → This week / The long game) and **This week and the long game** (medium, and the three Lock Screen sizes). The medium widget's long-game bar opens the long game tab; everything else opens This week.
+- Data: the app mirrors what is *stored* (craft, estimates, every session's start and length, week start, weekly target) into `widget-data.json` in the App Group `group.com.wehavesun.LongGame`, whenever any of it changes. The widgets compute totals, this week and today from that with the same Logic code; nothing derived is stored.
+- Tapping opens Home on the matching tab (deep link `longgame://home/week` or `longgame://home/longGame`).
 - Timeline: reload when a session is saved, edited or deleted, at midnight, and at the start of each week. While a timer runs, widgets show the saved total; the Live Activity shows the live time.
 
 ## Apple Watch app (`design/Watch.dc.html`)

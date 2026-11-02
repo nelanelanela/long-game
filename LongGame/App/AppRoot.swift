@@ -17,5 +17,6 @@ struct AppRoot: View {
                 OnboardingFlow(showIntro: crafts.isEmpty)
             }
         }
+        .syncsWidgets()
     }
 }

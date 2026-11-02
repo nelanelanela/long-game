@@ -25,6 +25,13 @@ targets:
         buildPhase: none
     dependencies:
       - target: LongGameWidgets
+    # The widgets open Home on a tab with longgame://home/week or longgame://home/longGame.
+    info:
+      path: LongGame/Info.plist
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLName: com.wehavesun.LongGame
+            CFBundleURLSchemes: [longgame]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
@@ -48,18 +55,26 @@ targets:
       - Shared
       - LongGame/DesignSystem/SunView.swift
       - LongGame/DesignSystem/Colors.swift
-      - LongGame/Logic/TimerLogic.swift
-      - LongGame/Logic/Format.swift
+      - LongGame/DesignSystem/Typography.swift
+      - LongGame/DesignSystem/Water.swift
+      # The numbers are worked out with the app's own Logic code (it is plain Swift, no database).
+      - LongGame/Logic
     info:
       path: LongGameWidgets/Info.plist
       properties:
         CFBundleDisplayName: Long Game
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    # The shared App Group the app writes the widgets' data to. Xcode registers it with your team on a device build.
+    entitlements:
+      path: LongGameWidgets/LongGameWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.Widgets
         SKIP_INSTALL: YES
+        CODE_SIGN_ENTITLEMENTS: LongGameWidgets/LongGameWidgets.entitlements
   LongGameTests:
     type: bundle.unit-test
     platform: iOS

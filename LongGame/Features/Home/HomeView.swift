@@ -85,6 +85,13 @@ struct HomeView: View {
         .navigationDestination(item: $historyDay) { day in
             HistoryView(craft: craft, day: day)
         }
+        // A widget opens Home on its tab: back out of History and any sheet first.
+        .onOpenURL { url in
+            guard let link = WidgetLink.tab(from: url) else { return }
+            historyDay = nil
+            sheet = nil
+            selectTab(link)
+        }
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
             // Read live rather than from state, so the timer never starts from a stale total.
             TimerView(craft: craft, baseTotal: summary(now: Date()).total)
@@ -290,13 +297,14 @@ struct HomeView: View {
                 .accessibilityAddTraits(.isHeader)
             Spacer()
             HStack(spacing: 0) {
-                NavigationLink {
-                    HistoryView(craft: craft)
+                Button {
+                    historyDay = Calendar.current.startOfDay(for: Date())
                 } label: {
                     Image(systemName: "calendar")
                         .font(.system(size: 19, weight: .regular))
                         .foregroundStyle(LGColor.ink)
                         .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityLabel("History")
                 LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
