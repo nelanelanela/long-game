@@ -12,6 +12,7 @@ enum DemoData {
         for craft in (try? context.fetch(FetchDescriptor<Craft>())) ?? [] { context.delete(craft) }
         for e in (try? context.fetch(FetchDescriptor<YearEstimate>())) ?? [] { context.delete(e) }
         for s in (try? context.fetch(FetchDescriptor<Session>())) ?? [] { context.delete(s) }
+        for t in (try? context.fetch(FetchDescriptor<TargetPeriod>())) ?? [] { context.delete(t) }
         TimerPersistence.save(nil)
 
         let calendar = Calendar.current
@@ -23,7 +24,15 @@ enum DemoData {
         for (i, h) in hours.enumerated() {
             context.insert(YearEstimate(craftId: craft.id, year: 2019 + i, hoursPerWeek: h))
         }
-        if (try? context.fetchCount(FetchDescriptor<AppSettings>())) == 0 { context.insert(AppSettings()) }
+        // The design's year of pace: 12 hours a week from today, with Home opening on This week.
+        let settings = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first ?? AppSettings()
+        if settings.modelContext == nil { context.insert(settings) }
+        settings.weeklyTargetHours = 0
+        settings.targetSetAt = nil
+        settings.targetEndsAt = nil
+        settings.targetPromptShownAt = nil
+        settings.lastHomeTab = .week
+        TargetSaving.apply(hours: 12, now: now, settings: settings, context: context)
 
         // A believable pattern: most days, a little more at weekends, a few rest days.
         for offset in 0..<119 {

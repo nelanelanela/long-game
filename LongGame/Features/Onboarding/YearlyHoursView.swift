@@ -3,7 +3,7 @@ import SwiftData
 
 struct YearlyHoursView: View {
     @Bindable var model: OnboardingModel
-    @Environment(\.modelContext) private var context
+    let onContinue: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -55,17 +55,18 @@ struct YearlyHoursView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text("Estimated so far").lgText(.row, color: LGColor.inkMuted)
                 Spacer()
-                Text("\(Totals.wholeHours(total: model.estimatedSoFar()).formatted()) h")
+                Text("\(DurationFormat.grouped(Totals.wholeHours(total: model.estimatedSoFar()))) h")
                     .lgNumber(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.5))
             }
             .accessibilityElement(children: .combine)
 
-            Button("Start playing") { model.save(in: context) }
+            Button("Continue", action: onContinue)
                 .buttonStyle(.lg(.primary))
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
         .lgScreen()
         .navigationBarBackButtonHidden()
+        .onAppear { model.estimateKnown = true }
     }
 }

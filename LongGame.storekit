@@ -1,0 +1,50 @@
+{
+  "identifier" : "7C1A9E02",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6A1F0001",
+      "localizations" : [ { "description" : "A small thank-you", "displayName" : "A ray of sunshine", "locale" : "en_US" } ],
+      "productID" : "com.wehavesun.LongGame.tip.ray",
+      "referenceName" : "Tip: A ray of sunshine",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6A1F0002",
+      "localizations" : [ { "description" : "Like buying a coffee", "displayName" : "A sunny morning", "locale" : "en_US" } ],
+      "productID" : "com.wehavesun.LongGame.tip.morning",
+      "referenceName" : "Tip: A sunny morning",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6A1F0003",
+      "localizations" : [ { "description" : "A big thank-you", "displayName" : "A golden hour", "locale" : "en_US" } ],
+      "productID" : "com.wehavesun.LongGame.tip.goldenhour",
+      "referenceName" : "Tip: A golden hour",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "6A1F0004",
+      "localizations" : [ { "description" : "For the biggest fans", "displayName" : "A whole sunrise", "locale" : "en_US" } ],
+      "productID" : "com.wehavesun.LongGame.tip.sunrise",
+      "referenceName" : "Tip: A whole sunrise",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_IE",
+    "_storefront" : "IRL",
+    "_askToBuyEnabled" : false
+  },
+  "subscriptionGroups" : [],
+  "version" : { "major" : 3, "minor" : 0 }
+}

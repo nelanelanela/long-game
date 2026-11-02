@@ -13,6 +13,7 @@ settings:
     DEVELOPMENT_TEAM: DGB322BJZ7
     CODE_SIGN_STYLE: Automatic
     CURRENT_PROJECT_VERSION: "1"
+    SWIFT_EMIT_LOC_STRINGS: YES
 targets:
   LongGame:
     type: application
@@ -20,6 +21,8 @@ targets:
     sources:
       - LongGame
       - Shared
+      - path: LongGame.storekit
+        buildPhase: none
     dependencies:
       - target: LongGameWidgets
     settings:
@@ -29,7 +32,8 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Long Game
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UIApplicationSupportsMultipleScenes: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         ENABLE_PREVIEWS: YES
         CODE_SIGN_ENTITLEMENTS: LongGame/LongGame.entitlements
@@ -63,12 +67,15 @@ targets:
       - LongGameTests
     dependencies:
       - target: LongGame
+      - sdk: StoreKitTest.framework
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameTests
 schemes:
   LongGame:
+    run:
+      storeKitConfiguration: LongGame.storekit
     build:
       targets:
         LongGame: all

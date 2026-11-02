@@ -15,8 +15,8 @@ The "10,000 hours" idea is about sticking with something for a long time. Long G
 - **Add past hours.** Log a session you forgot to time.
 - **History.** A calendar of practice days and a Growth chart of your pace over time.
 - **Mastery forecast.** A projected date for reaching 10,000 hours, with an early-to-late range and a "what if I practised more?" slider.
-- **Streaks and milestones.** Celebrations at 100, 500, 1,000, 2,500, 5,000, 7,500 and 10,000 hours.
-- **Reminders.** Optional and off by default: daily nudge, streak at risk, long-session check-in.
+- **Rhythm and milestones.** Calendar stats show your typical practice days a week and how long you have kept to it, with no streaks to break. Celebrations at 100, 500, 1,000, 2,500, 5,000, 7,500 and 10,000 hours.
+- **Reminders.** Optional and off by default: daily reminder, a rhythm nudge on days you usually practise, long-session check-in and milestones.
 - **Your data stays yours.** Everything is stored on the device and works offline. iCloud sync with Sign in with Apple is optional. Export your sessions to CSV any time.
 - **Accessible.** Supports Dynamic Type, VoiceOver and Reduce Motion.
 
@@ -35,7 +35,7 @@ The "10,000 hours" idea is about sticking with something for a long time. Long G
 LongGame/          The app
   App/             Entry point and root navigation
   Models/          Craft, YearEstimate, Session, Settings (SwiftData)
-  Logic/           Pure, tested calculations: totals, pace, streaks, forecast
+  Logic/           Pure, tested calculations: totals, pace, rhythm, forecast
   Features/        Onboarding, Home, Timer, History, Add hours, Settings
   DesignSystem/    Colours, typography, cards, buttons, the sun mascot
 LongGameWidgets/   Live Activity extension
@@ -46,7 +46,7 @@ docs/SPEC.md       Full product spec
 Tools/             Helper scripts (app icon generator)
 ```
 
-Derived numbers such as totals, streaks and the forecast are never stored. They are always calculated from the saved sessions and estimates.
+Derived numbers such as totals, rhythm and the forecast are never stored. They are always calculated from the saved sessions and estimates.
 
 ## Open and run
 

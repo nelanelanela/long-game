@@ -37,8 +37,12 @@ struct SessionFormView: View {
     private var calendar: Calendar { .current }
     private var seconds: Double { Double(hours * 3600 + minutes * 60) }
 
+    /// Hours before the onboarding date are already part of the estimates, so the calendar starts there.
+    /// (An older session that is being edited keeps its own day.)
     private var earliestDay: Date {
-        calendar.date(from: DateComponents(year: craft.startYear, month: 1, day: 1)) ?? Date.distantPast
+        let start = calendar.startOfDay(for: craft.createdAt)
+        guard let editing else { return start }
+        return min(start, calendar.startOfDay(for: editing.start))
     }
 
     private var otherSecondsThatDay: Double {

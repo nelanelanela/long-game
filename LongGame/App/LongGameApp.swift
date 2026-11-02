@@ -8,7 +8,7 @@ struct LongGameApp: App {
     @State private var account = AccountStore()
 
     init() {
-        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self])
+        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self])
         do {
             container = try ModelContainer(for: schema, configurations: CloudSync.configuration(for: schema))
             #if DEBUG

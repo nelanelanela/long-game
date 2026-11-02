@@ -1,25 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "“%@” will be your craft." : {
-
-    },
-    "%@" : {
-
-    },
-    "%@ / %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ / %2$@"
-          }
-        }
-      }
-    },
-    "%@ h" : {
-
-    },
+    "%@ h" : {},
+    "%@ hours" : {},
+    "%lld" : {},
+    "%lld / %lld" : {},
     "%lld days" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -89,6 +74,8 @@
         }
       }
     },
+    "%lld h" : {},
+    "%lld h per week" : {},
     "%lld hours" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -296,21 +283,20 @@
         }
       }
     },
-    "0" : {
-
-    },
-    "3,294" : {
-
-    },
-    "20" : {
-
-    },
-    "40" : {
-
-    },
-    "A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings." : {
-
-    },
+    "%lld, hours per week" : {},
+    "%lldk" : {},
+    "+%lld h/wk" : {},
+    "0" : {},
+    "10,000 hours" : {},
+    "20" : {},
+    "3,294" : {},
+    "40" : {},
+    "A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings." : {},
+    "A new year of pace" : {},
+    "A smiling sun rising over the sea, %lld%% of the way up" : {},
+    "A thousand-mile walk is made one day’s stretch at a time. Set the 10,000 hours aside for a moment and choose how many hours a week you’ll play for the next 12 months. Each week, that’s the only distance to cover." : {},
+    "About" : {},
+    "Add %lld h %lld m" : {},
     "Add %lld hours" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -357,177 +343,143 @@
         }
       }
     },
-    "Adding" : {
-
-    },
-    "Archived crafts" : {
-
-    },
-    "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
-
-    },
-    "Choose…" : {
-
-    },
-    "Coming later" : {
-
-    },
-    "Delete all data" : {
-
-    },
-    "Design system" : {
-
-    },
-    "Each week's hours are spread evenly across its days in your calendar." : {
-
-    },
-    "Estimated so far" : {
-
-    },
-    "Finish line · 10,000 h" : {
-
-    },
-    "Finish session" : {
-
-    },
-    "Forecast improves as you log more" : {
-
-    },
-    "History" : {
-
-    },
-    "hours : minutes" : {
-
-    },
-    "hours · %@" : {
-
-    },
-    "hours per week" : {
-
-    },
-    "Hours per week for each year. Only focused practice." : {
-
-    },
-    "Hours per week, each year" : {
-
-    },
-    "iCloud sync" : {
-
-    },
-    "Its hours will be removed from your total." : {
-
-    },
-    "Last 12 months" : {
-
-    },
-    "Less" : {
-
-    },
-    "Long Game" : {
-
-    },
-    "Monday" : {
-
-    },
-    "More" : {
-
-    },
-    "No sessions yet. Start one, or add past hours." : {
-
-    },
-    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {
-
-    },
-    "Nothing here. Crafts you replace are kept here to look back on." : {
-
-    },
-    "Notifications are off for Long Game. Turn them on in the iPhone's Settings app." : {
-
-    },
-    "of 10,000 hours · %@%%" : {
-
-    },
-    "of 10,000 hours · 33%" : {
-
-    },
-    "One player, one game" : {
-
-    },
-    "Saved" : {
-
-    },
-    "Sessions under a minute can't be saved." : {
-
-    },
-    "Set all to" : {
-
-    },
-    "Settings" : {
-
-    },
-    "Sign in and iCloud restore are coming in a later update. You can start tracking now." : {
-
-    },
-    "Signed in with Apple" : {
-
-    },
-    "Started %@" : {
-
-    },
-    "Sunday" : {
-
-    },
-    "That would be more than 24 hours on this day. Lower the time or pick another day." : {
-
-    },
-    "The app keeps counting. This is the beginning of the next stretch." : {
-
-    },
-    "The longest game on the App Store. About 10,000 hours long, and played in real life." : {
-
-    },
-    "The time won't be added to your hours." : {
-
-    },
-    "This is your starting score. Only focused practice counts." : {
-
-    },
-    "This session" : {
-
-    },
-    "Time" : {
-
-    },
-    "Today" : {
-
-    },
-    "Total with your sessions" : {
-
-    },
-    "Week starts on" : {
-
-    },
-    "Welcome back!" : {
-
-    },
-    "What if I practise more?" : {
-
-    },
-    "What's your game?" : {
-
-    },
-    "When did you start?" : {
-
-    },
-    "You can trim up to what you really practised." : {
-
-    },
-    "You don't start at level one. A rough guess is fine." : {
-
-    },
-    "You'll finish the game around" : {
-
-    },
+    "Add a note (optional)" : {},
+    "Add hours" : {},
+    "Add past hours" : {},
+    "Adding" : {},
+    "Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later." : {},
+    "Archive and replace" : {},
+    "Archived crafts" : {},
+    "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {},
+    "Average hours per week" : {},
+    "By %@" : {},
+    "Cancel" : {},
+    "Choose your pace for the year" : {},
+    "Choose…" : {},
+    "Clear" : {},
+    "Coming later" : {},
+    "Continue" : {},
+    "Daily reminder" : {},
+    "Date" : {},
+    "Day" : {},
+    "Debug only" : {},
+    "Delete" : {},
+    "Delete all data" : {},
+    "Delete all data?" : {},
+    "Delete everything" : {},
+    "Delete session" : {},
+    "Delete this session?" : {},
+    "Design system" : {},
+    "Disabled" : {},
+    "Discard" : {},
+    "Discard this session?" : {},
+    "Each week's hours are spread evenly across its days in your calendar." : {},
+    "Edit or delete this session" : {},
+    "Edit session" : {},
+    "Edit this session" : {},
+    "Estimated so far" : {},
+    "Extra hours per week" : {},
+    "Finish" : {},
+    "Finish line" : {},
+    "Finish line · 10,000 h" : {},
+    "Finish session" : {},
+    "Forecast improves as you log more" : {},
+    "Get started" : {},
+    "Goal" : {},
+    "Got it" : {},
+    "High" : {},
+    "History" : {},
+    "History view" : {},
+    "Home view" : {},
+    "Hours" : {},
+    "Hours a week" : {},
+    "Hours a week for the next 12 months" : {},
+    "Hours per week for each year. Only focused practice." : {},
+    "Hours per week, each year" : {},
+    "I already have an account" : {},
+    "In a year" : {},
+    "Its hours will be removed from your total." : {},
+    "Jump total to just under a whole hour" : {},
+    "Keep going" : {},
+    "Keep playing" : {},
+    "Last 12 months" : {},
+    "Less" : {},
+    "Long Game" : {},
+    "Low" : {},
+    "Meet your future self" : {},
+    "Minutes" : {},
+    "Monday" : {},
+    "More" : {},
+    "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {},
+    "No saved account found" : {},
+    "No sessions yet. Start one, or add past hours." : {},
+    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {},
+    "No, I took a break" : {},
+    "Not now" : {},
+    "Nothing here. Crafts you replace are kept here to look back on." : {},
+    "Notifications are off for Long Game. Turn them on in the iPhone's Settings app." : {},
+    "One player, one game" : {},
+    "Opens a short note about where your hours are heading" : {},
+    "Opens this day in History" : {},
+    "Opens your pace for the year" : {},
+    "Optional" : {},
+    "Overall total %@ hours, %lld percent of 10,000" : {},
+    "Pace" : {},
+    "Pause" : {},
+    "Pause or resume" : {},
+    "Pretend last session was %@ ago" : {},
+    "Replace %@?" : {},
+    "Replace my craft" : {},
+    "Resume" : {},
+    "Rhythm nudge" : {},
+    "Save" : {},
+    "Saved" : {},
+    "Series" : {},
+    "Session saved" : {},
+    "Sessions under a minute can't be saved." : {},
+    "Set all to" : {},
+    "Settings" : {},
+    "Show Welcome back on Home" : {},
+    "Shows how this is worked out" : {},
+    "Sign in and iCloud restore are coming in a later update. You can start tracking now." : {},
+    "Sign out" : {},
+    "Signed in with Apple" : {},
+    "Since %@. On average, how many hours a week did you practise?" : {},
+    "Start playing" : {},
+    "Start session" : {},
+    "Started %@" : {},
+    "Step %lld of %lld" : {},
+    "Sunday" : {},
+    "Switch to a new game" : {},
+    "That would be more than 24 hours on this day. Lower the time or pick another day." : {},
+    "The app keeps counting. This is the beginning of the next stretch." : {},
+    "The long game" : {},
+    "The longest game on the App Store. About 10,000 hours long, and played in real life." : {},
+    "The time won't be added to your hours." : {},
+    "This is your starting score. Only focused practice counts." : {},
+    "This session" : {},
+    "This week" : {},
+    "Time" : {},
+    "Today" : {},
+    "Total with your sessions" : {},
+    "Turn on to keep your hours safe and on all your devices. Close and reopen Long Game to apply the change." : {},
+    "Until" : {},
+    "Want a gentle nudge?" : {},
+    "Week starts on" : {},
+    "Welcome back!" : {},
+    "What if I practise more?" : {},
+    "What's your game?" : {},
+    "When did you start?" : {},
+    "Where 10,000 hours can take you" : {},
+    "Year of pace" : {},
+    "Year of pace ended yesterday" : {},
+    "Year of pace ends in 10 days" : {},
+    "Yes, let me add it" : {},
+    "Yes, remind me" : {},
+    "You can trim up to what you really practised." : {},
+    "You don't start at level one. A rough guess is fine." : {},
+    "You started on %@ — that's %@. Did you practise since then?" : {},
+    "You'll finish the game around" : {},
     "Your %@ of %@ will be archived. This can't be undone." : {
       "localizations" : {
         "en" : {
@@ -538,21 +490,28 @@
         }
       }
     },
-    "Your craft is the game. Pick one, or type your own." : {
-
-    },
-    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {
-
-    },
-    "Your estimates" : {
-
-    },
-    "Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on." : {
-
-    },
-    "z" : {
-
-    }
+    "Your craft" : {},
+    "Your craft is the game. Pick one, or type your own." : {},
+    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {},
+    "Your estimates" : {},
+    "Your hours are kept in your private iCloud. Close and reopen Long Game to apply the change." : {},
+    "Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on." : {},
+    "Your last session was on %@ — that's %@. Did you practise since then?" : {},
+    "Your pace for the year" : {},
+    "Your recent pace: %@" : {},
+    "about %lld h %@ m a day" : {},
+    "about %lld m a day" : {},
+    "hour a week" : {},
+    "hours : minutes" : {},
+    "hours a week" : {},
+    "hours per week" : {},
+    "hours · %@" : {},
+    "iCloud sync" : {},
+    "of %@ this week · %lld%%" : {},
+    "of 10,000 hours · %lld%%" : {},
+    "of 10,000 hours · 33%" : {},
+    "z" : {},
+    "“%@” will be your craft." : {}
   },
   "version" : "1.0"
 }

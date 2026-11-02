@@ -47,12 +47,14 @@ struct TimerLiveActivity: Widget {
                 }
                 .buttonStyle(.plain)
                 .background(.white.opacity(0.14), in: Circle())
+                .accessibilityLabel(context.state.pausedElapsed == nil ? "Pause" : "Resume")
                 Button(intent: FinishTimerIntent()) {
                     Image(systemName: "checkmark")
                         .frame(width: 44, height: 44)
                 }
                 .buttonStyle(.plain)
                 .background(.white.opacity(0.14), in: Circle())
+                .accessibilityLabel("Finish")
             }
             .foregroundStyle(.white)
             .padding(16)

@@ -2,19 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Progress</title>
+<title>Home, the long game</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 32px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
 <div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
 <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">Piano</h1>
 <div style="display: flex; gap: 4px; margin-right: -10px">
@@ -22,26 +39,38 @@ a{color:#16244A}a:hover{color:#000000}
 <a href="OneCraft.dc.html" aria-label="Add a craft" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></a>
 </div>
 </div>
-<div role="img" aria-label="A smiling sun rising over the sea, a third of the way up" style="position: relative; height: 200px; margin: 28px -24px 0; overflow: hidden">
-<svg aria-hidden="true" width="190" height="190" viewBox="0 0 200 200" style="position: absolute; left: 50%; top: 42px; margin-left: -95px"><path d="M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3M100 34V18M133 42.8L146 20.3M157.2 67L171 59" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></svg>
-<svg aria-hidden="true" width="390" height="40" viewBox="0 0 390 40" preserveAspectRatio="none" style="position: absolute; left: 0; bottom: 0"><rect x="0" y="10" width="390" height="30" fill="#FAF8F4"></rect><path d="M0 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path><path d="M10 28q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#C9D3EC" stroke-width="2" stroke-linecap="round"></path></svg>
+<div role="tablist" aria-label="Home view" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; padding: 3px; background: #EFEBE4; border-radius: 12px"><a href="HomeWeek.dc.html" role="tab" aria-selected="false" style="height: 36px; border-radius: 10px; color: #16244A; font-size: 14px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center">This week</a><span role="tab" aria-selected="true" style="height: 36px; border-radius: 10px; background: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,.1)">The long game</span></div>
+<div role="img" aria-label="On the long game the sun is a third of the way up: 3,294 of 10,000 hours" style="position: relative; height: 280px; margin: 8px -24px 0; overflow: hidden">
+<div aria-hidden="true" class="hm-glow" style="position: absolute; left: 85px; top: 45px; width: 260px; height: 260px; border-radius: 130px; background: radial-gradient(circle, rgba(255,201,60,.28) 0%, rgba(255,201,60,0) 62%)"></div>
+<div aria-hidden="true" style="position: absolute; left: 48px; top: 78px; height: 142px; border-left: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 6px; width: 34px; top: 212px; text-align: right; font-size: 11px; color: #8A93AB; font-variant-numeric: tabular-nums">0</div><div style="position: absolute; left: 44px; width: 8px; top: 220px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 6px; width: 34px; top: 178px; text-align: right; font-size: 11px; color: #8A93AB; font-variant-numeric: tabular-nums">2.5k</div><div style="position: absolute; left: 44px; width: 8px; top: 186px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 6px; width: 34px; top: 144px; text-align: right; font-size: 11px; color: #8A93AB; font-variant-numeric: tabular-nums">5k</div><div style="position: absolute; left: 44px; width: 8px; top: 152px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 6px; width: 34px; top: 110px; text-align: right; font-size: 11px; color: #8A93AB; font-variant-numeric: tabular-nums">7.5k</div><div style="position: absolute; left: 44px; width: 8px; top: 118px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 6px; width: 34px; top: 76px; text-align: right; font-size: 11px; color: #8A93AB; font-variant-numeric: tabular-nums">10k</div><div style="position: absolute; left: 44px; width: 8px; top: 84px; border-top: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 52px; width: 101px; top: 175px; border-top: 1.5px dashed #E0B04A"></div>
+<svg aria-hidden="true" width="170" height="170" viewBox="0 0 200 200" style="position: absolute; left: 130px; top: 90px; overflow: visible"><g class="hm-breathe"><g class="hm-turn"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path></g><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><path class="hm-peek-hide" d="M76 98q8-9 16 0M108 98q8-9 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><g class="hm-peek-show"><circle cx="84" cy="95" r="6" fill="#16244A"></circle><circle cx="86" cy="93" r="2" fill="#FFFFFF"></circle><circle cx="116" cy="95" r="6" fill="#16244A"></circle><circle cx="118" cy="93" r="2" fill="#FFFFFF"></circle></g></g></svg>
+<svg aria-hidden="true" width="390" height="64" viewBox="0 0 390 64" preserveAspectRatio="none" style="position: absolute; left: 0; top: 216px; overflow: hidden">
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 64 L-40 64 Z" fill="#D3DEF4"></path></g>
+<g class="hm-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round"></path></g>
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
+<rect class="hm-glint" x="196" y="22" width="38" height="3" rx="1.5" fill="#FFC93C"></rect><rect class="hm-glint" x="184" y="36" width="22" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:.9s"></rect><rect class="hm-glint" x="224" y="40" width="16" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:1.7s"></rect>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 246px; height: 34px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, rgba(250,248,244,.85) 70%, rgb(250,248,244) 100%)"></div>
+<div style="position: absolute; left: 58px; top: 163px; padding: 3px 8px; border-radius: 10px; background: #16244A; color: #FFFFFF; font-size: 12px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums">3,294 h</div>
+
 </div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 18px">
-<span style="font-size: 64px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums">3,294</span>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px">
+<span style="font-size: 56px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums">3,294</span>
 <span style="font-size: 15px; color: #5E6782">of 10,000 hours · 33%</span>
 </div>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 36px; padding: 18px 0; border-top: 1px solid #ECE7DE; border-bottom: 1px solid #ECE7DE">
-<div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 18px; font-weight: 600">9.5 h</span><span style="font-size: 13px; color: #5E6782">This week</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 18px; padding: 14px 0; border-top: 1px solid #ECE7DE; border-bottom: 1px solid #ECE7DE">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 18px; font-weight: 600">12 h/wk</span><span style="font-size: 13px; color: #5E6782">Pace</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 18px; font-weight: 600">+624 h</span><span style="font-size: 13px; color: #5E6782">By Nov 2027</span></div>
 <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 18px; font-weight: 600">~2036</span><span style="font-size: 13px; color: #5E6782">Finish line</span></div>
 </div>
-<div style="display: flex; flex-direction: column; margin-top: 8px">
-<div style="display: flex; align-items: center; justify-content: space-between; height: 48px"><span style="font-size: 15px">Today</span><span style="font-size: 15px; color: #5E6782">1 h 30 m</span></div>
-<div style="display: flex; align-items: center; justify-content: space-between; height: 48px"><span style="font-size: 15px">Thursday</span><span style="font-size: 15px; color: #5E6782">2 h</span></div>
-</div>
+<a href="FutureSelf.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; text-decoration: none; color: #16244A">
+<span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Meet your future self</span><span style="font-size: 13px; color: #5E6782">Where 10,000 hours can take you</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M9 6l6 6-6 6"></path></svg>
+</a>
 <div style="flex-grow: 1"></div>
-<a href="Timer.dc.html" style="height: 56px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Start session</a>
-<a href="LogPast.dc.html" style="height: 48px; margin-top: 4px; color: #16244A; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Add past hours</a>
+<a href="Timer.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Start session</a>
+<a href="LogPast.dc.html" style="height: 44px; margin-top: 2px; flex-shrink: 0; color: #16244A; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Add past hours</a>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>

@@ -65,7 +65,8 @@ struct CatchUpSheet: View {
 
     private var ask: some View {
         VStack(spacing: 20) {
-            SunView(face: .happy).frame(width: 112, height: 112)
+            // Open-eyed and smiling, as in the design.
+            SunView(face: .celebrate).frame(width: 112, height: 112)
             VStack(spacing: 10) {
                 Text("Welcome back!").lgText(.sheetTitle).accessibilityAddTraits(.isHeader)
                 Text(question)
@@ -90,8 +91,8 @@ struct CatchUpSheet: View {
         let day = RelativeDay.full(gap.anchor, calendar: calendar)
         let weeks = Labels.weeksAgo(gap.weeks)
         return gap.hasSessions
-            ? String(localized: "Your last session was on \(day) — that's \(weeks). Did you keep playing since then?")
-            : String(localized: "You started on \(day) — that's \(weeks). Did you keep playing since then?")
+            ? String(localized: "Your last session was on \(day) — that's \(weeks). Did you practise since then?")
+            : String(localized: "You started on \(day) — that's \(weeks). Did you practise since then?")
     }
 
     // MARK: Weeks (7–27 days)
@@ -100,7 +101,7 @@ struct CatchUpSheet: View {
         let blocks = blocks
         return VStack(spacing: 18) {
             stepHeader(title: Labels.weeksHavePassed(gap.weeks),
-                       subtitle: "Roughly how many hours did you play each week?")
+                       subtitle: "Roughly how many hours did you practise each week?")
             VStack(spacing: 0) {
                 ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
                     let hours = blockHours[index]
@@ -146,7 +147,7 @@ struct CatchUpSheet: View {
         let perDay = CatchUp.minutesPerDay(totalHours: totalHours, days: gap.days)
         return VStack(spacing: 18) {
             stepHeader(title: Labels.weeksHavePassed(gap.weeks),
-                       subtitle: String(localized: "Since \(CatchUp.longDay(gap.anchor, calendar: calendar)). On average, how many hours a week did you play?"))
+                       subtitle: String(localized: "Since \(CatchUp.longDay(gap.anchor, calendar: calendar)). On average, how many hours a week did you practise?"))
             VStack(spacing: 8) {
                 Text("\(average)").lgNumber(.yearNumber)
                 Text("hours per week").lgText(.caption, color: LGColor.inkMuted)

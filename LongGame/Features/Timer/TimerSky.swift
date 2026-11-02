@@ -1,14 +1,15 @@
 import SwiftUI
 
-/// The timer's sky: navy that warms through violet to rose over each hour.
+/// The timer's sky: navy that warms through violet to plum over each hour. It stays dark enough for white text
+/// (4.5:1 contrast), as in the design file whose sky ends at #6E3D74.
 struct TimerSky: View {
     /// 0...1 through the hour.
     let warmth: Double
     let paused: Bool
 
     private static let top: [UInt32] = [0x16244A, 0x1F2A5A, 0x2C3466]
-    private static let mid: [UInt32] = [0x1F2A5A, 0x3A2F6B, 0x8C5A8E]
-    private static let bottom: [UInt32] = [0x2A2F63, 0x6E3D74, 0xC2678A]
+    private static let mid: [UInt32] = [0x1F2A5A, 0x3A2F6B, 0x5A3B72]
+    private static let bottom: [UInt32] = [0x2A2F63, 0x5E3A72, 0x7B4378]
 
     var body: some View {
         LinearGradient(stops: [

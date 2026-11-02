@@ -36,7 +36,7 @@ struct MilestoneCelebration: View {
                 }
 
                 VStack(spacing: 8) {
-                    Text(isMastery ? "10,000 hours" : "\(NumberFormatter.localizedString(from: NSNumber(value: hours), number: .decimal)) hours")
+                    Text(isMastery ? "10,000 hours" : "\(DurationFormat.grouped(hours)) hours")
                         .lgNumber(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1),
                                   color: isMastery ? .white : LGColor.ink)
                     Text(Milestones.message(hours: hours, craft: craftName))

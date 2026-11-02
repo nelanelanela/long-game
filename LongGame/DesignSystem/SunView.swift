@@ -24,6 +24,8 @@ struct SunView: View {
     var rayColor: Color = LGColor.sunRays
     /// Extra reach of all rays, used by the golden-hour burst (1 = normal).
     var raySpread: Double = 1
+    /// 0...1: a happy sun opening both eyes for a peek (Home, every 7 s). The mouth stays the same.
+    var eyesOpen: Double = 0
 
     var body: some View {
         GeometryReader { geo in
@@ -75,16 +77,16 @@ struct SunView: View {
     private var faceLayers: some View {
         ZStack {
             // closed, smiling eyes
-            EyeArc(x: 76, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 : 0)
-            EyeArc(x: 108, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 : 0)
+            EyeArc(x: 76, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 - eyesOpen : 0)
+            EyeArc(x: 108, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 - eyesOpen : 0)
             // relaxed, closed eyes
             EyeArc(x: 76, y: 98, bend: 7).stroke(ink, style: line).opacity(face == .focus || face == .wink ? 1 : 0)
             EyeArc(x: 108, y: 98, bend: 7).stroke(ink, style: line).opacity(face == .focus ? 1 : 0)
             // winking: right eye open
             OpenEye(cx: 116).opacity(face == .wink ? 1 : 0)
             // celebrating: both eyes open
-            OpenEye(cx: 84).opacity(face == .celebrate ? 1 : 0)
-            OpenEye(cx: 116).opacity(face == .celebrate ? 1 : 0)
+            OpenEye(cx: 84).opacity(face == .celebrate ? 1 : face == .happy ? eyesOpen : 0)
+            OpenEye(cx: 116).opacity(face == .celebrate ? 1 : face == .happy ? eyesOpen : 0)
             // sleepy: droopy lids
             DroopyEye(x: 76, direction: 1).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)
             DroopyEye(x: 124, direction: -1).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)

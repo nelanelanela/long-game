@@ -8,9 +8,21 @@ enum Milestones {
         all.filter { Double($0) <= total && !seen.contains($0) }
     }
 
+    /// The next milestone a running session will carry the total over, and when. Nil when the timer is paused,
+    /// nothing is left to celebrate, or the 12-hour auto-pause comes first.
+    static func nextCrossing(baseTotal: Double, state: TimerState, seen: [Int], now: Date) -> (hours: Int, date: Date)? {
+        guard !state.isPaused(at: now) else { return nil }
+        let elapsed = state.elapsed(at: now)
+        let current = baseTotal + elapsed / 3600
+        guard let next = all.first(where: { Double($0) > current && !seen.contains($0) }) else { return nil }
+        let seconds = (Double(next) - baseTotal) * 3600 - elapsed
+        guard seconds > 0, seconds <= TimerState.autoPauseAfter - elapsed else { return nil }
+        return (next, now.addingTimeInterval(seconds))
+    }
+
     static func message(hours: Int, craft: String) -> String {
         if hours >= 10_000 { return "10,000 hours. The sun has fully risen." }
-        let formatted = NumberFormatter.localizedString(from: NSNumber(value: hours), number: .decimal)
+        let formatted = DurationFormat.grouped(hours)
         return "\(formatted) hours of \(craft.lowercased()). Sunrise is coming."
     }
 }

@@ -81,12 +81,26 @@ enum ForecastEngine {
         return max(0, rate)
     }
 
-    static func simulate(_ scenario: Scenario, total: Double, pace: Double, trend: Double, extra: Double = 0) -> ScenarioResult {
+    /// The weekly rate for the month starting `m` months from now. While the year of pace lasts, the mid scenario
+    /// runs on the target instead of the pace (the part of a month that falls inside it, if it ends mid-month).
+    /// The low and high edges of the band never use the target.
+    static func monthlyRate(_ scenario: Scenario, month m: Int, pace: Double, trend: Double, extra: Double,
+                            target: ForecastTarget?) -> Double {
+        let years = Double(m) / 12
+        let normal = weeklyRate(scenario, years: years, pace: pace, trend: trend, extra: extra)
+        guard scenario == .mid, let target, Double(m) < target.monthsRemaining else { return normal }
+        let share = min(1, target.monthsRemaining - Double(m))
+        let planned = weeklyRate(.mid, years: years, pace: target.hoursPerWeek, trend: trend, extra: extra)
+        return share * planned + (1 - share) * normal
+    }
+
+    static func simulate(_ scenario: Scenario, total: Double, pace: Double, trend: Double, extra: Double = 0,
+                         target: ForecastTarget? = nil) -> ScenarioResult {
         var hours = total
         var points = [ForecastPoint(monthsFromNow: 0, hours: hours)]
         if total >= Totals.goalHours { return ScenarioResult(monthsToGoal: 0, points: points) }
         for m in 0..<horizonMonths {
-            let rate = weeklyRate(scenario, years: Double(m) / 12, pace: pace, trend: trend, extra: extra)
+            let rate = monthlyRate(scenario, month: m, pace: pace, trend: trend, extra: extra, target: target)
             let add = rate * 52 / 12
             if add > 0, hours + add >= Totals.goalHours {
                 let months = Double(m) + (Totals.goalHours - hours) / add
@@ -99,9 +113,10 @@ enum ForecastEngine {
         return ScenarioResult(monthsToGoal: nil, points: points)
     }
 
-    static func forecast(total: Double, pace: Double, trend: Double, extra: Double = 0) -> Forecast {
+    static func forecast(total: Double, pace: Double, trend: Double, extra: Double = 0,
+                         target: ForecastTarget? = nil) -> Forecast {
         Forecast(
-            mid: simulate(.mid, total: total, pace: pace, trend: trend, extra: extra),
+            mid: simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target),
             high: simulate(.high, total: total, pace: pace, trend: trend, extra: extra),
             low: simulate(.low, total: total, pace: pace, trend: trend, extra: extra)
         )
@@ -112,9 +127,10 @@ enum ForecastEngine {
     }
 
     /// Months the mid date moves earlier with `extra` h/week (nil if either never arrives).
-    static func monthsSooner(total: Double, pace: Double, trend: Double, extra: Double) -> Double? {
-        guard let base = simulate(.mid, total: total, pace: pace, trend: trend).monthsToGoal,
-              let with = simulate(.mid, total: total, pace: pace, trend: trend, extra: extra).monthsToGoal
+    static func monthsSooner(total: Double, pace: Double, trend: Double, extra: Double,
+                             target: ForecastTarget? = nil) -> Double? {
+        guard let base = simulate(.mid, total: total, pace: pace, trend: trend, target: target).monthsToGoal,
+              let with = simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target).monthsToGoal
         else { return nil }
         return base - with
     }
@@ -134,9 +150,6 @@ enum ForecastText {
         if forecast.high.monthsToGoal == nil {
             return "Not within \(ForecastEngine.horizonYears) years at your average pace"
         }
-        if forecast.low.monthsToGoal == nil {
-            return "Likely from \(year(forecast.high, now: now, calendar: calendar)), possibly later"
-        }
         return "Likely between \(year(forecast.high, now: now, calendar: calendar)) and \(year(forecast.low, now: now, calendar: calendar))"
     }
 
@@ -154,15 +167,25 @@ enum ForecastText {
         return String(calendar.component(.year, from: ForecastEngine.date(afterMonths: m, from: now)))
     }
 
-    /// "~2036" on Home.
-    static func homeMastery(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
-        result.monthsToGoal == nil ? "—" : "~" + year(result, now: now, calendar: calendar)
+    private static let shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    /// "~Nov 2035" at the end of the future-self track, or "after 2056" when it is more than 30 years away.
+    static func shortFinish(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
+        guard let m = result.monthsToGoal else { return year(result, now: now, calendar: calendar) }
+        let c = calendar.dateComponents([.year, .month], from: ForecastEngine.date(afterMonths: m, from: now))
+        return "~\(shortMonths[(c.month ?? 1) - 1]) \(c.year ?? 0)"
     }
 
-    static func whatIf(extra: Double, total: Double, pace: Double, trend: Double, now: Date, calendar: Calendar = .current) -> String {
+    /// "~2036" on Home, or "after 2056" when it is more than 30 years away.
+    static func homeMastery(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
+        result.monthsToGoal == nil ? year(result, now: now, calendar: calendar) : "~" + year(result, now: now, calendar: calendar)
+    }
+
+    static func whatIf(extra: Double, total: Double, pace: Double, trend: Double, target: ForecastTarget? = nil,
+                       now: Date, calendar: Calendar = .current) -> String {
         guard extra > 0 else { return "Based on your recent pace and how it has been growing." }
-        let with = ForecastEngine.simulate(.mid, total: total, pace: pace, trend: trend, extra: extra)
-        guard let sooner = ForecastEngine.monthsSooner(total: total, pace: pace, trend: trend, extra: extra) else {
+        let with = ForecastEngine.simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target)
+        guard let sooner = ForecastEngine.monthsSooner(total: total, pace: pace, trend: trend, extra: extra, target: target) else {
             return "Around " + headline(with, now: now, calendar: calendar) + "."
         }
         let months = Int(sooner.rounded())

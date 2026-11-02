@@ -5,6 +5,8 @@ import AuthenticationServices
 
 struct SettingsView: View {
     let craft: Craft
+    /// Closes Settings and History together, back to Home (the debug buttons need Home on screen).
+    var closeAll: (() -> Void)?
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
@@ -20,8 +22,9 @@ struct SettingsView: View {
     @State private var syncOn = CloudSync.isEnabled
     @Environment(AccountStore.self) private var account
 
-    init(craft: Craft) {
+    init(craft: Craft, closeAll: (() -> Void)? = nil) {
         self.craft = craft
+        self.closeAll = closeAll
         let id = craft.id
         _craftSessions = Query(filter: #Predicate<Session> { $0.craftId == id })
     }
@@ -199,7 +202,7 @@ struct SettingsView: View {
         if CloudSync.isAvailable {
             card {
                 VStack(alignment: .leading, spacing: 0) {
-                    Toggle("iCloud sync", isOn: Binding(get: { syncOn }, set: { syncOn = $0; CloudSync.isEnabled = $0 }))
+                    Toggle("iCloud sync", isOn: Binding(get: { syncOn }, set: { syncOn = $0; CloudSync.isEnabled = $0; settings?.syncEnabled = $0; save() }))
                         .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
                     Text(syncOn
                          ? "Your hours are kept in your private iCloud. Close and reopen Long Game to apply the change."
@@ -242,6 +245,7 @@ struct SettingsView: View {
 
     #if DEBUG
     @AppStorage("debug.pretendDays") private var pretendDays = 10
+    @State private var confirmResetOnboarding = false
 
     private var debugCard: some View {
         card {
@@ -252,9 +256,44 @@ struct SettingsView: View {
                 Divider().overlay(LGColor.divider)
                 Button("Show Welcome back on Home") {
                     DebugOptions.setPretendLastSessionDaysAgo(pretendDays)
-                    dismiss()
+                    (closeAll ?? { dismiss() })()
                 }
                 .lgText(.rowStrong).frame(minHeight: 54)
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Show Meet your future self again") {
+                        settings?.futureSelfShown = false
+                        try? context.save()
+                        (closeAll ?? { dismiss() })()
+                    }
+                    .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Back on Home the sheet opens by itself, as it does the first time after onboarding.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Year of pace ends in 10 days") { pretendYearOfPaceEnds(inDays: 10) }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Button("Year of pace ended yesterday") { pretendYearOfPaceEnds(inDays: -1) }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Reset onboarding") { confirmResetOnboarding = true }
+                        .lgText(.rowStrong, color: LGColor.danger).frame(minHeight: 54, alignment: .leading)
+                    Text("Deletes all data and starts again from Welcome, with the three intro pages.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                .confirmationDialog("Reset onboarding?", isPresented: $confirmResetOnboarding, titleVisibility: .visible) {
+                    Button("Delete everything and start over", role: .destructive, action: deleteAll)
+                } message: {
+                    Text("Debug only. Your crafts, estimates and sessions are removed from this iPhone.")
+                }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
                     Button("Jump total to just under a whole hour") { jumpTotalToJustUnderWholeHour() }
@@ -267,6 +306,17 @@ struct SettingsView: View {
         }
     }
 
+    private func pretendYearOfPaceEnds(inDays days: Int) {
+        guard let settings, settings.weeklyTargetHours > 0 else { return }
+        let calendar = Calendar.current
+        let ends = calendar.date(byAdding: .day, value: days, to: calendar.startOfDay(for: Date())) ?? Date()
+        settings.targetEndsAt = ends
+        settings.targetSetAt = calendar.date(byAdding: .month, value: -12, to: ends)
+        settings.targetPromptShownAt = nil
+        try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
     private func jumpTotalToJustUnderWholeHour() {
         let id = craft.id
         let estimates = (try? context.fetch(FetchDescriptor<YearEstimate>(predicate: #Predicate { $0.craftId == id }))) ?? []
@@ -277,7 +327,7 @@ struct SettingsView: View {
         context.insert(Session(craftId: id, start: SessionRules.manualStart(on: Date()), durationSec: seconds,
                                source: .manual, note: "Debug: total set to just under a whole hour"))
         try? context.save()
-        dismiss()
+        (closeAll ?? { dismiss() })()
     }
     #endif
 
@@ -348,6 +398,7 @@ struct SettingsView: View {
         try? context.delete(model: YearEstimate.self)
         try? context.delete(model: Craft.self)
         try? context.delete(model: AppSettings.self)
+        try? context.delete(model: TargetPeriod.self)
         try? context.save()
         UserDefaults.standard.removeObject(forKey: "notifications.asked")
     }

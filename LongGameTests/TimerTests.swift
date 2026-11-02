@@ -67,7 +67,7 @@ struct SunHourTests {
         #expect(h.litRays == 8)
         #expect(h.minutesIntoHour == 42)
         #expect(h.caption == "Next ray in 2:42")
-        #expect(h.accessibilityLabel.contains("8 of 12 rays lit: 42 minutes"))
+        #expect(h.accessibilityLabel.contains("8 of 12 rays lit, 42 minutes into this hour"))
     }
 
     @Test func raysLightEveryFiveMinutes() {

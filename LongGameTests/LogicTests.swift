@@ -292,17 +292,3 @@ struct ForecastTests {
         #expect((f.mid.points.last?.hours ?? 0) > 5000)
     }
 }
-
-struct SunriseSceneTests {
-    @Test func sunRisesAsTheTotalGrows() {
-        let tops = [0.0, 1_000, 5_000, 10_000].map { SunriseScene.sunTop(total: $0) }
-        #expect(tops == tops.sorted(by: >))
-        #expect(tops.first! > tops.last!)
-    }
-
-    @Test func sunStaysInsideTheSceneAtTheEnds() {
-        #expect(SunriseScene.sunTop(total: -5) == SunriseScene.sunTop(total: 0))
-        #expect(SunriseScene.sunTop(total: 20_000) == SunriseScene.sunTop(total: 10_000))
-        #expect(SunriseScene.sunTop(total: 10_000) >= 0)
-    }
-}

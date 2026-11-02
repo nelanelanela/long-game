@@ -84,6 +84,22 @@ final class AppSettings {
     var milestonesSeen: [Int] = []
     /// When Welcome back was last offered; it is asked at most once every 7 days.
     var lastCatchUpPromptAt: Date?
+    /// "Meet your future self" opens once on its own, the first time Home appears after onboarding.
+    var futureSelfShown: Bool = false
+    /// Tips unlock nothing; these only decide whether to say thank you and when to stop asking.
+    var lastTipAt: Date?
+    var tipCount: Int = 0
+    /// When the gentle "Support Long Game" button last appeared after a celebration.
+    var lastTipOfferAt: Date?
+    /// Your pace for the year: hours a week for the 12 months from `targetSetAt`. 0 means none chosen yet
+    /// (a game started before this existed); the earlier ones live on as `TargetPeriod` rows.
+    var weeklyTargetHours: Double = 0
+    var targetSetAt: Date?
+    var targetEndsAt: Date?
+    /// When the target screen last opened on its own as a sheet (a new year of pace, or the first one for an
+    /// older game), so it asks once and then only leaves the reminder in the target row.
+    var targetPromptShownAt: Date?
+    var lastHomeTabRaw: String = HomeTab.week.rawValue
 
     init() {}
 
@@ -91,4 +107,32 @@ final class AppSettings {
         get { WeekStart(rawValue: weekStartRaw) ?? .monday }
         set { weekStartRaw = newValue.rawValue }
     }
+
+    var lastHomeTab: HomeTab {
+        get { HomeTab(rawValue: lastHomeTabRaw) ?? .week }
+        set { lastHomeTabRaw = newValue.rawValue }
+    }
+
+    /// The current target as plain values for the Logic code; nil until one has been chosen.
+    var currentTarget: TargetRecord? {
+        guard weeklyTargetHours > 0, let start = targetSetAt, let end = targetEndsAt else { return nil }
+        return TargetRecord(hoursPerWeek: weeklyTargetHours, start: start, end: end)
+    }
+}
+
+/// A finished year of pace. The current one is kept on `AppSettings`; when a new one replaces it, it moves here,
+/// so past weeks are judged against the target that applied then.
+@Model
+final class TargetPeriod {
+    var hoursPerWeek: Double = 0
+    var start: Date = Date()
+    var end: Date = Date()
+
+    init(hoursPerWeek: Double, start: Date, end: Date) {
+        self.hoursPerWeek = hoursPerWeek
+        self.start = start
+        self.end = end
+    }
+
+    var record: TargetRecord { TargetRecord(hoursPerWeek: hoursPerWeek, start: start, end: end) }
 }

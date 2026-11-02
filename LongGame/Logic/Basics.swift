@@ -24,6 +24,11 @@ enum WeekStart: String, Codable, Sendable, CaseIterable {
     }
 }
 
+/// The two tabs on Home. Stored raw, so the app opens on the one used last.
+enum HomeTab: String, Codable, Sendable, CaseIterable {
+    case week, longGame
+}
+
 enum Totals {
     static let goalHours = 10_000.0
 

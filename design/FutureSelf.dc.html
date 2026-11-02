@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Meet your future self</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
+@keyframes fsRise{0%{transform:translateY(34px)}100%{transform:translateY(0)}}
+.fs-rise{animation:fsRise 1.6s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion: reduce){.fs-rise{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div aria-hidden="true" style="position: absolute; inset: 0; padding: 22px 24px; box-sizing: border-box">
+<span style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em">Piano</span>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(22,36,74,.3)"></div>
+<div role="dialog" aria-labelledby="fs-title" style="position: absolute; left: 8px; right: 8px; bottom: 8px; top: 64px; box-sizing: border-box; padding: 12px 24px 24px; background: #FFFFFF; border-radius: 32px; box-shadow: 0 -8px 40px rgba(22,36,74,.15); display: flex; flex-direction: column; align-items: center; overflow: hidden">
+<div aria-hidden="true" style="width: 36px; height: 5px; border-radius: 3px; background: #E4DFD6"></div>
+<div role="img" aria-label="The sun fully risen above the sea" style="position: relative; align-self: stretch; height: 190px; margin: 8px -24px 0; overflow: hidden; background: linear-gradient(180deg, #FFFFFF 0%, #FFF1DA 70%, #FFE9C7 100%)">
+<div class="fs-rise" style="position: absolute; inset: 0">
+<div aria-hidden="true" class="hm-glow" style="position: absolute; left: 50%; top: -20px; width: 240px; height: 240px; margin-left: -120px; border-radius: 120px; background: radial-gradient(circle, rgba(255,201,60,.35) 0%, rgba(255,201,60,0) 62%)"></div>
+<svg aria-hidden="true" width="150" height="150" viewBox="0 0 200 200" style="position: absolute; left: 50%; top: 6px; margin-left: -75px; overflow: visible">
+<g class="hm-breathe">
+<g class="hm-turn"><path d="M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3M100 34V18M133 42.8L146 20.3M157.2 67L171 59" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path></g>
+<circle cx="100" cy="100" r="56" fill="#FFC93C"></circle>
+<circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle>
+<circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle>
+<path d="M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path>
+<path class="hm-peek-hide" d="M76 98q8-9 16 0M108 98q8-9 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path>
+<g class="hm-peek-show"><circle cx="84" cy="95" r="6" fill="#16244A"></circle><circle cx="86" cy="93" r="2" fill="#FFFFFF"></circle><circle cx="116" cy="95" r="6" fill="#16244A"></circle><circle cx="118" cy="93" r="2" fill="#FFFFFF"></circle></g>
+</g>
+</svg>
+</div>
+<svg aria-hidden="true" width="374" height="64" viewBox="0 0 390 64" preserveAspectRatio="none" style="position: absolute; left: 0; bottom: 0; overflow: hidden">
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 64 L-40 64 Z" fill="#D3DEF4"></path></g>
+<g class="hm-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round" opacity=".9"></path></g>
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
+<rect class="hm-glint" x="176" y="22" width="38" height="3" rx="1.5" fill="#FFC93C"></rect>
+<rect class="hm-glint" x="164" y="36" width="22" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:.9s"></rect>
+<rect class="hm-glint" x="204" y="40" width="16" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:1.7s"></rect>
+<rect class="hm-glint" x="186" y="50" width="12" height="2.5" rx="1.25" fill="#FFC93C" style="animation-delay:2.2s"></rect>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 70%, rgb(255,255,255) 100%)"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 18px; text-align: center">
+<h2 id="fs-title" style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Meet your future self</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5E6782">Long Game is a projection of you into the future. Every hour you add brings that person a little closer.</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #5E6782">Dreaming of turning your passion into a career? 10,000 hours is where that starts to become realistic, whenever you begin. In a well-known study of musicians, what set the professionals apart wasn’t talent but the hours they had put in. And you’re not starting from zero: every hour you’ve already practised counts.</p>
+</div>
+<div style="align-self: stretch; margin-top: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="position: relative; height: 6px; border-radius: 3px; background: #EFEAE1"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 33%; border-radius: 3px; background: #16244A"></div><div style="position: absolute; left: 33%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 7px; background: #FFFFFF; border: 3px solid #16244A; box-sizing: border-box"></div><div style="position: absolute; right: -2px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 8px; background: #FFC93C"></div></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span><b style="font-weight: 600">Today</b> <span style="color: #5E6782">· 3,294 h</span></span><span><b style="font-weight: 600">~Nov 2035</b> <span style="color: #5E6782">· 10,000 h</span></span></div>
+</div>
+<p style="margin: 14px 0 0; font-size: 13px; line-height: 1.45; color: #8A93AB; text-align: center">Hours aren't a guarantee, but they're the part you control.</p>
+<div style="flex-grow: 1"></div>
+<a href="Home.dc.html" style="align-self: stretch; height: 56px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Keep playing</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

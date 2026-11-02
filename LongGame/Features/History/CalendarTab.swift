@@ -6,9 +6,16 @@ struct CalendarTab: View {
     let sessions: [Session]
     let weekStart: WeekStart
 
-    @State private var selected = Calendar.current.startOfDay(for: Date())
+    @State private var selected: Date
     @State private var editing: Session?
     @State private var explaining: StatInfo?
+
+    init(craft: Craft, sessions: [Session], weekStart: WeekStart, initialDay: Date? = nil) {
+        self.craft = craft
+        self.sessions = sessions
+        self.weekStart = weekStart
+        _selected = State(initialValue: Calendar.current.startOfDay(for: initialDay ?? Date()))
+    }
 
     private let cell: CGFloat = 14
     private let gap: CGFloat = 3
@@ -27,9 +34,11 @@ struct CalendarTab: View {
         }
         .sheet(item: $editing) { session in
             SessionFormView(craft: craft, sessions: sessions, editing: session)
+                .lgSheetCard()
         }
         .sheet(item: $explaining) { info in
             StatExplainer(info: info)
+                .lgSheetCard()
         }
     }
 
@@ -232,7 +241,7 @@ struct CalendarTab: View {
                 Text(label).lgText(.caption, color: LGColor.inkMuted)
             }
             .frame(maxWidth: .infinity, minHeight: 56)
-            .padding(.vertical, 12)
+            .padding(.vertical, 12).padding(.horizontal, 6)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

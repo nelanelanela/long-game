@@ -90,8 +90,13 @@ struct SunHour: Equatable, Sendable {
         "Next ray in \(DurationFormat.minutesSeconds(seconds: secondsToNextRay))"
     }
 
+    /// "8 of 12 rays lit, 42 minutes into this hour" ("1 minute" is pluralised by the String Catalog).
+    var rayAnnouncement: String {
+        "\(litRays) of 12 rays lit, " + String(localized: "\(minutesIntoHour) minutes") + " into this hour"
+    }
+
     var accessibilityLabel: String {
-        "The sun is focusing with you. \(litRays) of 12 rays lit: \(minutesIntoHour) minutes into this hour."
+        "The sun is focusing with you. " + rayAnnouncement + "."
     }
 }
 

@@ -21,7 +21,7 @@ struct TimerView: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 30)) { timeline in
             if let savedAt {
-                SavedScene(now: timeline.date, since: savedAt)
+                SavedScene(now: timeline.date, since: savedAt, reduceMotion: reduceMotion)
             } else if let state = store.state {
                 RunningScene(
                     now: timeline.date, state: state, craftName: craft.name, baseTotal: baseTotal, reduceMotion: reduceMotion,
@@ -40,6 +40,7 @@ struct TimerView: View {
         .sheet(isPresented: $showFinish) {
             if let state = store.state {
                 FinishSheet(elapsed: state.elapsed(at: Date()), onSave: save, onDiscard: discard)
+                    .lgSheetCard()
             }
         }
         .onChange(of: store.state == nil) { _, gone in
@@ -97,6 +98,8 @@ private struct RunningScene: View {
     let onToggle: () -> Void
     let onFinish: () -> Void
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     private static let motes: [(x: Double, y: Double, delay: Double, size: CGFloat)] = [
         (150, 330, 0, 6), (228, 340, 1.7, 4), (192, 350, 3.1, 6), (260, 300, 4.2, 4),
     ]
@@ -132,7 +135,12 @@ private struct RunningScene: View {
         }()
 
         GeometryReader { geo in
-            let centre = CGPoint(x: geo.size.width / 2, y: geo.size.height * 0.29)
+            // Wide windows put the sun on the left and the clock and buttons on the right.
+            let full = CGSize(width: geo.size.width + geo.safeAreaInsets.leading + geo.safeAreaInsets.trailing,
+                              height: geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom)
+            let wide = WindowShape.make(width: full.width, height: full.height, isRegularWidth: horizontalSizeClass == .regular).isWide
+            let centre = wide ? CGPoint(x: geo.size.width * 0.28, y: geo.size.height / 2)
+                              : CGPoint(x: geo.size.width / 2, y: geo.size.height * 0.29)
             ZStack {
                 TimerSky(warmth: warmth, paused: paused)
 
@@ -184,7 +192,12 @@ private struct RunningScene: View {
                     .accessibilityLabel(sun.accessibilityLabel)
                     .accessibilityAddTraits(.isImage)
 
-                controls(elapsed: elapsed, paused: paused, sun: sun, golden: golden)
+                if wide {
+                    wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden)
+                        .padding(.leading, geo.size.width * 0.5)
+                } else {
+                    controls(elapsed: elapsed, paused: paused, sun: sun, golden: golden)
+                }
             }
         }
         .sensoryFeedback(trigger: sun.litRays) { old, new in new > old ? .impact(weight: .light) : nil }
@@ -193,7 +206,7 @@ private struct RunningScene: View {
             new > old ? .impact(weight: .light) : nil
         }
         .onChange(of: sun.litRays) { _, rays in
-            AccessibilityNotification.Announcement("\(rays) of 12 rays lit, \(sun.minutesIntoHour) minutes into this hour").post()
+            AccessibilityNotification.Announcement(sun.rayAnnouncement).post()
             LiveActivityManager.sync(state, now: now)
         }
         .onChange(of: paused) { _, _ in LiveActivityManager.sync(state, now: now) }
@@ -218,21 +231,21 @@ private struct RunningScene: View {
                 Text(DurationFormat.totalHours(total))
                     .lgNumber(.timerTotal, color: LGColor.mote)
                 Text("of 10,000 hours · \(Totals.percent(total: total))%")
-                    .lgText(.row, color: .white.opacity(0.75))
+                    .lgText(.row, color: .white.opacity(0.8))
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Overall total \(Totals.wholeHours(total: total).formatted()) hours, \(Totals.percent(total: total)) percent of 10,000")
+            .accessibilityLabel("Overall total \(DurationFormat.grouped(Totals.wholeHours(total: total))) hours, \(Totals.percent(total: total)) percent of 10,000")
 
             Rectangle().fill(.white.opacity(0.25)).frame(width: 40, height: 1)
                 .accessibilityHidden(true)
 
             VStack(spacing: 8) {
-                Text("This session").lgText(.caption, color: .white.opacity(0.7))
+                Text("This session").lgText(.caption, color: .white.opacity(0.8))
                 Text(DurationFormat.clock(seconds: elapsed))
                     .lgNumber(.timerNumber, color: .white)
                     .accessibilityLabel("This session, " + Self.spoken(elapsed))
                 Text(paused ? "Paused" : sun.caption)
-                    .lgText(.row, color: .white.opacity(0.75))
+                    .lgText(.row, color: .white.opacity(0.8))
                     .multilineTextAlignment(.center)
                 beadRow(hours: sun.hoursCompleted, golden: golden)
             }
@@ -247,6 +260,41 @@ private struct RunningScene: View {
         .padding(.horizontal, 24)
         .padding(.top, 8)
         .padding(.bottom, 24)
+    }
+
+    /// The wide window's right side: clock and total on the left-aligned column, the buttons under them.
+    private func wideControls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?) -> some View {
+        let total = baseTotal + elapsed / 3600
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                LGIconButton(systemName: "chevron.down", label: "Minimise", tint: .white, action: onMinimise)
+                    .padding(.leading, -10)
+                Spacer()
+            }
+            .frame(height: 44)
+
+            Spacer(minLength: 0)
+
+            Text("\(craftName) · this session").lgText(.row, color: .white.opacity(0.8))
+            Text(DurationFormat.clock(seconds: elapsed))
+                .lgNumber(.timerNumberWide, color: .white)
+                .accessibilityLabel("This session, " + Self.spoken(elapsed))
+            Text("\(DurationFormat.totalHours(total)) of 10,000 h" + (paused ? " · Paused" : " · " + sun.caption))
+                .lgText(.rowStrong, color: LGColor.mote)
+                .accessibilityLabel("Overall total \(DurationFormat.grouped(Totals.wholeHours(total: total))) hours, \(Totals.percent(total: total)) percent of 10,000. \(paused ? "Paused" : sun.caption)")
+            beadRow(hours: sun.hoursCompleted, golden: golden)
+                .padding(.top, 4)
+
+            HStack(spacing: 10) {
+                Button(paused ? "Resume" : "Pause", action: onToggle).buttonStyle(.lg(.translucent))
+                Button("Finish", action: onFinish).buttonStyle(.lg(.light))
+            }
+            .padding(.top, 18)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.trailing, 36)
+        .padding(.vertical, 8)
     }
 
     /// A gold bead for every full hour; the newest one drops in at golden hour.
@@ -327,17 +375,21 @@ private struct SparkleRing: View {
 private struct SavedScene: View {
     let now: Date
     let since: Date
+    let reduceMotion: Bool
 
     var body: some View {
         let p = min(1, max(0, now.timeIntervalSince(since) / 1.2))
+        // Reduce Motion: no burst and no jump, the sun just smiles and "Saved" fades in.
+        let motion = reduceMotion ? 0.0 : 1.0
         GeometryReader { geo in
             ZStack {
                 TimerSky(warmth: 1, paused: false)
                 SaveBurst(progress: p)
+                    .opacity(motion)
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
-                SunView(face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * sin(p * .pi))
+                SunView(face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * motion * sin(p * .pi))
                     .frame(width: 220, height: 220)
-                    .offset(y: -sin(p * .pi) * 36)
+                    .offset(y: -sin(p * .pi) * 36 * motion)
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
                 VStack {
                     Spacer()

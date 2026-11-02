@@ -82,7 +82,7 @@ struct ArchivedCraftDetail: View {
                 Text(craft.name).lgText(.screenTitle).accessibilityAddTraits(.isHeader)
 
                 VStack(spacing: 4) {
-                    Text(Totals.wholeHours(total: total).formatted()).lgNumber(.bigNumber)
+                    Text(DurationFormat.grouped(Totals.wholeHours(total: total))).lgNumber(.bigNumber)
                     Text("hours · \(Labels.sessions(sessions.count))")
                         .lgText(.row, color: LGColor.inkMuted)
                 }

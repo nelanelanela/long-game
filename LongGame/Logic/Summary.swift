@@ -12,13 +12,15 @@ struct ProgressSummary: Sendable {
     var yearlyRates: [YearRate]
     var forecast: Forecast
     var hasEnoughData: Bool
+    /// Set while the mid forecast runs on the weekly target (the recent pace is within 25% of it).
+    var forecastTarget: ForecastTarget?
 
     var progress: Double { Totals.progress(total: total) }
     var percent: Int { Totals.percent(total: total) }
     var wholeHours: Int { Totals.wholeHours(total: total) }
 
     static func make(estimates: [YearRate], sessions: [SessionRecord], onboardingDate: Date,
-                     weekStart: WeekStart, now: Date, extra: Double = 0,
+                     weekStart: WeekStart, now: Date, extra: Double = 0, target: TargetRecord? = nil,
                      calendar: Calendar = .current) -> ProgressSummary {
         let baseline = Baseline.hours(estimates: estimates, onboardingDate: onboardingDate, calendar: calendar)
         let logged = Totals.loggedHours(sessions)
@@ -31,13 +33,23 @@ struct ProgressSummary: Sendable {
         // a falling trend is not extrapolated into the future.
         let forecastPace = ForecastEngine.forecastPace(total: total, estimates: estimates, sessions: sessions,
                                                        onboardingDate: onboardingDate, now: now, calendar: calendar)
+        // For the 12 months of the weekly target the mid line runs on it, if the recent pace is close to it.
+        let window = WeeklyTarget.forecastWindow(target: target, pace: pace, now: now)
         return ProgressSummary(
             baseline: baseline, logged: logged, total: total,
             thisWeek: WeekMath.thisWeekHours(sessions, now: now, weekStart: weekStart, calendar: calendar),
             pace: pace, forecastPace: forecastPace, trend: trend, yearlyRates: yearly,
-            forecast: ForecastEngine.forecast(total: total, pace: forecastPace, trend: max(0, trend), extra: extra),
-            hasEnoughData: hasTwoWeeksOfData(sessions, now: now)
+            forecast: ForecastEngine.forecast(total: total, pace: forecastPace, trend: max(0, trend), extra: extra, target: window),
+            hasEnoughData: hasTwoWeeksOfData(sessions, now: now),
+            forecastTarget: window
         )
+    }
+
+    /// The mid finish if the next 12 months ran on this weekly target, whatever the recent pace is: the
+    /// "In a year" line of the target screen shows what a target would do, before it is chosen.
+    func finish(ifTarget hours: Double, months: Double = 12) -> ScenarioResult {
+        ForecastEngine.simulate(.mid, total: total, pace: forecastPace, trend: max(0, trend),
+                                target: ForecastTarget(hoursPerWeek: hours, monthsRemaining: months))
     }
 
     /// "Forecast improves as you log more" shows until there are 2 weeks of logged data.

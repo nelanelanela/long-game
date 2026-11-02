@@ -134,6 +134,47 @@ struct LGStepBar: View {
     }
 }
 
+// MARK: Segmented control
+
+/// Two or more segments on a warm track with a white pill under the chosen one: Home's This week | The long game.
+struct LGSegmentedControl<Item: Hashable>: View {
+    let items: [Item]
+    let selection: Item
+    /// What VoiceOver calls the group.
+    let label: LocalizedStringKey
+    let title: (Item) -> LocalizedStringKey
+    let onSelect: (Item) -> Void
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(items, id: \.self) { item in
+                let selected = item == selection
+                Button { onSelect(item) } label: {
+                    Text(title(item))
+                        .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .frame(maxWidth: .infinity, minHeight: 36)
+                        .background {
+                            if selected {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(.white)
+                                    .shadow(color: LGColor.ink.opacity(0.1), radius: 1.5, y: 1)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(selected ? [.isSelected] : [])
+            }
+        }
+        .padding(3)
+        .background(LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(label)
+    }
+}
+
 // MARK: Hold-to-repeat step button
 
 /// A round − or + button. One tap steps once; keeping a finger on it keeps stepping, faster the longer it is held,

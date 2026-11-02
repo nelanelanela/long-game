@@ -74,7 +74,7 @@ struct EstimatesEditorView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text("Total with your sessions").lgText(.row, color: LGColor.inkMuted)
                 Spacer()
-                Text("\(Totals.wholeHours(total: total).formatted()) h")
+                Text("\(DurationFormat.grouped(Totals.wholeHours(total: total))) h")
                     .lgNumber(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.5))
             }
             .accessibilityElement(children: .combine)

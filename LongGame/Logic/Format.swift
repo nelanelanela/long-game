@@ -19,6 +19,11 @@ enum DurationFormat {
         return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%02d:%02d", m, s)
     }
 
+    /// "3,294": whole numbers with commas, the same on every device (the app's copy is English).
+    static func grouped(_ n: Int) -> String {
+        n.formatted(.number.grouping(.automatic).locale(Locale(identifier: "en_GB")))
+    }
+
     /// "3,294.7": the overall total with one decimal, for the timer.
     static func totalHours(_ hours: Double) -> String {
         max(0, hours).formatted(.number.precision(.fractionLength(1)).locale(Locale(identifier: "en_GB")))

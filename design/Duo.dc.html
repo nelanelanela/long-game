@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iPhone Duo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
+</style>
+</helmet>
+<div style="width: 2440px; height: 860px; box-sizing: border-box; padding: 48px 56px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 30px">
+<div style="display: flex; flex-direction: column; gap: 6px"><h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">iPhone Duo · one layout that unfolds</h1><p style="margin: 0; font-size: 15px; color: #5E6782; max-width: 1400px">Closed, Long Game uses the compact phone layout. Opened, the wide inner display splits into two panes: the sun gauge on the left, the numbers on the right. In Split View it falls back to the compact layout. Sizes here are approximate (outer about 405 × 567 pt, inner about 802 × 573 pt); the build adapts to the real width, not to the device.</p></div>
+<div style="display: flex; gap: 48px; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start">
+<div style="width: 425px; height: 587px; border-radius: 44px; background: #1C1C1E; padding: 10px; box-sizing: border-box"><div style="width: 405px; height: 567px; border-radius: 36px; overflow: hidden; background: #FAF8F4; position: relative"><div style="position: absolute; inset: 0; padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 8px; box-sizing: border-box; color: #16244A; font-family: Inter, sans-serif">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 36px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Piano</span><span style="display: flex; gap: 18px; color: #16244A"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></div><div style="display: grid; grid-template-columns: 1fr 1fr; padding: 3px; background: #EFEBE4; border-radius: 11px"><span style="height: 30px; border-radius: 9px; background: #FFFFFF; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,.1)">This week</span><span style="height: 30px; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center">The long game</span></div>
+<div style="margin: 0 -20px"><div role="img" aria-label="This week sun gauge" style="position: relative; width: 405px; height: 212px; overflow: hidden; flex-shrink: 0">
+<div aria-hidden="true" class="hm-glow" style="position: absolute; left: 139px; top: 10px; width: 192px; height: 192px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,60,.28) 0%, rgba(255,201,60,0) 62%)"></div>
+<div aria-hidden="true" style="position: absolute; left: 46px; top: 62px; height: 88px; border-left: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 4px; width: 34px; top: 142px; text-align: right; font-size: 11px; color: #8A93AB">0 h</div><div style="position: absolute; left: 42px; width: 8px; top: 150px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 4px; width: 34px; top: 101px; text-align: right; font-size: 11px; color: #8A93AB">6 h</div><div style="position: absolute; left: 42px; width: 8px; top: 109px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 4px; width: 34px; top: 60px; text-align: right; font-size: 11px; color: #8A93AB">12 h</div><div style="position: absolute; left: 42px; width: 8px; top: 68px; border-top: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 50px; width: 142px; top: 106px; border-top: 1.5px dashed #E0B04A"></div>
+<svg aria-hidden="true" width="120" height="120" viewBox="0 0 200 200" style="position: absolute; left: 175px; top: 46px; overflow: visible"><g class="hm-breathe"><g class="hm-turn"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path></g><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><path class="hm-peek-hide" d="M76 98q8-9 16 0M108 98q8-9 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><g class="hm-peek-show"><circle cx="84" cy="95" r="6" fill="#16244A"></circle><circle cx="86" cy="93" r="2" fill="#FFFFFF"></circle><circle cx="116" cy="95" r="6" fill="#16244A"></circle><circle cx="118" cy="93" r="2" fill="#FFFFFF"></circle></g></g></svg>
+<svg aria-hidden="true" width="405" height="64" viewBox="0 0 390 64" preserveAspectRatio="none" style="position: absolute; left: 0; top: 148px; overflow: hidden">
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 64 L-40 64 Z" fill="#D3DEF4"></path></g>
+<g class="hm-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round"></path></g>
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
+<rect class="hm-glint" x="196" y="22" width="38" height="3" rx="1.5" fill="#FFC93C"></rect><rect class="hm-glint" x="184" y="36" width="22" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:.9s"></rect><rect class="hm-glint" x="224" y="40" width="16" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:1.7s"></rect>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 178px; height: 34px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, rgba(250,248,244,.85) 70%, rgb(250,248,244) 100%)"></div>
+<div style="position: absolute; left: 56px; top: 94px; padding: 3px 8px; border-radius: 10px; background: #16244A; color: #FFFFFF; font-size: 12px; font-weight: 600; white-space: nowrap">6.5 h</div>
+</div></div>
+<div style="display: flex; align-items: baseline; justify-content: center; gap: 8px"><span style="font-size: 40px; font-weight: 700; letter-spacing: -0.04em">6.5 h</span><span style="font-size: 14px; color: #5E6782">of 12 h · 54%</span></div>
+<div style="text-align: center; font-size: 13px; color: #5E6782">5.5 h to go · 3 days left</div>
+<div style="flex: 1"></div>
+<div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center"><a style="height: 50px; border-radius: 15px; background: #16244A; color: #FFFFFF; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Start session</a><span style="font-size: 14px; font-weight: 600">Add past hours</span></div>
+</div></div></div>
+<span style="font-size: 16px; font-weight: 700">Closed · outer display</span>
+<p style="margin: 0; max-width: 425px; font-size: 13px; line-height: 1.5; color: #5E6782">Compact layout, shorter than an iPhone: smaller hero, the number and target on one line, buttons side by side.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start">
+<div style="width: 822px; height: 593px; border-radius: 44px; background: #1C1C1E; padding: 10px; box-sizing: border-box"><div style="width: 802px; height: 573px; border-radius: 36px; overflow: hidden; background: #FAF8F4; position: relative"><div style="position: absolute; inset: 0; display: flex; color: #16244A; font-family: Inter, sans-serif">
+<div aria-hidden="true" style="position: absolute; left: 10px; top: 50%; margin-top: -60px; width: 30px; height: 120px; border-radius: 15px; background: #000"></div>
+<div style="width: 420px; padding: 18px 0 0 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+<div style="padding-right: 12px"><div style="display: flex; align-items: center; justify-content: space-between; height: 36px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Piano</span><span style="display: flex; gap: 18px; color: #16244A"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span></div></div>
+<div style="padding-right: 12px"><div style="display: grid; grid-template-columns: 1fr 1fr; padding: 3px; background: #EFEBE4; border-radius: 11px"><span style="height: 30px; border-radius: 9px; background: #FFFFFF; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,.1)">This week</span><span style="height: 30px; font-size: 13px; font-weight: 500; display: flex; align-items: center; justify-content: center">The long game</span></div></div>
+<div style="margin-left: -48px"><div role="img" aria-label="This week sun gauge" style="position: relative; width: 420px; height: 470px; overflow: hidden; flex-shrink: 0">
+<div aria-hidden="true" class="hm-glow" style="position: absolute; left: 124px; top: 112px; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,60,.28) 0%, rgba(255,201,60,0) 62%)"></div>
+<div aria-hidden="true" style="position: absolute; left: 90px; top: 77px; height: 331px; border-left: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 48px; width: 34px; top: 400px; text-align: right; font-size: 11px; color: #8A93AB">0 h</div><div style="position: absolute; left: 86px; width: 8px; top: 408px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 48px; width: 34px; top: 238px; text-align: right; font-size: 11px; color: #8A93AB">6 h</div><div style="position: absolute; left: 86px; width: 8px; top: 246px; border-top: 1.5px solid #C9C3B8"></div><div style="position: absolute; left: 48px; width: 34px; top: 75px; text-align: right; font-size: 11px; color: #8A93AB">12 h</div><div style="position: absolute; left: 86px; width: 8px; top: 83px; border-top: 1.5px solid #C9C3B8"></div>
+<div style="position: absolute; left: 94px; width: 96px; top: 232px; border-top: 1.5px dashed #E0B04A"></div>
+<svg aria-hidden="true" width="150" height="150" viewBox="0 0 200 200" style="position: absolute; left: 169px; top: 157px; overflow: visible"><g class="hm-breathe"><g class="hm-turn"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path></g><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><path class="hm-peek-hide" d="M76 98q8-9 16 0M108 98q8-9 16 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path><g class="hm-peek-show"><circle cx="84" cy="95" r="6" fill="#16244A"></circle><circle cx="86" cy="93" r="2" fill="#FFFFFF"></circle><circle cx="116" cy="95" r="6" fill="#16244A"></circle><circle cx="118" cy="93" r="2" fill="#FFFFFF"></circle></g></g></svg>
+<svg aria-hidden="true" width="420" height="64" viewBox="0 0 390 64" preserveAspectRatio="none" style="position: absolute; left: 0; top: 406px; overflow: hidden">
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 64 L-40 64 Z" fill="#D3DEF4"></path></g>
+<g class="hm-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round"></path></g>
+<g class="hm-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
+<rect class="hm-glint" x="196" y="22" width="38" height="3" rx="1.5" fill="#FFC93C"></rect><rect class="hm-glint" x="184" y="36" width="22" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:.9s"></rect><rect class="hm-glint" x="224" y="40" width="16" height="3" rx="1.5" fill="#FFC93C" style="animation-delay:1.7s"></rect>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 436px; height: 34px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, rgba(250,248,244,.85) 70%, rgb(250,248,244) 100%)"></div>
+<div style="position: absolute; left: 100px; top: 220px; padding: 3px 8px; border-radius: 10px; background: #16244A; color: #FFFFFF; font-size: 12px; font-weight: 600; white-space: nowrap">6.5 h</div>
+</div></div>
+</div>
+<div style="flex: 1; padding: 74px 32px 22px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<div><div style="font-size: 56px; font-weight: 700; letter-spacing: -0.045em; line-height: 1">6.5 h</div><div style="font-size: 15px; color: #5E6782; margin-top: 4px">of 12 h this week · 54%</div></div>
+<div style="display: flex; padding: 10px 0; border-top: 1px solid #ECE7DE; border-bottom: 1px solid #ECE7DE"><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 28px; border-radius: 4px; background: #FF9A3C"></div></div><span style="font-size: 11px; color: #8A93AB">M</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 22px; border-radius: 4px; background: #FFC53D"></div></div><span style="font-size: 11px; color: #8A93AB">T</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 4px; border-radius: 4px; background: #D3DCF2"></div></div><span style="font-size: 11px; color: #8A93AB">W</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 39px; border-radius: 4px; background: #EE6420"></div></div><span style="font-size: 11px; color: #8A93AB">T</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 4px; border-radius: 4px; background: #EFEAE1"></div></div><span style="font-size: 11px; color: #8A93AB">F</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 4px; border-radius: 4px; background: #EFEAE1"></div></div><span style="font-size: 11px; color: #8A93AB">S</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px"><div style="height: 34px; display: flex; align-items: flex-end"><div style="width: 18px; height: 4px; border-radius: 4px; background: #EFEAE1"></div></div><span style="font-size: 11px; color: #8A93AB">S</span></div></div>
+<div><div style="font-size: 15px; font-weight: 600">5.5 h to go · 3 days left</div><div style="font-size: 13px; color: #5E6782">Your pace for the year: 12 h a week, until 2 Nov 2027</div></div>
+<div style="display: grid; grid-template-columns: repeat(3,1fr); padding: 10px 0; border-top: 1px solid #ECE7DE"><div><div style="font-size: 17px; font-weight: 600">3,294 h</div><div style="font-size: 12px; color: #5E6782">The long game</div></div><div><div style="font-size: 17px; font-weight: 600">12 h/wk</div><div style="font-size: 12px; color: #5E6782">Pace</div></div><div><div style="font-size: 17px; font-weight: 600">~2036</div><div style="font-size: 12px; color: #5E6782">Finish line</div></div></div>
+<div style="flex: 1"></div>
+<div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center"><a style="height: 50px; border-radius: 15px; background: #16244A; color: #FFFFFF; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Start session</a><span style="font-size: 14px; font-weight: 600">Add past hours</span></div>
+</div>
+</div></div></div>
+<span style="font-size: 16px; font-weight: 700">Open · This week</span>
+<p style="margin: 0; max-width: 822px; font-size: 13px; line-height: 1.5; color: #5E6782">Two panes. Left: tabs and a tall sun gauge. Right: the number, day bars, target row, long-game stats and the buttons. Content keeps clear of the vertical Dynamic Island on the side.</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start">
+<div style="width: 822px; height: 593px; border-radius: 44px; background: #1C1C1E; padding: 10px; box-sizing: border-box"><div style="width: 802px; height: 573px; border-radius: 36px; overflow: hidden; background: #FAF8F4; position: relative"><div style="position: absolute; inset: 0; background: linear-gradient(180deg,#16244A 0%,#1F2A5A 45%,#3A2F6B 80%,#6E3D74 100%); color: #FFFFFF; font-family: Inter, sans-serif; display: flex; align-items: center">
+<div aria-hidden="true" style="position: absolute; left: 10px; top: 50%; margin-top: -60px; width: 30px; height: 120px; border-radius: 15px; background: #000"></div>
+<div style="width: 400px; display: flex; justify-content: center; position: relative"><div aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,60,.32) 0%, rgba(255,201,60,0) 65%)"></div><div style="position: relative"><svg aria-hidden="true" width="220" height="220" viewBox="0 0 200 200"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7" stroke="#FFD15C" stroke-width="9" stroke-linecap="round"></path><path d="M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="rgba(255,209,92,.22)" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8 7 16 0M108 98q8 7 16 0M92 116q8 6 16 0" fill="none" stroke="#16244A" stroke-width="5" stroke-linecap="round"></path></svg></div></div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 36px">
+<span style="font-size: 14px; color: rgba(255,255,255,.7)">Piano · this session</span>
+<span style="font-size: 88px; font-weight: 300; letter-spacing: -0.04em; line-height: 1">42:18</span>
+<span style="font-size: 15px; color: #FFE08A; font-weight: 600">3,294.7 of 10,000 h · next ray in 2:42</span>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px"><span style="height: 52px; border-radius: 15px; background: rgba(255,255,255,.12); font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Pause</span><span style="height: 52px; border-radius: 15px; background: #FFFFFF; color: #16244A; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center">Finish</span></div>
+</div>
+</div></div></div>
+<span style="font-size: 16px; font-weight: 700">Open · Timer</span>
+<p style="margin: 0; max-width: 822px; font-size: 13px; line-height: 1.5; color: #5E6782">Sun on the left, clock and buttons on the right. Folding or unfolding mid-session keeps the timer running and moves straight to the matching layout.</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2440,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

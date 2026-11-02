@@ -36,9 +36,25 @@ enum LGColor {
     static let forecastBand = Color(hex: 0xFF9A3C)
     static let currentBar = Color(hex: 0xFFB347)
 
-    // Home sunrise
-    static let seaLine = Color(hex: 0xC9D3EC)
+    // Sunrise hero (Home, intro pages, future-self sheet). The sea is fully opaque: nothing shows through it.
+    static let seaFill = Color(hex: 0xD3DEF4)
+    /// #B9C7E8 at 90% over the sea fill, pre-mixed so the pale wave needs no transparency.
+    static let seaWave = Color(hex: 0xBCC9E9)
     static let hairline = Color(hex: 0xECE7DE)
+    /// The sun gauge's scale line and ticks.
+    static let gaugeLine = Color(hex: 0xC9C3B8)
+    /// Scale labels and day letters (#8A93AB in the design, darkened to 4.5:1 contrast on the background).
+    static let gaugeLabel = Color(hex: 0x68718C)
+    /// "Finish line · 10,000 hours" on the first intro page (#A0712E in the design, darkened to 4.5:1 contrast).
+    static let finishLabel = Color(hex: 0x8A5E1E)
+    static let finishDash = Color(hex: 0xE0B04A)
+    static let track = Color(hex: 0xEFEAE1)
+    static let introDot = Color(hex: 0xDDD6CA)
+    static let futureSky = Gradient(stops: [
+        .init(color: .white, location: 0),
+        .init(color: Color(hex: 0xFFF1DA), location: 0.7),
+        .init(color: Color(hex: 0xFFE9C7), location: 1),
+    ])
 
     // Welcome sunrise sky
     static let welcomeSky = Gradient(stops: [

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How the game works 3</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+@keyframes inBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes inTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes inWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes inWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+.in-breathe{transform-origin:100px 100px;transform-box:view-box;animation:inBreathe 4s ease-in-out infinite}
+.in-turn{transform-origin:100px 100px;transform-box:view-box;animation:inTurn 90s linear infinite}
+.in-wave-r{animation:inWaveR 3.2s linear infinite}
+.in-wave-l{animation:inWaveL 5s linear infinite}
+@media (prefers-reduced-motion: reduce){.in-breathe,.in-turn,.in-wave-r,.in-wave-l{animation:none}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 32px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
+<a href="Intro2.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
+<a href="Main.dc.html" style="font-size: 15px; font-weight: 500; color: #5E6782; text-decoration: none">Skip</a>
+</div>
+<div role="img" aria-label="Illustration" style="position: relative; height: 300px; margin: 12px -24px 0; overflow: hidden">
+<svg aria-hidden="true" width="170" height="170" viewBox="0 0 200 200" style="position: absolute; left: 110px; top: 96px; overflow: visible"><g class="in-breathe"><g class="in-turn"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path><path d="M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#F1E4C8" stroke-width="9" stroke-linecap="round"></path></g><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></g></svg>
+<svg aria-hidden="true" width="390" height="68" viewBox="0 0 390 68" style="position: absolute; left: 0; top: 232px; overflow: hidden">
+<g class="in-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 68 L-40 68 Z" fill="#D3DEF4"></path></g>
+<g class="in-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round"></path></g>
+<g class="in-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 266px; height: 34px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, rgba(250,248,244,.85) 70%, #FAF8F4 100%)"></div>
+<div style="position: absolute; top: 58px; left: 262px; padding: 8px 14px; border-radius: 20px; background: #16244A; color: #FFFFFF; font-size: 14px; font-weight: 600; white-space: nowrap">+1 h today</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 28px">
+<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">Play it every day</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5E6782">Start the sun timer when you practise, or add hours afterwards. Every hour lifts your sun a little higher, and Long Game shows you when you’ll cross the finish line.</p>
+</div>
+<div style="flex-grow: 1"></div>
+<div aria-label="Page 3 of 3" role="img" style="display: flex; gap: 6px; justify-content: center; margin-bottom: 20px"><span style="width: 7px; height: 7px; border-radius: 4px; background: #DDD6CA"></span><span style="width: 7px; height: 7px; border-radius: 4px; background: #DDD6CA"></span><span style="width: 22px; height: 7px; border-radius: 4px; background: #16244A"></span></div>
+<a href="Main.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Choose your game</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

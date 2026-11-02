@@ -22,7 +22,7 @@ Natalia is a visual artist, not a full-time iOS developer. Explain decisions in 
 LongGame/
   App/            LongGameApp.swift, root navigation
   Models/         Craft, YearEstimate, Session, Settings (SwiftData)
-  Logic/          Pure, testable: totals, pace, streaks, calendar levels, forecast
+  Logic/          Pure, testable: totals, pace, rhythm, calendar levels, forecast
   Features/       Onboarding/, Home/, Timer/, History/ (Calendar, Growth), AddHours/, OneCraft/, Settings/
   DesignSystem/   Colors, Typography, Card, Buttons, SunView (all mascot states)
   LiveActivity/   Widget extension for the timer
@@ -31,7 +31,7 @@ LongGameTests/    Swift Testing tests for everything in Logic/
 
 ## Rules
 
-- Never store derived numbers (totals, streaks, forecast); compute them in `Logic/` from stored entities.
+- Never store derived numbers (totals, rhythm, forecast); compute them in `Logic/` from stored entities.
 - Exactly one active craft. Replacing archives the old one.
 - Timer state = timestamps (startedAt, pausedAt, accumulated pause), never an in-memory counter. Drive the timer UI from `TimelineView`.
 - Design tokens live in `DesignSystem/`; no hard-coded colours in feature views. Values are in the Visual system section of the spec.
@@ -43,5 +43,5 @@ LongGameTests/    Swift Testing tests for everything in Logic/
 
 - Work in the phases in `KICKOFF_PROMPT.md`; finish, build and test each phase before the next.
 - Build: `xcodebuild -scheme LongGame -destination 'platform=iOS Simulator,name=iPhone 16' build`
-- Test: same with `test`. Every function in `Logic/` gets unit tests, especially the forecast and streaks.
+- Test: same with `test`. Every function in `Logic/` gets unit tests, especially the forecast and Rhythm.
 - Commit after each working step with a clear message.

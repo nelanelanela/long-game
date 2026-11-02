@@ -6,13 +6,15 @@ struct GrowthTab: View {
     let sessions: [Session]
     let estimates: [YearEstimate]
     let weekStart: WeekStart
+    /// The weekly target, so the finish line matches Home (the mid line runs on it for its 12 months).
+    var target: TargetRecord?
 
     /// "What if I practise more?" — never saved.
     @State private var extra = 0.0
 
     private func summary(now: Date, extra: Double) -> ProgressSummary {
         ProgressSummary.make(estimates: estimates.map(\.rate), sessions: sessions.map(\.record),
-                             onboardingDate: craft.createdAt, weekStart: weekStart, now: now, extra: extra)
+                             onboardingDate: craft.createdAt, weekStart: weekStart, now: now, extra: extra, target: target)
     }
 
     var body: some View {
@@ -131,7 +133,8 @@ struct GrowthTab: View {
                 .tint(LGColor.ink)
                 .accessibilityLabel("Extra hours per week")
                 .accessibilityValue("\(Int(extra))")
-            Text(ForecastText.whatIf(extra: extra, total: s.total, pace: s.forecastPace, trend: max(0, s.trend), now: now))
+            Text(ForecastText.whatIf(extra: extra, total: s.total, pace: s.forecastPace, trend: max(0, s.trend),
+                                     target: s.forecastTarget, now: now))
                 .lgText(.caption, color: LGColor.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }

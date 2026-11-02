@@ -8,15 +8,19 @@ private enum HistoryTab: String, CaseIterable {
 
 struct HistoryView: View {
     let craft: Craft
+    /// The day the calendar opens on (a tapped day bar on Home); today when nil.
+    var day: Date?
 
     @Environment(\.dismiss) private var dismiss
     @Query private var sessions: [Session]
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
-    @State private var tab: HistoryTab = .calendar
+    @SceneStorage("history.tab") private var tab: HistoryTab = .calendar
+    @State private var showSettings = false
 
-    init(craft: Craft) {
+    init(craft: Craft, day: Date? = nil) {
         self.craft = craft
+        self.day = day
         let id = craft.id
         _sessions = Query(filter: #Predicate<Session> { $0.craftId == id }, sort: \Session.start, order: .reverse)
         _estimates = Query(filter: #Predicate<YearEstimate> { $0.craftId == id })
@@ -25,33 +29,70 @@ struct HistoryView: View {
     private var weekStart: WeekStart { settingsRows.first?.weekStart ?? .localeDefault }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack {
-                    LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                        .padding(.leading, -10)
-                    Spacer()
+        AdaptiveLayout { window in
+            let wide = window.shape.isWide
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    HStack {
+                        LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
+                            .padding(.leading, -10)
+                        Spacer()
+                        LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
+                            .padding(.trailing, -10)
+                    }
+                    .frame(height: 44)
+
+                    Text("History").lgText(.screenTitle)
+                        .padding(.top, -6)
+                        .accessibilityAddTraits(.isHeader)
+
+                    if wide {
+                        // Calendar and Growth side by side instead of tabs.
+                        HStack(alignment: .top, spacing: 28) {
+                            column("Calendar") { calendar }
+                            column("Growth") { growth }
+                        }
+                    } else {
+                        picker
+                        switch tab {
+                        case .calendar: calendar
+                        case .growth: growth
+                        }
+                    }
                 }
-                .frame(height: 44)
-
-                Text("History").lgText(.screenTitle)
-                    .padding(.top, -6)
-                    .accessibilityAddTraits(.isHeader)
-
-                picker
-
-                switch tab {
-                case .calendar:
-                    CalendarTab(craft: craft, sessions: sessions, weekStart: weekStart)
-                case .growth:
-                    GrowthTab(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart)
-                }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
+                .lgReadableColumn(wide ? .infinity : 560)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 32)
+            .animation(.easeInOut(duration: 0.3), value: wide)
         }
         .lgScreen()
         .toolbar(.hidden, for: .navigationBar)
+        // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
+        // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.
+        .fullScreenCover(isPresented: $showSettings) {
+            NavigationStack {
+                SettingsView(craft: craft, closeAll: { showSettings = false; dismiss() })
+            }
+        }
+    }
+
+    private var calendar: some View {
+        CalendarTab(craft: craft, sessions: sessions, weekStart: weekStart, initialDay: day)
+    }
+
+    private var growth: some View {
+        GrowthTab(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart,
+                  target: settingsRows.first?.currentTarget)
+    }
+
+    private func column<Content: View>(_ title: LocalizedStringKey, @ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title).lgText(.rowStrong, color: LGColor.inkMuted)
+                .accessibilityAddTraits(.isHeader)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     private var picker: some View {

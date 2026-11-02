@@ -7,6 +7,8 @@ final class OnboardingModel {
     var category = CraftCatalog.customCategory
     var startYear: Int
     var hours: [Int: Int] = [:]
+    /// Set once the user has seen the hours step, so the intro can show the real starting score.
+    var estimateKnown = false
 
     let currentYear: Int
 
@@ -27,7 +29,17 @@ final class OnboardingModel {
         Baseline.hours(estimates: estimates, onboardingDate: now, calendar: calendar)
     }
 
-    func save(in context: ModelContext, now: Date = Date()) {
+    /// This year's estimate is the pace on offer in step 4: there are no sessions to measure yet.
+    var recentPace: Double { Double(hoursFor(currentYear)) }
+
+    /// What the estimates add up to today, for the "In a year" line of step 4.
+    func summary(now: Date = Date(), calendar: Calendar = .current) -> ProgressSummary {
+        ProgressSummary.make(estimates: estimates, sessions: [], onboardingDate: now, weekStart: .localeDefault,
+                             now: now, calendar: calendar)
+    }
+
+    /// Saves the craft, the estimates and the weekly target; Home then opens on This week.
+    func save(in context: ModelContext, targetHours: Double, now: Date = Date()) {
         let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
                           category: category, startYear: startYear, createdAt: now)
         context.insert(craft)
@@ -36,36 +48,47 @@ final class OnboardingModel {
         }
         // Hours estimated at onboarding never trigger milestone celebrations.
         let seen = Milestones.newlyCrossed(total: estimatedSoFar(now: now), seen: [])
+        let settings: AppSettings
         if let existing = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first {
-            existing.milestonesSeen = seen
+            settings = existing
         } else {
-            let settings = AppSettings()
-            settings.milestonesSeen = seen
+            settings = AppSettings()
             context.insert(settings)
         }
-        try? context.save()
+        settings.milestonesSeen = seen
+        settings.lastHomeTab = .week
+        TargetSaving.apply(hours: targetHours, now: now, settings: settings, context: context)
     }
 }
 
 enum OnboardingStep: Hashable {
-    case start, hours
+    case start, hours, pace
 }
 
-/// Welcome (first launch only) followed by the three setup steps.
+/// Welcome (first launch, and again after "Switch to a new game"), the three "How the game works" pages (first
+/// onboarding only), then the four setup steps.
 struct OnboardingFlow: View {
-    /// After "Switch to a new game" the welcome screen is skipped.
-    let showWelcome: Bool
+    /// False after "Switch to a new game": the user has played before, so the intro pages are skipped.
+    let showIntro: Bool
 
+    private enum Stage { case welcome, intro, craft }
+
+    @Environment(\.modelContext) private var context
     @State private var model = OnboardingModel()
     @State private var path: [OnboardingStep] = []
-    @State private var started = false
+    @State private var stage = Stage.welcome
 
     var body: some View {
         NavigationStack(path: $path) {
             Group {
-                if showWelcome && !started {
-                    WelcomeView { withAnimation { started = true } }
-                } else {
+                switch stage {
+                case .welcome:
+                    WelcomeView { withAnimation { stage = showIntro ? .intro : .craft } }
+                case .intro:
+                    IntroView(startingScore: model.estimateKnown ? Int(model.estimatedSoFar().rounded(.down)) : nil,
+                              onBack: { withAnimation { stage = .welcome } },
+                              onFinish: { withAnimation { stage = .craft } })
+                case .craft:
                     CraftStepView(model: model) { path.append(.start) }
                 }
             }
@@ -74,7 +97,11 @@ struct OnboardingFlow: View {
                 case .start:
                     StartYearView(model: model) { path.append(.hours) }
                 case .hours:
-                    YearlyHoursView(model: model)
+                    YearlyHoursView(model: model) { path.append(.pace) }
+                case .pace:
+                    WeeklyTargetView(mode: .onboarding, recentPace: model.recentPace, summary: model.summary()) { hours in
+                        model.save(in: context, targetHours: hours)
+                    }
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
@@ -97,7 +124,7 @@ struct OnboardingHeader: View {
                 Color.clear.frame(width: 34, height: 44)
             }
             Spacer()
-            LGStepBar(step: step, of: 3)
+            LGStepBar(step: step, of: 4)
             Spacer()
             Color.clear.frame(width: 34, height: 44)
         }

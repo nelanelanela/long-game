@@ -97,7 +97,7 @@ enum GrowthText {
     }
 
     static func chartLabel(total: Double, forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
-        return "Cumulative hours: \(Totals.wholeHours(total: total).formatted()) today. Forecast reaches 10,000 hours: "
+        return "Cumulative hours: \(DurationFormat.grouped(Totals.wholeHours(total: total))) today. Forecast reaches 10,000 hours: "
             + ForecastText.headline(forecast.mid, now: now, calendar: calendar) + ". "
             + ForecastText.range(forecast, now: now, calendar: calendar) + "."
     }
