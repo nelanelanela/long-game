@@ -39,7 +39,7 @@ Four stored entities; every total on screen is derived from them, never stored.
 | Craft | id, name, category, startYear, createdAt, archivedAt? | Exactly one with archivedAt = nil. Archived crafts keep their data, read-only. |
 | YearEstimate | craftId, year, hoursPerWeek (0–40, step 1) | One row per year from startYear to the onboarding year. Editable later in Settings. |
 | Session | id, craftId, start, end, durationSec, source (timer / manual / catchUp), note?, createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. |
-| Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[], lastTipAt?, tipCount, lastTipOfferAt?, weeklyTargetHours, targetSetAt, targetEndsAt, lastHomeTab | Single row. |
+| Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[], lastTipAt?, tipCount, lastTipOfferAt?, weeklyTargetHours, targetSetAt, targetEndsAt, lastHomeTab (the tab Home opens on next: This week, except right after onboarding) | Single row. |
 | TargetPeriod | hoursPerWeek, start, end | One row per year of pace (history of weekly targets). |
 
 **Derived values**
@@ -98,16 +98,16 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 - Title "Your pace for the year". Text: "A thousand-mile walk is made one day's stretch at a time. Set the 10,000 hours aside for a moment and choose how many hours a week you'll play for the next 12 months. Each week, that's the only distance to cover."
 - Big number with a slider, 1–40 h a week, step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). Under the slider: "Your recent pace: N".
 - Card: **Until** (set date + 12 months), **About** (target ÷ 7 as "1 h 43 m a day"), **In a year** ("+624 h · finish ~2036", using the target as the forecast rate for the next 12 months).
-- Button **Start playing** (onboarding) saves the craft, estimates and target and opens Home on the This week tab. When editing, the button reads **Save** and the 12 months restart from today.
+- Button **Start playing** (onboarding) saves the craft, estimates and target and opens Home on The long game tab, once. When editing, the button reads **Save** and the 12 months restart from today.
 - Data: `Settings.weeklyTargetHours`, `targetSetAt`, `targetEndsAt` (= set date + 12 months). Earlier targets are kept in a small `TargetPeriod` list (hours, start, end) so past weeks are judged against the target that applied then.
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
 - Effect on the forecast: for the 12 months of the target, the mid scenario uses the target instead of the current pace when the user is within 25% of it (so an unrealistic target doesn't distort the finish line); otherwise the normal pace. The low/high band is unchanged.
 
 ### 4 · Home (`design/HomeWeek.dc.html`, `design/Home.dc.html`)
 
-No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between two tabs: **This week** (4a) and **The long game** (4b). The app opens on the tab used last; after onboarding, on This week.
+No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between two tabs: **This week** (4a) and **The long game** (4b). Home opens on **This week** every time the app starts; only right after onboarding does it open on **The long game**, once, so the first thing you see is the whole game. Choosing the other tab is not remembered for next time.
 
-- Header: craft name; History (calendar icon) and + buttons. Then the segmented control.
+- Header: craft name; History (calendar icon), + and Settings (gear) buttons. On a phone the header stays on top as a bar while the page scrolls under it. Then the segmented control.
 
 **The sun as a gauge (both tabs)**
 
@@ -349,7 +349,7 @@ No account is needed to use the app; signing in only adds iCloud backup and mult
 - Sign in with Apple from Welcome ("I already have an account") or Settings.
 - CloudKit private database mirrors all entities. Conflicts: last edit wins per session; sessions are never merged.
 - A running timer is device-local; the saved session syncs.
-- Settings opens from the gear in History. Its first row is "Support Long Game" (the tip jar, screen 14). It also offers Export (CSV of sessions) and Delete all data.
+- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). It also offers Export (CSV of sessions) and Delete all data.
 
 **Notifications** (all off by default; asked after the first saved session)
 

@@ -24,7 +24,7 @@ enum WeekStart: String, Codable, Sendable, CaseIterable {
     }
 }
 
-/// The two tabs on Home. Stored raw, so the app opens on the one used last.
+/// The two tabs on Home. Stored raw (`AppSettings.lastHomeTabRaw`): the tab Home opens on.
 enum HomeTab: String, Codable, Sendable, CaseIterable {
     case week, longGame
 }

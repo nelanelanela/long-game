@@ -31,7 +31,7 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Current year skips step 3 | ✅ | `StartYearView`, `YearlyHoursView` | Decided: no skip. Step 3 shows one slider for this year; set it to 0 if starting from scratch. Spec updated |
 | Hours per week: one slider per year 0–40, live estimate, Continue | ✅ | `YearlyHoursView` | Design file says max 30; spec says 40, code follows spec. The button now says Continue |
 | Step dots show 4 steps | ✅ | `LGStepBar`, `OnboardingHeader` | |
-| Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on This week |
+| Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
 
@@ -39,7 +39,8 @@ Updated after the fixes: every row below shows its final status, with what chang
 
 | Requirement | Status | Where | Note |
 | --- | --- | --- | --- |
-| No cards; segmented control This week \| The long game under the header; remembers the last tab | ✅ | `HomeView`, `LGSegmentedControl`, `AppRoot` | After onboarding it opens on This week |
+| No cards; segmented control This week \| The long game under the header | ✅ | `HomeView`, `LGSegmentedControl` | Changed after your note: Home opens on The long game right after onboarding (once), and on This week at every launch after that. The tab you tap is not remembered (`HomeView.chooseOpeningTab`) |
+| Craft name with History and + stays on top as a bar | ✅ | `HomeView.columnPage` | The header is pinned and the page scrolls under it. On a wide window the left pane never scrolls, so it was already fixed |
 | Sun as a gauge: vertical scale, navy pill at the sun's height, dashed gold line | ✅ | `GaugeHero`, `GaugeGeometry` | Scale labels use #68718C instead of the design's #8A93AB (2.9:1) to reach 4.5:1 |
 | Sun's centre linear from the horizon to the top tick; above 100% it stays up with open eyes | ✅ | `GaugeGeometry.centreY`, `HomeGauge.reachedTop` | Matches the design's heights (6.5 of 12 h at 146 pt, 3,294 h at 175 pt) |
 | This week scale 0 → target (ticks 0, half, target); long game 0 → 10,000 (every 2,500) | ✅ | `HomeGauge` | With no target yet, this week's scale uses the recent pace rounded |
@@ -51,7 +52,7 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Recent rows removed from Home | ✅ | `HomeView` | Sessions live in History and on the day bars |
 | Opaque sea always covers the lower sun; animation and Reduce Motion kept | ✅ | `SunriseCanvas`, `SeaFill`, `AboveWater` | Pixel tests at 8 heights, 3 widths and every wave phase |
 | Start session / Add past hours; "Back to session" or "Resume" | ✅ | `HomeView` | Your checklist says "Resume" while running; the spec says "Back to session" |
-| Header only History and + | ✅ | `HomeView`, `HistoryView` | Settings is a gear at the top right of History |
+| Header: craft name, History, + and Settings | ✅ | `HomeView`, `HistoryView` | Changed after your note: the Settings gear is in the Home bar too (History still has its own gear) |
 | No info icon, About, Line of the day | ✅ | | `design/About.dc.html` is still in the folder (not in the app) |
 
 ## History
@@ -100,7 +101,7 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Sign in with Apple, CloudKit private DB | 🟡 | `CloudSync.swift`, `SettingsView` | Built and in the project; the toggle now also saves `Settings.syncEnabled`. Cannot be tested here (needs your iCloud account and a real device) |
 | Export CSV, Delete all data | ✅ | `SettingsView` | |
 | YearEstimates editable; archived crafts listed | ✅ | `EstimatesEditorView`, `ArchivedCraftsView` | |
-| Settings reachable | ✅ | `HistoryView` | Now via the gear in History |
+| Settings reachable | ✅ | `HomeView`, `HistoryView` | The gear in the Home bar, and the gear in History |
 | Notifications off by default, asked after first saved session | ✅ | `HomeView`, `Notifications` | |
 | Daily reminder | ✅ | `NotificationPlanner` | |
 | Rhythm nudge (no streak notification) | ✅ | `ReminderPlanner` | |
@@ -180,7 +181,7 @@ Updated after the fixes: every row below shows its final status, with what chang
 1. **"I already have an account" on Welcome.** Sign in with Apple and iCloud restore are in the project (Settings has them), but Welcome still shows a placeholder alert. Wiring it needs your Apple Developer account and a device signed in to iCloud to test, and CloudKit only loads at launch, so "restore" means signing in, then restarting. Tell me when you want me to do it.
 2. ~~Starting this year skips step 3?~~ Decided: no skip. Step 3 shows one slider for this year, and the spec now says so.
 3. ~~Welcome after "Switch to a new game"?~~ Decided: show Welcome again. App and spec (Screen 8) updated.
-4. **Settings entry.** The spec's Home header has only History and +, so Settings now lives behind a gear at the top right of History. If you would rather have it somewhere else, say so.
+4. ~~Settings entry.~~ Decided: the gear is in the Home bar (next to History and +). History keeps its own gear; say if you'd rather remove it.
 
 5. **Pace and the 25% rule.** I compared the target with the Home **Pace** stat (the recent pace, blended with your estimate early on). Tell me if you meant the forecast pace.
 6. **"In a year" on the target screen** shows what a target *would* do (finish date with 12 months on that rate), even when your pace is too far from it for Home's forecast to use it. A bold target can therefore show an earlier finish there than on Home.
@@ -219,7 +220,7 @@ Run with `-demoData` for sample data.
 - **Your pace for the year:** the target row on This week (or step 4 of onboarding). Settings → Debug only → "Year of pace ends in 10 days" / "ended yesterday" shows the reminder and the new-year sheet.
 - **Widgets:** long-press the Home Screen → Edit → Add Widget → Long Game. Save a session and the widget redraws.
 - **Apple Watch:** open `LongGame.xcodeproj`, run the LongGame scheme on an iPhone paired with a watch (or the watchOS Simulator), then the LongGameWatch scheme target on the watch.
-- **Settings:** History → gear at the top right.
+- **Settings:** the gear at the top right of Home (or History → gear).
 - **Welcome back:** Settings → Debug only → set the days with the stepper (7–27 gives week sliders, 28+ gives one average slider) → "Show Welcome back on Home". It takes you back to Home with the sheet open.
 - **Hour bounce:** Settings → Debug only → "Jump total to just under a whole hour" → Start session. About 20 seconds later the sun bounces and a ring of sparkles shimmers.
 - **Milestone notification:** same jump, but choose a total just under a milestone first (for example edit estimates in Settings → Your estimates so the total is near 100, 500, 1,000…), allow notifications, start a session and lock the phone.

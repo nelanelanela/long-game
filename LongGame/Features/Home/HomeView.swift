@@ -38,12 +38,17 @@ struct HomeView: View {
     @State private var countingTotal: Double?
     @State private var catchUpGap: CatchUp.Gap?
     @State private var totalBeforeCatchUp = 0.0
-    /// This week or The long game; the app opens on the one used last (`AppSettings.lastHomeTab`).
+    /// This week or The long game. Home opens on This week; right after onboarding it opens on The long game once
+    /// (`AppSettings.lastHomeTab` holds the one to open on). Tapping the other tab is not remembered for next time.
     @SceneStorage("home.tab") private var tab: HomeTab = .week
+    /// The opening tab is chosen once, the first time this Home appears, not each time it comes back from History.
+    @State private var choseOpeningTab = false
     /// Which part of the page is at the top, so a fold, unfold or resize keeps the scroll position.
     @State private var scrollSpot: ScrollSpot?
     /// Set by tapping a day bar: History opens on that day.
     @State private var historyDay: Date?
+    /// The gear in the bar at the top.
+    @State private var showSettings = false
 
     init(craft: Craft, initialTab: HomeTab = .week) {
         self.craft = craft
@@ -90,6 +95,7 @@ struct HomeView: View {
             guard let link = WidgetLink.tab(from: url) else { return }
             historyDay = nil
             sheet = nil
+            showSettings = false
             selectTab(link)
         }
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
@@ -102,6 +108,7 @@ struct HomeView: View {
         .onDisappear { onScreen = false }
         .onAppear {
             onScreen = true
+            chooseOpeningTab()
             if showTimer && !timer.isActive { showTimer = false }
             if timer.finishRequested { openTimer(total: s.total) }
             showFutureSelfOnce()
@@ -197,13 +204,14 @@ struct HomeView: View {
         .accessibilityElement(children: .combine)
     }
 
-    /// Phone and short window: one column, the buttons pinned under it.
+    /// Phone and short window: one column. The craft name with History and + stays on top as a bar while the page
+    /// scrolls under it, and the buttons stay pinned under the page.
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
         ScrollView {
             VStack(spacing: 0) {
-                header.padding(.horizontal, 24).id(ScrollSpot.top)
                 LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
                     .padding(.horizontal, 24).padding(.top, short ? 4 : 10)
+                    .id(ScrollSpot.top)
                 hero(f, metrics: short ? .short : .standard)
                     .padding(.top, short ? 2 : 8)
                 number(f, style: short ? .inline : .stacked)
@@ -222,11 +230,16 @@ struct HomeView: View {
                 .id(ScrollSpot.details)
             }
             .lgReadableColumn(560)
-            .padding(.top, short ? 0 : 8)
             .padding(.bottom, 24)
             .scrollTargetLayout()
         }
         .scrollPosition(id: $scrollSpot)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            header
+                .padding(.horizontal, 24).padding(.top, short ? 0 : 8)
+                .lgReadableColumn(560)
+                .background(LGColor.background)
+        }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
 
@@ -308,10 +321,18 @@ struct HomeView: View {
                 }
                 .accessibilityLabel("History")
                 LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
+                LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
             }
             .padding(.trailing, -10)
         }
         .frame(minHeight: 44)
+        // Settings has its own stack: a screen that hides the navigation bar, pushed on top of another pushed screen
+        // (Settings → Your estimates), sent SwiftUI into an endless layout loop. It closes back to Home.
+        .fullScreenCover(isPresented: $showSettings) {
+            NavigationStack {
+                SettingsView(craft: craft, closeAll: { showSettings = false })
+            }
+        }
     }
 
     private static func title(_ tab: HomeTab) -> LocalizedStringKey {
@@ -324,8 +345,19 @@ struct HomeView: View {
     private func selectTab(_ new: HomeTab) {
         guard new != tab else { return }
         withAnimation(.easeInOut(duration: reduceMotion ? 0.25 : 0.6)) { tab = new }
-        settingsRows.first?.lastHomeTab = new
-        try? context.save()
+    }
+
+    /// Opens on This week, except right after onboarding: then on The long game, once, with the whole game in view.
+    /// Whatever was chosen is reset to This week straight away, so the next launch starts there.
+    private func chooseOpeningTab() {
+        guard !choseOpeningTab else { return }
+        choseOpeningTab = true
+        guard let settings = settingsRows.first else { return }
+        tab = settings.lastHomeTab
+        if settings.lastHomeTab != .week {
+            settings.lastHomeTab = .week
+            try? context.save()
+        }
     }
 
     // MARK: This week

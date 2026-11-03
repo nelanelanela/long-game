@@ -326,7 +326,8 @@ struct TargetSavingTests {
         #expect(try context.fetchCount(FetchDescriptor<Craft>()) == 1)
         #expect(settings.weeklyTargetHours == 9.5)
         #expect(settings.currentTarget != nil)
-        #expect(settings.lastHomeTab == .week)
+        // Home opens on The long game right after onboarding, then on This week at every launch after that.
+        #expect(settings.lastHomeTab == .longGame)
         #expect(model.recentPace == 8)
     }
 }

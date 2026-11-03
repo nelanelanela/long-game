@@ -38,7 +38,7 @@ final class OnboardingModel {
                              now: now, calendar: calendar)
     }
 
-    /// Saves the craft, the estimates and the weekly target; Home then opens on This week.
+    /// Saves the craft, the estimates and the weekly target; Home then opens on The long game, once.
     func save(in context: ModelContext, targetHours: Double, now: Date = Date()) {
         let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
                           category: category, startYear: startYear, createdAt: now)
@@ -56,7 +56,8 @@ final class OnboardingModel {
             context.insert(settings)
         }
         settings.milestonesSeen = seen
-        settings.lastHomeTab = .week
+        // The first Home after onboarding opens on The long game; every launch after that opens on This week.
+        settings.lastHomeTab = .longGame
         TargetSaving.apply(hours: targetHours, now: now, settings: settings, context: context)
     }
 }
