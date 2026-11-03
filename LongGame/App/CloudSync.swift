@@ -23,10 +23,13 @@ enum CloudSync {
         set { UserDefaults.standard.set(newValue, forKey: enabledKey) }
     }
 
+    /// The database stays in the app's own folder. SwiftData's default (`.automatic`) puts it in the App Group folder
+    /// as soon as the app has an App Group (the widgets and the watch need one), which would leave everyone's saved
+    /// data behind in the old place.
     static func configuration(for schema: Schema) -> ModelConfiguration {
         isEnabled
-            ? ModelConfiguration(schema: schema, cloudKitDatabase: .private(containerID))
-            : ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+            ? ModelConfiguration(schema: schema, groupContainer: .none, cloudKitDatabase: .private(containerID))
+            : ModelConfiguration(schema: schema, groupContainer: .none, cloudKitDatabase: .none)
     }
 }
 

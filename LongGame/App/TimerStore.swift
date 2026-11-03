@@ -11,10 +11,16 @@ final class TimerStore {
     var finishRequested = false
     /// Set when a session was just saved, so Home can count its total up.
     var savedSession = false
+    /// When the running timer (or its absence) last changed here or on the watch; the newest change wins.
+    private(set) var changedAt: Date
 
+    /// Told after every change made on this device, so the watch can follow.
+    @ObservationIgnored var onLocalChange: ((TimerUpdate) -> Void)?
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
+    private static let changedAtKey = "timer.changedAt.v1"
 
     init() {
+        changedAt = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: Self.changedAtKey))
         state = TimerPersistence.load()
         state?.normalize(at: Date())
         let center = NotificationCenter.default
@@ -71,9 +77,24 @@ final class TimerStore {
         refreshSurfaces()
     }
 
-    private func commit() {
+    /// The watch started, paused, resumed or finished the session. Only a newer change is taken, and it is not sent
+    /// straight back.
+    func applyRemote(_ update: TimerUpdate) {
+        guard update.supersedes(changedAt) else { return }
+        state = update.state
+        state?.normalize(at: Date())
+        changedAt = update.changedAt
+        UserDefaults.standard.set(changedAt.timeIntervalSince1970, forKey: Self.changedAtKey)
         TimerPersistence.save(state)
         refreshSurfaces()
+    }
+
+    private func commit() {
+        TimerPersistence.save(state)
+        changedAt = Date()
+        UserDefaults.standard.set(changedAt.timeIntervalSince1970, forKey: Self.changedAtKey)
+        refreshSurfaces()
+        onLocalChange?(TimerUpdate(state: state, changedAt: changedAt))
     }
 
     private func refreshSurfaces() {

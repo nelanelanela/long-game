@@ -41,6 +41,9 @@ enum LGColor {
     /// #B9C7E8 at 90% over the sea fill, pre-mixed so the pale wave needs no transparency.
     static let seaWave = Color(hex: 0xBCC9E9)
     static let hairline = Color(hex: 0xECE7DE)
+    /// The Apple Watch's dark sea and its wave line (the watch is always dark).
+    static let watchSea = Color(hex: 0x1F2E5C)
+    static let watchWave = Color(hex: 0x8FA6E0)
     /// The sun gauge's scale line and ticks.
     static let gaugeLine = Color(hex: 0xC9C3B8)
     /// Scale labels and day letters (#8A93AB in the design, darkened to 4.5:1 contrast on the background).

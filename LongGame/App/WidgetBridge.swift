@@ -13,16 +13,20 @@ enum WidgetBridge {
             craftName: craft.name,
             onboardingDate: craft.createdAt,
             estimates: estimates.filter { $0.craftId == id }.map { .init(year: $0.year, hoursPerWeek: Double($0.hoursPerWeek)) },
-            sessions: sessions.filter { $0.craftId == id }.map { .init(start: $0.start, seconds: $0.durationSec) },
+            sessions: sessions.filter { $0.craftId == id }.map { .init(start: $0.start, seconds: $0.durationSec, id: $0.id) },
             weekStart: (settings?.weekStart ?? .localeDefault).rawValue,
-            target: settings?.currentTarget.map { .init(hoursPerWeek: $0.hoursPerWeek, start: $0.start, end: $0.end) })
+            target: settings?.currentTarget.map { .init(hoursPerWeek: $0.hoursPerWeek, start: $0.start, end: $0.end) },
+            craftId: id)
     }
 
     /// Writes the data and reloads every widget, but only when something actually changed.
+    @MainActor
     static func publish(_ snapshot: WidgetSnapshot?) {
         if WidgetSnapshot.store(snapshot) {
             WidgetCenter.shared.reloadAllTimelines()
         }
+        // The watch gets the same stored data.
+        WatchBridge.shared.snapshotChanged(snapshot)
     }
 }
 

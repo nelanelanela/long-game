@@ -162,7 +162,8 @@ struct WidgetSnapshotTests {
         #expect(snap.craftName == "Piano")
         #expect(snap.onboardingDate == day(2026, 10, 1))
         #expect(snap.estimates == [.init(year: 2025, hoursPerWeek: 10)])
-        #expect(snap.sessions == [.init(start: day(2026, 11, 2), seconds: 5_400)])
+        #expect(snap.sessions == [.init(start: day(2026, 11, 2), seconds: 5_400, id: sessions[0].id)])
+        #expect(snap.craftId == active.id)
         #expect(snap.weekStart == "sunday")
         #expect(snap.target?.hoursPerWeek == 9.5)
     }

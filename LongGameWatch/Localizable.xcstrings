@@ -1,0 +1,22 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ / %@ h this week" : {},
+    "%@ hours this week" : {},
+    "%@ this session. %@." : {},
+    "Done" : {},
+    "Finish" : {},
+    "Hours this week" : {},
+    "Pause" : {},
+    "Resume" : {},
+    "Session saved" : {},
+    "Session saved. %@ added. %@." : {},
+    "Set up Long Game on your iPhone first." : {},
+    "Start" : {},
+    "Starts a practice session" : {},
+    "The long game" : {},
+    "This week" : {},
+    "This week, %@ of %@ hours" : {}
+  },
+  "version" : "1.0"
+}

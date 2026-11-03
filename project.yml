@@ -21,10 +21,12 @@ targets:
     sources:
       - LongGame
       - Shared
+      - WatchShared
       - path: LongGame.storekit
         buildPhase: none
     dependencies:
       - target: LongGameWidgets
+      - target: LongGameWatch
     # The widgets open Home on a tab with longgame://home/week or longgame://home/longGame.
     info:
       path: LongGame/Info.plist
@@ -75,6 +77,73 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.Widgets
         SKIP_INSTALL: YES
         CODE_SIGN_ENTITLEMENTS: LongGameWidgets/LongGameWidgets.entitlements
+  # The Apple Watch app. It can run without the phone once set up, and gets its data from the phone.
+  LongGameWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - LongGameWatch
+      - WatchShared
+      - Shared/WidgetSnapshot.swift
+      - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Colors.swift
+      - LongGame/DesignSystem/Typography.swift
+      - LongGame/DesignSystem/Water.swift
+      - LongGame/Logic
+    dependencies:
+      - target: LongGameWatchWidgets
+    info:
+      path: LongGameWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Long Game
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.wehavesun.LongGame
+        WKRunsIndependentlyOfCompanionApp: true
+    # The same App Group as the phone's, but on the watch: the app and its complications share the data there.
+    entitlements:
+      path: LongGameWatch/LongGameWatch.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.watchkitapp
+        TARGETED_DEVICE_FAMILY: "4"
+        CODE_SIGN_ENTITLEMENTS: LongGameWatch/LongGameWatch.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SKIP_INSTALL: YES
+  # The Apple Watch complications.
+  LongGameWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - LongGameWatchWidgets
+      - WatchShared/WatchViews.swift
+      - Shared/WidgetSnapshot.swift
+      - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Colors.swift
+      - LongGame/DesignSystem/Typography.swift
+      - LongGame/DesignSystem/Water.swift
+      - LongGame/Logic
+      - WatchShared/WatchSync.swift
+    info:
+      path: LongGameWatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Long Game
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: LongGameWatchWidgets/LongGameWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.watchkitapp.Widgets
+        TARGETED_DEVICE_FAMILY: "4"
+        CODE_SIGN_ENTITLEMENTS: LongGameWatchWidgets/LongGameWatchWidgets.entitlements
+        SKIP_INSTALL: YES
   LongGameTests:
     type: bundle.unit-test
     platform: iOS

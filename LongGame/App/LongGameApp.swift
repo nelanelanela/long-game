@@ -25,6 +25,8 @@ struct LongGameApp: App {
                 .environment(timerStore)
                 .environment(account)
                 .task { await account.refreshState() }
+                // The Apple Watch follows the timer and the stored data from here on.
+                .task { WatchBridge.shared.start(timer: timerStore, container: container) }
                 .preferredColorScheme(.light)
                 .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         }

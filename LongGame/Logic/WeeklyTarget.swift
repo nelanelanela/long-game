@@ -178,16 +178,19 @@ struct WeekTarget: Equatable {
                    daysLeft: daysLeft(now: now, weekStart: weekStart, calendar: calendar))
     }
 
+    /// "3 days left", "1 day left" or "last day".
+    var daysLeftText: String {
+        switch daysLeft {
+        case 0: "last day"
+        case 1: "1 day left"
+        default: "\(daysLeft) days left"
+        }
+    }
+
     /// "5.5 h to go · 3 days left", or "Target reached · +1.5 h" once passed.
     var headline: String {
         if reached { return "Target reached · +\(DurationFormat.hours(over))" }
-        let left: String
-        switch daysLeft {
-        case 0: left = "last day"
-        case 1: left = "1 day left"
-        default: left = "\(daysLeft) days left"
-        }
-        return "\(DurationFormat.hours(toGo)) to go · \(left)"
+        return "\(DurationFormat.hours(toGo)) to go · \(daysLeftText)"
     }
 }
 
