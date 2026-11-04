@@ -99,8 +99,8 @@ final class AppSettings {
     /// When the target screen last opened on its own as a sheet (a new year of pace, or the first one for an
     /// older game), so it asks once and then only leaves the reminder in the target row.
     var targetPromptShownAt: Date?
-    /// The tab Home opens on next: This week, except right after onboarding (The long game, once).
-    var lastHomeTabRaw: String = HomeTab.week.rawValue
+    /// The tab Home opens on next: Today, except right after onboarding (The long game, once).
+    var lastHomeTabRaw: String = HomeTab.today.rawValue
 
     init() {}
 
@@ -110,7 +110,7 @@ final class AppSettings {
     }
 
     var lastHomeTab: HomeTab {
-        get { HomeTab(rawValue: lastHomeTabRaw) ?? .week }
+        get { HomeTab(rawValue: lastHomeTabRaw) ?? .today }
         set { lastHomeTabRaw = newValue.rawValue }
     }
 

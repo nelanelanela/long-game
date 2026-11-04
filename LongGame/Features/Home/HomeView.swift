@@ -22,6 +22,7 @@ struct HomeView: View {
     @Query private var sessions: [Session]
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
+    @Query private var targetPeriods: [TargetPeriod]
     @Environment(\.modelContext) private var context
     @Environment(TimerStore.self) private var timer
     @Environment(\.scenePhase) private var scenePhase
@@ -38,9 +39,15 @@ struct HomeView: View {
     @State private var countingTotal: Double?
     @State private var catchUpGap: CatchUp.Gap?
     @State private var totalBeforeCatchUp = 0.0
-    /// This week or The long game. Home opens on This week; right after onboarding it opens on The long game once
-    /// (`AppSettings.lastHomeTab` holds the one to open on). Tapping the other tab is not remembered for next time.
-    @SceneStorage("home.tab") private var tab: HomeTab = .week
+    /// Today, This week or The long game. Home opens on Today; right after onboarding it opens on The long game once
+    /// (`AppSettings.lastHomeTab` holds the one to open on). Tapping another tab is not remembered for next time.
+    @SceneStorage("home.tab") private var tab: HomeTab = .today
+    /// The tab with a scale the sun last stood on, so Today's sun glides back to the right height.
+    @State private var lastScaleTab: HomeTab = .week
+    /// Today's sun winks for a moment when the stretch is covered.
+    @State private var winking = false
+    /// Bumped by a timer loop so Today's numbers follow the clock (every second while a session runs).
+    @State private var tick = Date()
     /// The opening tab is chosen once, the first time this Home appears, not each time it comes back from History.
     @State private var choseOpeningTab = false
     /// Which part of the page is at the top, so a fold, unfold or resize keeps the scroll position.
@@ -50,7 +57,7 @@ struct HomeView: View {
     /// The gear in the bar at the top.
     @State private var showSettings = false
 
-    init(craft: Craft, initialTab: HomeTab = .week) {
+    init(craft: Craft, initialTab: HomeTab = .today) {
         self.craft = craft
         _tab = SceneStorage(wrappedValue: initialTab, "home.tab")
         let id = craft.id
@@ -73,8 +80,13 @@ struct HomeView: View {
         // While the total counts up after a saved session, this week's hours count up with it.
         let shownWeek = max(0, s.thisWeek - (s.total - shownTotal))
         let weekTarget = target?.hoursPerWeek ?? WeeklyTarget.suggested(pace: s.pace)
-        let figures = HomeFigures(now: now, summary: s, week: shownWeek, total: shownTotal, weekTarget: weekTarget)
-        AdaptiveLayout { window in
+        let records = sessions.map(\.record)
+        let plan = StretchSource.plan(sessions: records, settings: settingsRows.first, periods: targetPeriods, now: now)
+        let stretch = plan.state(running: StretchSource.runningSeconds(timer.state, craftID: craft.id, now: now))
+        let figures = HomeFigures(now: now, summary: s, week: shownWeek, total: shownTotal, weekTarget: weekTarget,
+                                  stretch: stretch, shown: tab == .today && stretch == .noTarget ? .week : tab)
+        let _ = tick
+        let page = AdaptiveLayout { window in
             Group {
                 if window.shape.isWide {
                     widePage(figures, window: window)
@@ -106,6 +118,15 @@ struct HomeView: View {
             if requested { openTimer(total: s.total) }
         }
         .onDisappear { onScreen = false }
+        lifecycle(page, figures: figures, s: s)
+    }
+
+    /// The page's lifecycle, sheets and alerts, kept apart from `body` so the compiler can type-check each.
+    private func lifecycle<V: View>(_ page: V, figures: HomeFigures, s: ProgressSummary) -> some View {
+        page
+        .modifier(TodayLive(winkWhen: figures.shown == .today && figures.stretch.isCovered && !figures.stretch.isWeekCovered,
+                            ticksWhen: tab == .today && onScreen && !showTimer && scenePhase == .active,
+                            everySecond: timer.isActive, winking: $winking, tick: $tick))
         .onAppear {
             onScreen = true
             chooseOpeningTab()
@@ -172,26 +193,36 @@ struct HomeView: View {
         var week: Double
         var total: Double
         var weekTarget: Double
+        var stretch: StretchState
+        /// The tab on show: Today falls back to This week when there is no weekly target yet.
+        var shown: HomeTab
     }
 
     private enum ScrollSpot: Hashable { case top, details }
 
-    private func gauge(_ f: HomeFigures) -> HomeGauge {
-        tab == .week ? .week(hours: f.week, target: f.weekTarget) : .longGame(total: f.total)
+    private func scaleGauge(_ f: HomeFigures) -> HomeGauge {
+        (f.shown.hasScale ? f.shown : lastScaleTab) == .longGame ? .longGame(total: f.total) : .week(hours: f.week, target: f.weekTarget)
     }
 
     private func hero(_ f: HomeFigures, metrics: GaugeMetrics) -> some View {
-        let g = gauge(f)
-        return GaugeHero(gauge: g, fraction: g.fraction,
-                         face: countingTotal != nil || g.reachedTop ? .celebrate : .happy,
-                         isRunning: onScreen && scenePhase == .active && !showTimer, glides: !reduceMotion,
-                         metrics: metrics)
+        let scale = scaleGauge(f)
+        let onToday = f.shown == .today
+        let g = onToday ? HomeGauge.today(f.stretch) : scale
+        let place = GaugeHero.Place(fraction: scale.fraction, arcFraction: f.stretch.fraction, arcMix: onToday ? 1 : 0)
+        let face: SunFace = onToday ? (winking ? .wink : .happy)
+                                    : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
+        return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
+                         face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: !reduceMotion,
+                         metrics: metrics, final: place)
     }
 
     /// The big number; each tab's replaces the other's with a cross-fade, stacked so the page doesn't jump.
     private func number(_ f: HomeFigures, style: NumberLayout) -> some View {
         ZStack(alignment: style == .leading ? .topLeading : .top) {
-            switch tab {
+            switch f.shown {
+            case .today:
+                TodayNumber(state: f.stretch, style: style)
+                    .transition(.opacity)
             case .week:
                 CountingWeek(hours: f.week, target: f.weekTarget, style: style)
                     .transition(.opacity)
@@ -217,7 +248,11 @@ struct HomeView: View {
                 number(f, style: short ? .inline : .stacked)
                     .padding(.top, short ? 4 : 8)
                 ZStack(alignment: .top) {
-                    switch tab {
+                    switch f.shown {
+                    case .today:
+                        TodayQuietLine(state: f.stretch)
+                            .padding(.top, short ? 6 : 14)
+                            .transition(.opacity)
                     case .week:
                         weekContent(f.summary, now: f.now, showBars: !short)
                             .transition(.opacity)
@@ -267,7 +302,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     number(f, style: .leading).id(ScrollSpot.top)
                     VStack(spacing: 0) {
-                        switch tab {
+                        switch f.shown {
+                        case .today:
+                            TodayQuietLine(state: f.stretch, leading: true)
+                                .padding(.top, 6)
                         case .week:
                             weekContent(f.summary, now: f.now, showBars: true)
                             wideStatsRow(f.summary, now: f.now, total: f.total)
@@ -337,6 +375,7 @@ struct HomeView: View {
 
     private static func title(_ tab: HomeTab) -> LocalizedStringKey {
         switch tab {
+        case .today: "Today"
         case .week: "This week"
         case .longGame: "The long game"
         }
@@ -344,18 +383,21 @@ struct HomeView: View {
 
     private func selectTab(_ new: HomeTab) {
         guard new != tab else { return }
+        if new.hasScale { lastScaleTab = new }
         withAnimation(.easeInOut(duration: reduceMotion ? 0.25 : 0.6)) { tab = new }
     }
 
-    /// Opens on This week, except right after onboarding: then on The long game, once, with the whole game in view.
-    /// Whatever was chosen is reset to This week straight away, so the next launch starts there.
+    /// Opens on Today, except right after onboarding: then on The long game, once, with the whole game in view.
+    /// Whatever was chosen is reset to Today straight away, so the next launch starts there. (A value saved by an
+    /// older version, This week, also opens on Today.)
     private func chooseOpeningTab() {
         guard !choseOpeningTab else { return }
         choseOpeningTab = true
         guard let settings = settingsRows.first else { return }
-        tab = settings.lastHomeTab
-        if settings.lastHomeTab != .week {
-            settings.lastHomeTab = .week
+        tab = settings.lastHomeTab == .longGame ? .longGame : .today
+        if tab.hasScale { lastScaleTab = tab }
+        if settings.lastHomeTab != .today {
+            settings.lastHomeTab = .today
             try? context.save()
         }
     }
@@ -618,5 +660,32 @@ struct HomeView: View {
             Button(startTitle(at: timeline.date)) { openTimer(total: summary(now: Date()).total) }
                 .buttonStyle(.lg(.primary))
         }
+    }
+}
+
+/// Today's live bits: the sun winks for a moment when the stretch is covered, and the numbers follow the clock
+/// (every second while a session runs, otherwise now and then so a new day starts fresh).
+private struct TodayLive: ViewModifier {
+    var winkWhen: Bool
+    var ticksWhen: Bool
+    var everySecond: Bool
+    @Binding var winking: Bool
+    @Binding var tick: Date
+
+    func body(content: Content) -> some View {
+        content
+            .task(id: winkWhen) {
+                winking = winkWhen
+                guard winkWhen else { return }
+                try? await Task.sleep(for: .seconds(1.6))
+                winking = false
+            }
+            .task(id: ticksWhen) {
+                guard ticksWhen else { return }
+                while !Task.isCancelled {
+                    try? await Task.sleep(for: .seconds(everySecond ? 1 : 30))
+                    tick = Date()
+                }
+            }
     }
 }

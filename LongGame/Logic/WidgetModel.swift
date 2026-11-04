@@ -15,7 +15,7 @@ struct WidgetState: Equatable, Sendable {
     var weekPercent: Int { WeekTarget(hoursThisWeek: weekHours, target: weekTarget, daysLeft: 0).percent }
     var longGamePercent: Int { Totals.percent(total: total) }
 
-    func gauge(for tab: HomeTab) -> HomeGauge { tab == .week ? week : longGame }
+    func gauge(for tab: HomeTab) -> HomeGauge { tab == .longGame ? longGame : week }
 
     /// Shown in the widget gallery and while a widget loads: the design's Piano example.
     static let sample = WidgetState(

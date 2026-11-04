@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Data and maths
@@ -34,6 +34,25 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
+
+## Today's stretch (update prompt 11)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| No gold glints on or in the water, anywhere | ✅ | `SunriseHero`, `SunriseMotion` | Layer order glow, sun, sea fill, pale wave, navy line. The widgets and Watch draw their own sea and have no glints |
+| Practice days: practised on the weekday in at least 2 of the last 4 full weeks; under 2 full weeks of history, or none qualify, every day counts | ✅ | `Stretch.practiceDays` | A full week is a finished week that began on or after the first logged day |
+| Stretch states stretch, covered, restDay, weekCovered, noTarget; stretch = (target - hours before today) / practice days left, nearest 5 min, at least 15 | ✅ | `StretchState`, `Stretch.todayStretch` | Nothing stored. `StretchPlan` is the fixed part, so today's own sessions never move it. Target from the TargetPeriod history |
+| Done today = every session that starts today plus the running timer | ✅ | `StretchSource.runningSeconds` | A timer started before midnight counts towards the day it started |
+| Tests for rounding, minimum, short yesterday, today's sessions, rest days, week covered, no history, Sunday vs Monday, midnight, time zone | ✅ | `LongGameTests/TodayStretchTests.swift` | 308 tests pass |
+| Home third tab Today / This week / The long game; opens on Today, after onboarding on The long game once | ✅ | `HomeView`, `HomeTab`, `AppSettings.lastHomeTab` | A value saved by an older version (This week) also opens on Today. With no target, Today shows This week instead |
+| Arc, gold travelled line, moon; sun glides between arc and scale in 0.6 s (Reduce Motion: no glide) | ✅ | `GaugeHero`, `StretchArt` | Same sun and sea components and water rule |
+| Big number, 'of today's ...', one quiet line, exact texts for every state; VoiceOver reads the picture as one element | ✅ | `TodayContent`, `StretchText` |  |
+| Duo wide layout has the third tab | ✅ | `HomeView.widePage` | Checked in code and the build; not seen on a Duo-shaped simulator |
+| Timer strip with live arc; covered mid-session turns it gold, the sun winks once, gold line under 'Next ray in'; never interrupts; hidden on rest days and covered weeks | ✅ | `StretchStrip`, `TimerView` | Driven by the timer's own TimelineView. No sheet, alert, sound or extra haptic |
+| Finish sheet line 'Today's stretch covered.' | ✅ | `FinishSheet` | Only if this session covered it; follows the trimmed time |
+| Live Activity, widgets, Watch unchanged | ✅ |  | They show This week or The long game as before |
+| Debug options for hours this week before today and a rest day | ✅ | Settings, Debug only |  |
+| New text in the String Catalog | ✅ | `Localizable.xcstrings` |  |
 
 ## Home
 
@@ -216,7 +235,8 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 
 Run with `-demoData` for sample data.
 
-- **Home:** two tabs. This week: the sun at this week's height on the scale, day bars (tap one), the target row. The long game: total, three stats, Meet your future self.
+- **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Home:** three tabs. This week: the sun at this week's height on the scale, day bars (tap one), the target row. The long game: total, three stats, Meet your future self.
 - **Your pace for the year:** the target row on This week (or step 4 of onboarding). Settings → Debug only → "Year of pace ends in 10 days" / "ended yesterday" shows the reminder and the new-year sheet.
 - **Widgets:** long-press the Home Screen → Edit → Add Widget → Long Game. Save a session and the widget redraws.
 - **Apple Watch:** open `LongGame.xcodeproj`, run the LongGame scheme on an iPhone paired with a watch (or the watchOS Simulator), then the LongGameWatch scheme target on the watch.

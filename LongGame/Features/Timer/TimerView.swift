@@ -15,16 +15,34 @@ struct TimerView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
 
+    @Query private var sessions: [Session]
+    @Query private var settingsRows: [AppSettings]
+    @Query private var targetPeriods: [TargetPeriod]
+
     @State private var showFinish = false
     @State private var savedAt: Date?
 
+    init(craft: Craft, baseTotal: Double) {
+        self.craft = craft
+        self.baseTotal = baseTotal
+        let id = craft.id
+        _sessions = Query(filter: #Predicate<Session> { $0.craftId == id })
+    }
+
+    /// Today's stretch as it stood before this session: fixed for the day, the live part is added per frame.
+    private var stretchPlan: StretchPlan {
+        StretchSource.plan(sessions: sessions.map(\.record), settings: settingsRows.first, periods: targetPeriods, now: Date())
+    }
+
     var body: some View {
+        let plan = stretchPlan
         TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 30)) { timeline in
             if let savedAt {
                 SavedScene(now: timeline.date, since: savedAt, reduceMotion: reduceMotion)
             } else if let state = store.state {
                 RunningScene(
                     now: timeline.date, state: state, craftName: craft.name, baseTotal: baseTotal, reduceMotion: reduceMotion,
+                    stretchPlan: plan,
                     onMinimise: { dismiss() },
                     onToggle: { store.togglePause() },
                     onFinish: {
@@ -39,7 +57,9 @@ struct TimerView: View {
         .sensoryFeedback(.success, trigger: savedAt)
         .sheet(isPresented: $showFinish) {
             if let state = store.state {
-                FinishSheet(elapsed: state.elapsed(at: Date()), onSave: save, onDiscard: discard)
+                FinishSheet(elapsed: state.elapsed(at: Date()),
+                            coversStretch: { StretchSource.startedToday(state) && plan.isCovered(byAdding: $0) },
+                            onSave: save, onDiscard: discard)
                     .lgSheetCard()
             }
         }
@@ -94,6 +114,7 @@ private struct RunningScene: View {
     let craftName: String
     let baseTotal: Double
     let reduceMotion: Bool
+    let stretchPlan: StretchPlan
     let onMinimise: () -> Void
     let onToggle: () -> Void
     let onFinish: () -> Void
@@ -117,7 +138,11 @@ private struct RunningScene: View {
 
         let breath = reduceMotion ? 0 : (1 - cos(2 * .pi * t / (paused ? 8 : 4))) / 2
         let hop = golden.map { -sin($0 * .pi) * 34 } ?? 0
-        let winking = !paused && golden == nil && t.truncatingRemainder(dividingBy: 9) > 8.5
+        // Today's stretch: the strip's numbers follow the clock; the sun winks once as the stretch gets covered.
+        let stretch = stretchPlan.state(running: StretchSource.startedToday(state) ? elapsed : 0)
+        let sinceCovered = StretchSource.startedToday(state) ? stretchPlan.coveredAfter().map { elapsed - $0 } : nil
+        let coverWink = !paused && (sinceCovered.map { $0 >= 0 && $0 < 1.4 } ?? false)
+        let winking = !paused && golden == nil && (t.truncatingRemainder(dividingBy: 9) > 8.5 || coverWink)
         let face: SunFace = golden != nil ? .celebrate : paused ? .sleepy : winking ? .wink : .focus
 
         let growing = (paused || golden != nil) ? nil : sun.rayGrowProgress()
@@ -193,10 +218,10 @@ private struct RunningScene: View {
                     .accessibilityAddTraits(.isImage)
 
                 if wide {
-                    wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden)
+                    wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink)
                         .padding(.leading, geo.size.width * 0.5)
                 } else {
-                    controls(elapsed: elapsed, paused: paused, sun: sun, golden: golden)
+                    controls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink)
                 }
             }
         }
@@ -212,7 +237,25 @@ private struct RunningScene: View {
         .onChange(of: paused) { _, _ in LiveActivityManager.sync(state, now: now) }
     }
 
-    private func controls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?) -> some View {
+    /// The strip under the header (only while there is a stretch to cover, or one just covered).
+    @ViewBuilder
+    private func stretchStrip(_ stretch: StretchState, winking: Bool) -> some View {
+        if let target = stretch.target {
+            StretchStrip(done: stretch.done, target: target, winking: winking)
+        }
+    }
+
+    /// The quiet gold line under "Next ray in" once today's stretch is covered.
+    @ViewBuilder
+    private func coveredLine(_ stretch: StretchState) -> some View {
+        if case .covered = stretch {
+            Text("Today's stretch covered")
+                .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.mote)
+        }
+    }
+
+    private func controls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?,
+                          stretch: StretchState, coverWink: Bool) -> some View {
         VStack(spacing: 16) {
             HStack {
                 LGIconButton(systemName: "chevron.down", label: "Minimise", tint: .white, action: onMinimise)
@@ -223,6 +266,8 @@ private struct RunningScene: View {
                 Color.clear.frame(width: 34, height: 44)
             }
             .frame(height: 44)
+
+            stretchStrip(stretch, winking: coverWink)
 
             Spacer()
 
@@ -247,6 +292,7 @@ private struct RunningScene: View {
                 Text(paused ? "Paused" : sun.caption)
                     .lgText(.row, color: .white.opacity(0.8))
                     .multilineTextAlignment(.center)
+                coveredLine(stretch)
                 beadRow(hours: sun.hoursCompleted, golden: golden)
             }
 
@@ -263,7 +309,8 @@ private struct RunningScene: View {
     }
 
     /// The wide window's right side: clock and total on the left-aligned column, the buttons under them.
-    private func wideControls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?) -> some View {
+    private func wideControls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?,
+                              stretch: StretchState, coverWink: Bool) -> some View {
         let total = baseTotal + elapsed / 3600
         return VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -272,6 +319,9 @@ private struct RunningScene: View {
                 Spacer()
             }
             .frame(height: 44)
+
+            stretchStrip(stretch, winking: coverWink)
+                .frame(maxWidth: 360)
 
             Spacer(minLength: 0)
 
@@ -282,6 +332,7 @@ private struct RunningScene: View {
             Text("\(DurationFormat.totalHours(total)) of 10,000 h" + (paused ? " · Paused" : " · " + sun.caption))
                 .lgText(.rowStrong, color: LGColor.mote)
                 .accessibilityLabel("Overall total \(DurationFormat.grouped(Totals.wholeHours(total: total))) hours, \(Totals.percent(total: total)) percent of 10,000. \(paused ? "Paused" : sun.caption)")
+            coveredLine(stretch)
             beadRow(hours: sun.hoursCompleted, golden: golden)
                 .padding(.top, 4)
 

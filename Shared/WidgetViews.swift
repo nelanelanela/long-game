@@ -107,14 +107,14 @@ struct SmallSunWidgetView: View {
 
     private var caption: Text {
         switch tab {
-        case .week: Text("of \(DurationFormat.hours(state.weekTarget)) this week")
+        case .week, .today: Text("of \(DurationFormat.hours(state.weekTarget)) this week")
         case .longGame: Text("of 10,000 · \(state.longGamePercent)%")
         }
     }
 
     private var label: Text {
         switch tab {
-        case .week: Text("This week, \(WeeklyTarget.number(state.weekHours)) of \(WeeklyTarget.number(state.weekTarget)) hours")
+        case .week, .today: Text("This week, \(WeeklyTarget.number(state.weekHours)) of \(WeeklyTarget.number(state.weekTarget)) hours")
         case .longGame: Text("The long game, \(DurationFormat.grouped(Totals.wholeHours(total: state.total))) of 10,000 hours, \(state.longGamePercent)%")
         }
     }

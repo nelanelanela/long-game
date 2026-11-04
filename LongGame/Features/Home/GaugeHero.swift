@@ -1,33 +1,72 @@
 import SwiftUI
 
-/// The Home hero: the sunrise scene with a vertical scale on the left, and a navy pill at the sun's height joined to
-/// the sun by a dashed gold line. When the tab changes the sun glides to its new height (0.6 s) and the scale
-/// labels cross-fade; Home animates `gauge` and SwiftUI interpolates `fraction` frame by frame.
+/// The Home hero: the sunrise scene. On This week and The long game it has a vertical scale on the left and a navy
+/// pill at the sun's height, joined to the sun by a dashed gold line. On Today there is no scale: the sun moves
+/// along a dotted arc to the moon. When the tab changes the sun glides to its new place (0.6 s); Home animates the
+/// three numbers below and SwiftUI interpolates them frame by frame.
 struct GaugeHero: View, Animatable {
+    /// The shown tab's gauge: its scale and pill (none on Today) and what VoiceOver reads.
     var gauge: HomeGauge
-    /// Equal to `gauge.fraction`; SwiftUI interpolates it while the tab change animates.
+    /// Equal to `gauge.fraction` on the scale tabs; the last scale tab's value while Today is shown.
+    /// Interpolated while the tab change animates.
     var fraction: Double
+    /// How far along Today's arc the sun is (0...1), and how much of the sun's place is the arc's (0 = on the scale).
+    var arcFraction: Double = 0
+    var arcMix: Double = 0
     var face: SunFace = .happy
     var isRunning = true
-    /// False with Reduce Motion: the sun jumps to its new height and only the labels cross-fade.
+    /// False with Reduce Motion: the sun jumps to its new place and only the labels cross-fade.
     var glides = true
     /// The hero's size: the phone's by default, smaller or wider for other windows.
     var metrics: GaugeMetrics = .standard
+    /// The final values, for Reduce Motion (they are used instead of the interpolated ones).
+    var final: Place?
 
-    nonisolated var animatableData: Double {
-        get { fraction }
-        set { fraction = newValue }
+    struct Place: Equatable {
+        var fraction: Double
+        var arcFraction: Double
+        var arcMix: Double
     }
 
-    private var shown: Double { glides ? fraction : gauge.fraction }
+    nonisolated var animatableData: AnimatablePair<Double, AnimatablePair<Double, Double>> {
+        get { AnimatablePair(fraction, AnimatablePair(arcFraction, arcMix)) }
+        set {
+            fraction = newValue.first
+            arcFraction = newValue.second.first
+            arcMix = newValue.second.second
+        }
+    }
+
+    private var shown: Place {
+        if !glides, let final { return final }
+        return Place(fraction: fraction, arcFraction: arcFraction, arcMix: arcMix)
+    }
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            SunriseHero(layout: .gauge(fraction: shown, face: face, metrics: metrics), label: gauge.description, isRunning: isRunning)
-            GaugeScale(ticks: gauge.ticks, metrics: metrics)
-                .id(gauge.tab)
-                .transition(.opacity)
-            GaugeMarker(pill: gauge.pill, tab: gauge.tab, fraction: shown, metrics: metrics)
+        let place = shown
+        GeometryReader { geo in
+            let width = geo.size.width
+            let arc = ArcGeometry(width: width, metrics: metrics)
+            let onScale = CGPoint(x: width / 2 + metrics.sunOffsetX, y: metrics.centreY(fraction: place.fraction))
+            let onArc = arc.point(place.arcFraction)
+            let mix = CGFloat(GaugeGeometry.clamped(place.arcMix))
+            let centre = CGPoint(x: onScale.x + (onArc.x - onScale.x) * mix, y: onScale.y + (onArc.y - onScale.y) * mix)
+            let size = metrics.sunSize + (arc.sunSize - metrics.sunSize) * mix
+
+            ZStack(alignment: .topLeading) {
+                // Today's arc and moon sit behind the sea and the sun, and fade with the tab.
+                StretchArcLayer(geometry: arc, fraction: place.arcFraction)
+                    .opacity(Double(mix))
+                SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics),
+                            label: gauge.description, isRunning: isRunning)
+                if gauge.tab.hasScale {
+                    GaugeScale(ticks: gauge.ticks, metrics: metrics)
+                        .id(gauge.tab)
+                        .transition(.opacity)
+                    GaugeMarker(pill: gauge.pill, tab: gauge.tab, fraction: place.fraction, metrics: metrics)
+                        .transition(.opacity)
+                }
+            }
         }
         .frame(height: metrics.height)
     }

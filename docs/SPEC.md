@@ -38,8 +38,8 @@ Four stored entities; every total on screen is derived from them, never stored.
 | --- | --- | --- |
 | Craft | id, name, category, startYear, createdAt, archivedAt? | Exactly one with archivedAt = nil. Archived crafts keep their data, read-only. |
 | YearEstimate | craftId, year, hoursPerWeek (0–40, step 1) | One row per year from startYear to the onboarding year. Editable later in Settings. |
-| Session | id, craftId, start, end, durationSec, source (timer / manual / catchUp), note?, createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. |
-| Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[], lastTipAt?, tipCount, lastTipOfferAt?, weeklyTargetHours, targetSetAt, targetEndsAt, lastHomeTab (the tab Home opens on next: This week, except right after onboarding) | Single row. |
+| Session | id, craftId, start, end, durationSec, source (timer / manual / catchUp), note?, photo? (image data, external storage), createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. note and photo are optional (section 16). |
+| Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[], lastTipAt?, tipCount, lastTipOfferAt?, scrubHintSeen, weeklyTargetHours, targetSetAt, targetEndsAt, lastHomeTab (the tab Home opens on next: Today, except right after onboarding) | Single row. |
 | TargetPeriod | hoursPerWeek, start, end | One row per year of pace (history of weekly targets). |
 
 **Derived values**
@@ -103,19 +103,19 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
 - Effect on the forecast: for the 12 months of the target, the mid scenario uses the target instead of the current pace when the user is within 25% of it (so an unrealistic target doesn't distort the finish line); otherwise the normal pace. The low/high band is unchanged.
 
-### 4 · Home (`design/HomeWeek.dc.html`, `design/Home.dc.html`)
+### 4 · Home (`design/TodayStretch.dc.html`, `design/HomeWeek.dc.html`, `design/Home.dc.html`)
 
-No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between two tabs: **This week** (4a) and **The long game** (4b). Home opens on **This week** every time the app starts; only right after onboarding does it open on **The long game**, once, so the first thing you see is the whole game. Choosing the other tab is not remembered for next time.
+No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between three tabs: **Today** (4c), **This week** (4a) and **The long game** (4b). Each tab shows one sun, one big number and one quiet line, so no screen carries too many numbers. Home opens on **Today** every time the app starts; only right after onboarding does it open on **The long game**, once, so the first thing you see is the whole game. Choosing another tab is not remembered for next time.
 
 - Header: craft name; History (calendar icon), + and Settings (gear) buttons. On a phone the header stays on top as a bar while the page scrolls under it. Then the segmented control.
 
-**The sun as a gauge (both tabs)**
+**The sun as a gauge (This week and The long game)**
 
 - The hero shows the sun rising out of the sea with a **vertical scale** on the left: a thin line with ticks and labels, and a navy pill on the line at the sun's height showing the current value, joined to the sun by a dashed gold line.
 - The sun's centre height maps linearly to the value: at 0 the sun sits on the horizon (centre just above the waterline, lower half hidden by the sea); at 100% its centre reaches the top tick. Above 100% it stays at the top and opens its eyes (celebrate face, no peeking).
 - **This week:** scale 0 → weekly target, ticks at 0, half and the target ("0 h · 6 h · 12 h"). Value = hours logged this week (Settings.weekStart). The pill shows e.g. "6.5 h".
 - **The long game:** scale 0 → 10,000 h, ticks at 0, 2.5k, 5k, 7.5k, 10k. Value = total hours. The pill shows e.g. "3,294 h".
-- When switching tabs, the sun glides to its new height (0.6 s ease-in-out) and the scale labels cross-fade.
+- When switching tabs, the sun glides to its new place (0.6 s ease-in-out) and the scale labels cross-fade. Between Today and the other tabs the sun glides from its spot on the arc to its spot on the scale.
 
 **4a · This week**
 
@@ -123,27 +123,48 @@ No cards on Home: everything sits directly on the warm-white background. A segme
 - A row of 7 small day bars between hairlines (Mon–Sun, or Sun–Sat), coloured like the calendar levels; rest days in the light blue, future days in light grey; today's letter in bold.
 - Target row: "5.5 h to go · 3 days left" (or "Target reached · +1.5 h" in gold once passed) and underneath "Your pace for the year: 12 h a week, until 2 Nov 2027", with a chevron. Opens 3b.
 
+**4c · Today: today's stretch**
+
+Your weekly target, turned into today's distance. "A thousand-mile walk is made one day's stretch at a time": this tab shows just today's stretch.
+
+- **The picture:** instead of a vertical scale, a wide dotted arc rises from the sea on the left and comes down on the right to a small pale-blue moon sitting on the horizon, *today's resting place*. The part of the arc the sun has travelled is a solid gold line. The sun (same sun, same animation, about 120 pt) sits on the arc at `done ÷ stretch` (0 = on the horizon on the left, 1 = at the moon). No ticks or labels: the arc is the scale. Same sea, same water rule as the other tabs (at 0 the sun's lower half is hidden by the sea).
+- **Big number:** today's time ("1 h 05", or "40 m" under an hour). **Under it:** "of today's 1 h 45". **One quiet line** (14 pt, #8A93AB): "40 m to today's resting place".
+- **Stretch covered** (done ≥ stretch): the sun sits at the moon with the wink face for a moment, then happy; the whole arc is gold. Number = today's time, under it "today's 1 h 45 · covered", line "Anything more is a bonus."
+- **Week covered** (this week ≥ weekly target): the arc is drawn fully gold with the sun at the moon; number = today's time (or "0 m"), under it "This week is covered", line "Anything more is a bonus."
+- **Rest day** (today isn't one of your practice days): the sun rests on the horizon at the left, no gold on the arc. Big text "Rest day", under it "The sun's taking it easy too", line "Playing anyway? Every minute still counts." If you play anyway, the number shows today's time with "a rest-day bonus" under it; the sun stays on the horizon.
+- **No target yet** (shouldn't happen after onboarding): show the This week tab instead.
+- **Never a penalty:** a missed stretch isn't shown or remembered anywhere. Tomorrow simply has its own stretch.
+- VoiceOver: the picture is one element, e.g. "Today's stretch: 1 hour 5 minutes of 1 hour 45. 40 minutes to go."
+
+**How the stretch is worked out** (all in `Logic/`, nothing stored):
+
+- **Practice days:** a weekday counts as a practice day if you practised on that weekday in at least 2 of the last 4 full weeks. With less than 2 full weeks of history, or if this finds no days at all, every day is a practice day.
+- **Stretch for today** = (weekly target − hours logged this week *before today*) ÷ (practice days left this week, including today), rounded to the nearest 5 minutes, at least 15 minutes. It is fixed for the day: what you play today doesn't change it, and a short yesterday spreads over the remaining days.
+- If today isn't a practice day → rest day. If the week is already covered at the start of today → week covered.
+- **Done today** = all sessions that start today (timer, manual and catch-up), plus the running timer's elapsed time live.
+- A day starts at local midnight. A session that crosses midnight counts towards the day it started (same as the calendar).
+
 **4b · The long game**
 
 - Big number: the total (rounded down) and "of 10,000 hours · N%".
 - Stats row between hairlines: Pace (h/wk), **By Nov 2027** ("+624 h", what the weekly target adds by the end of the 12 months), Finish line.
 - **Meet your future self** row (opens sheet 13).
+- From 1 December to 15 January only, a **Your 2026** row under it opens the year card (section 17). No notification or pop-up.
 
 **Shared hero details**
-- The smiling sun rising out of the sea, full width, with a soft warm glow behind it. The sea is an opaque shape whose top edge is the navy wave line, filled with an opaque colour (#D3DEF4) that fades into the background colour over its bottom 34 pt, so the lower part of the sun is fully hidden behind the water. Inside it: a pale blue second wave line and small gold glints. No glow or transparency in the water, so nothing of the sun shows below the waterline. The sun's height follows the gauge rules above.
+- The smiling sun rising out of the sea, full width, with a soft warm glow behind it. The sea is an opaque shape whose top edge is the navy wave line, filled with an opaque colour (#D3DEF4) that fades into the background colour over its bottom 34 pt, so the lower part of the sun is fully hidden behind the water. Inside it: a pale blue second wave line. No gold glints or reflections on the water (they read as the sun showing through). No glow or transparency in the water, so nothing of the sun shows below the waterline. The sun's height follows the gauge rules above.
 - The hero is gently animated (all of it off with Reduce Motion):
 
 | Element | Motion | Timing |
 | --- | --- | --- |
 | Navy wave + sea fill | Drift right together by one wavelength, seamless loop | 3.2 s, linear |
 | Pale wave | Drifts left by one wavelength | 5 s, linear |
-| Water glints | Three short gold dashes under the sun fade in and stretch, staggered | 2.6 s each, offsets 0 / 0.9 / 1.7 s |
 | Sun | Breathes: up 3 pt, scale 103% | 4 s, ease-in-out |
 | Rays | Turn slowly | One turn per 90 s |
 | Glow | Pulses with the breath | 4 s |
 | Eyes | Every 7 s the sun opens both eyes for a short peek, then closes them | Open for about 0.35 s |
 
-- **Water must cover the sun (build rule).** Layer order, back to front: glow → sun → sea fill → pale wave → navy wave line → glints. The sea fill is one closed `Shape` whose top edge is exactly the navy wave path (same phase, moved by the same offset), filled with a fully opaque colour. Also clip the sun view to the area above the wave path (e.g. `.mask` with the inverted sea shape), so nothing of the sun can show between crests at any animation phase, scale or Dynamic Type size. The fade at the bottom of the sea goes on top of the sea, never as transparency in the sea itself.
+- **Water must cover the sun (build rule).** Layer order, back to front: glow → sun → sea fill → pale wave → navy wave line. Nothing gold is drawn on or in the water. The sea fill is one closed `Shape` whose top edge is exactly the navy wave path (same phase, moved by the same offset), filled with a fully opaque colour. Also clip the sun view to the area above the wave path (e.g. `.mask` with the inverted sea shape), so nothing of the sun can show between crests at any animation phase, scale or Dynamic Type size. The fade at the bottom of the sea goes on top of the sea, never as transparency in the sea itself.
 - Stop the animation when Home is not visible, and keep it cheap (one TimelineView or a few repeating SwiftUI animations).
 - Recent sessions are no longer on Home; they live in History (the day detail) and on the This week day bars (tap a bar to open that day).
 - Bottom: one primary button **Start session**, with **Add past hours** as a text button under it. If a session is running, Start session becomes "Back to session · mm:ss" while the timer is running, or "Resume · mm:ss" if it is paused.
@@ -153,7 +174,8 @@ No cards on Home: everything sits directly on the warm-white background. A segme
 - Segmented control Calendar | Growth.
 - Grid of the last 53 weeks, one square per day, most recent week on the right, scrolled to the end; swipe to go back.
 - Colours by daily logged hours: 0 = blue (rest); < 1 h, 1–2 h, 2–3 h, 3 h+ = yellow → deep orange. Days before onboarding use the same blue.
-- Tapping a day shows its total and sessions in the card below; sessions can be edited or deleted there.
+- Tapping a day shows its total and sessions in the card below; sessions can be edited or deleted there. Each session row shows its photo (56 pt thumbnail) and note if it has them, otherwise "No note" in light grey (section 16).
+- A day with at least one photo gets a tiny white dot (4 pt) in the centre of its square. The legend keeps Rest and Less → More, and adds a second line: a square with the dot and "White dot: a day with a photo" (only once the user has at least one photo).
 - Stats: **Rhythm**, **Steady for**, **Active days** in the window. There are no streaks anywhere in the app: nothing ever "breaks".
   - **Rhythm** = the user's typical practice days per week: the median number of days with any logged time per calendar week (Monday start) over the last 8 complete weeks plus the current week. Shown as "N days/wk".
   - **Steady for** = how many consecutive weeks, counting back from the current week, had at least (Rhythm − 1) practice days. Shown as "N weeks" ("1 week"). If Rhythm is 0, show "–".
@@ -163,6 +185,8 @@ No cards on Home: everything sits directly on the warm-white background. A segme
 - Chart of cumulative hours over time: solid navy line for the past, dashed orange forecast to 10,000 h, soft orange band for the likely range, a small sun at the forecast finish point. The dashed 10,000 h line is labelled "Finish line · 10,000 h" at its left end. No legend.
 - Headline: forecast month + year; "Likely between YYYY and YYYY".
 - **What if I practise more?** slider, 0–10 extra h/week; the forecast, band and text update live ("About 1.4 years sooner, around May 2035"). Not saved.
+- The chart card has a small expand button (36 pt circle, top right); tapping it or the chart opens the full-screen chart (section 19).
+- At the bottom: a quiet **Your 2026** row (small sun, "A card of your year, to keep or share", chevron) that opens the year card (section 17). It is there all year.
 
 ### 7 · Add past hours (`design/LogPast.dc.html`)
 
@@ -258,6 +282,95 @@ An optional way to support the app. Tips never unlock features, remove limits or
 - Include a StoreKit configuration file (`LongGame.storekit`) with the four products, so tips can be tested in the Simulator without App Store Connect.
 - No analytics or third-party SDKs.
 
+### 16 · A note and a photo, if you like (`design/NotePhoto.dc.html`)
+
+One photo of what you made and a short line about it, attached to a session. Completely optional and low key: most days people just tap Save.
+
+- **Finish sheet:** between the session time and Save, one row: a 64 pt dashed square with a camera icon (photo) and a soft field "A note, if you like" with the hint "What you made, what needs work". Nothing is focused or opened automatically: no keyboard, no camera. Save and Discard look and behave exactly the same with or without them.
+- **Photo:** tapping the square offers **Take photo** and **Choose from library** (PhotosPicker, which needs no permission). With a photo, the square shows the thumbnail with a small navy ✕ to remove it. One photo per session.
+- **Note:** plain text, up to 500 characters, multi-line, grows to 4 lines then scrolls.
+- **Later:** tapping a session row in the History day card opens the same two fields (plus duration and delete, as today). This is also how a session finished from the Live Activity or the Watch gets a note or photo.
+- **History:** the white photo dot in the calendar, the photo and note in each session row (section 5).
+- **Photo, full screen:** tapping a thumbnail opens a dark full-screen viewer: close ✕, the date and "Evening · 1 h 15" at the top, the photo fitted, the note under it, and a strip of recent photo thumbnails at the bottom. Swiping left/right moves to the previous/next photo across all days (newest last). ··· offers Change photo, Edit note and Remove photo (with confirmation). Pinch to zoom.
+- **Never asked again:** no reminders, prompts, badges, counts or empty states about notes or photos anywhere. No ratings, tags or questions.
+- **Storage:** the photo is saved as JPEG (longest side 2048 px, quality 0.8), with location and other metadata removed, in `Session.photo` using SwiftData external storage. Thumbnails are made on the fly and cached in memory. It syncs through CloudKit only when sync is on, and is deleted with its session.
+- **Privacy:** the camera needs `NSCameraUsageDescription`: "Take a photo of what you made, if you like." Asked only when Take photo is first tapped.
+- **Accessibility:** the photo square is a button "Add a photo" / "Photo, double-tap to change". Thumbnails read "Photo from Thursday 22 October, evening session". The viewer supports VoiceOver swipes between photos and Dynamic Type for the note.
+
+### 17 · Your year — a shareable card (`design/YearCard.dc.html`)
+
+Once a year, the long game in one picture, to keep or share. No competition: nothing about other people, no ranking.
+
+- **Where:** the "Your 2026" row at the bottom of History → Growth (all year, as the year so far) and, 1 December – 15 January only, under the stats on The long game tab. From 1 to 15 January the card shows the year that just ended. When more than one year has data, the title on the screen is a menu to pick the year.
+- **Screen "Your year":** back chevron and the title; a segmented control **Sunrise | Evening | Photos**; the card preview scaled to fit; one row **Show hours** (switch, on by default; subtitle "Off shows days and percent instead"); a primary **Share** button. Photos only appears when the year has at least 6 sessions with a photo.
+- **Story card (Sunrise and Evening), 9:16:**
+  - Top: "MY 2026 IN THE LONG GAME" (12 pt, letter-spaced, gold #A0712E; #FFE08A on Evening) and the craft name (30 pt bold).
+  - The happy sun (still, no animation) rising out of the sea, with its lower part fully hidden by the opaque sea, same rules as Home. Sunrise: sky #FFF6E6 → #FFE9C7, sea #D3DEF4 with the navy wave line. Evening: the Timer navy gradient, sea #2B3A73 with a pale wave line #9FB0E0. Nothing gold on the water.
+  - Big number: hours played this year ("+624 h", 54 pt bold), "played this year".
+  - The year's calendar as a strip of 53 weeks × 7 days in the calendar colours (rest #DCE3F3 on Sunrise, #2A3566 on Evening), with month labels Jan · Apr · Jul · Oct · Dec. Future days are left out.
+  - Three stats: **Rhythm** ("5 days/wk"), **Most played** (month name), and the total ("3,294 h", "of 10,000").
+  - Footer: small sun and "Long Game · the longest game, played in real life". No link or QR code.
+- **Photos card, 1:1:** "MY 2026 · PIANO", "+624 h" and a small sun, then a 3 × 2 grid of photos from the year's most recent sessions with photos, then "241 days of practice · 3,294 of 10,000 h" and "Long Game". Long-press a tile in the preview to swap it for another of the year's photos.
+- **Show hours off:** the big number becomes days of practice ("241 days", "of practice this year") and the total becomes the percentage ("33%", "of the way"). Notes are never on any card.
+- **Numbers** (all derived in `Logic/`):
+  - Hours this year = logged sessions (timer, manual, catch-up) that start in that calendar year. The onboarding estimate is not included. If onboarding was during that year, the subtitle reads "played since 12 March".
+  - Days of practice = days in the year with any logged time.
+  - Rhythm = the median number of practice days per week over the year's complete weeks (week start from Settings).
+  - Most played month = the month with the most hours; on a tie, the later month.
+  - Total = the overall total (baseline + logged) at the end of the year, or now for the current year.
+  - With fewer than 4 weeks of data in the year, the rows that open the card are hidden.
+- **Sharing:** render the card with `ImageRenderer` at 1080 × 1920 (stories) or 1080 × 1080 (photos), at scale 1 from a 360-pt-wide layout × 3, and share it as a PNG through `ShareLink` (the system share sheet: Instagram Stories, Messages, Save Image, …). The image always uses light or dark exactly as chosen, regardless of the system appearance, and fixed text sizes (not Dynamic Type) so it always fits.
+- **Accessibility:** the preview is one element with a spoken summary ("Your 2026 in the long game: 624 hours played, practised 5 days a week, most in March, 3,294 of 10,000 hours"). The screen around it supports Dynamic Type and VoiceOver.
+
+### 18 · The sun giggles when tapped (`design/SunGiggle.dc.html`)
+
+A small secret: tapping the sun makes it squish, giggle, wiggle and wink, about one second, with a real child's laugh when the sound is on. No hint, tooltip or counter; it never changes any number.
+
+- **Where:** the big sun on Home (all three tabs), the intro pages, the future-self sheet and the tip jar. On the Timer a tap only gets a soft wink (no sound, no wiggle), so a session is never disturbed. Not in widgets, the Watch, the Live Activity or the year card image.
+- **Tap target:** the whole sun, at least 44 pt.
+- **Faces:** a new **laughing** face (eyes > <, open mouth with a small pink tongue, deeper cheeks #F48FA8); reuses **surprised** (open eyes, small "o") and **wink**.
+- **Timing:**
+
+| Time | What happens |
+| --- | --- |
+| 0.00 | Tap. Soft haptic. |
+| 0.00–0.08 s | Squash to 107% × 92%, down 6 pt, surprised face. |
+| 0.05 s | Giggle sound starts (if allowed, below). |
+| 0.08–0.70 s | Laughing face. Wiggle −8°, +7°, −5°, +3°, −1° with hops of 6 and 5 pt. Rays scale to 108% and back. Four small gold sparkles pop out and fade. Light haptics at 0.25 s and 0.45 s. |
+| 0.70–1.00 s | Spring back (response 0.35, damping 0.6) to the happy face, with a 0.2 s wink. |
+
+- **Tapping again:** a tap during a giggle restarts the animation; a new laugh only starts once the current sound has finished (never two at once). Five taps within 2 s: a bigger laugh (the longest clip) and one full spin of the rays, then a 3 s rest during which taps only get the wink.
+- **Stays in place:** at most 6 pt of movement and 8° of turn; the sun's spot on the gauge or arc doesn't change, and the sea and its mask stay in front.
+- **Sound:**
+  - A few short recordings of a child laughing, bundled with the app (`Resources/Sounds/giggle-1.m4a`, `giggle-2.m4a`, …), each about 1 s (max 1.5 s), AAC, with a short fade-out and matched loudness. One is picked at random, never the same twice in a row.
+  - Played with `AVAudioSession` category **`.ambient`** (mix with others): silent when the Ring/Silent switch is on silent, follows the ringer volume, never stops or ducks the user's music or podcast. If other audio is playing (`secondaryAudioShouldBeSilencedHint`), skip the sound.
+  - Volume 0.7 of the system level. Preloaded once with `AVAudioPlayer` so it starts instantly; no audio work at all if the setting is off.
+  - **Settings:** a switch **Giggle sound** (on by default) under a small "Sounds" group.
+- **Haptics:** as in the timing table, only when system haptics are on.
+- **Reduce Motion:** no squish, wiggle, hop or spin; the laughing face shows for 0.8 s, with the haptic and sound as normal.
+- **VoiceOver:** the sun keeps its label and gets one custom action, "Tickle the sun", which plays the face change, haptic and sound.
+
+### 19 · Scrub the forecast — full-screen Growth chart (`design/GrowthScrub.dc.html`)
+
+The Growth chart opens full screen; drag a finger along the line, from the first hour to the finish, and feel a light tap at each milestone.
+
+- **Open:** tap the Growth chart or its expand button. The card grows into a full-screen cover (matched geometry, 0.4 s). Close with the ✕ (top right) or a swipe down. Works in portrait and landscape (landscape gives a wider chart); on wide windows (iPhone Duo open, iPad) it uses the full width.
+- **Layout (portrait):** "Piano · the long game" and ✕ at the top; a headline block (small line, big line, accent line); the chart, same colours and parts as the card (past line, grey area under it, dashed forecast, likely-range band, dashed "Finish line · 10,000 h", the sun at the finish, "Today" on the time axis), with y labels 0 · 2.5k · 5k · 7.5k · 10k. A quiet capsule hint "Drag along the line" at the bottom, hidden after the first scrub ever (Settings.scrubHintSeen).
+- **Idle headline:** "You'll finish the game around" / "November 2035" / "Likely between 2034 and later" (same as the card).
+- **Draw-in:** on open, the past line draws left to right (0.8 s, ease-out), then the dashed forecast (0.5 s), the band fades in (0.3 s) and the sun pops onto the finish point with a small bounce. Reduce Motion: a 0.2 s fade instead.
+- **Milestone dots:** 1,000 · 2,500 · 5,000 · 7,500 h as small dots on the line (4.5 pt radius, 2 pt stroke): filled navy when reached, white with an orange outline when ahead. 10,000 is the sun.
+- **Scrubbing:** touch and drag anywhere on the chart (no long-press needed). A navy vertical line and a white dot with a navy ring follow the finger along the curve (past line or forecast). The headline shows the point:
+  - Past: "Played" / "14 Sep 2022 · 1,000 h" (day precision), plus a "Played" chip in the floating label.
+  - Future: "If you keep your pace" / "Feb 2029 · 5,000 h" (month precision), plus a "Forecast" chip.
+  - On a milestone the accent line reads "Milestone reached" (past) or "Milestone · halfway" / "Milestone · 7,500 h" (ahead); at 10,000, "The finish line".
+  - A floating white label (radius 14, soft shadow) next to the dot repeats the date, hours and a short line; it flips side so it never leaves the screen or sits under the finger.
+  - Releasing the finger keeps the point for 1.5 s, then the headline fades back to the idle text.
+- **Haptics:** a light impact when the scrub crosses a milestone (with a short gold ring around its dot, 0.4 s), and a soft selection tick when crossing Today and at the first/last point. Nothing for ordinary movement. Only when system haptics are on.
+- **Reached dates:** the day the running total first reached the milestone. If it was reached within the onboarding estimate (before tracking began), show the month with "about" ("about Sep 2022 · estimate"), since that part of the line is estimated.
+- **Forecast:** uses the forecast algorithm; if "What if I practise more?" is above 0, the full-screen chart uses that value too (not saved).
+- **VoiceOver:** the chart has an Audio Graph (`accessibilityChartDescriptor`) and an adjustable action: swipe up/down steps through Start → each milestone → Today → Finish line, reading the same text as the headline. The close button is "Close chart".
+- **Build notes:** Swift Charts with `chartXSelection(value:)` (iOS 17) for the scrub value, snapping the dot to the curve; milestones and dates come from `Logic/` (pure functions, tested). Haptics through `sensoryFeedback(.impact(weight: .light), trigger:)` keyed on the milestone index.
+
 ## Timer (`design/Timer.dc.html`)
 
 The timer is timestamp-based, survives the app being closed, and turns each session into a small sunrise where the sun grows a ray every 5 minutes.
@@ -284,9 +397,18 @@ The timer is timestamp-based, survives the app being closed, and turns each sess
 - Ends automatically 12 h after start (matching the auto-pause rule) and is removed when the session is saved or discarded.
 - Reduce Motion: no animation in the activity; it already has none beyond the ticking clock.
 - **Minimise** (chevron) returns to Home; Home shows "Back to session · mm:ss" (or "Resume · mm:ss" if paused).
-- **Finish** opens a sheet: duration (editable ± 5 min, cannot exceed real elapsed time), optional note, **Save** and **Discard**. Sessions under 1 minute offer Discard only.
+- **Finish** opens a sheet: duration (editable ± 5 min, cannot exceed real elapsed time), the optional photo and note row (section 16), **Save** and **Discard**. Sessions under 1 minute offer Discard only.
 - **Long sessions:** after 4 h running, send a gentle notification ("Still practising?"); at 12 h auto-pause.
 - **Haptics:** light tick when a ray lights; success haptic on each golden hour and on save.
+
+### Today's stretch on the Timer (`design/TodayStretch.dc.html`)
+
+- A slim strip under the Timer header (white 8% background, radius 18): a small version of today's arc (about 84 × 44 pt) filling live, then "Today's stretch" (12 pt, 65% white) and "1 h 05 of 1 h 45" (15 pt semibold, white).
+- When the stretch is covered during the session, the strip turns gold ("1 h 45 · covered" in #FFE08A, arc full with the sun at the end), the sun winks once, and a quiet gold line "Today's stretch covered" (13 pt semibold) appears under "Next ray in". The session keeps running.
+- **Never interrupt a session:** no pop-up, sheet, alert, sound or extra haptic for the stretch. The ray haptics stay as they are.
+- On a rest day or when the week is already covered, the strip is hidden.
+- The Finish sheet shows one small line above the buttons when this session covered today's stretch: "Today's stretch covered."
+- Live Activity, widgets and the Watch stay as they are for now.
 
 ### Animation: the sun's hour
 
@@ -349,7 +471,7 @@ No account is needed to use the app; signing in only adds iCloud backup and mult
 - Sign in with Apple from Welcome ("I already have an account") or Settings.
 - CloudKit private database mirrors all entities. Conflicts: last edit wins per session; sessions are never merged.
 - A running timer is device-local; the saved session syncs.
-- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). It also offers Export (CSV of sessions) and Delete all data.
+- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
 **Notifications** (all off by default; asked after the first saved session)
 
@@ -448,6 +570,26 @@ Simple, flat and calm: warm-white background, flat white cards only where conten
 | Celebrate | Open eyes, big smile, rays burst | Finish, golden hour, milestones |
 
 Build the sun as one vector view (circle, 12 rays, face layers) so every state animates between the others; export the same drawing for the app icon. Exact geometry (200×200 viewBox): body circle r 56 at (100,100); 12 rays every 30° from r 66 to r 92 (long) / r 82 (short), alternating, stroke 9, round caps; cheeks r 7 at (72,113) and (128,113); happy eyes `M76 98 q8 -9 16 0` and `M108 98 q8 -9 16 0`; smile `M88 114 q12 11 24 0`; stroke 4.5 navy, round caps. See any design file for the SVG.
+
+### Liquid Glass (iOS 26 and later) (`design/LiquidGlass.dc.html`)
+
+On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–25 the app looks exactly as described above (flat). Only the system glass APIs are used, never a hand-made blur.
+
+| Control | iOS 26+ look | API |
+| --- | --- | --- |
+| Segmented controls (Home: Today / This week / The long game; History: Calendar / Growth; Your year: Sunrise / Evening / Photos) | Glass capsule track; the selected tab is a brighter lens that slides and stretches to the tapped tab | Custom capsule control in a `GlassEffectContainer`, track `.glassEffect(.regular, in: .capsule)`, lens `.glassEffect(.regular.interactive())` + `glassEffectID` with a namespace so it morphs between tabs |
+| Toolbar icons (History, +, Settings, back, Timer close) | 44 pt glass circles | `.buttonStyle(.glass)` with `.buttonBorderShape(.circle)` |
+| Primary button (Start session, Save, Share, Start playing, …) | Capsule, navy-tinted glass, white text | `.buttonStyle(.glassProminent)` + `.tint(ink)`, `.buttonBorderShape(.capsule)`, 56 pt high |
+| Secondary button (Add past hours, Discard, Keep playing, …) | Clear glass capsule, navy text, 48 pt high | `.buttonStyle(.glass)`, `.buttonBorderShape(.capsule)` |
+| Timer: Pause / Resume | Clear glass capsule on the night sky, white text | `.buttonStyle(.glass)` |
+| Timer: Finish | Bright glass capsule, navy text | `.buttonStyle(.glassProminent)` + `.tint(.white)` |
+| Timer: today's stretch strip | Clear glass, radius 22 | `.glassEffect(.regular, in: .rect(cornerRadius: 22))` |
+
+- **Glass only on controls.** The sun, sea, numbers, cards, the calendar, charts and sheet contents stay flat. No glass on glass.
+- **Something to refract:** Home and History get a soft warm wash at the top of the background (#FFF0D6 fading into #FAF8F4 by about 40% of the screen). The header and tabs float as a glass layer and the content scrolls under them.
+- **Shapes:** controls become capsules (corner radius = half the height); cards keep their 20–24 pt corners.
+- **Accessibility:** Reduce Transparency and Increase Contrast make the system glass solid automatically; keep text contrast at 4.5:1 or better (navy on light glass, white on dark glass). With Reduce Motion the lens moves without the stretch.
+- Sheets and the Live Activity keep the system's own appearance.
 
 ## Accessibility, edge cases and scope
 

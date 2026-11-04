@@ -74,13 +74,13 @@ struct HomeGaugeTests {
     @Test func theTabsAreStoredByName() {
         #expect(HomeTab(rawValue: "week") == .week)
         #expect(HomeTab(rawValue: "longGame") == .longGame)
-        #expect(HomeTab.allCases == [.week, .longGame])
+        #expect(HomeTab.allCases == [.today, .week, .longGame])
         let settings = AppSettings()
-        #expect(settings.lastHomeTab == .week)
+        #expect(settings.lastHomeTab == .today)
         settings.lastHomeTab = .longGame
         #expect(settings.lastHomeTabRaw == "longGame")
         settings.lastHomeTabRaw = "something old"
-        #expect(settings.lastHomeTab == .week)
+        #expect(settings.lastHomeTab == .today)
     }
 }
 

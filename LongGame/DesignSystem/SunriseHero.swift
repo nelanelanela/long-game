@@ -41,6 +41,17 @@ struct SunriseLayout {
             sunOffsetX: metrics.sunOffsetX, peeks: face != .celebrate, face: face)
     }
 
+    /// The sun anywhere in the hero: `centre` is where the middle of the sun is, measured from the hero's top left.
+    /// Home uses it while the sun glides between its place on the scale and its place on Today's arc.
+    static func placed(centre: CGPoint, width: CGFloat, sunSize: CGFloat, face: SunFace = .happy,
+                       metrics: GaugeMetrics = .standard) -> SunriseLayout {
+        SunriseLayout(
+            height: metrics.height, waterY: metrics.waterY, sunSize: sunSize,
+            sunTop: centre.y - sunSize / 2,
+            glowSize: 260 * sunSize / GaugeGeometry.sunSize, glowStrength: 0.28, glowDy: 0,
+            sunOffsetX: centre.x - width / 2, peeks: face != .celebrate, face: face)
+    }
+
     /// Pages 0, 1, 2 of "How the game works": the sun high, just rising, and with 8 of 12 rays lit.
     static func intro(page: Int) -> SunriseLayout {
         let tops: [CGFloat] = [70, 150, 96]

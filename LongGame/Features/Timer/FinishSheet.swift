@@ -3,6 +3,8 @@ import SwiftUI
 /// Shown when the user taps Finish: adjust the time, add a note, save or discard.
 struct FinishSheet: View {
     let elapsed: TimeInterval
+    /// Whether a session of this length covers today's stretch (it was still open when the session began).
+    var coversStretch: (TimeInterval) -> Bool = { _ in false }
     let onSave: (_ duration: TimeInterval, _ note: String?) -> Void
     let onDiscard: () -> Void
 
@@ -11,8 +13,10 @@ struct FinishSheet: View {
     @State private var note = ""
     @State private var confirmDiscard = false
 
-    init(elapsed: TimeInterval, onSave: @escaping (TimeInterval, String?) -> Void, onDiscard: @escaping () -> Void) {
+    init(elapsed: TimeInterval, coversStretch: @escaping (TimeInterval) -> Bool = { _ in false },
+         onSave: @escaping (TimeInterval, String?) -> Void, onDiscard: @escaping () -> Void) {
         self.elapsed = elapsed
+        self.coversStretch = coversStretch
         self.onSave = onSave
         self.onDiscard = onDiscard
         _duration = State(initialValue: elapsed)
@@ -54,6 +58,11 @@ struct FinishSheet: View {
                         if new.count > SessionRules.maxNoteLength { note = String(new.prefix(SessionRules.maxNoteLength)) }
                     }
 
+                if coversStretch(duration) {
+                    Text("Today's stretch covered.")
+                        .lgText(.label, color: LGColor.finishLabel)
+                }
+
                 Button("Save") {
                     let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
                     onSave(duration, trimmed.isEmpty ? nil : trimmed)
@@ -75,7 +84,7 @@ struct FinishSheet: View {
         .padding(.bottom, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(LGColor.background)
-        .presentationDetents([.height(canSave ? 520 : 340), .large])
+        .presentationDetents([.height(canSave ? (coversStretch(duration) ? 548 : 520) : 340), .large])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(32)
         .confirmationDialog("Discard this session?", isPresented: $confirmDiscard, titleVisibility: .visible) {

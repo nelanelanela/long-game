@@ -115,6 +115,12 @@ struct HomeGauge: Equatable, Sendable {
         return gauge.describing("The long game", value: DurationFormat.grouped(whole), of: DurationFormat.grouped(Int(Totals.goalHours)))
     }
 
+    /// Today: the sun on an arc, no scale. `value`/`maximum` are seconds-free shares so `fraction` is the arc position.
+    static func today(_ state: StretchState) -> HomeGauge {
+        HomeGauge(tab: .today, value: state.fraction, maximum: 1, ticks: [], pill: "",
+                  description: StretchText.description(state))
+    }
+
     /// "0", "2.5k", "5k", "10k"
     static func thousands(_ hours: Double) -> String {
         guard hours > 0 else { return "0" }

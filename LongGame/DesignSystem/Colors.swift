@@ -52,6 +52,10 @@ enum LGColor {
     static let finishLabel = Color(hex: 0x8A5E1E)
     static let finishDash = Color(hex: 0xE0B04A)
     static let track = Color(hex: 0xEFEAE1)
+    /// Today's arc: the dotted road, the moon at its end (#D9D2C4 and #C9D3EC), and the Timer strip's pale moon.
+    static let arcDots = Color(hex: 0xD9D2C4)
+    static let moon = Color(hex: 0xC9D3EC)
+    static let moonOnDark = Color(hex: 0xE6ECF8)
     static let introDot = Color(hex: 0xDDD6CA)
     static let futureSky = Gradient(stops: [
         .init(color: .white, location: 0),

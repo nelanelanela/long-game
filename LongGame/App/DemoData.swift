@@ -31,7 +31,7 @@ enum DemoData {
         settings.targetSetAt = nil
         settings.targetEndsAt = nil
         settings.targetPromptShownAt = nil
-        settings.lastHomeTab = .week
+        settings.lastHomeTab = .today
         TargetSaving.apply(hours: 12, now: now, settings: settings, context: context)
 
         // A believable pattern: most days, a little more at weekends, a few rest days.

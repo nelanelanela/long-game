@@ -117,7 +117,7 @@ struct WatchHomePage: View {
         VStack(spacing: 0) {
             Group {
                 switch tab {
-                case .week: Text("This week")
+                case .week, .today: Text("This week")
                 case .longGame: Text("The long game")
                 }
             }
@@ -129,7 +129,7 @@ struct WatchHomePage: View {
 
             VStack(spacing: 0) {
                 Text(verbatim: gauge.pill).lgNumber(WatchDesign.number, color: .white)
-                Text(verbatim: tab == .week ? state.weekCaption : state.longGameCaption)
+                Text(verbatim: tab != .longGame ? state.weekCaption : state.longGameCaption)
                     .lgText(WatchDesign.caption, color: WatchDesign.muted)
                     .lineLimit(1).minimumScaleFactor(0.7)
             }
@@ -139,7 +139,7 @@ struct WatchHomePage: View {
 
             Spacer(minLength: 4)
 
-            if tab == .week, let onStart {
+            if tab != .longGame, let onStart {
                 WatchPill(title: "Start", kind: .gold, action: onStart)
                     .accessibilityHint("Starts a practice session")
             }

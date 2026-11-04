@@ -24,9 +24,13 @@ enum WeekStart: String, Codable, Sendable, CaseIterable {
     }
 }
 
-/// The two tabs on Home. Stored raw (`AppSettings.lastHomeTabRaw`): the tab Home opens on.
+/// The three tabs on Home, in the order of the segmented control. Stored raw (`AppSettings.lastHomeTabRaw`): the
+/// tab Home opens on. `today` shows today's stretch on an arc; the other two are gauges with a vertical scale.
 enum HomeTab: String, Codable, Sendable, CaseIterable {
-    case week, longGame
+    case today, week, longGame
+
+    /// The tabs whose sun climbs a vertical scale (Today's sun moves along an arc instead).
+    var hasScale: Bool { self != .today }
 }
 
 enum Totals {
