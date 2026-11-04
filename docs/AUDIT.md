@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Data and maths
@@ -34,6 +34,26 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
+
+## Scrub the forecast (update prompt 16)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| `milestoneDates`: 1,000 / 2,500 / 5,000 / 7,500 / 10,000 h as the day first reached (estimate flag inside the onboarding estimate) or the forecast month; none beyond 30 years | ✅ | `Logic/GrowthScrub.swift` | Uses the forecast with the 'What if I practise more?' extra hours |
+| `curvePoint(at:)`, `crossedMilestone(from:to:)` (either direction, Today included) | ✅ | `GrowthScrub` | Arriving on a milestone counts, leaving one does not |
+| A tap never repeats while the finger rests on a milestone | ✅ | `GrowthScrub.Tracker` | Moving well away (2% of the line) re-arms it |
+| Texts for past, future and milestone points; idle headline as on the card | ✅ | `ScrubText` | Dates and numbers formatted for the user's locale (the example in the spec uses British English) |
+| Tests: reached by estimate, by logged hours, still ahead; exactly on Today; left and right; 'Not within 30 years'; the slider's extra hours | ✅ | `LongGameTests/GrowthScrubTests.swift` | 379 tests pass |
+| Expand button (36 pt circle) and a tap on the chart open a full-screen cover; zoom transition; close with the X or a swipe down on the top of the screen | ✅ | `GrowthTab`, `GrowthScrubView` | The zoom is iOS 18 and later; on iOS 17 the cover slides up. The swipe down works on the header and headline, because the chart belongs to the scrubbing finger |
+| Same chart code as the card, bigger, y labels 0 / 2.5k / 5k / 7.5k / 10k; milestone dots (navy filled when reached, orange outline ahead); the sun at 10,000 | ✅ | `GrowthChartView` | One view for both styles |
+| Draw-in 0.8 s, 0.5 s, 0.3 s and a bouncing sun; Reduce Motion: a 0.2 s fade | ✅ | `GrowthScrubView.drawIn` |  |
+| Scrub with `chartXSelection`, a navy line and a white dot with a navy ring snapped to the curve; floating label that flips side; point kept 1.5 s after the finger lifts | ✅ | `GrowthScrubView`, `GrowthChartView` | Seen working on the iOS 18.2 Simulator with a drag |
+| Hint 'Drag along the line' goes away for good after the first scrub | ✅ | `AppSettings.scrubHintSeen` |  |
+| Haptics: light impact at a milestone with a 0.4 s gold ring; selection tick at Today and both ends | ✅ | `sensoryFeedback` keyed on the milestone index | Cannot be felt in the Simulator |
+| VoiceOver: Audio Graph, adjustable action through Start, milestones, Today, Finish line, 'Close chart' | ✅ | `GrowthChartDescriptor`, `ScrubText.stops` | The Audio Graph and the stepping were not run with VoiceOver |
+| Previews: portrait, landscape, wide; scrubbed at a past milestone, Today and a future milestone; 'Not within 30 years' | ✅ | `GrowthScrubView.swift` |  |
+
+Not seen: landscape and wide windows on a device, the zoom transition on iOS 26.
 
 ## Liquid Glass (update prompt 14)
 
@@ -289,6 +309,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 Run with `-demoData` for sample data.
 
 - **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Scrub the forecast:** Run with `-demoData`, open History (calendar icon), Growth, tap the chart or the small expand button. Drag a finger along the line; the hint disappears for good after the first drag. The Simulator has no haptics, so the taps need a real iPhone.
 - **Compare the two looks (Liquid Glass):** run the LongGame scheme on an iOS 26 or later Simulator for the glass look, and on an iOS 18 Simulator (or any version before 26) for the flat look. In Xcode, open `GlassPreviews.swift` and its canvas: each preview shows glass on the left and the old flat look on the right.
 - **Your year card:** Settings -> Debug only -> 'Fill a sample year'; back on Home go to History (calendar icon) -> Growth, scroll to the bottom row 'Your 2026'. Try the three looks and the Show hours switch, long-press a tile on Photos, then Share (Save Image, Messages). 'Remove the sample year' undoes it.
 - **Note and photo:** Start a session, Finish: the dashed square and the note field sit above Save; pick a photo from the library, Save. History: the day shows a white dot, the day card a 56 pt thumbnail; tap it for the viewer. Tap the row for the editor.

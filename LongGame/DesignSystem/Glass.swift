@@ -75,3 +75,26 @@ private struct GlassStripModifier: ViewModifier {
         }
     }
 }
+
+extension View {
+    /// Marks the Growth chart as the place the full-screen chart grows out of (iOS 18 and later; before that the
+    /// cover simply slides up).
+    @ViewBuilder
+    func scrubTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18, *) {
+            matchedTransitionSource(id: id, in: namespace)
+        } else {
+            self
+        }
+    }
+
+    /// The full-screen chart zooms out of its source over the system's 0.4 s or so.
+    @ViewBuilder
+    func scrubTransition(id: String, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18, *) {
+            navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            self
+        }
+    }
+}
