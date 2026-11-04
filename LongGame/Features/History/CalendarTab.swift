@@ -9,6 +9,8 @@ struct CalendarTab: View {
     @State private var selected: Date
     @State private var editing: Session?
     @State private var explaining: StatInfo?
+    /// The session whose photo is open full screen.
+    @State private var viewing: Session?
 
     init(craft: Craft, sessions: [Session], weekStart: WeekStart, initialDay: Date? = nil) {
         self.craft = craft
@@ -40,6 +42,14 @@ struct CalendarTab: View {
             StatExplainer(info: info)
                 .lgSheetCard()
         }
+        .fullScreenCover(item: $viewing) { session in
+            PhotoViewer(sessions: photoSessions, startAt: session)
+        }
+    }
+
+    /// Every session with a photo, oldest first (the newest is last in the viewer).
+    private var photoSessions: [Session] {
+        sessions.filter(\.hasPhoto).sorted { $0.start < $1.start }
     }
 
     // MARK: Grid
@@ -49,6 +59,7 @@ struct CalendarTab: View {
             .filter { $0.start >= windowStart && $0.start <= now.addingTimeInterval(86_400) }
             .reduce(0.0) { $0 + $1.durationSec } / 3600
         let today = calendar.startOfDay(for: now)
+        let photoDays = SessionPhotos.daysWithPhoto(sessions.map { ($0.start, $0.hasPhoto) }, calendar: calendar)
 
         return VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
@@ -70,7 +81,7 @@ struct CalendarTab: View {
                                     .frame(width: cell, height: cell, alignment: .leading)
                                     .accessibilityHidden(true)
                                 ForEach(week, id: \.self) { day in
-                                    dayCell(day, daily: daily, today: today)
+                                    dayCell(day, daily: daily, today: today, hasPhoto: photoDays.contains(day))
                                 }
                             }
                         }
@@ -92,12 +103,22 @@ struct CalendarTab: View {
                 }
             }
             .accessibilityHidden(true)
+
+            // Only once there is a photo: what the white dot means.
+            if !photoDays.isEmpty {
+                HStack(spacing: 6) {
+                    RoundedRectangle(cornerRadius: 3).fill(LGColor.practice[1]).frame(width: 12, height: 12)
+                        .overlay { Circle().fill(.white).frame(width: 4, height: 4) }
+                    Text("White dot: a day with a photo").lgText(.tiny, color: LGColor.inkMuted)
+                }
+                .accessibilityHidden(true)
+            }
         }
         .padding(.horizontal, 16).padding(.vertical, 18)
         .lgCard()
     }
 
-    private func dayCell(_ day: Date, daily: [Date: Double], today: Date) -> some View {
+    private func dayCell(_ day: Date, daily: [Date: Double], today: Date, hasPhoto: Bool) -> some View {
         let isFuture = day > today
         let seconds = daily[day] ?? 0
         let level = CalendarLevel.level(hours: seconds / 3600)
@@ -105,6 +126,10 @@ struct CalendarTab: View {
         return RoundedRectangle(cornerRadius: 4, style: .continuous)
             .fill(isFuture ? Color.clear : LGColor.calendar(level))
             .frame(width: cell, height: cell)
+            .overlay {
+                // A tiny white dot in the middle: this day has a photo.
+                if hasPhoto && !isFuture { Circle().fill(.white).frame(width: 4, height: 4) }
+            }
             .overlay {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 5.5)
@@ -115,7 +140,7 @@ struct CalendarTab: View {
             .contentShape(Rectangle())
             .onTapGesture { if !isFuture { selected = day } }
             .accessibilityElement()
-            .accessibilityLabel(Self.spoken(day, seconds: seconds, calendar: calendar))
+            .accessibilityLabel(Self.spoken(day, seconds: seconds, calendar: calendar) + (hasPhoto ? String(localized: ", with a photo") : ""))
             .accessibilityAddTraits(isFuture ? [] : .isButton)
             .accessibilityHidden(isFuture)
     }
@@ -185,24 +210,56 @@ struct CalendarTab: View {
             if daySessions.count > 0 {
                 ForEach(daySessions, id: \.persistentModelID) { session in
                     Divider().overlay(LGColor.divider)
-                    Button { editing = session } label: {
-                        HStack {
-                            Text(sessionTitle(session)).lgText(.row)
-                            Spacer()
-                            Text(DurationFormat.short(seconds: session.durationSec)).lgText(.row, color: LGColor.inkMuted)
-                            Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(LGColor.inkMuted)
-                        }
-                        .frame(minHeight: 48)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityHint("Edit or delete this session")
+                    sessionRow(session)
                 }
             }
         }
         .padding(.horizontal, 18)
         .lgCard()
+    }
+
+    /// One session in the day card: its photo (56 pt) and note if it has them, otherwise a quiet "No note".
+    /// Tapping the photo opens it full screen; tapping anywhere else edits the session.
+    private func sessionRow(_ session: Session) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            if session.hasPhoto, let data = session.photo {
+                Button { viewing = session } label: {
+                    PhotoThumb(id: session.id, data: data, side: 56, radius: 12)
+                        .frame(minWidth: 56, minHeight: 56)
+                }
+                .buttonStyle(.plain)
+                .padding(.vertical, 8)
+                .accessibilityLabel(SessionPhotos.spokenLabel(start: session.start))
+                .accessibilityHint("Opens the photo")
+            }
+            Button { editing = session } label: {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(sessionTitle(session)).lgText(.row)
+                        // A manual session already shows its note as the title.
+                        if let note = session.note, !note.isEmpty, session.source != .manual {
+                            Text(note)
+                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
+                                .lineLimit(3)
+                                .multilineTextAlignment(.leading)
+                        } else if !session.hasPhoto, session.note?.isEmpty != false {
+                            Text("No note")
+                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: Color(hex: 0xB3B8C7))
+                        }
+                    }
+                    Spacer(minLength: 8)
+                    Text(DurationFormat.short(seconds: session.durationSec)).lgText(.row, color: LGColor.inkMuted)
+                    Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(LGColor.inkMuted)
+                        .padding(.top, 4)
+                }
+                .padding(.vertical, 12)
+                .frame(minHeight: 48)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Edit or delete this session")
+        }
     }
 
     private func sessionTitle(_ s: Session) -> String {

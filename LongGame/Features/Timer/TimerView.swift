@@ -89,9 +89,10 @@ struct TimerView: View {
         showFinish = true
     }
 
-    private func save(duration: TimeInterval, note: String?) {
+    private func save(duration: TimeInterval, note: String?, photo: Data?) {
         guard let state = store.state else { return }
-        context.insert(Session(craftId: state.craftId, start: state.startedAt, durationSec: duration, source: .timer, note: note))
+        context.insert(Session(craftId: state.craftId, start: state.startedAt, durationSec: duration, source: .timer,
+                               note: note, photo: photo))
         try? context.save()
         store.savedSession = true
         showFinish = false

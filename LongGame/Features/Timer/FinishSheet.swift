@@ -5,16 +5,17 @@ struct FinishSheet: View {
     let elapsed: TimeInterval
     /// Whether a session of this length covers today's stretch (it was still open when the session began).
     var coversStretch: (TimeInterval) -> Bool = { _ in false }
-    let onSave: (_ duration: TimeInterval, _ note: String?) -> Void
+    let onSave: (_ duration: TimeInterval, _ note: String?, _ photo: Data?) -> Void
     let onDiscard: () -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var duration: TimeInterval
     @State private var note = ""
+    @State private var photo: Data?
     @State private var confirmDiscard = false
 
     init(elapsed: TimeInterval, coversStretch: @escaping (TimeInterval) -> Bool = { _ in false },
-         onSave: @escaping (TimeInterval, String?) -> Void, onDiscard: @escaping () -> Void) {
+         onSave: @escaping (TimeInterval, String?, Data?) -> Void, onDiscard: @escaping () -> Void) {
         self.elapsed = elapsed
         self.coversStretch = coversStretch
         self.onSave = onSave
@@ -49,14 +50,8 @@ struct FinishSheet: View {
                 Text("You can trim up to what you really practised.")
                     .lgText(.caption, color: LGColor.inkMuted)
 
-                TextField("Add a note (optional)", text: $note, axis: .vertical)
-                    .lineLimit(2...4)
-                    .lgText(.row)
-                    .padding(.horizontal, 18).padding(.vertical, 14)
-                    .lgCard()
-                    .onChange(of: note) { _, new in
-                        if new.count > SessionRules.maxNoteLength { note = String(new.prefix(SessionRules.maxNoteLength)) }
-                    }
+                // Optional and quiet: nothing here opens or focuses by itself, and Save works the same without it.
+                NotePhotoRow(photo: $photo, note: $note)
 
                 if coversStretch(duration) {
                     Text("Today's stretch covered.")
@@ -64,8 +59,7 @@ struct FinishSheet: View {
                 }
 
                 Button("Save") {
-                    let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
-                    onSave(duration, trimmed.isEmpty ? nil : trimmed)
+                    onSave(duration, SessionRules.savedNote(note), photo)
                 }
                 .buttonStyle(.lg(.primary))
             } else {

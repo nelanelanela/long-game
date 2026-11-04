@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Data and maths
@@ -34,6 +34,26 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
+
+## A note and a photo (update prompt 12)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| `Session.photo` (external storage) and a `hasPhoto` flag; existing sessions keep working | ✅ | `Models/Models.swift` | Adding optional attributes is a lightweight automatic migration, so no versioned schema was needed. `hasPhoto` lets lists and the calendar avoid loading images |
+| Photo saved as JPEG, longest side 2048 px, quality 0.8, no metadata; never enlarged | ✅ | `Logic/PhotoProcessing.swift` | Tested with a picture carrying GPS and camera details |
+| Thumbnails made on the fly, cached in memory, not stored | ✅ | `Features/Photos/PhotoThumb.swift` |  |
+| Note limit 500 characters | ✅ | `SessionRules` | Was 280 |
+| Finish sheet row: 64 pt dashed camera square and soft note field; nothing focused or opened by itself | ✅ | `NotePhotoRow`, `FinishSheet` | Take photo, Choose from library (PhotosPicker, no permission). Take photo is hidden where there is no camera (the Simulator). Camera permission is asked by the system on first use |
+| `NSCameraUsageDescription` | ✅ | `project.yml` | 'Take a photo of what you made, if you like.' |
+| Edit later: same two fields in the session editor | ✅ | `SessionFormView` | Also reached from the History day card |
+| Calendar: white 4 pt dot on days with a photo; second legend line only once there is a photo | ✅ | `CalendarTab` |  |
+| Day card: 56 pt thumbnail and note per session; 'No note' in light grey | ✅ | `CalendarTab.sessionRow` | A manual session's note is its title as before |
+| Full-screen viewer: close, date and 'Evening · 1 h 15', pinch zoom, note, strip of thumbnails, swipe across all days newest last, ... menu (Change photo, Edit note, Remove photo with confirmation); cross-fade with Reduce Motion | ✅ | `PhotoViewer` | VoiceOver: swipe up or down on the photo to move between photos, thumbnails are buttons |
+| CSV export has notes, escaped, and no photos; Delete all data removes photos; deleting a session deletes its photo | ✅ | `CSVExport`, `SettingsView.deleteAll` | Delete all now deletes sessions one by one so every photo file goes |
+| CloudKit: photos sync only when sync is on | ✅ |  | Automatic with external storage; cannot be tried without your Apple Developer account |
+| Tests | ✅ | `LongGameTests/NotePhotoTests.swift` | Size limit, JPEG, stripped details, note limit, CSV escaping, photo days, deleting a session |
+
+Not seen on a device: the camera, and the viewer's gestures. Check them by hand (below).
 
 ## Today's stretch (update prompt 11)
 
@@ -236,6 +256,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 Run with `-demoData` for sample data.
 
 - **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Note and photo:** Start a session, Finish: the dashed square and the note field sit above Save; pick a photo from the library, Save. History: the day shows a white dot, the day card a 56 pt thumbnail; tap it for the viewer. Tap the row for the editor.
 - **Home:** three tabs. This week: the sun at this week's height on the scale, day bars (tap one), the target row. The long game: total, three stats, Meet your future self.
 - **Your pace for the year:** the target row on This week (or step 4 of onboarding). Settings → Debug only → "Year of pace ends in 10 days" / "ended yesterday" shows the reminder and the new-year sheet.
 - **Widgets:** long-press the Home Screen → Edit → Add Widget → Long Game. Save a session and the widget redraws.

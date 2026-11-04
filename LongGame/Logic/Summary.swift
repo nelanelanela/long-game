@@ -61,7 +61,19 @@ struct ProgressSummary: Sendable {
 
 enum SessionRules {
     static let maxDaySeconds = 24.0 * 3600
-    static let maxNoteLength = 280
+    /// A note is up to 500 characters (section 16 of the spec).
+    static let maxNoteLength = 500
+
+    /// The note cut to the limit (a pasted text can be longer).
+    static func clampedNote(_ text: String) -> String {
+        text.count > maxNoteLength ? String(text.prefix(maxNoteLength)) : text
+    }
+
+    /// What is saved: trimmed, and nil when nothing is left.
+    static func savedNote(_ text: String) -> String? {
+        let trimmed = clampedNote(text).trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
 
     /// A day's total across all sessions cannot exceed 24 hours.
     static func fits(existingSecondsThatDay: Double, adding: Double) -> Bool {

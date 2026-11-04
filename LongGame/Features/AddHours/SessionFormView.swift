@@ -14,6 +14,7 @@ struct SessionFormView: View {
     @State private var hours: Int
     @State private var minutes: Int
     @State private var note: String
+    @State private var photo: Data?
     @State private var confirmDelete = false
 
     init(craft: Craft, sessions: [Session], editing: Session?) {
@@ -26,6 +27,7 @@ struct SessionFormView: View {
             _hours = State(initialValue: min(12, total / 60))
             _minutes = State(initialValue: (total % 60) / 5 * 5)
             _note = State(initialValue: editing.note ?? "")
+            _photo = State(initialValue: editing.photo)
         } else {
             _day = State(initialValue: Date())
             _hours = State(initialValue: 1)
@@ -97,21 +99,7 @@ struct SessionFormView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    LGSectionLabel("Note")
-                    TextField("Optional", text: $note, axis: .vertical)
-                        .lineLimit(3...5)
-                        .lgText(.row)
-                        .padding(.horizontal, 18).padding(.vertical, 14)
-                        .lgCard()
-                        .onChange(of: note) { _, new in
-                            if new.count > SessionRules.maxNoteLength { note = String(new.prefix(SessionRules.maxNoteLength)) }
-                        }
-                    if note.count > 240 {
-                        Text("\(note.count) / \(SessionRules.maxNoteLength)").lgText(.tiny, color: LGColor.inkMuted)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-                }
+                NotePhotoRow(photo: $photo, note: $note, photoID: editing?.id ?? UUID())
 
                 if editing != nil {
                     Button("Delete session") { confirmDelete = true }
@@ -166,7 +154,7 @@ struct SessionFormView: View {
 
     private func save() {
         guard canSave else { return }
-        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        let saved = SessionRules.savedNote(note)
         if let editing {
             if !calendar.isDate(editing.start, inSameDayAs: day) {
                 let time = calendar.dateComponents([.hour, .minute, .second], from: editing.start)
@@ -174,11 +162,12 @@ struct SessionFormView: View {
             }
             editing.durationSec = seconds
             editing.end = editing.start.addingTimeInterval(seconds)
-            editing.note = trimmed.isEmpty ? nil : trimmed
+            editing.note = saved
+            if editing.hasPhoto != (photo != nil) || (photo != nil && photo != editing.photo) { editing.setPhoto(photo) }
             editing.editedAt = Date()
         } else {
             context.insert(Session(craftId: craft.id, start: SessionRules.manualStart(on: day),
-                                   durationSec: seconds, source: .manual, note: trimmed.isEmpty ? nil : trimmed))
+                                   durationSec: seconds, source: .manual, note: saved, photo: photo))
         }
         try? context.save()
         dismiss()

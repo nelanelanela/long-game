@@ -462,7 +462,8 @@ struct SettingsView: View {
     private func deleteAll() {
         timer.clear()
         NotificationPlanner.cancelAll()
-        try? context.delete(model: Session.self)
+        // One by one (not a batch delete) so every photo's file goes with its session.
+        for session in (try? context.fetch(FetchDescriptor<Session>())) ?? [] { context.delete(session) }
         try? context.delete(model: YearEstimate.self)
         try? context.delete(model: Craft.self)
         try? context.delete(model: AppSettings.self)

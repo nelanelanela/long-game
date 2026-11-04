@@ -52,16 +52,31 @@ final class Session {
     var durationSec: Double = 0
     var sourceRaw: String = SessionSource.manual.rawValue
     var note: String?
+    /// One optional photo of what was made: JPEG, longest side 2048 px, no metadata (see `PhotoProcessing`). Kept in
+    /// its own file by SwiftData so the database stays small, and deleted with the session. Adding it needs no
+    /// migration: an optional attribute is added to existing stores automatically.
+    @Attribute(.externalStorage) var photo: Data?
+    /// Whether there is a photo, so lists and the calendar can tell without loading the image.
+    /// Always set through `setPhoto(_:)`.
+    var hasPhoto: Bool = false
     var createdAt: Date = Date()
     var editedAt: Date?
 
-    init(craftId: UUID, start: Date, durationSec: Double, source: SessionSource, note: String? = nil) {
+    init(craftId: UUID, start: Date, durationSec: Double, source: SessionSource, note: String? = nil, photo: Data? = nil) {
         self.craftId = craftId
         self.start = start
         self.end = start.addingTimeInterval(durationSec)
         self.durationSec = durationSec
         self.sourceRaw = source.rawValue
         self.note = note
+        self.photo = photo
+        self.hasPhoto = photo != nil
+    }
+
+    /// Sets or removes the photo (the data should come from `PhotoProcessing.prepare`).
+    func setPhoto(_ data: Data?) {
+        photo = data
+        hasPhoto = data != nil
     }
 
     var source: SessionSource {
