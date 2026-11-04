@@ -27,6 +27,24 @@ struct GrowthTab: View {
         VStack(spacing: 14) {
             forecastCard(s: s, data: data, now: now)
             whatIfCard(s: s, now: now)
+            yearRow(now: now)
+        }
+    }
+
+    /// A quiet row at the bottom, there all year: opens the year card (the year so far, or last year in early January).
+    @ViewBuilder
+    private func yearRow(now: Date) -> some View {
+        let year = YearSummary.defaultYear(now: now)
+        let summary = YearSummary.make(year: year, sessions: sessions.map(\.record), estimates: estimates.map(\.rate),
+                                       onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
+        if summary.hasEnoughData {
+            NavigationLink {
+                YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
+            } label: {
+                YearEntryRow(year: year).padding(.horizontal, 18)
+            }
+            .buttonStyle(.plain)
+            .lgCard()
         }
     }
 

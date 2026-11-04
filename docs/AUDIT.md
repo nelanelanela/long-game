@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Data and maths
@@ -34,6 +34,23 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
+
+## Your year card (update prompt 13)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| `YearSummary`: hours, days of practice, Rhythm, most played month, total at year end, percent, calendar levels, 'since' date, photos newest first | ✅ | `Logic/YearSummary.swift` | Pure, nothing stored. Rhythm is the middle of the practice days per week over complete weeks inside the year (and after the game began) |
+| Which year: the current one, the one that just ended from 1 to 15 January; rows hidden under 4 weeks of data | ✅ | `YearSummary.defaultYear`, `hasEnoughData` | Four weeks = 28 days since the start of the year or the game, with something logged |
+| Tests: hours and days, Rhythm, months and ties, 1-15 Jan, onboarding in the year, under 4 weeks, Sunday or Monday, 31 December midnight, rendering sizes | ✅ | `LongGameTests/YearSummaryTests.swift` | 351 tests pass |
+| Entry rows: History -> Growth all year; The long game tab 1 Dec - 15 Jan | ✅ | `GrowthTab`, `HomeView` | Quiet rows, no notification or pop-up |
+| Your year screen: back chevron, title menu to pick a year, Sunrise / Evening / Photos, scaled preview, Show hours, Share | ✅ | `Features/Year/YearScreen.swift` | Photos only with at least 6 photo sessions in the year. Long-press a photo tile to swap it |
+| Cards at 360 pt, fixed text sizes: Sunrise and Evening 9:16, Photos square; the still happy sun, year strip, three stats, footer; nothing gold on the water | ✅ | `Features/Year/YearCardView.swift`, `SunriseCanvas` | Reuses the sun, sea and calendar colours; the sea gained a palette so Evening can have its own |
+| Sharing: ImageRenderer at 3x (1080 x 1920 or 1080 x 1080), PNG through ShareLink, always the chosen look | ✅ | `YearCardRender` | No new permission. Tested sizes and that light and dark system settings give the same picture |
+| VoiceOver: preview is one element with a spoken summary; screen supports Dynamic Type | ✅ | `YearCardText.spoken` |  |
+| Numbers and month names follow the user's locale; previews of all three cards with hours shown and hidden | ✅ | `YearCardText`, `YearCardView` previews | The rest of the app's copy is English |
+| Debug option: fill a sample year (and remove it) | ✅ | Settings, Debug only | About 60% of this year's days so far, six with a made-up photo |
+
+Not seen on a device: the share sheet (Instagram Stories and so on).
 
 ## A note and a photo (update prompt 12)
 
@@ -256,6 +273,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 Run with `-demoData` for sample data.
 
 - **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Your year card:** Settings -> Debug only -> 'Fill a sample year'; back on Home go to History (calendar icon) -> Growth, scroll to the bottom row 'Your 2026'. Try the three looks and the Show hours switch, long-press a tile on Photos, then Share (Save Image, Messages). 'Remove the sample year' undoes it.
 - **Note and photo:** Start a session, Finish: the dashed square and the note field sit above Save; pick a photo from the library, Save. History: the day shows a white dot, the day card a 56 pt thumbnail; tap it for the viewer. Tap the row for the editor.
 - **Home:** three tabs. This week: the sun at this week's height on the scale, day bars (tap one), the target row. The long game: total, three stats, Meet your future self.
 - **Your pace for the year:** the target row on This week (or step 4 of onboarding). Settings → Debug only → "Year of pace ends in 10 days" / "ended yesterday" shows the reminder and the new-year sheet.

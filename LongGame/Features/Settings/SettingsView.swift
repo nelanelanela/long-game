@@ -297,6 +297,16 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
+                    Button("Fill a sample year") { fillSampleYear() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Button("Remove the sample year") { removeSampleYear() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Adds about 60% of the days of this year so far as sessions, six with a photo, so History → Growth → Your year shows a full card straight away. Remove deletes only those sessions.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
                     Button("Show Meet your future self again") {
                         settings?.futureSelfShown = false
                         try? context.save()
@@ -340,6 +350,51 @@ struct SettingsView: View {
                 }
             }
         }
+    }
+
+    private static let sampleNote = "Debug: sample year"
+
+    /// Sessions on about 60% of the days of this year so far, six of them with a made-up photo.
+    private func fillSampleYear() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        guard var day = cal.date(from: DateComponents(year: cal.component(.year, from: today), month: 1, day: 1)) else { return }
+        let id = craft.id
+        let start = max(cal.startOfDay(for: craft.createdAt), day)
+        var n = 0
+        var photoDays: [Date] = []
+        while day < today {
+            if day >= start, (n * 7919) % 10 < 6 {
+                let minutes = 20 + (n * 37) % 100
+                let session = Session(craftId: id, start: SessionRules.manualStart(on: day), durationSec: Double(minutes * 60),
+                                      source: .manual, note: Self.sampleNote)
+                context.insert(session)
+                photoDays.append(day)
+                if photoDays.count % 9 == 0, let data = Self.samplePhoto(seed: photoDays.count) { session.setPhoto(data) }
+            }
+            day = cal.date(byAdding: .day, value: 1, to: day) ?? today
+            n += 1
+        }
+        try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    private func removeSampleYear() {
+        for session in craftSessions where session.note == Self.sampleNote { context.delete(session) }
+        try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    /// A soft coloured picture, prepared the same way as a real photo.
+    private static func samplePhoto(seed: Int) -> Data? {
+        let hue = Double((seed * 47) % 100) / 100
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 900, height: 900)).image { ctx in
+            UIColor(hue: hue, saturation: 0.35, brightness: 0.95, alpha: 1).setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 900, height: 900))
+            UIColor(hue: hue, saturation: 0.6, brightness: 0.75, alpha: 1).setFill()
+            ctx.cgContext.fillEllipse(in: CGRect(x: 250, y: 250, width: 400, height: 400))
+        }
+        return image.jpegData(compressionQuality: 0.9).flatMap(PhotoProcessing.prepare)
     }
 
     private func pretendYearOfPaceEnds(inDays days: Int) {

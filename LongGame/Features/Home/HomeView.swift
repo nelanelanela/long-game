@@ -434,6 +434,26 @@ struct HomeView: View {
             statsRow(s, now: now)
                 .padding(.top, 18)
             futureSelfRow
+            yearRow(now: now)
+        }
+    }
+
+    /// From 1 December to 15 January only: the year card, under "Meet your future self". No notification.
+    @ViewBuilder
+    private func yearRow(now: Date) -> some View {
+        if YearSummary.showsOnLongGame(now: now) {
+            let year = YearSummary.defaultYear(now: now)
+            let summary = YearSummary.make(year: year, sessions: sessions.map(\.record), estimates: estimates.map(\.rate),
+                                           onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
+            if summary.hasEnoughData {
+                NavigationLink {
+                    YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
+                } label: {
+                    YearEntryRow(year: year)
+                }
+                .buttonStyle(.plain)
+                .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+            }
         }
     }
 

@@ -6,6 +6,17 @@ import SwiftUI
 // The sea is one closed, fully opaque shape whose top edge is the navy wave path, and the sun is also masked to
 // the area above that path, so no part of it can show below the waterline at any phase, size or scale.
 
+/// The colours of the sea: the fill, the pale second wave and the line on top. Day is Home's; Evening is the year
+/// card's navy look. The water never has anything gold in it, whatever the palette.
+struct SeaPalette: Equatable {
+    var fill: Color
+    var secondWave: Color
+    var line: Color
+
+    static let day = SeaPalette(fill: LGColor.seaFill, secondWave: LGColor.seaWave, line: LGColor.ink)
+    static let evening = SeaPalette(fill: Color(hex: 0x2B3A73), secondWave: Color(hex: 0x4A5A96), line: Color(hex: 0x9FB0E0))
+}
+
 /// Where everything sits, in points inside a hero that is as wide as its container and `height` tall.
 struct SunriseLayout {
     var height: CGFloat
@@ -28,6 +39,7 @@ struct SunriseLayout {
     /// The colour the bottom of the sea fades into.
     var fade: Color = LGColor.background
     var fadeHeight: CGFloat = 34
+    var sea: SeaPalette = .day
 
     static let homeSeaHeight: CGFloat = 64
 
@@ -57,6 +69,12 @@ struct SunriseLayout {
         let tops: [CGFloat] = [70, 150, 96]
         let index = min(max(page, 0), 2)
         return SunriseLayout(height: 300, waterY: 244, sunSize: 170, sunTop: tops[index], litRays: index == 2 ? 8 : 12)
+    }
+
+    /// The year card: a 160 pt sun in a 222 pt hero, 360 pt wide. The sea ends flat; there is no fade.
+    static func yearCard(sea: SeaPalette, glowStrength: Double) -> SunriseLayout {
+        SunriseLayout(height: 222, waterY: 186, sunSize: 160, sunTop: 50, glowSize: 230, glowStrength: glowStrength,
+                      fadeHeight: 0, sea: sea)
     }
 
     static let futureSelf = SunriseLayout(
@@ -126,11 +144,11 @@ struct SunriseCanvas: View {
                     }
                     .mask { AboveWater(waterY: layout.waterY, phase: frame.phaseRight).fill(Color.black) }
 
-                SeaFill(waterY: layout.waterY, phase: frame.phaseRight).fill(LGColor.seaFill)
+                SeaFill(waterY: layout.waterY, phase: frame.phaseRight).fill(layout.sea.fill)
                 WaveLine(y: layout.waterY + 18, phase: frame.phaseLeft + 10)
-                    .stroke(LGColor.seaWave, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    .stroke(layout.sea.secondWave, style: StrokeStyle(lineWidth: 2, lineCap: .round))
                 WaveLine(y: layout.waterY, phase: frame.phaseRight)
-                    .stroke(LGColor.ink, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    .stroke(layout.sea.line, style: StrokeStyle(lineWidth: 2, lineCap: .round))
 
                 // The fade into the background sits on top of the sea, never as transparency inside it.
                 LinearGradient(stops: [
