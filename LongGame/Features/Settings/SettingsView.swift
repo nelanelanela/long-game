@@ -49,6 +49,7 @@ struct SettingsView: View {
                     weekCard(settings)
                     reminderCard(settings)
                 }
+                FocusSettingsCard()
                 practiceCard
                 dataCard
                 syncCard

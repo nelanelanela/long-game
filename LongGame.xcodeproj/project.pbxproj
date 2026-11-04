@@ -81,6 +81,7 @@
 		4E6D01FACAA7DB7941354047 /* CatchUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */; };
 		4EDAD511BC70EB0204DD9F65 /* HomeGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC7B97C2565533549273A31 /* HomeGauge.swift */; };
 		4FCFE72A84A287472599F6AA /* Water.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43824C0EB89F2251259C11A0 /* Water.swift */; };
+		517C580C75461F5A0B1D0C61 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		5279E50D7A49F01B27EBF6FC /* HomeGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC7B97C2565533549273A31 /* HomeGauge.swift */; };
 		528285A7DB16772F17E4CAEB /* NotificationPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E763AA3D970D5463433DD4 /* NotificationPlanner.swift */; };
 		52F16376B796BA75453CD383 /* StartPlayingControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F217BEF396AE500574325E62 /* StartPlayingControl.swift */; };
@@ -91,15 +92,18 @@
 		590035547BD25BB957766118 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C6B8F89138DDBD022A383C /* WidgetSnapshot.swift */; };
 		5B246DEBF5917B287551E344 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F6EA70DA895FEED27FBAADE6 /* Localizable.xcstrings */; };
 		5B9FC10EBF7B87078D027601 /* Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */; };
+		5CFE716122EABE14BBBE2929 /* FocusSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABCB669F894280D7A83F628 /* FocusSettingsCard.swift */; };
 		5D30333D1BEB5794AF64F8F5 /* WidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBC944F7A3152CAA65BFB2 /* WidgetModel.swift */; };
 		5E8AA49079B617D4F55FEBD2 /* PolishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0DA036E644F90279B0F39B /* PolishTests.swift */; };
 		61B1D36484BDC0A2BA2B7E26 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E53F81FC9E8C23ED679BC8 /* WatchViews.swift */; };
 		64764DC89253F6EC32FDF177 /* TimerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C9DE464C0FF4C3D233638F /* TimerLogic.swift */; };
 		6492BF94C59B185C11BE87EA /* SunriseMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */; };
+		66A337675FB857523898D619 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		6856D897257E00E4048673A2 /* SaveBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3B9B0FF8D4A15F09D8BFA /* SaveBurst.swift */; };
 		68D50658297C3C6A440D094C /* LongGameWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E0C7883CE69545EC403CAA3 /* LongGameWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6BDEBED2390D9079FE581AE8 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480213F17CA1F530062D7B2E /* IntroView.swift */; };
 		6FDD092786B71CED9232D89A /* Basics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACABF7B3578EC4629399A351 /* Basics.swift */; };
+		72561DAC99D92671A8D9122A /* FocusPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5395D0B29A808ABD0940C12E /* FocusPlanTests.swift */; };
 		7271631B83F214F323DC7F72 /* SunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C376529B80B4C903039F615E /* SunView.swift */; };
 		76342EADF5DA9A2E9F92CE84 /* TipRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95668AEA33090AE8C1ED90AF /* TipRules.swift */; };
 		76B8ED0E4B9EA70693CDF77D /* GaugeHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCC544F9830366BF50EAB12 /* GaugeHero.swift */; };
@@ -148,6 +152,7 @@
 		B635D0C92067D8F98D514863 /* TimerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C9DE464C0FF4C3D233638F /* TimerLogic.swift */; };
 		B73E6E3CCDBDE4687AFD0351 /* RhythmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E773072D1CD5918F00B4D6F7 /* RhythmTests.swift */; };
 		B75BBA00C6C8822619E4DB07 /* Practice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF3C5DCEB543083E891D780 /* Practice.swift */; };
+		B8540871920ADB4AB5A85AE7 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		B93348C0D8FA4DC560F63C87 /* TimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5773F1E7DF81F13522180A4F /* TimerTests.swift */; };
 		BC06AEAF23117424F6CC1D76 /* AppRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180144944789A61E483B9BA6 /* AppRoot.swift */; };
 		BC1AC5D4B2CFABB30FED3602 /* WeeklyTargetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6097C66FD7340953CF696711 /* WeeklyTargetView.swift */; };
@@ -162,6 +167,7 @@
 		C7BB0B04E761345A10D0C3B3 /* TimerSky.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7E3F49B3D4B88874771B1F /* TimerSky.swift */; };
 		C81FF17E3A3B2C7A8EA5514D /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9429C70C8E5C507E316B0BBC /* WidgetViews.swift */; };
 		C96786528BF4F0C8F03975E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12A984DCEDA178DE7119B40 /* SettingsView.swift */; };
+		C97C0FD7CD6F5E0F0930B73D /* FocusMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959578556E103EF105C91D6 /* FocusMode.swift */; };
 		C9951326B05452D88021B2A3 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		CB64E23D7E1C7531BC2F3BA7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D3125885B8A2AC3B3EB399 /* Models.swift */; };
 		CCFB98D662F865C7B6FBB2CF /* WeeklyTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00D5764DAEC9966CA01FB8A /* WeeklyTargetTests.swift */; };
@@ -174,6 +180,7 @@
 		E64DBBAAD642D6A30A83FDB5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0CE3E9FF87E9165C481A16 /* Typography.swift */; };
 		E6DE98EAD3DD85A5F66DC65A /* StoreKitTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 074BF7987401BB1D633526AA /* StoreKitTest.framework */; };
 		E7F56508D856379C00A08485 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E1B8CB7C4D4E00CEE64C06C8 /* Localizable.xcstrings */; };
+		E9325B3757EF1507BF86D8EB /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		EDA32DB79F7C4B29573D49D5 /* StartPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19CB5B062C354BF9A0D4A6B4 /* StartPlaying.swift */; };
 		EF2AE4CE531CBB367404240C /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB10F8E126C34BEC2850AFA /* HistoryView.swift */; };
 		EF848AE52CD079394B5E269C /* TimerMoments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FADE04FC791931D0B34E177 /* TimerMoments.swift */; };
@@ -295,8 +302,10 @@
 		46B97B0E389ECC0050CBBF09 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
 		480213F17CA1F530062D7B2E /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		4FADE04FC791931D0B34E177 /* TimerMoments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerMoments.swift; sourceTree = "<group>"; };
+		5395D0B29A808ABD0940C12E /* FocusPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusPlanTests.swift; sourceTree = "<group>"; };
 		54D4D158B97B67F3305FD164 /* MilestoneCelebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneCelebration.swift; sourceTree = "<group>"; };
 		5773F1E7DF81F13522180A4F /* TimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTests.swift; sourceTree = "<group>"; };
+		5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusPlan.swift; sourceTree = "<group>"; };
 		5C5A3E6DCE733A487C4F7DB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6022DFF5F6081A955B9C3863 /* TipStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipStore.swift; sourceTree = "<group>"; };
 		6097C66FD7340953CF696711 /* WeeklyTargetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTargetView.swift; sourceTree = "<group>"; };
@@ -345,6 +354,7 @@
 		C376529B80B4C903039F615E /* SunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunView.swift; sourceTree = "<group>"; };
 		C5A6845E073F95FBC0C9C651 /* OnboardingFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlow.swift; sourceTree = "<group>"; };
 		C770FF544849BEAC65E4607E /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		C959578556E103EF105C91D6 /* FocusMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusMode.swift; sourceTree = "<group>"; };
 		CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Labels.swift; sourceTree = "<group>"; };
 		CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUp.swift; sourceTree = "<group>"; };
 		D00D5764DAEC9966CA01FB8A /* WeeklyTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTargetTests.swift; sourceTree = "<group>"; };
@@ -379,6 +389,7 @@
 		F6EA70DA895FEED27FBAADE6 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		F8D4894833A78A620446EC2B /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		FA63E65293528C8217C4B6B0 /* DayBarsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBarsRow.swift; sourceTree = "<group>"; };
+		FABCB669F894280D7A83F628 /* FocusSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSettingsCard.swift; sourceTree = "<group>"; };
 		FD160555B15B20735D686997 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		FDEA7A331E76422E857878BC /* GrowthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthTests.swift; sourceTree = "<group>"; };
 		FF86E7F3BE3B356942FB65E4 /* WatchSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
@@ -450,6 +461,7 @@
 				EB309A444D8CD7FFD6139114 /* CloudSync.swift */,
 				09414C404EEAB7AE974460CD /* DebugOptions.swift */,
 				3EE9F568BE6C8C49CA7159FC /* DemoData.swift */,
+				C959578556E103EF105C91D6 /* FocusMode.swift */,
 				DD4128CE14B1359C65AB6CB2 /* LongGameApp.swift */,
 				D1E763AA3D970D5463433DD4 /* NotificationPlanner.swift */,
 				C770FF544849BEAC65E4607E /* Notifications.swift */,
@@ -542,6 +554,7 @@
 			children = (
 				ACABF7B3578EC4629399A351 /* Basics.swift */,
 				CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */,
+				5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */,
 				46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */,
 				35DBBF9A26035DE803E852B3 /* Format.swift */,
 				E4EC9E004501C0C951AEF83A /* Growth.swift */,
@@ -608,6 +621,7 @@
 			children = (
 				D3CC49F874CF563564E5ECA0 /* ArchivedCraftsView.swift */,
 				B1A9A0D14F2ACF4FA8075536 /* EstimatesEditorView.swift */,
+				FABCB669F894280D7A83F628 /* FocusSettingsCard.swift */,
 				A12A984DCEDA178DE7119B40 /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -654,6 +668,7 @@
 			children = (
 				782FD5C9CAC4F3D2F257CD72 /* AuditTests.swift */,
 				A002D092B46E53CEBDF5D3D2 /* CatchUpTests.swift */,
+				5395D0B29A808ABD0940C12E /* FocusPlanTests.swift */,
 				FDEA7A331E76422E857878BC /* GrowthTests.swift */,
 				955AE8A7A8A39B243A44E46F /* HomeGaugeTests.swift */,
 				1A25C749C7D371B6DF1E10DD /* LogicTests.swift */,
@@ -913,6 +928,7 @@
 			files = (
 				0A773BA69D2EF8335AED3CCA /* AuditTests.swift in Sources */,
 				37B6CDD9C3B921301012DBA0 /* CatchUpTests.swift in Sources */,
+				72561DAC99D92671A8D9122A /* FocusPlanTests.swift in Sources */,
 				4751CEE786E63AD5198DEAC2 /* GrowthTests.swift in Sources */,
 				AAD4619BF3456B17C0B66B45 /* HomeGaugeTests.swift in Sources */,
 				942A613EA4F9ABF961A16CFB /* LogicTests.swift in Sources */,
@@ -936,6 +952,7 @@
 				7A12E6D5561AD4BC17F54727 /* Basics.swift in Sources */,
 				31F585538D815BF7CCC57012 /* CatchUp.swift in Sources */,
 				7D5DFF86E17C29AC3413A486 /* Colors.swift in Sources */,
+				517C580C75461F5A0B1D0C61 /* FocusPlan.swift in Sources */,
 				C3B8BC4B9D15EF1F25A1956F /* Forecast.swift in Sources */,
 				1097655DAA6B394B63A6BE5D /* Format.swift in Sources */,
 				013C4250E8EF4582E695AC9A /* Growth.swift in Sources */,
@@ -988,6 +1005,9 @@
 				092B496BD425270B1BD9FC0D /* EstimatesEditorView.swift in Sources */,
 				30560DBF0C15CE6B2A83AEC1 /* FinishSheet.swift in Sources */,
 				FD3DE4552EED422E9FF39A2A /* FlowLayout.swift in Sources */,
+				C97C0FD7CD6F5E0F0930B73D /* FocusMode.swift in Sources */,
+				E9325B3757EF1507BF86D8EB /* FocusPlan.swift in Sources */,
+				5CFE716122EABE14BBBE2929 /* FocusSettingsCard.swift in Sources */,
 				15B6DC22149273AFE8082E63 /* Forecast.swift in Sources */,
 				DE36297BDE629D8E2E80A2BD /* Format.swift in Sources */,
 				3C9E5541EA64DA857DC806BB /* FutureSelfSheet.swift in Sources */,
@@ -1052,6 +1072,7 @@
 				6FDD092786B71CED9232D89A /* Basics.swift in Sources */,
 				165DE7B6DA8D202F0891B09A /* CatchUp.swift in Sources */,
 				8D340AAF09F8CC8C9D532A41 /* Colors.swift in Sources */,
+				B8540871920ADB4AB5A85AE7 /* FocusPlan.swift in Sources */,
 				8D2D7F19DCF1B204AFA29BBA /* Forecast.swift in Sources */,
 				1ECC4E73E38D9270576EC2D7 /* Format.swift in Sources */,
 				081EBB4F22FA7C1552E14D09 /* Growth.swift in Sources */,
@@ -1087,6 +1108,7 @@
 				89B254B3EA59CBC172A109CA /* Basics.swift in Sources */,
 				4E6D01FACAA7DB7941354047 /* CatchUp.swift in Sources */,
 				AED557B62753F9F5BAF953A4 /* Colors.swift in Sources */,
+				66A337675FB857523898D619 /* FocusPlan.swift in Sources */,
 				4B71CA5CEE20170F2F55E11A /* Forecast.swift in Sources */,
 				483222535E580E4ED0A61065 /* Format.swift in Sources */,
 				44BB18A5801AF589B95241F5 /* Growth.swift in Sources */,

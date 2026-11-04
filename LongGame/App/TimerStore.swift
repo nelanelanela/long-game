@@ -42,6 +42,7 @@ final class TimerStore {
         guard state == nil else { return }
         state = TimerState(craftId: craft.id, craftName: craft.name, startedAt: now)
         commit()
+        FocusMode.shared.runShortcut(starting: true)
     }
 
     func pause(now: Date = Date()) {
@@ -61,8 +62,10 @@ final class TimerStore {
 
     /// Ends the session (saved or discarded).
     func clear() {
+        let wasActive = state != nil
         state = nil
         commit()
+        if wasActive { FocusMode.shared.runShortcut(starting: false) }
     }
 
     /// Re-reads the clock after the app comes back to the foreground.
@@ -101,5 +104,7 @@ final class TimerStore {
         let now = Date()
         Notifications.scheduleLongSession(at: state?.longSessionDate(at: now))
         LiveActivityManager.sync(state, now: now)
+        // Mutes the chosen apps while a session exists, and lets them go the moment it ends, wherever it ended.
+        FocusMode.shared.sync(sessionActive: state != nil)
     }
 }
