@@ -2,7 +2,7 @@ import SwiftUI
 
 // The sun rising out of the sea: one set of components for Home (as a gauge), the intro pages and the future-self sheet.
 //
-// Layer order, back to front: glow → sun → sea fill → pale wave → navy wave line → glints → fade.
+// Layer order, back to front: glow → sun → sea fill → pale wave → navy wave line → fade.
 // The sea is one closed, fully opaque shape whose top edge is the navy wave path, and the sun is also masked to
 // the area above that path, so no part of it can show below the waterline at any phase, size or scale.
 
@@ -19,9 +19,8 @@ struct SunriseLayout {
     var glowStrength: Double = 0.28
     /// Glow centre below the sun's centre.
     var glowDy: CGFloat = 0
-    /// How far right of the middle the sun, its glow and the glints sit (Home leaves room for the scale).
+    /// How far right of the middle the sun and its glow sit (Home leaves room for the scale).
     var sunOffsetX: CGFloat = 0
-    var glints = false
     /// Home and the future-self sheet: the sun opens its eyes for a peek every 7 s.
     var peeks = false
     var litRays = 12
@@ -39,7 +38,7 @@ struct SunriseLayout {
             height: metrics.height, waterY: metrics.waterY, sunSize: metrics.sunSize,
             sunTop: metrics.centreY(fraction: fraction) - metrics.sunSize / 2,
             glowSize: 260 * metrics.sunSize / GaugeGeometry.sunSize, glowStrength: 0.28, glowDy: 0,
-            sunOffsetX: metrics.sunOffsetX, glints: true, peeks: face != .celebrate, face: face)
+            sunOffsetX: metrics.sunOffsetX, peeks: face != .celebrate, face: face)
     }
 
     /// Pages 0, 1, 2 of "How the game works": the sun high, just rising, and with 8 of 12 rays lit.
@@ -51,7 +50,7 @@ struct SunriseLayout {
 
     static let futureSelf = SunriseLayout(
         height: 190, waterY: 190 - homeSeaHeight + 12, sunSize: 150, sunTop: 0,
-        glowSize: 240, glowStrength: 0.35, glowDy: 19, glints: true, peeks: true, fade: .white)
+        glowSize: 240, glowStrength: 0.35, glowDy: 19, peeks: true, fade: .white)
 }
 
 /// One moment of the animation. `SunriseFrame.at(_:)` gives the live one, `.still` the Reduce Motion one.
@@ -63,7 +62,6 @@ struct SunriseFrame {
     var eyesOpen: Double = 0
     var glowOpacity: Double = 0.55
     var glowScale: Double = 1
-    var glints: [(opacity: Double, scaleX: Double)] = Array(repeating: (0.8, 1), count: 4)
     /// How far below its resting place the sun still is (the future-self sheet).
     var rise: CGFloat = 0
 
@@ -75,7 +73,7 @@ struct SunriseFrame {
             breathe: SunriseMotion.breathe(t), rotation: SunriseMotion.rotationDegrees(t),
             eyesOpen: peeks ? SunriseMotion.eyesOpen(t) : 0,
             glowOpacity: SunriseMotion.glowOpacity(t), glowScale: SunriseMotion.glowScale(t),
-            glints: SunriseMotion.glintDelays.map { SunriseMotion.glint(t, delay: $0) }, rise: rise)
+            rise: rise)
     }
 
     /// Frozen at a wave phase, for previews and tests. `breathe` 0 is the sun at its lowest (the worst case for
@@ -96,12 +94,6 @@ struct SunriseFrame {
 struct SunriseCanvas: View {
     var layout: SunriseLayout
     var frame: SunriseFrame = .still
-    /// Tests turn the glints off: they are gold dashes that belong on the water.
-    var showsGlints = true
-
-    private static let glintShapes: [(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat)] = [
-        (176, 22, 38, 3), (164, 36, 22, 3), (204, 40, 16, 3), (186, 50, 12, 2.5),
-    ]
 
     var body: some View {
         GeometryReader { geo in
@@ -129,8 +121,6 @@ struct SunriseCanvas: View {
                 WaveLine(y: layout.waterY, phase: frame.phaseRight)
                     .stroke(LGColor.ink, style: StrokeStyle(lineWidth: 2, lineCap: .round))
 
-                if layout.glints && showsGlints { glints(width: w) }
-
                 // The fade into the background sits on top of the sea, never as transparency inside it.
                 LinearGradient(stops: [
                     .init(color: layout.fade.opacity(0), location: 0),
@@ -156,21 +146,6 @@ struct SunriseCanvas: View {
             .scaleEffect(frame.glowScale)
             .opacity(frame.glowOpacity)
             .position(x: w / 2 + layout.sunOffsetX, y: centreY)
-    }
-
-    private func glints(width w: CGFloat) -> some View {
-        ZStack {
-            ForEach(0..<Self.glintShapes.count, id: \.self) { i in
-                let g = Self.glintShapes[i]
-                let state = frame.glints[min(i, frame.glints.count - 1)]
-                RoundedRectangle(cornerRadius: g.h / 2)
-                    .fill(LGColor.sunBody)
-                    .frame(width: g.w, height: g.h)
-                    .scaleEffect(x: state.scaleX, y: 1)
-                    .opacity(state.opacity)
-                    .position(x: w / 2 + layout.sunOffsetX + g.x + g.w / 2 - 195, y: layout.waterY - 12 + g.y + g.h / 2)
-            }
-        }
     }
 }
 

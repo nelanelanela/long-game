@@ -13,8 +13,6 @@ enum SunriseMotion {
     static let breathePeriod: TimeInterval = 4
     static let turnPeriod: TimeInterval = 90
     static let peekPeriod: TimeInterval = 7
-    static let glintPeriod: TimeInterval = 2.6
-    static let glintDelays: [TimeInterval] = [0, 0.9, 1.7, 2.2]
     static let riseDuration: TimeInterval = 1.6
     static let riseDistance: CGFloat = 34
 
@@ -50,13 +48,6 @@ enum SunriseMotion {
             return a.value + (b.value - a.value) * smooth(p)
         }
         return 0
-    }
-
-    /// A glint fades in and stretches, then fades out: opacity 0 → 1 → 0 and width 40% → 100% → 40%.
-    static func glint(_ t: TimeInterval, delay: TimeInterval) -> (opacity: Double, scaleX: Double) {
-        let p = fraction((t - delay) / glintPeriod)
-        let e = smooth(p < 0.5 ? p * 2 : (1 - p) * 2)
-        return (e, 0.4 + 0.6 * e)
     }
 
     /// The glow pulses with the breath: opacity .55 → .8 (as a share of its strength), scale 1 → 1.06.

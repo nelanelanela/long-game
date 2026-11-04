@@ -45,17 +45,6 @@ struct SunriseMotionTests {
         #expect(abs(Double(open) * 0.005 - 0.35) < 0.02)
     }
 
-    @Test func glintsFadeInAndStretchThenFadeOutStaggered() {
-        let start = SunriseMotion.glint(0, delay: 0)
-        let middle = SunriseMotion.glint(1.3, delay: 0)
-        #expect(start.opacity == 0 && abs(start.scaleX - 0.4) < 0.0001)
-        #expect(abs(middle.opacity - 1) < 0.0001 && abs(middle.scaleX - 1) < 0.0001)
-        // the second glint is 0.9 s behind the first
-        #expect(SunriseMotion.glint(0.9, delay: 0.9).opacity == 0)
-        #expect(SunriseMotion.glint(0.9, delay: 0).opacity > 0.1)
-        #expect(SunriseMotion.glintDelays == [0, 0.9, 1.7, 2.2])
-    }
-
     @Test func glowPulsesWithTheBreath() {
         #expect(abs(SunriseMotion.glowOpacity(0) - 0.55) < 0.0001)
         #expect(abs(SunriseMotion.glowOpacity(2) - 0.8) < 0.0001)
@@ -135,7 +124,7 @@ struct SunriseLayoutTests {
 @MainActor
 struct SunriseWaterlineTests {
     private func pixels(_ layout: SunriseLayout, _ frame: SunriseFrame, width: CGFloat = 390) -> (data: [UInt8], w: Int, h: Int, scale: Int) {
-        let view = SunriseCanvas(layout: layout, frame: frame, showsGlints: false)
+        let view = SunriseCanvas(layout: layout, frame: frame)
             .frame(width: width, height: layout.height)
             .background(Color.white)
         let renderer = ImageRenderer(content: view)
