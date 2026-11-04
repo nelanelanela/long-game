@@ -22,18 +22,55 @@ extension View {
 // MARK: Buttons
 
 struct LGButtonStyle: ButtonStyle {
-    enum Kind { case primary, secondary, light, translucent, text }
+    /// `quiet` is a secondary action (Add past hours, Discard): a plain text button before iOS 26, a 48 pt clear
+    /// glass capsule from iOS 26.
+    enum Kind { case primary, secondary, light, translucent, text, quiet }
     var kind: Kind = .primary
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.lgFlat) private var flat
 
+    @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        let label = configuration.label
-            .lgText(kind == .text ? .rowStrong : .button, color: foreground)
+        if #available(iOS 26, *), !flat, kind != .text {
+            glassBody(configuration)
+        } else {
+            flatBody(configuration)
+        }
+    }
+
+    /// Liquid Glass: capsules. Primary is ink-tinted (56 pt), secondary clear glass with navy text (48 pt); on the
+    /// Timer, Pause and Resume are clear glass with white text and Finish is bright glass with navy text.
+    @available(iOS 26, *)
+    private func glassBody(_ configuration: Configuration) -> some View {
+        let height: CGFloat = (kind == .quiet || kind == .secondary) ? 48 : 56
+        return configuration.label
+            .lgText(.button, color: foreground)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: kind == .text ? 48 : 56)
-        Group {
+            .frame(minHeight: height)
+            .glassEffect(glass, in: .capsule)
+            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
+            .contentShape(Capsule())
+    }
+
+    @available(iOS 26, *)
+    private var glass: Glass {
+        switch kind {
+        case .primary: .regular.tint(LGColor.ink).interactive()
+        case .light: .regular.tint(.white).interactive()
+        case .translucent: .clear.interactive()
+        default: .regular.interactive()
+        }
+    }
+
+    private func flatBody(_ configuration: Configuration) -> some View {
+        let isText = kind == .text || kind == .quiet
+        let label = configuration.label
+            .lgText(isText ? .rowStrong : .button, color: foreground)
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: isText ? 48 : 56)
+        return Group {
             switch kind {
-            case .text:
+            case .text, .quiet:
                 label
             case .secondary:
                 label.lgCard(radius: 16)
@@ -72,17 +109,32 @@ struct LGIconButton: View {
     let systemName: String
     let label: String
     var tint: Color = LGColor.ink
+    var size: CGFloat = 18
+    var weight: Font.Weight = .medium
     let action: () -> Void
+    @Environment(\.lgFlat) private var flat
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: systemName)
-                .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(tint)
-                .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
+            icon
         }
         .accessibilityLabel(label)
+    }
+
+    private var image: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size, weight: weight))
+            .foregroundStyle(tint)
+            .frame(width: 44, height: 44)
+    }
+
+    /// A 44 pt glass circle from iOS 26; the plain icon before.
+    @ViewBuilder private var icon: some View {
+        if #available(iOS 26, *), !flat {
+            image.glassEffect(.regular.interactive(), in: .circle).contentShape(Circle())
+        } else {
+            image.contentShape(Rectangle())
+        }
     }
 }
 
@@ -136,7 +188,9 @@ struct LGStepBar: View {
 
 // MARK: Segmented control
 
-/// Two or more segments on a warm track with a white pill under the chosen one: Home's This week | The long game.
+/// Two or more segments on a warm track with a white pill under the chosen one: Home's Today | This week | The long
+/// game, History's Calendar | Growth, Your year's Sunrise | Evening | Photos. From iOS 26 the track is a glass
+/// capsule and the chosen tab a brighter, interactive glass lens that morphs between tabs.
 struct LGSegmentedControl<Item: Hashable>: View {
     let items: [Item]
     let selection: Item
@@ -145,16 +199,38 @@ struct LGSegmentedControl<Item: Hashable>: View {
     let title: (Item) -> LocalizedStringKey
     let onSelect: (Item) -> Void
 
+    @Environment(\.lgFlat) private var flat
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Namespace private var lens
+
     var body: some View {
+        Group {
+            if #available(iOS 26, *), !flat {
+                glassTabs
+            } else {
+                flatTabs
+            }
+        }
+        // A tab list for VoiceOver: "Today, tab, 1 of 3, selected".
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(.isTabBar)
+    }
+
+    private func segmentTitle(_ item: Item, selected: Bool) -> some View {
+        Text(title(item))
+            .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline))
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            .frame(maxWidth: .infinity, minHeight: 36)
+    }
+
+    private var flatTabs: some View {
         HStack(spacing: 0) {
             ForEach(items, id: \.self) { item in
                 let selected = item == selection
                 Button { onSelect(item) } label: {
-                    Text(title(item))
-                        .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .frame(maxWidth: .infinity, minHeight: 36)
+                    segmentTitle(item, selected: selected)
                         .background {
                             if selected {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -170,8 +246,36 @@ struct LGSegmentedControl<Item: Hashable>: View {
         }
         .padding(3)
         .background(LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(label)
+    }
+
+    @available(iOS 26, *)
+    private var glassTabs: some View {
+        GlassEffectContainer(spacing: 0) {
+            HStack(spacing: 0) {
+                ForEach(items, id: \.self) { item in
+                    let selected = item == selection
+                    Button { onSelect(item) } label: {
+                        segmentTitle(item, selected: selected)
+                            .background { if selected { lensView } }
+                            .contentShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(selected ? [.isSelected] : [])
+                }
+            }
+            .padding(3)
+            .glassEffect(.regular, in: .capsule)
+        }
+    }
+
+    /// The lens: with Reduce Motion it just appears under the chosen tab instead of stretching across.
+    @available(iOS 26, *)
+    @ViewBuilder private var lensView: some View {
+        if reduceMotion {
+            Color.clear.glassEffect(.regular.interactive(), in: .capsule)
+        } else {
+            Color.clear.glassEffect(.regular.interactive(), in: .capsule).glassEffectID("lens", in: lens)
+        }
     }
 }
 

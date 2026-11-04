@@ -70,7 +70,7 @@ struct FinishSheet: View {
             }
 
             Button("Discard") { confirmDiscard = true }
-                .buttonStyle(.lg(.text))
+                .buttonStyle(.lg(.quiet))
                 .foregroundStyle(LGColor.danger)
         }
         .padding(.horizontal, 24)

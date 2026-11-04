@@ -165,6 +165,7 @@
 		A92B40E5C27759FD2E460D79 /* CountingTotal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4999DC1C22FCC8CF3B000F /* CountingTotal.swift */; };
 		AA2EBAF50A611D976529618C /* WatchConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320347EF98367153628E0BC /* WatchConnection.swift */; };
 		AAD4619BF3456B17C0B66B45 /* HomeGaugeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AE8A7A8A39B243A44E46F /* HomeGaugeTests.swift */; };
+		AB0F36B28A3EDC5E253C6837 /* GlassPreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */; };
 		ABB8237CECE68FEAFCD93FE0 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		AED557B62753F9F5BAF953A4 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB675DC2617545CB3E70BFF /* Colors.swift */; };
 		AFD9FE749B5D2F45B6B6C814 /* CSVImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D8FAA37F0A651882F1D77B /* CSVImport.swift */; };
@@ -216,6 +217,7 @@
 		F22A0075E099039A824C0982 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF86E7F3BE3B356942FB65E4 /* WatchSync.swift */; };
 		F277391135C3C5F561BB8CA9 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0CE3E9FF87E9165C481A16 /* Typography.swift */; };
 		F2889BAC8FDEDBB30F3B954D /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86E06BDBC8507B3E32237F2 /* LiveActivityManager.swift */; };
+		F2CB6F786E67D3BC4B8BE70A /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC77651FD0C1022D8DFF364 /* Glass.swift */; };
 		F50A998595779BB0E8126B45 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BAA370AE7B949987519BFA /* WelcomeView.swift */; };
 		F6D1214A09E11C848F4B45D3 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		F77DDD462352ECBD9F0EF19B /* WidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBC944F7A3152CAA65BFB2 /* WidgetModel.swift */; };
@@ -332,6 +334,7 @@
 		46B97B0E389ECC0050CBBF09 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
 		47D8FAA37F0A651882F1D77B /* CSVImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVImport.swift; sourceTree = "<group>"; };
 		480213F17CA1F530062D7B2E /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
+		48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassPreviews.swift; sourceTree = "<group>"; };
 		4FADE04FC791931D0B34E177 /* TimerMoments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerMoments.swift; sourceTree = "<group>"; };
 		5395D0B29A808ABD0940C12E /* FocusPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusPlanTests.swift; sourceTree = "<group>"; };
 		54D4D158B97B67F3305FD164 /* MilestoneCelebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneCelebration.swift; sourceTree = "<group>"; };
@@ -409,6 +412,7 @@
 		D3CC49F874CF563564E5ECA0 /* ArchivedCraftsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedCraftsView.swift; sourceTree = "<group>"; };
 		D590BA78DBAFEC94CE665416 /* LongGameWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LongGameWatch.entitlements; sourceTree = "<group>"; };
 		D98BB75880B3BE798BB21487 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DAC77651FD0C1022D8DFF364 /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		DD4128CE14B1359C65AB6CB2 /* LongGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameApp.swift; sourceTree = "<group>"; };
 		DEF45215EAA92228AC729A7C /* DuoPreviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuoPreviews.swift; sourceTree = "<group>"; };
 		DF1E7DB03E309FDB1284F4F6 /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
@@ -554,6 +558,8 @@
 				D0EAD2429BCF420D02DB7885 /* DesignGallery.swift */,
 				DEF45215EAA92228AC729A7C /* DuoPreviews.swift */,
 				137080755F58FBE8663118CC /* FlowLayout.swift */,
+				DAC77651FD0C1022D8DFF364 /* Glass.swift */,
+				48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */,
 				D37BC0B3AD47BA40D09F0EE7 /* SunriseHero.swift */,
 				C376529B80B4C903039F615E /* SunView.swift */,
 				9B0CE3E9FF87E9165C481A16 /* Typography.swift */,
@@ -1096,6 +1102,8 @@
 				DE36297BDE629D8E2E80A2BD /* Format.swift in Sources */,
 				3C9E5541EA64DA857DC806BB /* FutureSelfSheet.swift in Sources */,
 				76B8ED0E4B9EA70693CDF77D /* GaugeHero.swift in Sources */,
+				F2CB6F786E67D3BC4B8BE70A /* Glass.swift in Sources */,
+				AB0F36B28A3EDC5E253C6837 /* GlassPreviews.swift in Sources */,
 				358084D9C11020004DD500D3 /* Growth.swift in Sources */,
 				1BE4E24C9D3FF749583C2933 /* GrowthTab.swift in Sources */,
 				EF2AE4CE531CBB367404240C /* HistoryView.swift in Sources */,

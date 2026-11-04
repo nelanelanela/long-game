@@ -27,7 +27,7 @@ struct StretchStrip: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
-        .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .lgGlassStrip(radius: 22)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(covered
             ? String(localized: "Today's stretch covered, \(StretchText.spoken(seconds: target))")

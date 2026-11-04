@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Data and maths
@@ -34,6 +34,22 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
+
+## Liquid Glass (update prompt 14)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Only Apple's glass APIs, every one behind `if #available(iOS 26, *)`; iOS 17-25 unchanged | ✅ | `DesignSystem/Glass.swift`, `Components.swift` | glassEffect, GlassEffectContainer, glassEffectID. The shared styles pick the look, so feature views do not change per OS. `lgFlat` forces the old look on a newer system, for previews |
+| Segmented control: glass capsule track, brighter interactive lens that morphs; Reduce Motion: no stretching; VoiceOver tab list | ✅ | `LGSegmentedControl` | Used for Home and History, and Your year. The tab-bar trait is on every OS |
+| Primary button: 56 pt ink-tinted glass capsule, white text | ✅ | `LGButtonStyle.primary` | Uses glassEffect with an ink tint rather than `.glassProminent`, so every call site stays `.lg(.primary)` |
+| Secondary button: 48 pt clear glass capsule, navy text (Add past hours, Discard) | ✅ | `LGButtonStyle.quiet` | New kind, a plain text button before iOS 26. 'Keep playing' stays a primary button as before |
+| Toolbar icons: 44 pt glass circles | ✅ | `LGIconButton` | Home's History icon now uses it too |
+| Timer: Pause and Resume clear glass; Finish bright glass with navy text; stretch strip clear glass, radius 22 | ✅ | `LGButtonStyle`, `lgGlassStrip` | The strip keeps its 18 pt corners before iOS 26 |
+| Warm wash #FFF0D6 at the top of Home and History | ✅ | `LGColor.warmWash`, `lgWarmScreen` | iOS 26 only, so iOS 17-25 looks the same |
+| Header floats while content scrolls under it | ✅ | `lgTopBar` | Uses the system's soft scroll edge (`safeAreaBar`) on iOS 26. Home's tabs scroll with the page, as before, so only the header floats |
+| Previews of each style, glass and flat, light and over the night sky | ✅ | `DesignSystem/GlassPreviews.swift` |  |
+
+**Not verified:** the iOS 26+ glass look has not been seen. The iOS 27 Simulator here would not run any app (even Settings hung), so it compiles for iOS 27 but I could not look at it. The old look was run on the iOS 18.2 Simulator (no iOS 17 runtime is installed) and all 351 tests pass there. Reduce Transparency, Increase Contrast, Dynamic Type XXXL and the 4.5:1 contrast check on glass still need a look on a working iOS 26+ Simulator or device.
 
 ## Your year card (update prompt 13)
 
@@ -273,6 +289,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 Run with `-demoData` for sample data.
 
 - **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Compare the two looks (Liquid Glass):** run the LongGame scheme on an iOS 26 or later Simulator for the glass look, and on an iOS 18 Simulator (or any version before 26) for the flat look. In Xcode, open `GlassPreviews.swift` and its canvas: each preview shows glass on the left and the old flat look on the right.
 - **Your year card:** Settings -> Debug only -> 'Fill a sample year'; back on Home go to History (calendar icon) -> Growth, scroll to the bottom row 'Your 2026'. Try the three looks and the Show hours switch, long-press a tile on Photos, then Share (Save Image, Messages). 'Remove the sample year' undoes it.
 - **Note and photo:** Start a session, Finish: the dashed square and the note field sit above Save; pick a photo from the library, Save. History: the day shows a white dot, the day card a 56 pt thumbnail; tap it for the viewer. Tap the row for the editor.
 - **Home:** three tabs. This week: the sun at this week's height on the scale, day bars (tap one), the target row. The long game: total, three stats, Meet your future self.

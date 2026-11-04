@@ -97,7 +97,7 @@ struct HomeView: View {
             // Folding, unfolding or resizing moves to the matching layout; the tab, sheets and timer live above it.
             .animation(.easeInOut(duration: reduceMotion ? 0.2 : 0.35), value: window.shape)
         }
-        .lgScreen()
+        .lgWarmScreen()
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(item: $historyDay) { day in
             HistoryView(craft: craft, day: day)
@@ -269,11 +269,10 @@ struct HomeView: View {
             .scrollTargetLayout()
         }
         .scrollPosition(id: $scrollSpot)
-        .safeAreaInset(edge: .top, spacing: 0) {
+        .lgTopBar {
             header
                 .padding(.horizontal, 24).padding(.top, short ? 0 : 8)
                 .lgReadableColumn(560)
-                .background(LGColor.background)
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -348,16 +347,9 @@ struct HomeView: View {
                 .accessibilityAddTraits(.isHeader)
             Spacer()
             HStack(spacing: 0) {
-                Button {
+                LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
                     historyDay = Calendar.current.startOfDay(for: Date())
-                } label: {
-                    Image(systemName: "calendar")
-                        .font(.system(size: 19, weight: .regular))
-                        .foregroundStyle(LGColor.ink)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
                 }
-                .accessibilityLabel("History")
                 LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
                 LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
             }
@@ -659,13 +651,13 @@ struct HomeView: View {
                 HStack(spacing: 14) {
                     startButton
                     Button("Add past hours") { sheet = .addHours }
-                        .buttonStyle(.lg(.text))
+                        .buttonStyle(.lg(.quiet))
                         .fixedSize(horizontal: true, vertical: false)
                 }
             } else {
                 VStack(spacing: 4) {
                     startButton
-                    Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.text))
+                    Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.quiet))
                 }
             }
         }
