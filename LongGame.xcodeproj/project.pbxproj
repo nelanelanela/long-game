@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0075B2FC72602EA20BE13295 /* LongGameWatchWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27FF9D44FCA8830991811CB2 /* LongGameWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		007B453417A06A6BB3BEE379 /* CSVImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D8FAA37F0A651882F1D77B /* CSVImport.swift */; };
 		00C82FE8066471BC3A835D5B /* Adaptive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036B723725632FAFC7EE97A3 /* Adaptive.swift */; };
 		013C4250E8EF4582E695AC9A /* Growth.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EC9E004501C0C951AEF83A /* Growth.swift */; };
 		027234BACA73E0A6465457FB /* MilestoneCelebration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D4D158B97B67F3305FD164 /* MilestoneCelebration.swift */; };
@@ -20,6 +21,8 @@
 		0A9A3E1FCF1C69531C4AE279 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF86E7F3BE3B356942FB65E4 /* WatchSync.swift */; };
 		0CE5D29B7DFE6112AE55B4BC /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C6B8F89138DDBD022A383C /* WidgetSnapshot.swift */; };
 		0DD59B97D866F7714E43EB2A /* StoreLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E145E52BAAAD03ECC3BD17 /* StoreLocationTests.swift */; };
+		0F9F672C967FCC8F64521B77 /* CSVImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D8FAA37F0A651882F1D77B /* CSVImport.swift */; };
+		0FA6976C0D3AFC2AEC2BC0BF /* CSVImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D8FAA37F0A651882F1D77B /* CSVImport.swift */; };
 		1097655DAA6B394B63A6BE5D /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DBBF9A26035DE803E852B3 /* Format.swift */; };
 		156E28E2C8023163BDBC4C9B /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE9F568BE6C8C49CA7159FC /* DemoData.swift */; };
 		15B6DC22149273AFE8082E63 /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */; };
@@ -145,6 +148,7 @@
 		AAD4619BF3456B17C0B66B45 /* HomeGaugeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AE8A7A8A39B243A44E46F /* HomeGaugeTests.swift */; };
 		ABB8237CECE68FEAFCD93FE0 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		AED557B62753F9F5BAF953A4 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB675DC2617545CB3E70BFF /* Colors.swift */; };
+		AFD9FE749B5D2F45B6B6C814 /* CSVImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D8FAA37F0A651882F1D77B /* CSVImport.swift */; };
 		B0F2E90CAFE4568548A241B6 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0CE3E9FF87E9165C481A16 /* Typography.swift */; };
 		B4E457A4E844BA194EE3DBA1 /* SessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADE0A24B1CD339FF51F1046 /* SessionFormView.swift */; };
 		B50F812C0D1B6C8FD19B67A3 /* CatchUpSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6786F3B6D0CB2CD09F547A54 /* CatchUpSheet.swift */; };
@@ -300,6 +304,7 @@
 		4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunriseMotion.swift; sourceTree = "<group>"; };
 		46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forecast.swift; sourceTree = "<group>"; };
 		46B97B0E389ECC0050CBBF09 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
+		47D8FAA37F0A651882F1D77B /* CSVImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVImport.swift; sourceTree = "<group>"; };
 		480213F17CA1F530062D7B2E /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		4FADE04FC791931D0B34E177 /* TimerMoments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerMoments.swift; sourceTree = "<group>"; };
 		5395D0B29A808ABD0940C12E /* FocusPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusPlanTests.swift; sourceTree = "<group>"; };
@@ -554,6 +559,7 @@
 			children = (
 				ACABF7B3578EC4629399A351 /* Basics.swift */,
 				CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */,
+				47D8FAA37F0A651882F1D77B /* CSVImport.swift */,
 				5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */,
 				46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */,
 				35DBBF9A26035DE803E852B3 /* Format.swift */,
@@ -950,6 +956,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7A12E6D5561AD4BC17F54727 /* Basics.swift in Sources */,
+				0FA6976C0D3AFC2AEC2BC0BF /* CSVImport.swift in Sources */,
 				31F585538D815BF7CCC57012 /* CatchUp.swift in Sources */,
 				7D5DFF86E17C29AC3413A486 /* Colors.swift in Sources */,
 				517C580C75461F5A0B1D0C61 /* FocusPlan.swift in Sources */,
@@ -987,6 +994,7 @@
 				1620D367D23CE9BAD1C3D710 /* AppShortcuts.swift in Sources */,
 				C5D31D5685B250C2246252E7 /* ArchivedCraftsView.swift in Sources */,
 				55308C47E3D57DE1E38AC791 /* Basics.swift in Sources */,
+				007B453417A06A6BB3BEE379 /* CSVImport.swift in Sources */,
 				1B6F94D990B0DD43D03C45E2 /* CalendarColors.swift in Sources */,
 				A36629BF3DFE4A00E79DEB26 /* CalendarTab.swift in Sources */,
 				8C80CA2C44ED4D5256B11651 /* CatchUp.swift in Sources */,
@@ -1070,6 +1078,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6FDD092786B71CED9232D89A /* Basics.swift in Sources */,
+				0F9F672C967FCC8F64521B77 /* CSVImport.swift in Sources */,
 				165DE7B6DA8D202F0891B09A /* CatchUp.swift in Sources */,
 				8D340AAF09F8CC8C9D532A41 /* Colors.swift in Sources */,
 				B8540871920ADB4AB5A85AE7 /* FocusPlan.swift in Sources */,
@@ -1106,6 +1115,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				89B254B3EA59CBC172A109CA /* Basics.swift in Sources */,
+				AFD9FE749B5D2F45B6B6C814 /* CSVImport.swift in Sources */,
 				4E6D01FACAA7DB7941354047 /* CatchUp.swift in Sources */,
 				AED557B62753F9F5BAF953A4 /* Colors.swift in Sources */,
 				66A337675FB857523898D619 /* FocusPlan.swift in Sources */,

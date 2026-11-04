@@ -87,3 +87,44 @@ struct CSVTests {
         #expect(lines[2] == "Piano,2026-10-22,12:00,90,manual,\"Slow, careful\"")
     }
 }
+
+struct CSVImportTests {
+    @Test func readsQuotedFieldsAndRoundTripsExport() {
+        let rows = [
+            CSVExport.Row(craft: "Piano", start: day(2026, 10, 22), durationSec: 5400, source: "manual", note: "Slow, \"careful\"\nsecond line"),
+            CSVExport.Row(craft: "Piano", start: day(2026, 10, 20), durationSec: 1800, source: "timer", note: ""),
+        ]
+        let parsed = CSVImport.sessions(CSVExport.sessions(rows, calendar: utc), calendar: utc)
+        #expect(parsed.skipped == 0)
+        #expect(parsed.rows.count == 2)
+        #expect(parsed.rows[0].start == day(2026, 10, 20))
+        #expect(parsed.rows[0].durationSec == 1800)
+        #expect(parsed.rows[1].note == "Slow, \"careful\"\nsecond line")
+        #expect(parsed.rows[1].durationSec == 5400)
+    }
+
+    @Test func toleratesCRLFBOMAndBadLines() {
+        let text = "\u{FEFF}Craft,Date,Start,Minutes,Source,Note\r\nPiano,2026-10-20,12:00,30,timer,\r\nPiano,not a date,12:00,30,timer,\r\nPiano,2026-10-21,12:00,0,timer,\r\n"
+        let parsed = CSVImport.sessions(text, calendar: utc)
+        #expect(parsed.rows.count == 1)
+        #expect(parsed.skipped == 2)
+    }
+
+    @Test func plansByNameSkipsDuplicatesAndFallsBackToActive() {
+        let piano = UUID(), other = UUID()
+        let row = CSVImport.Row(craft: "piano", start: day(2026, 10, 20), durationSec: 1800, source: "timer", note: "")
+        let existing: Set<String> = [CSVImport.key(craftId: piano, start: row.start, durationSec: 1800)]
+        let crafts = [CSVImport.CraftRef(id: piano, name: "Piano"), CSVImport.CraftRef(id: other, name: "Drawing")]
+
+        let dup = CSVImport.plan(rows: [row], crafts: crafts, activeId: piano, existingKeys: existing)
+        #expect(dup.toAdd.isEmpty && dup.duplicates == 1)
+
+        var cello = row; cello.craft = "Cello"
+        let fallback = CSVImport.plan(rows: [cello], crafts: crafts, activeId: other, existingKeys: [])
+        #expect(fallback.toAdd.first?.craftId == other)
+
+        var violin = row; violin.craft = "Violin"
+        let skipped = CSVImport.plan(rows: [cello, violin], crafts: crafts, activeId: other, existingKeys: [])
+        #expect(skipped.unmatched == 2)
+    }
+}

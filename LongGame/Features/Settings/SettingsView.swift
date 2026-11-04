@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UIKit
 import AuthenticationServices
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     let craft: Craft
@@ -18,6 +19,8 @@ struct SettingsView: View {
 
     @State private var csvURL: URL?
     @State private var confirmDelete = false
+    @State private var pickingCSV = false
+    @State private var importMessage: String?
     @State private var notificationsDenied = false
     @State private var syncOn = CloudSync.isEnabled
     @Environment(AccountStore.self) private var account
@@ -64,6 +67,14 @@ struct SettingsView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onAppear { ensureSettings(); buildCSV() }
         .onChange(of: allSessions.count) { _, _ in buildCSV() }
+        .fileImporter(isPresented: $pickingCSV, allowedContentTypes: [.commaSeparatedText, .plainText]) { result in
+            importCSV(result)
+        }
+        .alert("Import sessions", isPresented: Binding(get: { importMessage != nil }, set: { if !$0 { importMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(importMessage ?? "")
+        }
         .confirmationDialog("Delete all data?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete everything", role: .destructive, action: deleteAll)
         } message: {
@@ -184,6 +195,11 @@ struct SettingsView: View {
                 } else {
                     row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up").opacity(0.4)
                 }
+                Divider().overlay(LGColor.divider)
+                Button { pickingCSV = true } label: {
+                    row("Import sessions (CSV)", detail: nil, icon: "square.and.arrow.down")
+                }
+                .buttonStyle(.plain)
                 Divider().overlay(LGColor.divider)
                 Button { confirmDelete = true } label: {
                     HStack {
@@ -390,6 +406,38 @@ struct SettingsView: View {
         } catch {
             csvURL = nil
         }
+    }
+
+    private func importCSV(_ result: Result<URL, Error>) {
+        guard case .success(let url) = result else { return }
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        guard let data = try? Data(contentsOf: url), let text = String(data: data, encoding: .utf8) else {
+            importMessage = "That file couldn't be read. Choose a CSV exported from Long Game."
+            return
+        }
+        let parsed = CSVImport.sessions(text)
+        guard !parsed.rows.isEmpty else {
+            importMessage = "No sessions found. Choose a CSV exported from Long Game."
+            return
+        }
+        let existing = Set(allSessions.map { CSVImport.key(craftId: $0.craftId, start: $0.start, durationSec: $0.durationSec) })
+        let plan = CSVImport.plan(rows: parsed.rows,
+                                  crafts: allCrafts.map { .init(id: $0.id, name: $0.name) },
+                                  activeId: craft.id, existingKeys: existing)
+        for item in plan.toAdd {
+            let source = SessionSource(rawValue: item.row.source) ?? .manual
+            let note = item.row.note.isEmpty ? nil : item.row.note
+            context.insert(Session(craftId: item.craftId, start: item.row.start, durationSec: item.row.durationSec,
+                                   source: source, note: note))
+        }
+        try? context.save()
+
+        var message = plan.toAdd.count == 1 ? "Added 1 session." : "Added \(plan.toAdd.count) sessions."
+        if plan.duplicates > 0 { message += " \(plan.duplicates) already here, left as they were." }
+        if plan.unmatched > 0 { message += " \(plan.unmatched) belonged to crafts that aren't on this iPhone and were skipped." }
+        if parsed.skipped > 0 { message += " \(parsed.skipped) lines couldn't be read." }
+        importMessage = message
     }
 
     private func deleteAll() {
