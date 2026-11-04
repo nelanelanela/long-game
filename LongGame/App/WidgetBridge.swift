@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import WidgetKit
+import AppIntents
 
 /// Keeps the widgets' copy of the saved data in the shared App Group in step with the app, and tells WidgetKit to
 /// redraw when it changes.
@@ -24,6 +25,8 @@ enum WidgetBridge {
     static func publish(_ snapshot: WidgetSnapshot?) {
         if WidgetSnapshot.store(snapshot) {
             WidgetCenter.shared.reloadAllTimelines()
+            // Siri learns the craft's name for "Start playing piano".
+            LongGameShortcuts.updateAppShortcutParameters()
         }
         // The watch gets the same stored data.
         WatchBridge.shared.snapshotChanged(snapshot)

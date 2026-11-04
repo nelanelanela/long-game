@@ -9,6 +9,9 @@ struct LongGameWidgetsBundle: WidgetBundle {
         SunWidget()
         OverviewWidget()
         TimerLiveActivity()
+        if #available(iOS 18.0, *) {
+            StartPlayingControl()
+        }
     }
 }
 
