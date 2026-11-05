@@ -58,7 +58,7 @@ Not done or not testable here:
 | --- | --- | --- | --- |
 | Welcome: sunrise gradient, sun, one line, Get started only (no sign-in button) | ✅ | `WelcomeView` | Update 21 |
 | Welcome back from iCloud: looks quietly for a game for at most 3 s on a first launch; Continue my game / Start a new game (the iCloud game is archived, not deleted) | 🟡 | `AppRoot`, `WelcomeBackView`, `WelcomeBack` (Logic) | Decision logic and timing are unit-tested. The real restore needs a second device or a reinstall with your iCloud, not tried here |
-| Your craft: search, five groups, custom name 2–40 | ✅ | `CraftStepView`, `CraftCatalog` | |
+| Your craft: search, five groups, custom name 2–40 | ✅ | `CraftStepView`, `CraftSuggestions` | |
 | When did you start: stepper, default year − 3, 1940…now | ✅ | `StartYearView` | |
 | Current year skips step 3 | ✅ | `StartYearView`, `YearlyHoursView` | Decided: no skip. Step 3 shows one slider for this year; set it to 0 if starting from scratch. Spec updated |
 | Hours per week: one slider per year 0–40, live estimate, Continue | ✅ | `YearlyHoursView` | Design file says max 30; spec says 40, code follows spec. The button now says Continue |

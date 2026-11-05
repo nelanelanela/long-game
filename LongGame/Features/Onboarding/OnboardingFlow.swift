@@ -4,7 +4,7 @@ import SwiftData
 @Observable
 final class OnboardingModel {
     var craftName = ""
-    var category = CraftCatalog.customCategory
+    var category = CraftSuggestions.customCategory
     var startYear: Int
     var hours: [Int: Int] = [:]
     /// Set once the user has seen the hours step, so the intro can show the real starting score.

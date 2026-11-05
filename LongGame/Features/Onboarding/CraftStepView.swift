@@ -5,8 +5,9 @@ struct CraftStepView: View {
     let onContinue: () -> Void
 
     @FocusState private var focused: Bool
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-    private var matchedCraft: String? { CraftCatalog.match(model.craftName)?.craft }
+    private var matchedCraft: String? { CraftSuggestions.match(model.craftName)?.craft }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -27,8 +28,8 @@ struct CraftStepView: View {
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
                     .onChange(of: model.craftName) { _, new in
-                        if let hit = CraftCatalog.match(new) { model.category = hit.group }
-                        else { model.category = CraftCatalog.customCategory }
+                        if let hit = CraftSuggestions.match(new) { model.category = hit.group }
+                        else { model.category = CraftSuggestions.customCategory }
                         if new.count > 40 { model.craftName = String(new.prefix(40)) }
                     }
                 if !model.craftName.isEmpty {
@@ -40,27 +41,30 @@ struct CraftStepView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .frame(minHeight: 52)
+            .frame(minHeight: 48)
             .lgCard(radius: 14)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    let groups = CraftCatalog.filtered(model.craftName == matchedCraft ? "" : model.craftName)
+                    let groups = CraftSuggestions.filtered(model.craftName == matchedCraft ? "" : model.craftName)
                     ForEach(groups) { group in
                         VStack(alignment: .leading, spacing: 10) {
-                            LGSectionLabel(group.name)
-                            FlowLayout(spacing: 8) {
-                                ForEach(group.crafts, id: \.self) { craft in
-                                    LGPill(title: craft, selected: craft == matchedCraft) {
-                                        model.craftName = craft
-                                        model.category = group.name
-                                        focused = false
-                                    }
+                            Text(group.name)
+                                .font(.system(.caption, weight: .semibold))
+                                .foregroundStyle(Color(hex: 0x8A93AB))
+                                .accessibilityAddTraits(.isHeader)
+                            if dynamicTypeSize.isAccessibilitySize {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    ForEach(group.crafts, id: \.self) { craft in chip(craft, in: group) }
+                                }
+                            } else {
+                                FlowLayout(spacing: 6) {
+                                    ForEach(group.crafts, id: \.self) { craft in chip(craft, in: group) }
                                 }
                             }
                         }
                     }
-                    if groups.isEmpty && CraftCatalog.isValidName(model.craftName) {
+                    if groups.isEmpty && CraftSuggestions.isValidName(model.craftName) {
                         Text("“\(model.craftName.trimmingCharacters(in: .whitespaces))” will be your craft.")
                             .lgText(.row, color: LGColor.inkMuted)
                     }
@@ -69,13 +73,20 @@ struct CraftStepView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollDismissesKeyboard(.interactively)
+            .overlay(alignment: .bottom) {
+                // A soft fade so it is clear the list scrolls.
+                LinearGradient(colors: [LGColor.background.opacity(0), LGColor.background],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 32)
+                    .allowsHitTesting(false)
+            }
 
             Button("Continue") {
                 focused = false
                 onContinue()
             }
             .buttonStyle(.lg(.primary))
-            .disabled(!CraftCatalog.isValidName(model.craftName))
+            .disabled(!CraftSuggestions.isValidName(model.craftName))
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
@@ -86,4 +97,49 @@ struct CraftStepView: View {
         }
         .lgScreen()
     }
+
+    /// Tapping selects the chip and fills the search field; tapping it again clears both.
+    private func chip(_ craft: String, in group: CraftGroup) -> some View {
+        let selected = craft == matchedCraft
+        return Button {
+            if selected {
+                model.craftName = ""
+            } else {
+                model.craftName = craft
+                model.category = group.name
+                focused = false
+            }
+        } label: {
+            Text(verbatim: craft)
+                .font(.system(.subheadline, weight: .medium))
+                .foregroundStyle(selected ? Color.white : LGColor.ink)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? .infinity : nil, alignment: .leading)
+                .background(selected ? LGColor.ink : LGColor.surface, in: Capsule())
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+#Preview("Craft · nothing selected") {
+    CraftStepView(model: OnboardingModel(), onContinue: {})
+}
+
+#Preview("Craft · Piano selected") {
+    let m = OnboardingModel(); m.craftName = "Piano"; m.category = "Music"
+    return CraftStepView(model: m, onContinue: {})
+}
+
+#Preview("Craft · searching “pa”") {
+    let m = OnboardingModel(); m.craftName = "pa"
+    return CraftStepView(model: m, onContinue: {})
+}
+
+#Preview("Craft · AX5") {
+    CraftStepView(model: OnboardingModel(), onContinue: {})
+        .environment(\.dynamicTypeSize, .accessibility5)
 }

@@ -58,11 +58,11 @@ struct WeeklyTargetView: View {
                 }
                 .padding(.top, 12)
 
-                picker.padding(.top, 20)
+                picker.padding(.top, 28)
                 Text("About \(WeeklyTarget.perDay(hours)) · until \(DateText.monthYear(WeeklyTarget.endDate(from: now)))")
-                    .lgText(.body, color: LGColor.inkMuted)
+                    .lgText(.note, color: LGColor.inkMuted)
                     .frame(maxWidth: .infinity)
-                    .padding(.top, 18)
+                    .padding(.top, 32)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
@@ -95,9 +95,7 @@ struct WeeklyTargetView: View {
 
     private var picker: some View {
         HoursBigStepper(label: String(localized: "Hours a week"), value: $hours, spec: .pace, unit: unit)
-            .padding(.horizontal, 16).padding(.top, 20).padding(.bottom, 18)
             .frame(maxWidth: .infinity)
-            .lgCard(radius: 24)
     }
 
     private var actions: some View {

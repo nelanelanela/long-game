@@ -23,6 +23,7 @@ struct LGTextStyle: Sendable {
     static let statValue = LGTextStyle(size: 19, weight: .semibold, relativeTo: .title3)
     static let body = LGTextStyle(size: 16, weight: .regular, relativeTo: .body)
     static let bodyLarge = LGTextStyle(size: 17, weight: .regular, relativeTo: .body)
+    static let note = LGTextStyle(size: 14, weight: .regular, relativeTo: .footnote)
     static let row = LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline)
     static let rowStrong = LGTextStyle(size: 15, weight: .semibold, relativeTo: .subheadline)
     static let button = LGTextStyle(size: 16, weight: .semibold, relativeTo: .body)

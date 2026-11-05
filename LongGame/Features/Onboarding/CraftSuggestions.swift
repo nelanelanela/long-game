@@ -6,11 +6,11 @@ struct CraftGroup: Identifiable {
     var id: String { name }
 }
 
-enum CraftCatalog {
+enum CraftSuggestions {
     static let groups: [CraftGroup] = [
         CraftGroup(name: "Music", crafts: ["Piano", "Guitar", "Violin", "Cello", "Drums", "Bass", "Saxophone", "Flute", "Trumpet", "Singing", "Composing"]),
         CraftGroup(name: "Visual arts & making", crafts: ["Painting", "Drawing", "Sculpture", "Woodworking", "Ceramics", "Photography", "Illustration", "Printmaking", "Textiles", "Jewellery"]),
-        CraftGroup(name: "Performing arts", crafts: ["Acting", "Dance", "Ballet", "Directing", "Stand-up"]),
+        CraftGroup(name: "Performing arts", crafts: ["Acting", "Dance", "Ballet", "Directing"]),
         CraftGroup(name: "Words & mind", crafts: ["Writing", "Poetry", "Languages", "Chess", "Coding"]),
         CraftGroup(name: "Professions", crafts: ["Medicine", "Law", "Architecture", "Design", "Cooking", "Teaching"]),
     ]

@@ -250,7 +250,7 @@ struct HoursQuickPick: Identifiable {
     var id: String { title }
 }
 
-/// 56 pt − and + either side of the big number, the unit under it and quick-pick chips under that.
+/// 56 pt − and + either side of the big number, the unit under it, and optional quick-pick chips under that (only Catch-up passes them).
 struct HoursBigStepper: View {
     let label: String
     @Binding var value: Double
@@ -325,9 +325,7 @@ private struct StepperPreviewBench: View {
                     HoursStepperRow(label: "2023", subLabel: "Sub-line", value: $high)
                 }
                 .padding(.horizontal, 18).lgCard()
-                HoursBigStepper(label: "Hours a week", value: $pace, spec: .pace, unit: "hours a week",
-                                quickPicks: [.init(title: "Recent pace · 12", value: 12), .init(title: "5", value: 5),
-                                             .init(title: "8", value: 8), .init(title: "15", value: 15), .init(title: "20", value: 20)])
+                HoursBigStepper(label: "Hours a week", value: $pace, spec: .pace, unit: "hours a week")
                 HoursBigStepper(label: "Hours a week", value: $low, unit: "hours a week")
                 HoursBigStepper(label: "Hours a week", value: $high, unit: "hours a week")
             }
