@@ -346,7 +346,7 @@ struct HomeView: View {
                 .lineLimit(1).minimumScaleFactor(0.6)
                 .accessibilityAddTraits(.isHeader)
             Spacer()
-            HStack(spacing: 0) {
+            HStack(spacing: 10) {
                 LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
                     historyDay = Calendar.current.startOfDay(for: Date())
                 }
@@ -648,14 +648,14 @@ struct HomeView: View {
     private func actionBar(sideBySide: Bool, inset: EdgeInsets) -> some View {
         Group {
             if sideBySide {
-                HStack(spacing: 14) {
+                HStack(spacing: 20) {
                     startButton
                     Button("Add past hours") { sheet = .addHours }
                         .buttonStyle(.lg(.quiet))
                         .fixedSize(horizontal: true, vertical: false)
                 }
             } else {
-                VStack(spacing: 4) {
+                VStack(spacing: 12) {
                     startButton
                     Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.quiet))
                 }
