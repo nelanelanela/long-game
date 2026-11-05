@@ -4,6 +4,24 @@ Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
 Updated after update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
+## Accessibility (update prompt 17 and the accessibility pass before it)
+
+Report: `docs/ACCESSIBILITY_REPORT.md`. Done:
+
+- **Calendar shapes** (`DesignSystem/CalendarLevelMark.swift`): rest dot, thin bar, taller bar, rounded square, circle, in the spec's sizes and colours. Used in the History grid, its legend (and the photo-dot legend) and the year card's strip. Photo dot in the centre, navy selection ring kept, 1 pt darker outline on level 1 and the rest dot with Increase Contrast. Previews: levels, greyscale, Increase Contrast, AX5 legend.
+- **The sun in words** (`Logic/SunWords.swift`): `sunPositionWords(fraction:)` and `SunSpeech` (This week, The long game, Today, Timer, calendar day). Each Home sun is one element: label = words, `accessibilityValue` = numbers; on This week it is adjustable (swipe reads "Monday, 1 hour 10 minutes", "Saturday, not yet").
+- **Timer:** the sun reads "Session … rays lit … Total …"; a lit ray posts a queued, low-priority "Ray 6 lit" only while VoiceOver is on; pause, resume and save are announced.
+- **Calendar days** read "Thursday 22 October. 2 hours, a good day. Has a photo."; they are real buttons with a larger touch area and the selected trait.
+- **Non-colour cues:** forecast is dashed (already); the Growth tab now has a "Played / Forecast" legend in words; reached/covered states already say so in words; the stretch arc's travelled part is 3 pt over a 2 pt dotted track (already). Changed: calendar levels (colour only before), "No note" grey (2:1 → 4.4:1), note placeholder (3.3:1 → 5.1:1), forecast words on the chart chip (3.1:1 → 5:1), year-card label (4.0:1 → 4.8:1), Timer strip caption (65% → 80% white).
+- **Other:** Dynamic Type up to AX5; Reduce Motion on every page and tab change (`lgAnimation`); Reduce Transparency and Increase Contrast make the translucent buttons and glass strip firmer; Button Shapes underline plain text buttons; photos and the sun ignore Smart Invert; chevrons scale with text; headings on every screen; photo viewer has a Zoom action.
+
+Not done or not testable here:
+
+- **Accessibility Inspector audit** (Home three tabs, Timer, History, Finish sheet): it is a Mac app that needs to be driven by hand, so I could not run it. I checked Home and History at AX5 in the Simulator by screenshot and fixed what I saw (tab names cut off, calendar labels overlapping the grid, legend breaking mid-word). Please run the audit once.
+- Real VoiceOver speech, Voice Control and the queued ray announcement: need a real iPhone or hands-on Simulator use.
+- Strings: the spoken sentences are one `String(localized:)` each, with the plural parts ("3 days", "1 hour") taken from the existing pluralised catalog entries rather than new catalog variations. The catalog is English only.
+- Dark appearance: not started (a design job of its own).
+
 ## Data and maths
 
 | Requirement | Status | Where | Note |
@@ -303,7 +321,7 @@ Not seen on a device: the camera, and the viewer's gestures. Check them by hand 
 5. **Pace and the 25% rule.** I compared the target with the Home **Pace** stat (the recent pace, blended with your estimate early on). Tell me if you meant the forecast pace.
 6. **"In a year" on the target screen** shows what a target *would* do (finish date with 12 months on that rate), even when your pace is too far from it for Home's forecast to use it. A bold target can therefore show an earlier finish there than on Home.
 7. **Watch data: WatchConnectivity, not a CloudKit database on the watch.** The spec says the watch uses "the shared CloudKit store". That would need its own iCloud setup on the watch and sync switched on, so instead the phone stays the one store: it sends the watch its stored data, and a session finished on the watch travels to the phone (queued, saved once). iCloud sync of the phone's database is untouched. Say if you want the CloudKit route later.
-8. **Apple Developer account, once you build to real devices.** The App Group `group.com.wehavesun.LongGame` is in the app, the widgets and both watch targets. The watch app is `com.wehavesun.LongGame.watchkitapp` and its complications `…watchkitapp.Widgets`. I did not touch your account: with automatic signing Xcode should offer to register these when you build to a device.
+8. **Apple Developer account, once you build to real devices.** The App Group `group.com.wehavesun.LongGame.shared` is in the app, the widgets and both watch targets. The watch app is `com.wehavesun.LongGame.watchkitapp` and its complications `…watchkitapp.Widgets`. I did not touch your account: with automatic signing Xcode should offer to register these when you build to a device.
 9. **Two sessions in one folder.** A second Claude session (iPhone Duo) edited this folder at the same time, so some changes are mixed (see the commit messages). Using separate worktrees avoids it.
 
 ## Where the spec and a design file disagree (the spec won)
@@ -344,7 +362,8 @@ Run with `-demoData` for sample data.
 - **Widgets:** long-press the Home Screen → Edit → Add Widget → Long Game. Save a session and the widget redraws.
 - **Apple Watch:** open `LongGame.xcodeproj`, run the LongGame scheme on an iPhone paired with a watch (or the watchOS Simulator), then the LongGameWatch scheme target on the watch.
 - **Settings:** the gear at the top right of Home (or History → gear).
-- **Welcome back:** Settings → Debug only → set the days with the stepper (7–27 gives week sliders, 28+ gives one average slider) → "Show Welcome back on Home". It takes you back to Home with the sheet open.
+- **Hour steppers (− and +):** Onboarding: Get started → pick a craft → pick a start year → step 3 has one stepper row per year (tap − or +, hold for 0.4 s to repeat, tap the number to type it; changing a year shows "Use N h for the years after YYYY"). Continue gives Your pace for the year, a big stepper in half hours with quick picks. Later: Home → This week → the target row. In Settings, Your estimates uses the same rows. The Simulator has no haptics. Previews of both components (default, AX5, flat look, night sky) are at the bottom of `HoursStepper.swift`. VoiceOver: swipe up/down on a stepper to change it. Growth's "What if I practise more?" is still a slider on purpose.
+- **Welcome back:** Settings → Debug only → set the days with the stepper (7–27 gives one − / + row per week, 28+ gives one big stepper for the average) → "Show Welcome back on Home". It takes you back to Home with the sheet open.
 - **Hour bounce:** Settings → Debug only → "Jump total to just under a whole hour" → Start session. About 20 seconds later the sun bounces and a ring of sparkles shimmers.
 - **Milestone notification:** same jump, but choose a total just under a milestone first (for example edit estimates in Settings → Your estimates so the total is near 100, 500, 1,000…), allow notifications, start a session and lock the phone.
 - **Reduce Motion:** Settings app → Accessibility → Motion → Reduce Motion, then save a session.

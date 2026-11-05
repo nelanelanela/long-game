@@ -85,7 +85,7 @@ enum CatchUp {
         hoursPerWeek * Double(days) / 7
     }
 
-    /// Slider default: the current pace, rounded and kept on the slider.
+    /// Stepper default: the current pace, rounded and kept in range.
     static func defaultHours(pace: Double) -> Int {
         min(maxWeeklyHours, max(0, Int(pace.rounded())))
     }

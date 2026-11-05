@@ -12,6 +12,7 @@ struct CatchUpSheet: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private enum Step { case ask, adding }
     @State private var step: Step = .ask
@@ -76,7 +77,7 @@ struct CatchUpSheet: View {
             }
             VStack(spacing: 4) {
                 Button("Yes, let me add it") {
-                    withAnimation { step = .adding; detent = .large }
+                    withAnimation(reduceMotion ? nil : .default) { step = .adding; detent = .large }
                 }
                 .buttonStyle(.lg(.primary))
                 Button("No, I took a break") { dismiss() }.buttonStyle(.lg(.text))
@@ -105,18 +106,9 @@ struct CatchUpSheet: View {
             VStack(spacing: 0) {
                 ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
                     let hours = blockHours[index]
-                    VStack(spacing: 10) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(CatchUp.rangeLabel(first: block.first, last: block.last, calendar: calendar))
-                                .lgText(.rowStrong)
-                            Spacer()
-                            Text(Labels.shortHours(hours)).lgText(.rowStrong).monospacedDigit().fixedSize()
-                        }
-                        Slider(value: Binding(get: { Double(hours) }, set: { blockHours[index] = Int($0) }),
-                               in: 0...Double(CatchUp.maxWeeklyHours), step: 1)
-                            .tint(LGColor.ink)
-                            .accessibilityLabel(CatchUp.rangeLabel(first: block.first, last: block.last, calendar: calendar))
-                            .accessibilityValue(Labels.hours(hours))
+                    VStack(spacing: 6) {
+                        HoursStepperRow(label: CatchUp.rangeLabel(first: block.first, last: block.last, calendar: calendar),
+                                        value: Binding(get: { Double(hours) }, set: { blockHours[index] = Int($0.rounded()) }))
                         Text(Labels.days(block.days) + " · " + Labels.aboutPerDay(
                             minutes: CatchUp.minutesPerDay(totalHours: Double(hours), days: block.days)))
                             .lgText(.tiny, color: LGColor.inkMuted)
@@ -149,18 +141,10 @@ struct CatchUpSheet: View {
             stepHeader(title: Labels.weeksHavePassed(gap.weeks),
                        subtitle: String(localized: "Since \(CatchUp.longDay(gap.anchor, calendar: calendar)). On average, how many hours a week did you practise?"))
             VStack(spacing: 8) {
-                Text("\(average)").lgNumber(.yearNumber)
-                Text("hours per week").lgText(.caption, color: LGColor.inkMuted)
-                Slider(value: Binding(get: { Double(average) }, set: { average = Int($0) }),
-                       in: 0...Double(CatchUp.maxWeeklyHours), step: 1)
-                    .tint(LGColor.ink)
-                    .accessibilityLabel("Average hours per week")
-                    .accessibilityValue(Labels.hours(average))
-                HStack {
-                    Text("0"); Spacer(); Text("20"); Spacer(); Text("40")
-                }
-                .lgText(.tiny, color: LGColor.inkMuted)
-                .accessibilityHidden(true)
+                HoursBigStepper(label: String(localized: "Average hours per week"),
+                                value: Binding(get: { Double(average) }, set: { average = Int($0.rounded()) }),
+                                unit: String(localized: "hours per week"),
+                                quickPicks: averagePicks)
             }
             .padding(.horizontal, 18).padding(.vertical, 20)
             .lgCard()
@@ -179,6 +163,13 @@ struct CatchUpSheet: View {
         .padding(.horizontal, 24)
         .padding(.top, 28)
         .padding(.bottom, 16)
+    }
+
+    /// "Your usual · N", 0, 5 and 10.
+    private var averagePicks: [HoursQuickPick] {
+        let usual = Double(CatchUp.defaultHours(pace: pace))
+        return [HoursQuickPick(title: String(localized: "Your usual · \(Int(usual))"), value: usual)]
+            + [0.0, 5, 10].map { HoursQuickPick(title: "\(Int($0))", value: $0) }
     }
 
     // MARK: Shared pieces

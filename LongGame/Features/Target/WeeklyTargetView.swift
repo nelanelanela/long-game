@@ -17,7 +17,7 @@ struct WeeklyTargetView: View {
     }
 
     let mode: Mode
-    /// Where the slider starts, and the "Your recent pace" line.
+    /// Where the stepper starts, and the "Your recent pace" line.
     let recentPace: Double
     /// Total, pace and trend for the "In a year" line.
     let summary: ProgressSummary
@@ -89,30 +89,22 @@ struct WeeklyTargetView: View {
 
     private var picker: some View {
         VStack(spacing: 14) {
-            VStack(spacing: 2) {
-                Text(WeeklyTarget.number(hours)).lgNumber(.yearNumber)
-                Text(unit).lgText(.caption, color: LGColor.inkMuted)
-            }
-            .accessibilityHidden(true)
-
-            Slider(value: $hours, in: WeeklyTarget.range, step: WeeklyTarget.step)
-                .tint(LGColor.ink)
-                .accessibilityLabel("Hours a week")
-                .accessibilityValue("\(WeeklyTarget.number(hours)) \(unit)")
-
-            HStack(alignment: .firstTextBaseline) {
-                Text(verbatim: "1")
-                Spacer(minLength: 8)
-                Text("Your recent pace: \(WeeklyTarget.number(recentPace))").multilineTextAlignment(.center)
-                Spacer(minLength: 8)
-                Text(verbatim: "40")
-            }
-            .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
-            .accessibilityHidden(true)
+            HoursBigStepper(label: String(localized: "Hours a week"), value: $hours, spec: .pace, unit: unit,
+                            quickPicks: quickPicks)
+            Text("Tap the number to type it · hold − or + to go faster")
+                .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+                .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, 20).padding(.top, 24).padding(.bottom, 20)
+        .padding(.horizontal, 16).padding(.top, 20).padding(.bottom, 18)
         .frame(maxWidth: .infinity)
         .lgCard(radius: 24)
+    }
+
+    /// "Recent pace · N" plus 5, 8, 15 and 20.
+    private var quickPicks: [HoursQuickPick] {
+        let recent = WeeklyTarget.clamped(recentPace)
+        return [HoursQuickPick(title: String(localized: "Recent pace · \(WeeklyTarget.number(recent))"), value: recent)]
+            + [5.0, 8, 15, 20].map { HoursQuickPick(title: WeeklyTarget.number($0), value: $0) }
     }
 
     private var summaryRows: some View {

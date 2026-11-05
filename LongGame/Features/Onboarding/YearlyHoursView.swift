@@ -5,6 +5,9 @@ struct YearlyHoursView: View {
     @Bindable var model: OnboardingModel
     let onContinue: () -> Void
 
+    /// The year the user changed last: highlighted, and the source of "Use N h for the years after".
+    @State private var changedYear: Int?
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             OnboardingHeader(step: 3)
@@ -20,7 +23,7 @@ struct YearlyHoursView: View {
                     Text("Set all to").lgText(.row, color: LGColor.inkMuted)
                     Spacer()
                     Menu {
-                        ForEach([0, 2, 5, 10, 15, 20], id: \.self) { value in
+                        ForEach(Array(1...20), id: \.self) { value in
                             Button(Labels.hoursPerWeek(value)) { model.years.forEach { model.hours[$0] = value } }
                         }
                     } label: {
@@ -33,24 +36,25 @@ struct YearlyHoursView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(model.years, id: \.self) { year in
-                        HStack(spacing: 12) {
-                            Text(String(year)).lgText(.rowStrong).monospacedDigit()
-                                .frame(width: 48, alignment: .leading)
-                            Slider(value: Binding(get: { Double(model.hoursFor(year)) },
-                                                  set: { model.hours[year] = Int($0) }),
-                                   in: 0...40, step: 1)
-                                .tint(LGColor.ink)
-                                .accessibilityLabel("\(year), hours per week")
-                            Text("\(model.hoursFor(year)) h").lgText(.row, color: LGColor.inkMuted).monospacedDigit()
-                                .frame(width: 48, alignment: .trailing)
-                        }
-                        .frame(minHeight: 52)
+                        HoursStepperRow(label: String(year),
+                                        value: Binding(get: { Double(model.hoursFor(year)) },
+                                                       set: { model.hours[year] = Int($0.rounded()); changedYear = year }),
+                                        isHighlighted: changedYear == year)
+                            .frame(minHeight: 52)
                         if year != model.years.last { Divider().overlay(LGColor.divider) }
                     }
                 }
                 .padding(.horizontal, 18)
             }
             .lgCard()
+
+            if let year = changedYear, YearHoursFill.hasLaterYears(after: year, years: model.years) {
+                let hours = model.hoursFor(year)
+                Button("Use \(hours) h for the years after \(String(year))") {
+                    model.hours = YearHoursFill.applying(hours, after: year, to: model.hours, years: model.years)
+                }
+                .buttonStyle(.lg(.text))
+            }
 
             HStack(alignment: .firstTextBaseline) {
                 Text("Estimated so far").lgText(.row, color: LGColor.inkMuted)

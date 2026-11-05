@@ -21,6 +21,11 @@ enum LGColor {
     static let danger = Color(hex: 0xB3341A)
     static let chipFill = Color(hex: 0xF3EFE8)
     static let segmentTrack = Color(hex: 0xEFEBE4)
+    // Hour steppers
+    static let stepperButton = Color(hex: 0xF3F0EA)
+    static let stepperButtonLimit = Color(hex: 0xF6F4EF)
+    static let stepperGlyphLimit = Color(hex: 0xC9C3B8)
+    static let stepperHighlight = Color(hex: 0xFFF3D6)
 
     // Sun
     static let sunBody = Color(hex: 0xFFC93C)
@@ -32,9 +37,11 @@ enum LGColor {
     static let mote = Color(hex: 0xFFE08A)
 
     // Calendar and forecast
-    static let rest = Color(hex: 0xD3DCF2)
+    static let rest = Color(hex: 0xC5D0EC)
     static let practice: [Color] = [Color(hex: 0xFFE48C), Color(hex: 0xFFC53D), Color(hex: 0xFF9A3C), Color(hex: 0xEE6420)]
     static let forecast = Color(hex: 0xEE6420)
+    /// The forecast orange darkened to 4.5:1 for words (the lines and band keep the brighter orange).
+    static let forecastText = Color(hex: 0xB8470E)
     static let forecastBand = Color(hex: 0xFF9A3C)
     static let currentBar = Color(hex: 0xFFB347)
 

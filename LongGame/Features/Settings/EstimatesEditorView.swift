@@ -54,16 +54,9 @@ struct EstimatesEditorView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(estimates, id: \.persistentModelID) { estimate in
-                        HStack(spacing: 12) {
-                            Text(String(estimate.year)).lgText(.rowStrong).monospacedDigit().frame(width: 48, alignment: .leading)
-                            Slider(value: Binding(get: { Double(estimate.hoursPerWeek) }, set: { estimate.hoursPerWeek = Int($0) }),
-                                   in: 0...40, step: 1)
-                                .tint(LGColor.ink)
-                                .accessibilityLabel("\(estimate.year), hours per week")
-                            Text("\(estimate.hoursPerWeek) h").lgText(.row, color: LGColor.inkMuted).monospacedDigit()
-                                .frame(width: 48, alignment: .trailing)
-                        }
-                        .frame(minHeight: 52)
+                        HoursStepperRow(label: String(estimate.year), value: Binding(get: { Double(estimate.hoursPerWeek) },
+                                                                                     set: { estimate.hoursPerWeek = Int($0.rounded()) }))
+                            .frame(minHeight: 52)
                         if estimate.persistentModelID != estimates.last?.persistentModelID { Divider().overlay(LGColor.divider) }
                     }
                 }
