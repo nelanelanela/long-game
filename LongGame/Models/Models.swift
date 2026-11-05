@@ -108,6 +108,8 @@ final class AppSettings {
     var lastTipOfferAt: Date?
     /// The full-screen Growth chart's hint "Drag along the line" goes away for good after the first scrub.
     var scrubHintSeen: Bool = false
+    /// Settings → Sounds → Giggle sound: the sun's laugh when it is tapped. On unless turned off.
+    var giggleSound: Bool = true
     /// Your pace for the year: hours a week for the 12 months from `targetSetAt`. 0 means none chosen yet
     /// (a game started before this existed); the earlier ones live on as `TargetPeriod` rows.
     var weeklyTargetHours: Double = 0

@@ -5,6 +5,7 @@ import SwiftData
 /// the first time. Otherwise Home (it opens on This week).
 struct AppRoot: View {
     @Query private var crafts: [Craft]
+    @Query private var settingsRows: [AppSettings]
 
     private var active: Craft? { crafts.first(where: \.isActive) }
 
@@ -17,5 +18,6 @@ struct AppRoot: View {
             }
         }
         .syncsWidgets()
+        .environment(\.giggleSoundOn, settingsRows.first?.giggleSound ?? true)
     }
 }

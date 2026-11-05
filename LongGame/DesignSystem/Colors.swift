@@ -27,6 +27,8 @@ enum LGColor {
     static let sunRays = Color(hex: 0xFFB627)
     static let sunRaysBright = Color(hex: 0xFFD15C)
     static let sunCheeks = Color(hex: 0xF7A1B5)
+    /// The laughing face's deeper cheeks.
+    static let sunCheeksDeep = Color(hex: 0xF48FA8)
     static let mote = Color(hex: 0xFFE08A)
 
     // Calendar and forecast

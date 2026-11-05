@@ -51,6 +51,7 @@ struct SettingsView: View {
                 if let settings {
                     weekCard(settings)
                     reminderCard(settings)
+                    soundsCard(settings)
                 }
                 FocusSettingsCard()
                 practiceCard
@@ -97,6 +98,18 @@ struct SettingsView: View {
                 .frame(maxWidth: 190)
             }
             .frame(minHeight: 54)
+        }
+    }
+
+    private func soundsCard(_ settings: AppSettings) -> some View {
+        card {
+            VStack(alignment: .leading, spacing: 2) {
+                Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
+                    .lgText(.row).tint(LGColor.ink)
+                Text("A little laugh when you tap the sun. It stays quiet when your iPhone is on silent.")
+                    .lgText(.caption, color: LGColor.inkMuted)
+            }
+            .padding(.vertical, 10)
         }
     }
 

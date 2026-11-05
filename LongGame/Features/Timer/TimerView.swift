@@ -121,6 +121,8 @@ private struct RunningScene: View {
     let onFinish: () -> Void
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    /// A tap on the sun gets a soft wink here: no sound, no wiggle, so a session is never disturbed.
+    @State private var tapWink = GiggleController()
 
     private static let motes: [(x: Double, y: Double, delay: Double, size: CGFloat)] = [
         (150, 330, 0, 6), (228, 340, 1.7, 4), (192, 350, 3.1, 6), (260, 300, 4.2, 4),
@@ -143,7 +145,8 @@ private struct RunningScene: View {
         let stretch = stretchPlan.state(running: StretchSource.startedToday(state) ? elapsed : 0)
         let sinceCovered = StretchSource.startedToday(state) ? stretchPlan.coveredAfter().map { elapsed - $0 } : nil
         let coverWink = !paused && (sinceCovered.map { $0 >= 0 && $0 < 1.4 } ?? false)
-        let winking = !paused && golden == nil && (t.truncatingRemainder(dividingBy: 9) > 8.5 || coverWink)
+        let tapped = tapWink.run?.pose(at: now)?.face == .wink
+        let winking = !paused && golden == nil && (t.truncatingRemainder(dividingBy: 9) > 8.5 || coverWink || tapped)
         let face: SunFace = golden != nil ? .celebrate : paused ? .sleepy : winking ? .wink : .focus
 
         let growing = (paused || golden != nil) ? nil : sun.rayGrowProgress()
@@ -217,6 +220,8 @@ private struct RunningScene: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(sun.accessibilityLabel)
                     .accessibilityAddTraits(.isImage)
+                    .accessibilityAction(named: Text("Tickle the sun")) { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
+                    .onTapGesture { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
 
                 if wide {
                     wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink)

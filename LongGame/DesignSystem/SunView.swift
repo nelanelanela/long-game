@@ -2,6 +2,8 @@ import SwiftUI
 
 enum SunFace: Equatable, Sendable {
     case happy, focus, wink, sleepy, celebrate
+    /// Only during a giggle (spec section 18): open eyes and a small "o", then eyes > < and an open laughing mouth.
+    case surprised, laughing
 }
 
 /// The smiling sun, drawn in the spec's 200 × 200 space and scaled to fit.
@@ -26,20 +28,34 @@ struct SunView: View {
     var raySpread: Double = 1
     /// 0...1: a happy sun opening both eyes for a peek (Home, every 7 s). The mouth stays the same.
     var eyesOpen: Double = 0
+    /// The giggle's pose for this moment (Home, the intro and the future-self sheet); at rest it changes nothing.
+    var giggle: GigglePose = .rest
+
+    /// The face that is showing: the giggle's, or the sun's own.
+    private var shown: SunFace { giggle.face ?? face }
 
     var body: some View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height) / 200
             ZStack {
-                raysLayer
-                    .rotationEffect(raysRotation)
-                    .opacity(raysOpacity)
-                Circle().fill(LGColor.sunBody)
-                    .frame(width: 112, height: 112)
-                    .position(x: 100, y: 100)
-                Circle().fill(LGColor.sunCheeks).frame(width: 14, height: 14).position(x: 72, y: 113)
-                Circle().fill(LGColor.sunCheeks).frame(width: 14, height: 14).position(x: 128, y: 113)
-                faceLayers
+                ZStack {
+                    raysLayer
+                        .scaleEffect(giggle.raysScale)
+                        .rotationEffect(raysRotation + .degrees(giggle.raysSpin))
+                        .opacity(raysOpacity)
+                    Circle().fill(LGColor.sunBody)
+                        .frame(width: 112, height: 112)
+                        .position(x: 100, y: 100)
+                    Circle().fill(LGColor.sunCheeks).frame(width: 14, height: 14).position(x: 72, y: 113)
+                        .opacity(shown == .laughing ? 0 : 1)
+                    Circle().fill(LGColor.sunCheeks).frame(width: 14, height: 14).position(x: 128, y: 113)
+                        .opacity(shown == .laughing ? 0 : 1)
+                    faceLayers
+                }
+                .scaleEffect(x: giggle.scaleX, y: giggle.scaleY)
+                .rotationEffect(.degrees(giggle.rotation))
+                .offset(y: giggle.dy)
+                sparkleLayer
             }
             .frame(width: 200, height: 200)
             .scaleEffect(s)
@@ -77,31 +93,61 @@ struct SunView: View {
     private var faceLayers: some View {
         ZStack {
             // closed, smiling eyes
-            EyeArc(x: 76, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 - eyesOpen : 0)
-            EyeArc(x: 108, y: 98, bend: -9).stroke(ink, style: line).opacity(face == .happy ? 1 - eyesOpen : 0)
+            EyeArc(x: 76, y: 98, bend: -9).stroke(ink, style: line).opacity(shown == .happy ? 1 - eyesOpen : 0)
+            EyeArc(x: 108, y: 98, bend: -9).stroke(ink, style: line).opacity(shown == .happy ? 1 - eyesOpen : 0)
             // relaxed, closed eyes
-            EyeArc(x: 76, y: 98, bend: 7).stroke(ink, style: line).opacity(face == .focus || face == .wink ? 1 : 0)
-            EyeArc(x: 108, y: 98, bend: 7).stroke(ink, style: line).opacity(face == .focus ? 1 : 0)
+            EyeArc(x: 76, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus || shown == .wink ? 1 : 0)
+            EyeArc(x: 108, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus ? 1 : 0)
             // winking: right eye open
-            OpenEye(cx: 116).opacity(face == .wink ? 1 : 0)
+            OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
             // celebrating: both eyes open
-            OpenEye(cx: 84).opacity(face == .celebrate ? 1 : face == .happy ? eyesOpen : 0)
-            OpenEye(cx: 116).opacity(face == .celebrate ? 1 : face == .happy ? eyesOpen : 0)
+            OpenEye(cx: 84).opacity(shown == .celebrate ? 1 : shown == .happy ? eyesOpen : 0)
+            OpenEye(cx: 116).opacity(shown == .celebrate ? 1 : shown == .happy ? eyesOpen : 0)
             // sleepy: droopy lids
-            DroopyEye(x: 76, direction: 1).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)
-            DroopyEye(x: 124, direction: -1).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)
+            DroopyEye(x: 76, direction: 1).stroke(ink, style: line).opacity(shown == .sleepy ? 1 : 0)
+            DroopyEye(x: 124, direction: -1).stroke(ink, style: line).opacity(shown == .sleepy ? 1 : 0)
             // mouths
-            EyeArc(x: 88, y: 114, bend: 11, width: 24).stroke(ink, style: line).opacity(face == .happy ? 1 : 0)
-            EyeArc(x: 92, y: 116, bend: 6).stroke(ink, style: line).opacity(face == .focus || face == .wink ? 1 : 0)
-            EyeArc(x: 94, y: 118, bend: 3, width: 12).stroke(ink, style: line).opacity(face == .sleepy ? 1 : 0)
-            BigSmile().fill(ink).opacity(face == .celebrate ? 1 : 0)
+            EyeArc(x: 88, y: 114, bend: 11, width: 24).stroke(ink, style: line).opacity(shown == .happy ? 1 : 0)
+            EyeArc(x: 92, y: 116, bend: 6).stroke(ink, style: line).opacity(shown == .focus || shown == .wink ? 1 : 0)
+            EyeArc(x: 94, y: 118, bend: 3, width: 12).stroke(ink, style: line).opacity(shown == .sleepy ? 1 : 0)
+            BigSmile().fill(ink).opacity(shown == .celebrate ? 1 : 0)
+            // surprised: wide eyes and a small "o"
+            OpenEye(cx: 84).opacity(shown == .surprised ? 1 : 0)
+            OpenEye(cx: 116).opacity(shown == .surprised ? 1 : 0)
+            Ellipse().fill(ink).frame(width: 12, height: 14).position(x: 100, y: 118).opacity(shown == .surprised ? 1 : 0)
+            // laughing: eyes > <, deeper cheeks, an open mouth with a small pink tongue
+            Group {
+                Circle().fill(LGColor.sunCheeksDeep).frame(width: 18, height: 18).position(x: 70, y: 114)
+                Circle().fill(LGColor.sunCheeksDeep).frame(width: 18, height: 18).position(x: 130, y: 114)
+                LaughEyes().stroke(ink, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                LaughMouth().fill(ink)
+                LaughTongue().fill(LGColor.sunCheeks)
+            }
+            .opacity(shown == .laughing ? 1 : 0)
             Text("z")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(ink)
                 .position(x: 134, y: 78)
-                .opacity(face == .sleepy ? 1 : 0)
+                .opacity(shown == .sleepy ? 1 : 0)
         }
-        .animation(.easeInOut(duration: 0.18), value: face)
+        .animation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
+    }
+
+    /// Four small gold sparkles that pop out around the sun during a giggle.
+    private var sparkleLayer: some View {
+        ZStack {
+            ForEach(0..<4, id: \.self) { i in
+                let spot = GiggleMotion.sparkleSpots[i]
+                let sparkle = giggle.sparkles[i]
+                SparkleCross()
+                    .stroke(LGColor.sunRays, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
+                    .frame(width: 16, height: 16)
+                    .scaleEffect(sparkle.scale)
+                    .opacity(sparkle.opacity)
+                    .position(x: spot.x, y: spot.y)
+            }
+        }
+        .frame(width: 200, height: 200)
     }
 
     private var ink: Color { LGColor.ink }
@@ -165,6 +211,49 @@ private struct OpenEye: View {
     }
 }
 
+private struct SparkleCross: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: rect.midX, y: rect.minY)); p.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        p.move(to: CGPoint(x: rect.minX, y: rect.midY)); p.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        return p
+    }
+}
+
+/// Eyes > <
+private struct LaughEyes: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: 74, y: 90)); p.addLine(to: CGPoint(x: 87, y: 97)); p.addLine(to: CGPoint(x: 74, y: 104))
+        p.move(to: CGPoint(x: 126, y: 90)); p.addLine(to: CGPoint(x: 113, y: 97)); p.addLine(to: CGPoint(x: 126, y: 104))
+        return p
+    }
+}
+
+private struct LaughMouth: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: 82, y: 110))
+        p.addQuadCurve(to: CGPoint(x: 118, y: 110), control: CGPoint(x: 100, y: 110))
+        p.addQuadCurve(to: CGPoint(x: 100, y: 130), control: CGPoint(x: 116, y: 130))
+        p.addQuadCurve(to: CGPoint(x: 82, y: 110), control: CGPoint(x: 84, y: 130))
+        p.closeSubpath()
+        return p
+    }
+}
+
+private struct LaughTongue: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: 91, y: 123))
+        p.addQuadCurve(to: CGPoint(x: 109, y: 123), control: CGPoint(x: 100, y: 117))
+        p.addQuadCurve(to: CGPoint(x: 100, y: 129), control: CGPoint(x: 105, y: 129))
+        p.addQuadCurve(to: CGPoint(x: 91, y: 123), control: CGPoint(x: 95, y: 129))
+        p.closeSubpath()
+        return p
+    }
+}
+
 private struct BigSmile: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
@@ -178,7 +267,7 @@ private struct BigSmile: Shape {
 
 #Preview("Sun faces") {
     HStack {
-        ForEach([SunFace.happy, .focus, .wink, .sleepy, .celebrate], id: \.self) { f in
+        ForEach([SunFace.happy, .focus, .wink, .sleepy, .celebrate, .surprised, .laughing], id: \.self) { f in
             SunView(face: f).frame(width: 64, height: 64)
         }
     }

@@ -123,6 +123,9 @@ struct SunriseFrame {
 struct SunriseCanvas: View {
     var layout: SunriseLayout
     var frame: SunriseFrame = .still
+    /// The giggle that is running (the live hero), or a frozen moment of one (previews and tests).
+    var giggleRun: GiggleRun?
+    var gigglePose: GigglePose = .rest
 
     var body: some View {
         GeometryReader { geo in
@@ -136,8 +139,7 @@ struct SunriseCanvas: View {
                 Color.clear
                     .frame(width: w, height: h)
                     .overlay(alignment: .topLeading) {
-                        SunView(face: layout.face, litRays: layout.litRays, raysRotation: .degrees(frame.rotation),
-                                rayColor: LGColor.sunRays, eyesOpen: frame.eyesOpen)
+                        sun(size: size)
                             .frame(width: size, height: size)
                             .scaleEffect(1 + 0.03 * frame.breathe)
                             .offset(x: w / 2 - size / 2 + layout.sunOffsetX, y: layout.sunTop + frame.rise - 3 * frame.breathe)
@@ -165,6 +167,21 @@ struct SunriseCanvas: View {
         .frame(height: layout.height)
     }
 
+    /// The sun, through the giggle when there is one. Only the sun moves: the sea and its mask are drawn after it.
+    @ViewBuilder
+    private func sun(size: CGFloat) -> some View {
+        if giggleRun != nil {
+            GigglingSun(run: giggleRun) { pose in sunView(pose) }
+        } else {
+            sunView(gigglePose)
+        }
+    }
+
+    private func sunView(_ pose: GigglePose) -> SunView {
+        SunView(face: layout.face, litRays: layout.litRays, raysRotation: .degrees(frame.rotation),
+                rayColor: LGColor.sunRays, eyesOpen: pose.face == nil ? frame.eyesOpen : 0, giggle: pose)
+    }
+
     private func glow(width w: CGFloat) -> some View {
         let d = layout.glowSize
         let centreY = layout.sunTop + layout.sunSize / 2 + layout.glowDy + frame.rise
@@ -186,16 +203,44 @@ struct SunriseHero: View {
     var isRunning = true
     /// The future-self sheet: when it opened, so the sun can rise into place.
     var riseStart: Date?
+    /// False where the sun must stay still when tapped.
+    var giggles = true
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.giggleSoundOn) private var soundOn
+    @State private var giggle = GiggleController()
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !isRunning || reduceMotion)) { timeline in
-            SunriseCanvas(layout: layout, frame: frame(at: timeline.date))
+            let current = frame(at: timeline.date)
+            SunriseCanvas(layout: layout, frame: current, giggleRun: giggle.run)
+                .overlay { if giggles { tapTarget(frame: current) } }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
         .accessibilityAddTraits(.isImage)
+        .accessibilityAction(named: Text("Tickle the sun")) { if giggles { tickle() } }
+        .task(id: soundOn) { if giggles { giggle.prepare(soundOn: soundOn) } }
+    }
+
+    private func tickle() {
+        giggle.tap(soundOn: soundOn, reduceMotion: reduceMotion)
+    }
+
+    /// The whole sun, and at least 44 pt, but never below the waterline.
+    private func tapTarget(frame: SunriseFrame) -> some View {
+        GeometryReader { geo in
+            let side = max(layout.sunSize, 44)
+            let centreX = geo.size.width / 2 + layout.sunOffsetX
+            let centreY = layout.sunTop + layout.sunSize / 2 + frame.rise
+            let top = centreY - side / 2
+            let bottom = min(centreY + side / 2, layout.waterY)
+            Color.clear
+                .contentShape(Rectangle())
+                .frame(width: side, height: max(0, bottom - top))
+                .position(x: centreX, y: top + max(0, bottom - top) / 2)
+                .onTapGesture { tickle() }
+        }
     }
 
     private func frame(at date: Date) -> SunriseFrame {
@@ -206,6 +251,38 @@ struct SunriseHero: View {
 }
 
 // MARK: Previews (frozen, so every phase can be inspected)
+
+#Preview("Giggle · every frame") {
+    // The sequence at its key moments, frozen. The sea stays in front at every frame.
+    let moments: [(String, Double)] = [("0 tap", 0), ("0.04 squish", 0.04), ("0.08", 0.08), ("0.14", 0.14), ("0.26", 0.26),
+                                       ("0.38", 0.38), ("0.50", 0.50), ("0.62", 0.62), ("0.72 wink", 0.74), ("0.90", 0.90)]
+    ScrollView {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 170))], spacing: 8) {
+            ForEach(moments, id: \.0) { name, t in
+                VStack {
+                    SunriseCanvas(layout: .intro(page: 1), frame: .frozen(phase: 6),
+                                  gigglePose: GiggleMotion.pose(at: t, kind: .small, reduceMotion: false) ?? .rest)
+                        .scaleEffect(0.5, anchor: .top).frame(height: 150)
+                    Text(name).font(.caption)
+                }
+            }
+        }
+        .padding()
+    }
+    .background(LGColor.background)
+}
+
+#Preview("Giggle · big laugh and Reduce Motion") {
+    HStack {
+        ForEach([(GiggleKind.big, 0.6, false), (.big, 1.1, false), (.small, 0.4, true), (.wink, 0.2, false)], id: \.1) { kind, t, reduce in
+            SunriseCanvas(layout: .intro(page: 1), frame: .frozen(phase: 6),
+                          gigglePose: GiggleMotion.pose(at: t, kind: kind, reduceMotion: reduce) ?? .rest)
+                .scaleEffect(0.3, anchor: .top).frame(width: 100, height: 100)
+        }
+    }
+    .padding()
+    .background(LGColor.background)
+}
 
 #Preview("Intro pages") {
     ScrollView {

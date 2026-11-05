@@ -35,6 +35,31 @@ Updated after the fixes: every row below shows its final status, with what chang
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
 
+## The sun giggles when tapped (update prompt 15)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Seven recordings trimmed to the loudest laugh, evened to the same loudness, 10 ms fade-in and a 0.18 s fade-out, AAC `.m4a` made with `afconvert` | ✅ | `LongGame/Resources/Sounds/giggle-1.m4a` … `giggle-7.m4a` | Six are 1.2 s. `giggle-3` (your longest, 1.5 s) is kept for the five-tap laugh and is never picked for a normal giggle. Your originals stay in `Sounds/giggles/sun_laughs/`, outside the app target and never uploaded |
+| `GiggleSoundPlayer`: preloads the clips, random pick that is never the same twice in a row, volume 0.7, one clip at a time, `.ambient` session, skips when `secondaryAudioShouldBeSilencedHint` | ✅ | `Sound/GiggleSoundPlayer.swift`, `GiggleClipPicker` | The sound starts 0.05 s after the tap |
+| Settings → Sounds → Giggle sound, on by default; when off the audio session is never touched and no clip is loaded | ✅ | `SettingsView.soundsCard`, `AppSettings.giggleSound`, test `withTheSettingOffTheAudioSessionIsNeverTouched` | The session is set up the first time the sun is shown with the switch on, so the first tap starts instantly |
+| Laughing face (eyes > <, open mouth, small pink tongue, deeper cheeks #F48FA8) and a surprised face | ✅ | `SunView` (`SunFace.laughing`, `.surprised`) | Previews: 'Sun faces' |
+| The sequence: squash 107% × 92% and 6 pt down with the surprised face, laugh with the wiggle −8°, +7°, −5°, +3°, −1° and hops of 6 and 5 pt, rays to 108% and back, four sparkles, spring back (response 0.35, damping 0.6), 0.2 s wink | ✅ | `Logic/SunGiggle.swift` (`GiggleMotion.pose`) | A pure function of time, tested at each stop. Never more than 6 pt or 8° |
+| Driven by time, not timers: the sun redraws only from the first to the last moment of a giggle | ✅ | `GiggleSchedule` (a `TimelineSchedule`), `GigglingSun` | **Different from the prompt:** I used a `TimelineView` with the pose worked out from timestamps instead of `phaseAnimator` or `keyframeAnimator`, because it can be tested exactly and follows the project rule that animations come from timestamps. There are no timers either way |
+| The sun's place on the gauge or arc does not change; the sea and its mask stay in front | ✅ | `SunriseCanvas`: the giggle moves the sun inside the masked layer | Preview 'Giggle · every frame' |
+| Haptics: soft at 0, light at 0.25 s and 0.45 s, only when system haptics are on | ✅ | `GigglingSun` (`sensoryFeedback`) | Cannot be felt in the Simulator |
+| A tap during a giggle restarts the animation; a new sound starts only when the clip has finished | ✅ | `GiggleTaps` | Tested |
+| Five taps in 2 s: the big laugh (longest clip, one full spin of the rays), then taps are ignored while it lasts and only wink for 3 s | ✅ | `GiggleTaps`, `GiggleMotion` (kind `.big`) | The fifth tap may cut a normal clip short, so there are never two sounds at once |
+| Works on Home (all three tabs), the intro pages and the future-self sheet | ✅ | `SunriseHero` | The sun's tap target is the whole sun, at least 44 pt, and never below the waterline |
+| Tip jar | ⚠️ | n/a | There is no tip jar screen in the app yet (only `TipStore`), so there was nothing to add the giggle to. It will work with `SunriseHero` when it exists |
+| The Timer: a tap gets only a soft wink, no sound, no wiggle, no haptic, no audio session | ✅ | `TimerView` (`tapWink`) |  |
+| Not in widgets, the Watch, the Live Activity or the year card image | ✅ | They use `SunView` or `SunriseCanvas` without a giggle | |
+| Reduce Motion: the laughing face for 0.8 s with haptic and sound, nothing moves | ✅ | `GiggleMotion.pose(reduceMotion: true)` | Tested |
+| VoiceOver: the custom action 'Tickle the sun' | ✅ | `SunriseHero`, `TimerView` | Not run with VoiceOver |
+| Tests: tap logic, no overlapping sound, five taps in 2 s, 3 s rest, never the same clip, setting off means no session, schedule, controller | ✅ | `LongGameTests/SunGiggleTests.swift` |  |
+| Previews of the sequence | ✅ | `SunriseHero.swift`: 'Giggle · every frame', 'Giggle · big laugh and Reduce Motion' |  |
+
+Not seen or heard on a device: the Ring/Silent switch (only a real iPhone can test it), the haptics, and VoiceOver.
+
 ## Scrub the forecast (update prompt 16)
 
 | Requirement | Status | Where | Note |
@@ -309,6 +334,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 Run with `-demoData` for sample data.
 
 - **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **The sun giggles:** tap the sun on Home (any tab), on an intro page or in 'Meet your future self'. Tap it five times quickly for the big laugh with the spinning rays; for the next 3 seconds taps only get a wink. On the Timer a tap only winks. Settings -> Giggle sound turns the laugh off. The Simulator plays the sound through your Mac (keep the volume up); the Ring/Silent switch and the haptics need a real iPhone.
 - **Scrub the forecast:** Run with `-demoData`, open History (calendar icon), Growth, tap the chart or the small expand button. Drag a finger along the line; the hint disappears for good after the first drag. The Simulator has no haptics, so the taps need a real iPhone.
 - **Compare the two looks (Liquid Glass):** run the LongGame scheme on an iOS 26 or later Simulator for the glass look, and on an iOS 18 Simulator (or any version before 26) for the flat look. In Xcode, open `GlassPreviews.swift` and its canvas: each preview shows glass on the left and the old flat look on the right.
 - **Your year card:** Settings -> Debug only -> 'Fill a sample year'; back on Home go to History (calendar icon) -> Growth, scroll to the bottom row 'Your 2026'. Try the three looks and the Show hours switch, long-press a tile on Photos, then Share (Save Image, Messages). 'Remove the sample year' undoes it.
