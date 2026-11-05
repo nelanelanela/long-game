@@ -108,8 +108,8 @@ struct YearScreen: View {
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Text("Your \(String(year))").lgText(.navTitle)
-                    Image(systemName: "chevron.down").font(.system(size: 11, weight: .semibold)).foregroundStyle(LGColor.inkMuted)
+                    Text("Your \(String(year))").lgText(.navTitle).accessibilityAddTraits(.isHeader)
+                    Image(systemName: "chevron.down").lgIcon(11, weight: .semibold).foregroundStyle(LGColor.inkMuted)
                 }
                 .frame(minHeight: 44)
             }
@@ -277,7 +277,7 @@ struct YearEntryRow: View {
                 Text("A card of your year, to keep or share").lgText(.caption, color: LGColor.inkMuted)
             }
             Spacer(minLength: 8)
-            Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold))
+            Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
                 .foregroundStyle(LGColor.inkMuted).accessibilityHidden(true)
         }
         .padding(.vertical, 12)

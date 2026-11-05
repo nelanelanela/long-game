@@ -11,6 +11,8 @@ struct CalendarTab: View {
     @State private var explaining: StatInfo?
     /// The session whose photo is open full screen.
     @State private var viewing: Session?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    private var isAccessibilitySize: Bool { dynamicTypeSize.isAccessibilitySize }
 
     init(craft: Craft, sessions: [Session], weekStart: WeekStart, initialDay: Date? = nil) {
         self.craft = craft
@@ -78,6 +80,7 @@ struct CalendarTab: View {
                                 Text(labels[index] ?? "")
                                     .lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
                                     .fixedSize()
+                                    .dynamicTypeSize(...DynamicTypeSize.xLarge)
                                     .frame(width: cell, height: cell, alignment: .leading)
                                     .accessibilityHidden(true)
                                 ForEach(week, id: \.self) { day in
@@ -91,14 +94,16 @@ struct CalendarTab: View {
                 .defaultScrollAnchor(.trailing)
             }
 
-            HStack {
-                legendSwatch(LGColor.rest, "Rest")
-                Spacer()
+            // At the accessibility sizes the legend stacks, so "Less" and "More" never break mid-word.
+            let legend = isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
+                : AnyLayout(HStackLayout())
+            legend {
+                legendSwatch(.rest, "Rest")
+                if !isAccessibilitySize { Spacer() }
                 HStack(spacing: 4) {
                     Text("Less").lgText(.tiny, color: LGColor.inkMuted).padding(.trailing, 4)
-                    ForEach(0..<4, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 3).fill(LGColor.practice[i]).frame(width: 12, height: 12)
-                    }
+                    ForEach(CalendarLevel.allCases.dropFirst(), id: \.self) { CalendarLevelMark(level: $0, size: 14) }
                     Text("More").lgText(.tiny, color: LGColor.inkMuted).padding(.leading, 4)
                 }
             }
@@ -107,8 +112,7 @@ struct CalendarTab: View {
             // Only once there is a photo: what the white dot means.
             if !photoDays.isEmpty {
                 HStack(spacing: 6) {
-                    RoundedRectangle(cornerRadius: 3).fill(LGColor.practice[1]).frame(width: 12, height: 12)
-                        .overlay { Circle().fill(.white).frame(width: 4, height: 4) }
+                    CalendarLevelMark(level: .from1to2, size: 14, hasPhoto: true)
                     Text("White dot: a day with a photo").lgText(.tiny, color: LGColor.inkMuted)
                 }
                 .accessibilityHidden(true)
@@ -123,26 +127,27 @@ struct CalendarTab: View {
         let seconds = daily[day] ?? 0
         let level = CalendarLevel.level(hours: seconds / 3600)
         let isSelected = day == selected
-        return RoundedRectangle(cornerRadius: 4, style: .continuous)
-            .fill(isFuture ? Color.clear : LGColor.calendar(level))
+        return Button { if !isFuture { selected = day } } label: {
+            // Future days are left empty; every other day is its level's shape (a rest day is the small dot).
+            Group {
+                if isFuture { Color.clear } else { CalendarLevelMark(level: level, size: cell, hasPhoto: hasPhoto) }
+            }
             .frame(width: cell, height: cell)
-            .overlay {
-                // A tiny white dot in the middle: this day has a photo.
-                if hasPhoto && !isFuture { Circle().fill(.white).frame(width: 4, height: 4) }
-            }
-            .overlay {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 5.5)
-                        .stroke(LGColor.ink, lineWidth: 1.5)
-                        .padding(-3)
+                .overlay {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: 5.5)
+                            .stroke(LGColor.ink, lineWidth: 1.5)
+                            .padding(-3)
+                    }
                 }
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { if !isFuture { selected = day } }
-            .accessibilityElement()
-            .accessibilityLabel(Self.spoken(day, seconds: seconds, calendar: calendar) + (hasPhoto ? String(localized: ", with a photo") : ""))
-            .accessibilityAddTraits(isFuture ? [] : .isButton)
-            .accessibilityHidden(isFuture)
+                // The touch area reaches halfway into the gaps, so neighbouring days never overlap.
+                .contentShape(Rectangle().inset(by: -gap / 2))
+        }
+        .buttonStyle(.plain)
+        .disabled(isFuture)
+        .accessibilityLabel(Self.spoken(day, seconds: seconds, calendar: calendar, hasPhoto: hasPhoto))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityHidden(isFuture)
     }
 
     private func weekdayLabels(weeks: [[Date]]) -> some View {
@@ -153,6 +158,7 @@ struct CalendarTab: View {
                 Text([2, 4, 6].contains(weekday) ? Self.shortWeekday(date, calendar) : "")
                     .lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
                     .fixedSize()
+                    .dynamicTypeSize(...DynamicTypeSize.xLarge)
                     .frame(height: cell, alignment: .leading)
             }
         }
@@ -160,9 +166,9 @@ struct CalendarTab: View {
         .accessibilityHidden(true)
     }
 
-    private func legendSwatch(_ color: Color, _ title: String) -> some View {
+    private func legendSwatch(_ level: CalendarLevel, _ title: String) -> some View {
         HStack(spacing: 6) {
-            RoundedRectangle(cornerRadius: 3).fill(color).frame(width: 12, height: 12)
+            CalendarLevelMark(level: level, size: 14)
             Text(title).lgText(.tiny, color: LGColor.inkMuted)
         }
     }
@@ -244,12 +250,12 @@ struct CalendarTab: View {
                                 .multilineTextAlignment(.leading)
                         } else if !session.hasPhoto, session.note?.isEmpty != false {
                             Text("No note")
-                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: Color(hex: 0xB3B8C7))
+                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.gaugeLabel)
                         }
                     }
                     Spacer(minLength: 8)
                     Text(DurationFormat.short(seconds: session.durationSec)).lgText(.row, color: LGColor.inkMuted)
-                    Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold))
+                    Image(systemName: "chevron.right").lgIcon(12, weight: .semibold)
                         .foregroundStyle(LGColor.inkMuted)
                         .padding(.top, 4)
                 }
@@ -320,11 +326,9 @@ struct CalendarTab: View {
     private static func shortWeekday(_ d: Date, _ c: Calendar) -> String { formatter("EEE", c).string(from: d) }
     private static func shortMonth(_ d: Date, _ c: Calendar) -> String { formatter("MMM", c).string(from: d) }
 
-    /// "Thursday 22 October, 2 hours" or "…, rest day"
-    static func spoken(_ day: Date, seconds: Double, calendar: Calendar) -> String {
-        let date = formatter("EEEE d MMMM", calendar).string(from: day)
-        guard seconds > 0 else { return "\(date), rest day" }
-        return "\(date), " + Labels.spoken(seconds: Int((seconds / 60).rounded()) * 60, includeSeconds: false)
+    /// "Thursday 22 October. 2 hours, a good day. Has a photo." or "Thursday 22 October. Rest day."
+    static func spoken(_ day: Date, seconds: Double, calendar: Calendar, hasPhoto: Bool = false) -> String {
+        SunSpeech.calendarDay(date: formatter("EEEE d MMMM", calendar).string(from: day), seconds: seconds, hasPhoto: hasPhoto)
     }
 }
 
@@ -391,3 +395,4 @@ private struct StatExplainer: View {
         .presentationCornerRadius(32)
     }
 }
+

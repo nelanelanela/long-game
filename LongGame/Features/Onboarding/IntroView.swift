@@ -9,6 +9,7 @@ struct IntroView: View {
     let onFinish: () -> Void
 
     @State private var page = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private struct Copy {
         let title: LocalizedStringKey
@@ -19,15 +20,15 @@ struct IntroView: View {
 
     private static let pages: [Copy] = [
         Copy(title: "One game, 10,000 hours",
-             text: "Around 10,000 hours of focused practice is where people tend to reach mastery in their craft: musicians, makers, surgeons, writers. That’s your finish line. It’s the longest game on the App Store, and it’s played in real life.",
+             text: "Roughly where mastery begins. That’s your finish line.",
              button: "Next",
              illustration: "The sun high above the sea, under a dashed line marking the finish line at 10,000 hours"),
-        Copy(title: "You don’t start at level one",
-             text: "Tell us roughly how much you’ve practised so far. Those hours become your starting score, whether you began last year or decades ago. It’s never too late to play.",
+        Copy(title: "You don’t start at zero",
+             text: "The hours you’ve already practised are your starting score.",
              button: "Next",
              illustration: "The sun just rising out of the sea, above a badge showing your starting score"),
-        Copy(title: "Play it every day",
-             text: "Start the sun timer when you practise, or add hours afterwards. Every hour lifts your sun a little higher, and Long Game shows you when you’ll cross the finish line.",
+        Copy(title: "Play every day",
+             text: "Start the timer when you practise. Every hour lifts your sun.",
              button: "Choose your game",
              illustration: "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today"),
     ]
@@ -102,7 +103,7 @@ struct IntroView: View {
                     .frame(width: index == page ? 22 : 7, height: 7)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: page)
+        .lgAnimation(.easeInOut(duration: 0.2), value: page)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
         .accessibilityAdjustableAction { direction in
@@ -115,11 +116,11 @@ struct IntroView: View {
     }
 
     private func back() {
-        if page == 0 { onBack() } else { withAnimation { page -= 1 } }
+        if page == 0 { onBack() } else { withAnimation(reduceMotion ? nil : .default) { page -= 1 } }
     }
 
     private func next() {
-        if page < count - 1 { withAnimation { page += 1 } } else { onFinish() }
+        if page < count - 1 { withAnimation(reduceMotion ? nil : .default) { page += 1 } } else { onFinish() }
     }
 }
 

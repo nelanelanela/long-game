@@ -132,7 +132,7 @@ struct WidgetSnapshotTests {
     }
 
     @Test func theGroupIsTheOneInTheEntitlements() throws {
-        #expect(WidgetSnapshot.groupID == "group.com.wehavesun.LongGame")
+        #expect(WidgetSnapshot.groupID == "group.com.wehavesun.LongGame.shared")
     }
 
     private func makeContext() throws -> ModelContext {

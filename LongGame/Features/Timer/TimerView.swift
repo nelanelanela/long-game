@@ -55,6 +55,9 @@ struct TimerView: View {
         }
         .preferredColorScheme(.dark)
         .sensoryFeedback(.success, trigger: savedAt)
+        .onChange(of: savedAt) { _, new in
+            if new != nil { AccessibilityNotification.Announcement(String(localized: "Session saved")).post() }
+        }
         .sheet(isPresented: $showFinish) {
             if let state = store.state {
                 FinishSheet(elapsed: state.elapsed(at: Date()),
@@ -113,6 +116,7 @@ private struct RunningScene: View {
     let now: Date
     let state: TimerState
     let craftName: String
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverOn
     let baseTotal: Double
     let reduceMotion: Bool
     let stretchPlan: StretchPlan
@@ -136,12 +140,13 @@ private struct RunningScene: View {
         let t = now.timeIntervalSinceReferenceDate
         // Small win: the overall total (big gold number) just crossed a whole hour.
         let win = paused ? nil : TimerMoments.secondsSinceWholeHour(baseTotal: baseTotal, elapsed: elapsed)
+        let sunLabel = SunSpeech.timer(elapsed: elapsed, total: baseTotal + elapsed / 3600)
         let winScale = (win.map { reduceMotion ? 1 : TimerMoments.bounceScale(secondsSince: $0) }) ?? 1
         let sparkle = win.map { TimerMoments.shimmerOpacity(secondsSince: $0) } ?? 0
 
         let breath = reduceMotion ? 0 : (1 - cos(2 * .pi * t / (paused ? 8 : 4))) / 2
         let hop = golden.map { -sin($0 * .pi) * 34 } ?? 0
-        // Today's stretch: the strip's numbers follow the clock; the sun winks once as the stretch gets covered.
+        // Today's stretch: the sun winks once as the stretch gets covered, and a quiet line says so.
         let stretch = stretchPlan.state(running: StretchSource.startedToday(state) ? elapsed : 0)
         let sinceCovered = StretchSource.startedToday(state) ? stretchPlan.coveredAfter().map { elapsed - $0 } : nil
         let coverWink = !paused && (sinceCovered.map { $0 >= 0 && $0 < 1.4 } ?? false)
@@ -218,7 +223,7 @@ private struct RunningScene: View {
                     .offset(y: -4 * breath + hop)
                     .position(centre)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(sun.accessibilityLabel)
+                    .accessibilityLabel(sunLabel)
                     .accessibilityAddTraits(.isImage)
                     .accessibilityAction(named: Text("Tickle the sun")) { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
                     .onTapGesture { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
@@ -236,19 +241,26 @@ private struct RunningScene: View {
         .sensoryFeedback(trigger: Int((baseTotal + elapsed / 3600).rounded(.down))) { old, new in
             new > old ? .impact(weight: .light) : nil
         }
-        .onChange(of: sun.litRays) { _, rays in
-            AccessibilityNotification.Announcement(sun.rayAnnouncement).post()
-            LiveActivityManager.sync(state, now: now)
-        }
-        .onChange(of: paused) { _, _ in LiveActivityManager.sync(state, now: now) }
+        .onChange(of: sun.litRays) { _, _ in rayLit(sun: sun, paused: paused) }
+        .onChange(of: paused) { _, isPaused in pauseChanged(isPaused) }
     }
 
-    /// The strip under the header (only while there is a stretch to cover, or one just covered).
-    @ViewBuilder
-    private func stretchStrip(_ stretch: StretchState, winking: Bool) -> some View {
-        if let target = stretch.target {
-            StretchStrip(done: stretch.done, target: target, winking: winking)
+    private func rayLit(sun: SunHour, paused: Bool) {
+        if voiceOverOn && !paused {
+            // Quiet and queued: it waits for VoiceOver to finish speaking and never interrupts.
+            let text = NSAttributedString(string: SunSpeech.rayLit(sun), attributes: [
+                .accessibilitySpeechQueueAnnouncement: true,
+                .accessibilitySpeechAnnouncementPriority: UIAccessibilityPriority.low,
+            ])
+            UIAccessibility.post(notification: .announcement, argument: text)
         }
+        LiveActivityManager.sync(state, now: now)
+    }
+
+    private func pauseChanged(_ isPaused: Bool) {
+        LiveActivityManager.sync(state, now: now)
+        let message = isPaused ? String(localized: "Timer paused") : String(localized: "Timer resumed")
+        AccessibilityNotification.Announcement(message).post()
     }
 
     /// The quiet gold line under "Next ray in" once today's stretch is covered.
@@ -272,8 +284,6 @@ private struct RunningScene: View {
                 Color.clear.frame(width: 34, height: 44)
             }
             .frame(height: 44)
-
-            stretchStrip(stretch, winking: coverWink)
 
             Spacer()
 
@@ -326,7 +336,6 @@ private struct RunningScene: View {
             }
             .frame(height: 44)
 
-            stretchStrip(stretch, winking: coverWink)
                 .frame(maxWidth: 360)
 
             Spacer(minLength: 0)
@@ -450,7 +459,7 @@ private struct SavedScene: View {
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
                 VStack {
                     Spacer()
-                    Text("Saved").lgText(.sheetTitle, color: .white)
+                    Text("Saved").lgText(.sheetTitle, color: .white).accessibilityAddTraits(.isHeader)
                         .padding(.bottom, 140)
                         .opacity(p)
                 }

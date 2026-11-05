@@ -100,9 +100,9 @@ struct NotePhotoRow: View {
         ZStack(alignment: .topLeading) {
             if note.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("A note, if you like").lgText(.row, color: Color(hex: 0x7E869D))
+                    Text("A note, if you like").lgText(.row, color: LGColor.inkMuted)
                     Text("What you made, what needs work")
-                        .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: Color(hex: 0x7E869D))
+                        .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
                 }
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)

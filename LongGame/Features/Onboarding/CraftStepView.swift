@@ -12,18 +12,15 @@ struct CraftStepView: View {
         VStack(alignment: .leading, spacing: 20) {
             OnboardingHeader(step: 1, showsBack: false)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("What's your game?").lgText(.screenTitle)
-                    .accessibilityAddTraits(.isHeader)
-                Text("Your craft is the game. Pick one, or type your own.").lgText(.body, color: LGColor.inkMuted)
-            }
+            Text("What's your game?").lgText(.screenTitle)
+                .accessibilityAddTraits(.isHeader)
 
             HStack(spacing: 10) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 16, weight: .medium))
+                    .lgIcon(16, weight: .medium)
                     .foregroundStyle(LGColor.inkMuted)
                     .accessibilityHidden(true)
-                TextField("Your craft", text: $model.craftName)
+                TextField("Search or type your own", text: $model.craftName)
                     .lgText(.bodyLarge)
                     .focused($focused)
                     .submitLabel(.done)

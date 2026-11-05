@@ -49,6 +49,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: LongGame/LongGame.entitlements
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) CLOUD_SYNC"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # The icon grows at milestones (Logic/IconStage.swift); these are the alternate sets next to AppIcon.
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-1000 AppIcon-2500 AppIcon-5000 AppIcon-7500 AppIcon-10000"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
   LongGameWidgets:
     type: app-extension
@@ -57,6 +59,7 @@ targets:
       - LongGameWidgets
       - Shared
       - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Motion.swift
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
@@ -72,10 +75,10 @@ targets:
     entitlements:
       path: LongGameWidgets/LongGameWidgets.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame.shared]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.Widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.sunwidgets
         SKIP_INSTALL: YES
         CODE_SIGN_ENTITLEMENTS: LongGameWidgets/LongGameWidgets.entitlements
   # The Apple Watch app. It can run without the phone once set up, and gets its data from the phone.
@@ -88,6 +91,7 @@ targets:
       - WatchShared
       - Shared/WidgetSnapshot.swift
       - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Motion.swift
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
@@ -105,10 +109,10 @@ targets:
     entitlements:
       path: LongGameWatch/LongGameWatch.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame.shared]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.watchkitapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.sunwatch
         TARGETED_DEVICE_FAMILY: "4"
         CODE_SIGN_ENTITLEMENTS: LongGameWatch/LongGameWatch.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -124,6 +128,7 @@ targets:
       - WatchShared/WatchViews.swift
       - Shared/WidgetSnapshot.swift
       - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Motion.swift
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
@@ -138,10 +143,10 @@ targets:
     entitlements:
       path: LongGameWatchWidgets/LongGameWatchWidgets.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.wehavesun.LongGame]
+        com.apple.security.application-groups: [group.com.wehavesun.LongGame.shared]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.watchkitapp.Widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.sunwatch.complications
         TARGETED_DEVICE_FAMILY: "4"
         CODE_SIGN_ENTITLEMENTS: LongGameWatchWidgets/LongGameWatchWidgets.entitlements
         SKIP_INSTALL: YES

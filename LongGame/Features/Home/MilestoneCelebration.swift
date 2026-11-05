@@ -5,6 +5,8 @@ import SwiftUI
 struct MilestoneCelebration: View {
     let hours: Int
     let craftName: String
+    var offerSupport = false
+    var onSupport: () -> Void = {}
     let onDone: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -54,6 +56,12 @@ struct MilestoneCelebration: View {
 
                 Button("Keep going", action: onDone)
                     .buttonStyle(.lg(isMastery ? .light : .primary))
+                if offerSupport {
+                    Button("Support Long Game", action: onSupport)
+                        .buttonStyle(.lg(.text))
+                        .environment(\.colorScheme, .light)
+                        .foregroundStyle(isMastery ? Color.white : LGColor.ink)
+                }
             }
             .padding(24)
             .frame(maxWidth: isMastery ? .infinity : 340)
@@ -65,6 +73,10 @@ struct MilestoneCelebration: View {
             .padding(.horizontal, isMastery ? 0 : 24)
         }
         .sensoryFeedback(.success, trigger: startedAt)
+        .onAppear {
+            let spoken = (isMastery ? String(localized: "10,000 hours") : String(localized: "\(DurationFormat.grouped(hours)) hours")) + ". " + Milestones.message(hours: hours, craft: craftName)
+            AccessibilityNotification.Announcement(spoken).post()
+        }
         .accessibilityAddTraits(.isModal)
     }
 }

@@ -18,7 +18,7 @@ struct TimerSky: View {
             .init(color: Self.color(Self.bottom, warmth), location: 1),
         ], startPoint: .top, endPoint: .bottom)
         .saturation(paused ? 0.45 : 1)
-        .animation(.easeOut(duration: 0.5), value: paused)
+        .lgAnimation(.easeOut(duration: 0.5), value: paused)
         .ignoresSafeArea()
     }
 

@@ -38,7 +38,7 @@ struct PhotoThumb: View {
         let pixels = Int(side * scale * 2)
         Group {
             if let image = image ?? ThumbnailCache.cached(id, pixels: pixels, dataSize: data.count) {
-                Image(uiImage: image).resizable().scaledToFill()
+                Image(uiImage: image).resizable().scaledToFill().accessibilityIgnoresInvertColors()
             } else {
                 LGColor.chipFill
             }

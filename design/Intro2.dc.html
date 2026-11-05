@@ -2,50 +2,39 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>How the game works 2</title>
+<title>Starting score</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
-@keyframes inBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
-@keyframes inTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes inWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
-@keyframes inWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
-.in-breathe{transform-origin:100px 100px;transform-box:view-box;animation:inBreathe 4s ease-in-out infinite}
-.in-turn{transform-origin:100px 100px;transform-box:view-box;animation:inTurn 90s linear infinite}
-.in-wave-r{animation:inWaveR 3.2s linear infinite}
-.in-wave-l{animation:inWaveL 5s linear infinite}
-@media (prefers-reduced-motion: reduce){.in-breathe,.in-turn,.in-wave-r,.in-wave-l{animation:none}}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 32px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
-<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
-<a href="Intro1.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
-<a href="Main.dc.html" style="font-size: 15px; font-weight: 500; color: #5E6782; text-decoration: none">Skip</a>
-</div>
-<div role="img" aria-label="Illustration" style="position: relative; height: 300px; margin: 12px -24px 0; overflow: hidden">
-<svg aria-hidden="true" width="170" height="170" viewBox="0 0 200 200" style="position: absolute; left: 110px; top: 150px; overflow: visible"><g class="in-breathe"><g class="in-turn"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path></g><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></g></svg>
-<svg aria-hidden="true" width="390" height="68" viewBox="0 0 390 68" style="position: absolute; left: 0; top: 232px; overflow: hidden">
-<g class="in-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 68 L-40 68 Z" fill="#D3DEF4"></path></g>
-<g class="in-wave-l"><path d="M-30 30q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2" stroke-linecap="round"></path></g>
-<g class="in-wave-r"><path d="M-40 12q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></g>
-</svg>
-<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 266px; height: 34px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, rgba(250,248,244,.85) 70%, #FAF8F4 100%)"></div>
-<div style="position: absolute; top: 86px; left: 50%; transform: translateX(-50%); padding: 8px 14px; border-radius: 20px; background: #FFFFFF; color: #16244A; font-size: 14px; font-weight: 600; white-space: nowrap">Your starting score · 3,208 h</div>
-</div>
-<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 28px">
-<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">You don’t start at level one</h1>
-<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #5E6782">Tell us roughly how much you’ve practised so far. Those hours become your starting score, whether you began last year or decades ago. It’s never too late to play.</p>
-</div>
-<div style="flex-grow: 1"></div>
-<div aria-label="Page 2 of 3" role="img" style="display: flex; gap: 6px; justify-content: center; margin-bottom: 20px"><span style="width: 7px; height: 7px; border-radius: 4px; background: #DDD6CA"></span><span style="width: 22px; height: 7px; border-radius: 4px; background: #16244A"></span><span style="width: 7px; height: 7px; border-radius: 4px; background: #DDD6CA"></span></div>
-<a href="Intro3.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Next</a>
-</div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column"><div style="height: 44px; display: flex; align-items: center; justify-content: space-between; position: relative"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg><div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px"></div><span style="font-size: 15px; font-weight: 600; color: #5E6782">Skip</span></div><div style="position: relative; height: 330px; margin: 12px -24px 0; overflow: hidden">
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 110px; width: 260px; height: 260px; margin-left: -130px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,60,.3) 0%, rgba(255,201,60,0) 62%)"></div>
+<div style="position: absolute; left: 50%; top: 150px; margin-left: -75px"><svg aria-hidden="true" width="150" height="150" viewBox="0 0 200 200" style="display:block"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="10" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="5" stroke-linecap="round"></path></svg></div>
+<div style="position: absolute; left: 0; right: 0; top: 284px"><svg aria-hidden="true" width="390" height="46" viewBox="0 0 390 46" preserveAspectRatio="none" style="display:block"><path d="M-40 10q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 46 L-40 46 Z" fill="#D3DEF4"></path><path d="M-30 26q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2"></path><path d="M-40 10q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></svg></div><span style="position: absolute; left: 50%; transform: translateX(-50%); top: 96px; padding: 6px 12px; border-radius: 14px; background: #FFFFFF; color: #16244A; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 14px rgba(22,36,74,.12)">Your starting score · 3,208 h</span></div><h1 style="margin: 18px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">You don’t start at zero</h1><p style="margin: 8px 0 0; font-size: 16px; line-height: 1.45; color: #5E6782">The hours you’ve already practised are your starting score.</p><div style="display: flex; gap: 6px; justify-content: center; margin-top: 18px"><span style="width: 6px; height: 6px; border-radius: 3px; background: #D9D2C4"></span><span style="width: 18px; height: 6px; border-radius: 3px; background: #16244A"></span><span style="width: 6px; height: 6px; border-radius: 3px; background: #D9D2C4"></span></div><div style="flex: 1"></div><span style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Next</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {

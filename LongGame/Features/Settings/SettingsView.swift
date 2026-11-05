@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 import UIKit
-import AuthenticationServices
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
@@ -16,20 +15,24 @@ struct SettingsView: View {
     @Query private var allCrafts: [Craft]
     @Query private var allSessions: [Session]
     @Query private var craftSessions: [Session]
+    @Query private var craftEstimates: [YearEstimate]
 
     @State private var csvURL: URL?
     @State private var confirmDelete = false
     @State private var pickingCSV = false
     @State private var importMessage: String?
     @State private var notificationsDenied = false
-    @State private var syncOn = CloudSync.isEnabled
-    @Environment(AccountStore.self) private var account
+    @Environment(StoreHost.self) private var store
+    @Environment(ICloudMonitor.self) private var monitor
+    @State private var confirmDeleteCopy = false
+    @State private var iCloudMessage: String?
 
     init(craft: Craft, closeAll: (() -> Void)? = nil) {
         self.craft = craft
         self.closeAll = closeAll
         let id = craft.id
         _craftSessions = Query(filter: #Predicate<Session> { $0.craftId == id })
+        _craftEstimates = Query(filter: #Predicate<YearEstimate> { $0.craftId == id })
     }
 
     private var settings: AppSettings? { settingsRows.first }
@@ -48,15 +51,17 @@ struct SettingsView: View {
                 Text("Settings").lgText(.screenTitle).padding(.top, -6)
                     .accessibilityAddTraits(.isHeader)
 
+                supportCard
+                iCloudCard
                 if let settings {
                     weekCard(settings)
                     reminderCard(settings)
+                    iconCard(settings)
                     soundsCard(settings)
                 }
                 FocusSettingsCard()
                 practiceCard
                 dataCard
-                syncCard
                 #if DEBUG
                 debugCard
                 #endif
@@ -76,6 +81,16 @@ struct SettingsView: View {
         } message: {
             Text(importMessage ?? "")
         }
+        .confirmationDialog("Delete iCloud copy?", isPresented: $confirmDeleteCopy, titleVisibility: .visible) {
+            Button("Delete iCloud copy", role: .destructive, action: deleteICloudCopy)
+        } message: {
+            Text("This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays.")
+        }
+        .alert("iCloud", isPresented: Binding(get: { iCloudMessage != nil }, set: { if !$0 { iCloudMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(iCloudMessage ?? "")
+        }
         .confirmationDialog("Delete all data?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete everything", role: .destructive, action: deleteAll)
         } message: {
@@ -84,6 +99,28 @@ struct SettingsView: View {
     }
 
     // MARK: Cards
+
+    private var supportCard: some View {
+        card {
+            NavigationLink {
+                TipJarView()
+            } label: {
+                HStack(spacing: 14) {
+                    TipSunIcon(tier: .sunrise).scaleEffect(0.8).frame(width: 32, height: 32)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Support Long Game").lgText(.row)
+                        if (settings?.tipCount ?? 0) > 0 {
+                            Text("Thank you for your support").lgText(.caption, color: LGColor.inkMuted)
+                        }
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
+                }
+                .frame(minHeight: 54)
+                .contentShape(Rectangle())
+            }
+        }
+    }
 
     private func weekCard(_ settings: AppSettings) -> some View {
         card {
@@ -107,6 +144,28 @@ struct SettingsView: View {
                 Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
                     .lgText(.row).tint(LGColor.ink)
                 Text("A little laugh when you tap the sun. It stays quiet when your iPhone is on silent.")
+                    .lgText(.caption, color: LGColor.inkMuted)
+            }
+            .padding(.vertical, 10)
+        }
+    }
+
+    /// Turning it off sets the plain icon; turning it on sets the stage for the current total.
+    private func iconCard(_ settings: AppSettings) -> some View {
+        let on = Binding(
+            get: { settings.iconGrows },
+            set: { newValue in
+                settings.iconGrows = newValue
+                save()
+                let total = ProgressSummary.make(estimates: craftEstimates.map(\.rate), sessions: craftSessions.map(\.record),
+                                                 onboardingDate: craft.createdAt, weekStart: settings.weekStart, now: Date()).total
+                AppIconManager.apply(IconPlan.wanted(totalHours: total, growsWithYou: newValue),
+                                     settings: settings, context: context, timerRunning: timer.isActive)
+            })
+        return card {
+            VStack(alignment: .leading, spacing: 2) {
+                Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.ink)
+                Text("Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours")
                     .lgText(.caption, color: LGColor.inkMuted)
             }
             .padding(.vertical, 10)
@@ -227,49 +286,42 @@ struct SettingsView: View {
         }
     }
 
-    @ViewBuilder
-    private var syncCard: some View {
-        if CloudSync.isAvailable {
-            card {
-                VStack(alignment: .leading, spacing: 0) {
-                    Toggle("iCloud sync", isOn: Binding(get: { syncOn }, set: { syncOn = $0; CloudSync.isEnabled = $0; settings?.syncEnabled = $0; save() }))
-                        .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
-                    Text(syncOn
-                         ? "Your hours are kept in your private iCloud. Close and reopen Long Game to apply the change."
-                         : "Turn on to keep your hours safe and on all your devices. Close and reopen Long Game to apply the change.")
-                        .lgText(.caption, color: LGColor.inkMuted)
-                        .padding(.bottom, 12)
-                    Divider().overlay(LGColor.divider)
-                    if account.isSignedIn {
-                        HStack {
-                            Text("Signed in with Apple").lgText(.row)
-                            Spacer()
-                            Button("Sign out") { account.signOut() }.buttonStyle(.lg(.text))
-                        }
-                        .frame(minHeight: 54)
-                    } else {
-                        SignInWithAppleButton(.signIn) { request in
-                            request.requestedScopes = []
-                        } onCompletion: { account.handle($0) }
-                            .signInWithAppleButtonStyle(.black)
-                            .frame(height: 48)
-                            .padding(.vertical, 10)
-                    }
-                }
-            }
-        } else {
-            card {
-                VStack(alignment: .leading, spacing: 2) {
+    /// Save to iCloud, how the sync is going, and Delete iCloud copy (which leaves this iPhone's data alone).
+    private var iCloudCard: some View {
+        let switchState = ICloudSwitchState.make(availability: monitor.availability, wantsOn: store.iCloudOn)
+        let status = monitor.status(enabled: store.iCloudOn)
+        return card {
+            VStack(alignment: .leading, spacing: 0) {
+                Toggle("Save to iCloud", isOn: Binding(get: { switchState.isOn }, set: setICloud))
+                    .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                    .disabled(!switchState.isEnabled)
+                Text(status.text(now: Date()))
+                    .lgText(.caption, color: LGColor.inkMuted)
+                    .padding(.bottom, 12)
+                Divider().overlay(LGColor.divider)
+                Button { confirmDeleteCopy = true } label: {
                     HStack {
-                        Text("iCloud sync").lgText(.row)
+                        Text("Delete iCloud copy").lgText(.row, color: LGColor.danger)
                         Spacer()
-                        Text("Coming later").lgText(.row, color: LGColor.inkMuted)
                     }
-                    Text("Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on.")
-                        .lgText(.caption, color: LGColor.inkMuted)
+                    .frame(minHeight: 54)
+                    .contentShape(Rectangle())
                 }
-                .padding(.vertical, 12)
+                .buttonStyle(.plain)
+                .disabled(!CloudSync.isAvailable || monitor.availability != .available)
             }
+        }
+    }
+
+    private func setICloud(_ on: Bool) {
+        do { try store.setICloud(on) }
+        catch { iCloudMessage = String(localized: "Couldn't change iCloud saving. Nothing was lost.") }
+    }
+
+    private func deleteICloudCopy() {
+        Task {
+            do { try await store.deleteICloudCopy() }
+            catch { iCloudMessage = String(localized: "Couldn't delete the iCloud copy. Check your connection and try again.") }
         }
     }
 

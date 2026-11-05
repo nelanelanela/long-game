@@ -36,7 +36,7 @@ struct TargetRow: View {
             }
             Spacer(minLength: 8)
             Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
+                .lgIcon(13, weight: .semibold)
                 .foregroundStyle(LGColor.inkMuted)
                 .accessibilityHidden(true)
         }

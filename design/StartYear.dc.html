@@ -8,38 +8,30 @@
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 40px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px">
-<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
-<a href="Main.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
-<div aria-label="Step 2 of 4" role="img" style="display: flex; gap: 6px">
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #16244A"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #16244A"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
-</div>
-<div style="width: 34px"></div>
-</div>
-<div style="display: flex; flex-direction: column; gap: 8px">
-<h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">When did you start?</h1>
-<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">You don't start at level one. A rough guess is fine.</p>
-</div>
-<div style="display: flex; align-items: center; justify-content: space-between; padding: 36px 20px; background: #FFFFFF; border-radius: 24px">
-<button type="button" aria-label="Earlier year" style="width: 52px; height: 52px; border: 0; border-radius: 26px; background: #F3EFE8; color: #16244A; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"></path></svg></button>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-<span style="font-size: 64px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums">2019</span>
-<span style="font-size: 14px; color: #5E6782">7 years ago</span>
-</div>
-<button type="button" aria-label="Later year" style="width: 52px; height: 52px; border: 0; border-radius: 26px; background: #F3EFE8; color: #16244A; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
-</div>
-<div style="flex-grow: 1"></div>
-<a href="YearlyHours.dc.html" style="height: 56px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Continue</a>
-</div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column"><div style="height: 44px; display: flex; align-items: center; justify-content: space-between; position: relative"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg><div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px"><span style="width: 22px; height: 4px; border-radius: 2px; background: #16244A"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #16244A"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span></div><span></span></div><h1 style="margin: 18px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">When did you start?</h1><p style="margin: 8px 0 0; font-size: 16px; line-height: 1.45; color: #5E6782">A rough guess is fine.</p><div style="margin-top: 60px; display: flex; align-items: center; justify-content: space-between"><span role="button" aria-label="Less" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 28px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></span><span style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 64px; font-weight: 700; letter-spacing: -0.04em">2019</span><span style="font-size: 15px; color: #5E6782">7 years ago</span></span><span role="button" aria-label="More" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 28px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></span></div><div style="flex: 1"></div><span style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Continue</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {

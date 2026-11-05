@@ -21,6 +21,8 @@ struct GaugeHero: View, Animatable {
     var metrics: GaugeMetrics = .standard
     /// The final values, for Reduce Motion (they are used instead of the interpolated ones).
     var final: Place?
+    /// This week only: one line per day, read when VoiceOver users swipe up or down on the sun.
+    var dayReadings: [String] = []
 
     struct Place: Equatable {
         var fraction: Double
@@ -58,7 +60,8 @@ struct GaugeHero: View, Animatable {
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics),
-                            label: gauge.description, isRunning: isRunning)
+                            label: gauge.spoken.label, value: gauge.spoken.value,
+                            dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
                 if gauge.tab.hasScale {
                     GaugeScale(ticks: gauge.ticks, metrics: metrics)
                         .id(gauge.tab)

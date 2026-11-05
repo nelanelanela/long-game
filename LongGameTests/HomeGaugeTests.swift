@@ -60,9 +60,9 @@ struct HomeGaugeTests {
     }
 
     @Test func voiceOverHearsWhereTheSunIs() {
-        #expect(HomeGauge.week(hours: 6.5, target: 12).description == "This week: the sun is 54% of the way up, 6.5 of 12 hours")
-        #expect(HomeGauge.week(hours: 13.5, target: 12).description == "This week: the sun has reached the top, 13.5 of 12 hours")
-        #expect(HomeGauge.longGame(total: 3_294).description == "The long game: the sun is 33% of the way up, 3,294 of 10,000 hours")
+        #expect(HomeGauge.week(hours: 6.5, target: 12, daysLeft: 3).description == "The sun is just over halfway to your weekly target. 6.5 of 12 hours, 5.5 to go, 3 days left.")
+        #expect(HomeGauge.week(hours: 13.5, target: 12).description == "The sun is above your weekly target. 13.5 of 12 hours.")
+        #expect(HomeGauge.longGame(total: 3_294).description == "The sun is a third of the way to the finish line. 3,294 of 10,000 hours.")
     }
 
     @Test func tickLabelsAbbreviateThousands() {

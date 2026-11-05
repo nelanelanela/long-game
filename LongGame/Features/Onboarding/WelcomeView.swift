@@ -2,7 +2,6 @@ import SwiftUI
 
 struct WelcomeView: View {
     let onStart: () -> Void
-    @State private var showNoAccount = false
 
     var body: some View {
         GeometryReader { geo in
@@ -24,14 +23,12 @@ struct WelcomeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Long Game").lgText(.welcomeTitle, color: .white)
                         .accessibilityAddTraits(.isHeader)
-                    Text("The longest game on the App Store. About 10,000 hours long, and played in real life.")
+                    Text("The longest game on the App Store. Played in real life.")
                         .lgText(.bodyLarge, color: .white.opacity(0.85))
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: 280, alignment: .leading)
                     Spacer()
                     Button("Get started", action: onStart).buttonStyle(.lg(.light))
-                    Button("I already have an account") { showNoAccount = true }
-                        .buttonStyle(.lg(.text))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 28)
@@ -40,11 +37,6 @@ struct WelcomeView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .alert("No saved account found", isPresented: $showNoAccount) {
-            Button("Continue", action: onStart)
-        } message: {
-            Text("Sign in and iCloud restore are coming in a later update. You can start tracking now.")
-        }
     }
 }
 

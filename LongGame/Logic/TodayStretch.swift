@@ -222,14 +222,6 @@ enum StretchText {
     /// "40 m to today's resting place"
     static func toGo(_ remaining: TimeInterval) -> String { String(localized: "\(clockUp(seconds: remaining)) to today's resting place") }
 
-    /// "1 h 05 of 1 h 45", the Timer strip.
-    static func progress(done: TimeInterval, target: TimeInterval) -> String {
-        String(localized: "\(clock(seconds: done)) of \(clock(seconds: target))")
-    }
-
-    /// "1 h 45 · covered", the Timer strip once the stretch is done.
-    static func stripCovered(_ target: TimeInterval) -> String { String(localized: "\(clock(seconds: target)) · covered") }
-
     /// "1 hour 5 minutes" (spoken), whole minutes.
     static func spoken(seconds: TimeInterval) -> String { Labels.spoken(seconds: Int(max(0, seconds) / 60) * 60, includeSeconds: false) }
     static func spokenUp(seconds: TimeInterval) -> String {

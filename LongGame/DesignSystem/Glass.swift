@@ -37,13 +37,6 @@ extension View {
             safeAreaInset(edge: .top, spacing: 0) { bar().background(LGColor.background) }
         }
     }
-
-    /// Clear glass with rounded corners for a control-like strip (the Timer's stretch strip); before iOS 26 the
-    /// translucent white it always had, with its 18 pt corners.
-    @ViewBuilder
-    func lgGlassStrip(radius: CGFloat) -> some View {
-        modifier(GlassStripModifier(radius: radius))
-    }
 }
 
 private struct WarmScreenModifier: ViewModifier {
@@ -59,19 +52,6 @@ private struct WarmScreenModifier: ViewModifier {
                 }
             }
             .ignoresSafeArea()
-        }
-    }
-}
-
-private struct GlassStripModifier: ViewModifier {
-    var radius: CGFloat
-    @Environment(\.lgFlat) private var flat
-
-    func body(content: Content) -> some View {
-        if #available(iOS 26, *), !flat {
-            content.glassEffect(.clear, in: .rect(cornerRadius: radius))
-        } else {
-            content.background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
     }
 }

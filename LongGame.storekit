@@ -1,12 +1,30 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "7C1A9E02",
-  "nonRenewingSubscriptions" : [],
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
       "displayPrice" : "0.99",
       "familyShareable" : false,
       "internalID" : "6A1F0001",
-      "localizations" : [ { "description" : "A small thank-you", "displayName" : "A ray of sunshine", "locale" : "en_US" } ],
+      "localizations" : [
+        {
+          "description" : "A small thank-you",
+          "displayName" : "A ray of sunshine",
+          "locale" : "en_US"
+        }
+      ],
       "productID" : "com.wehavesun.LongGame.tip.ray",
       "referenceName" : "Tip: A ray of sunshine",
       "type" : "Consumable"
@@ -15,7 +33,13 @@
       "displayPrice" : "2.99",
       "familyShareable" : false,
       "internalID" : "6A1F0002",
-      "localizations" : [ { "description" : "Like buying a coffee", "displayName" : "A sunny morning", "locale" : "en_US" } ],
+      "localizations" : [
+        {
+          "description" : "Like buying a coffee",
+          "displayName" : "A sunny morning",
+          "locale" : "en_US"
+        }
+      ],
       "productID" : "com.wehavesun.LongGame.tip.morning",
       "referenceName" : "Tip: A sunny morning",
       "type" : "Consumable"
@@ -24,7 +48,13 @@
       "displayPrice" : "4.99",
       "familyShareable" : false,
       "internalID" : "6A1F0003",
-      "localizations" : [ { "description" : "A big thank-you", "displayName" : "A golden hour", "locale" : "en_US" } ],
+      "localizations" : [
+        {
+          "description" : "A big thank-you",
+          "displayName" : "A golden hour",
+          "locale" : "en_US"
+        }
+      ],
       "productID" : "com.wehavesun.LongGame.tip.goldenhour",
       "referenceName" : "Tip: A golden hour",
       "type" : "Consumable"
@@ -33,18 +63,43 @@
       "displayPrice" : "9.99",
       "familyShareable" : false,
       "internalID" : "6A1F0004",
-      "localizations" : [ { "description" : "For the biggest fans", "displayName" : "A whole sunrise", "locale" : "en_US" } ],
+      "localizations" : [
+        {
+          "description" : "For the biggest fans",
+          "displayName" : "A whole sunrise",
+          "locale" : "en_US"
+        }
+      ],
       "productID" : "com.wehavesun.LongGame.tip.sunrise",
       "referenceName" : "Tip: A whole sunrise",
       "type" : "Consumable"
     }
   ],
   "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
-    "_locale" : "en_IE",
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "IRL",
-    "_askToBuyEnabled" : false
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
   },
-  "subscriptionGroups" : [],
-  "version" : { "major" : 3, "minor" : 0 }
+  "subscriptionBundleGroups" : [
+
+  ],
+  "subscriptionGroups" : [
+
+  ],
+  "subscriptionSuiteGroups" : [
+
+  ],
+  "version" : {
+    "major" : 6,
+    "minor" : 3
+  }
 }

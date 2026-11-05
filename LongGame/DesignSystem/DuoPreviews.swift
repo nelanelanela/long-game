@@ -44,7 +44,6 @@ private struct DuoPreviewHome: View {
         NavigationStack { HomeView(craft: data.craft, initialTab: tab) }
             .modelContainer(data.container)
             .environment(data.timer)
-            .environment(AccountStore())
     }
 }
 

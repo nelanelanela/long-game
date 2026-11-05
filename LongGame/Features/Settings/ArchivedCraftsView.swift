@@ -34,7 +34,7 @@ struct ArchivedCraftsView: View {
                                         Text("Started \(String(craft.startYear))").lgText(.caption, color: LGColor.inkMuted)
                                     }
                                     Spacer()
-                                    Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold))
+                                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
                                         .foregroundStyle(LGColor.inkMuted)
                                 }
                                 .padding(18).lgCard()

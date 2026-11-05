@@ -28,6 +28,9 @@ struct LGButtonStyle: ButtonStyle {
     var kind: Kind = .primary
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.lgFlat) private var flat
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.accessibilityShowButtonShapes) private var showButtonShapes
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
@@ -71,7 +74,8 @@ struct LGButtonStyle: ButtonStyle {
         return Group {
             switch kind {
             case .text, .quiet:
-                label
+                // Settings > Accessibility > Button Shapes: plain text buttons get an underline.
+                label.underline(showButtonShapes)
             case .secondary:
                 label.lgCard(radius: 16)
             default:
@@ -94,7 +98,7 @@ struct LGButtonStyle: ButtonStyle {
         switch kind {
         case .primary: LGColor.ink
         case .light: .white
-        case .translucent: .white.opacity(0.12)
+        case .translucent: .white.opacity(reduceTransparency || contrast == .increased ? 0.28 : 0.12)
         default: .clear
         }
     }
@@ -222,6 +226,9 @@ struct LGSegmentedControl<Item: Hashable>: View {
             .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline))
             .lineLimit(1)
             .minimumScaleFactor(0.8)
+            // Like the system's own tab bars, the three tab names stop growing at the largest accessibility sizes so
+            // they stay whole; everything else on the screen keeps growing.
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)
             .frame(maxWidth: .infinity, minHeight: 36)
     }
 

@@ -21,9 +21,10 @@ final class WatchBridge: NSObject {
 
     /// Starts listening. Called once, when the app's scene appears.
     func start(timer: TimerStore, container: ModelContainer) {
+        // The container is replaced when "Save to iCloud" is switched, so it is refreshed on every call.
+        self.container = container
         guard WCSession.isSupported(), self.timer == nil else { return }
         self.timer = timer
-        self.container = container
         lastSnapshot = WidgetSnapshot.load()
         timer.onLocalChange = { [weak self] update in self?.send(update) }
         WCSession.default.delegate = self

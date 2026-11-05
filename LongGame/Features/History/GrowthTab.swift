@@ -95,6 +95,7 @@ struct GrowthTab: View {
                         .contentShape(Rectangle())
                 }
                 .accessibilityLabel("Open chart full screen")
+                .accessibilityInputLabels(["Open chart full screen", "Expand chart", "Full screen"])
                 .padding(.top, -6).padding(.trailing, -6)
             }
             .padding(.horizontal, 4)
@@ -107,6 +108,8 @@ struct GrowthTab: View {
                 .accessibilityLabel(GrowthText.chartLabel(total: s.total, forecast: s.forecast, now: now))
                 .accessibilityAction(named: "Open full screen") { scrubbing = true }
                 .scrubTransitionSource(id: "growth-chart", in: chartSpace)
+
+            ChartLegend()
 
         }
         .padding(.horizontal, 14).padding(.vertical, 16)

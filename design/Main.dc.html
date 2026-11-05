@@ -2,71 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Your craft</title>
+<title>Your game</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; padding: 60px 24px 40px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px">
-<svg aria-hidden="true" width="96" height="96" viewBox="0 0 200 200" style="position: absolute; right: -18px; top: 18px"><path d="M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3M100 34V18M133 42.8L146 20.3M157.2 67L171 59" stroke="#FFB627" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></svg>
-<div aria-label="Step 1 of 4" role="img" style="display: flex; gap: 6px">
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #16244A"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
-<div style="width: 24px; height: 4px; border-radius: 2px; background: #E4DFD6"></div>
-</div>
-<div style="display: flex; flex-direction: column; gap: 8px">
-<h1 style="margin: 0; max-width: 260px; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">What's your game?</h1>
-<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">Your craft is the game. Pick one, or type your own.</p>
-</div>
-<div style="display: flex; align-items: center; gap: 10px; height: 52px; box-sizing: border-box; padding: 0 16px; background: #FFFFFF; border-radius: 14px">
-<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E6782" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
-<label for="craft" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Your craft</label>
-<input id="craft" type="text" value="Piano" style="flex-grow: 1; min-width: 0; height: 40px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 17px; color: #16244A">
-</div>
-<div style="flex-grow: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; margin: 0 -24px; padding: 4px 24px 8px">
-<sc-for list="{{groups}}" as="g" hint-placeholder-count="5">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #5E6782">{{g.name}}</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 8px">
-<sc-for list="{{g.items}}" as="c" hint-placeholder-count="6">
-<sc-if value="{{c.selected}}" hint-placeholder-val="{{false}}">
-<button type="button" aria-pressed="true" style="height: 40px; padding: 0 16px; border: 0; border-radius: 20px; background: #16244A; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 500">{{c.label}}</button>
-</sc-if>
-<sc-if value="{{c.plain}}" hint-placeholder-val="{{true}}">
-<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border: 1px solid #E4DFD6; border-radius: 20px; background: #FFFFFF; color: #16244A; font: inherit; font-size: 15px">{{c.label}}</button>
-</sc-if>
-</sc-for>
-</div>
-</div>
-</sc-for>
-</div>
-<a href="StartYear.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Continue</a>
-</div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column"><div style="height: 44px; display: flex; align-items: center; justify-content: space-between; position: relative"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg><div style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px"><span style="width: 22px; height: 4px; border-radius: 2px; background: #16244A"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span></div><span></span></div><h1 style="margin: 18px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">What’s your game?</h1><div style="margin-top: 14px; height: 48px; flex-shrink: 0; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; gap: 10px; padding: 0 14px; font-size: 16px; color: #9AA1B5"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9AA1B5" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>Search or type your own</div>
+<div style="position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; margin: 0 -24px; padding: 0 24px; display: flex; flex-direction: column"><span style="margin-top: 14px; font-size: 12px; font-weight: 600; color: #8A93AB">Music</span><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px"><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #16244A; color: #FFFFFF">Piano</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Guitar</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Violin</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Cello</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Drums</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Bass</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Saxophone</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Flute</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Trumpet</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Singing</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Composing</span></div><span style="margin-top: 14px; font-size: 12px; font-weight: 600; color: #8A93AB">Visual arts &amp; making</span><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px"><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Painting</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Drawing</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Sculpture</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Woodworking</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Ceramics</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Photography</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Illustration</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Printmaking</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Textiles</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Jewellery</span></div><span style="margin-top: 14px; font-size: 12px; font-weight: 600; color: #8A93AB">Performing arts</span><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px"><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Acting</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Dance</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Ballet</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Directing</span></div><span style="margin-top: 14px; font-size: 12px; font-weight: 600; color: #8A93AB">Words &amp; mind</span><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px"><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Writing</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Poetry</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Languages</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Chess</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Coding</span></div><span style="margin-top: 14px; font-size: 12px; font-weight: 600; color: #8A93AB">Professions</span><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px"><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Medicine</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Law</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Architecture</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Design</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Cooking</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 14px; font-weight: 500; background: #FFFFFF; color: #16244A">Teaching</span></div><div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: linear-gradient(180deg, rgba(250,248,244,0) 0%, #FAF8F4 90%)"></div></div><div style="height: 12px; flex-shrink: 0"></div><span style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Continue</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 renderVals() {
-const groups = [
-['Music', ['Piano', 'Guitar', 'Violin', 'Cello', 'Drums', 'Bass', 'Saxophone', 'Flute', 'Trumpet', 'Singing', 'Composing']],
-['Visual arts & making', ['Painting', 'Drawing', 'Sculpture', 'Woodworking', 'Ceramics', 'Photography', 'Illustration', 'Printmaking', 'Textiles', 'Jewellery']],
-['Performing arts', ['Acting', 'Dance', 'Ballet', 'Directing', 'Stand-up']],
-['Words & mind', ['Writing', 'Poetry', 'Languages', 'Chess', 'Coding']],
-['Professions', ['Medicine', 'Law', 'Architecture', 'Design', 'Cooking', 'Teaching']]
-];
-return {
-groups: groups.map(([name, items]) => ({
-name,
-items: items.map((label) => ({ label, selected: label === 'Piano', plain: label !== 'Piano' }))
-}))
-};
+return {};
 }
 }
 </script>

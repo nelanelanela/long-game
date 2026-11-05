@@ -21,7 +21,7 @@ struct StartYearView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("When did you start?").lgText(.screenTitle)
                     .accessibilityAddTraits(.isHeader)
-                Text("You don't start at level one. A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
+                Text("A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
             }
 
             HStack {
@@ -61,7 +61,7 @@ struct StartYearView: View {
             Image(systemName: icon)
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(LGColor.ink)
-                .frame(width: 52, height: 52)
+                .frame(width: 56, height: 56)
                 .background(LGColor.chipFill, in: Circle())
         }
         .disabled(!enabled)

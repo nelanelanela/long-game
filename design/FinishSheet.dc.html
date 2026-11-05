@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Finish session</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: linear-gradient(180deg,#16244A 0%,#1F2A5A 45%,#3A2F6B 80%,#6E3D74 100%); font-family: Inter, -apple-system, system-ui, sans-serif; color: #16244A">
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 120px; margin-left: -100px; opacity: .5"><svg aria-hidden="true" width="200" height="200" viewBox="0 0 200 200"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7" stroke="#FFD15C" stroke-width="9" stroke-linecap="round"></path><path d="M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="rgba(255,209,92,.22)" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8 7 16 0M108 98q8 7 16 0M92 116q8 6 16 0" fill="none" stroke="#16244A" stroke-width="5" stroke-linecap="round"></path></svg></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(10,16,36,.35)"></div>
+<div role="dialog" aria-label="Finish session" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 24px 30px; background: #FFFFFF; border-radius: 32px 32px 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,.25); display: flex; flex-direction: column; gap: 16px">
+<div aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 3px; background: #E4DFD6"></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 4px"><span style="font-size: 13px; color: #5E6782">This session</span>
+<div style="display: flex; align-items: center; gap: 22px"><span aria-label="5 minutes less" style="width: 36px; height: 36px; border-radius: 18px; background: #EFEBE4; display: flex; align-items: center; justify-content: center; font-size: 20px">−</span><span style="font-size: 44px; font-weight: 700; letter-spacing: -0.03em">1 h 15</span><span aria-label="5 minutes more" style="width: 36px; height: 36px; border-radius: 18px; background: #EFEBE4; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #B8B2A6">+</span></div>
+<span style="font-size: 13px; color: #8A93AB">3,295.9 of 10,000 hours</span></div><div style="display: flex; gap: 10px; align-items: stretch">
+<span role="button" aria-label="Add a photo" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 14px; border: 1.5px dashed #CFC8BB; color: #8A93AB; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></span>
+<span style="flex: 1; min-height: 64px; box-sizing: border-box; padding: 12px 14px; border-radius: 14px; background: #F6F3EE; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; color: #9AA1B5">A note, if you like</span><span style="font-size: 12px; color: #B3B8C7">What you made, what needs work</span></span>
+</div><div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px"><span style="height: 54px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Save</span><span style="height: 40px; font-size: 15px; font-weight: 600; color: #5E6782; display: flex; align-items: center; justify-content: center">Discard</span></div>
+</div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

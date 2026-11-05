@@ -12,6 +12,7 @@ struct HistoryView: View {
     var day: Date?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query private var sessions: [Session]
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
@@ -64,7 +65,7 @@ struct HistoryView: View {
                 .padding(.bottom, 32)
                 .lgReadableColumn(wide ? .infinity : 560)
             }
-            .animation(.easeInOut(duration: 0.3), value: wide)
+            .lgAnimation(.easeInOut(duration: 0.3), value: wide)
         }
         .lgWarmScreen()
         .toolbar(.hidden, for: .navigationBar)
@@ -98,7 +99,7 @@ struct HistoryView: View {
     private var picker: some View {
         HStack(spacing: 0) {
             ForEach(HistoryTab.allCases, id: \.self) { item in
-                Button { withAnimation(.easeInOut(duration: 0.15)) { tab = item } } label: {
+                Button { withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) { tab = item } } label: {
                     Text(item.rawValue)
                         .lgText(LGTextStyle(size: 14, weight: tab == item ? .semibold : .medium, relativeTo: .subheadline))
                         .frame(maxWidth: .infinity, minHeight: 36)

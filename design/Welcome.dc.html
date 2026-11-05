@@ -2,29 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Welcome to Long Game</title>
+<title>Welcome</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: linear-gradient(180deg, #16244A 0%, #2C3466 34%, #8C5A8E 58%, #E98FA3 76%, #F7B46A 100%); color: #FFFFFF; font-family: Inter, -apple-system, system-ui, sans-serif">
-<div aria-hidden="true" style="position: absolute; left: 50%; top: 450px; width: 300px; height: 300px; margin-left: -150px; border-radius: 150px; background: radial-gradient(circle, rgba(255,214,120,.55) 0%, rgba(255,214,120,0) 65%)"></div>
-<svg aria-hidden="true" width="240" height="240" viewBox="0 0 200 200" style="position: absolute; left: 75px; top: 480px"><path d="M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3M100 34V18M133 42.8L146 20.3M157.2 67L171 59" stroke="#FFD15C" stroke-width="9" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="4.5" stroke-linecap="round"></path></svg>
-<div style="position: absolute; inset: 0; box-sizing: border-box; padding: 120px 28px 44px; display: flex; flex-direction: column; gap: 12px">
-<h1 style="margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05">Long Game</h1>
-<p style="margin: 0; max-width: 280px; font-size: 17px; line-height: 1.5; color: rgba(255,255,255,.85)">The longest game on the App Store. About 10,000 hours long, and played in real life.</p>
-<div style="flex-grow: 1"></div>
-<a href="Intro1.dc.html" style="height: 56px; border-radius: 16px; background: #FFFFFF; color: #16244A; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Get started</a>
-<button type="button" style="height: 48px; border: 0; background: transparent; color: #16244A; font: inherit; font-size: 15px; font-weight: 600">I already have an account</button>
-</div>
-</div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: linear-gradient(180deg,#FFE3B0 0%,#FFF1DA 45%,#FAF8F4 70%); color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; align-items: center">
+<div style="height: 120px"></div><div style="position: relative; height: 300px; margin: 0 -24px; align-self: stretch; overflow: hidden">
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 30px; width: 260px; height: 260px; margin-left: -130px; border-radius: 50%; background: radial-gradient(circle, rgba(255,201,60,.3) 0%, rgba(255,201,60,0) 62%)"></div>
+<div style="position: absolute; left: 50%; top: 70px; margin-left: -75px"><svg aria-hidden="true" width="150" height="150" viewBox="0 0 200 200" style="display:block"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="10" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="5" stroke-linecap="round"></path></svg></div>
+<div style="position: absolute; left: 0; right: 0; top: 254px"><svg aria-hidden="true" width="390" height="46" viewBox="0 0 390 46" preserveAspectRatio="none" style="display:block"><path d="M-40 10q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0 L480 46 L-40 46 Z" fill="#D3DEF4"></path><path d="M-30 26q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#B9C7E8" stroke-width="2"></path><path d="M-40 10q10-7 20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0t20 0" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"></path></svg></div></div>
+<h1 style="margin: 28px 0 0; font-size: 40px; font-weight: 700; letter-spacing: -0.03em">Long Game</h1>
+<p style="margin: 10px 0 0; font-size: 17px; line-height: 1.45; color: #5E6782; text-align: center">The longest game on the App Store.<br>Played in real life.</p>
+<div style="flex: 1"></div><span style="align-self: stretch; height: 56px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Get started</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {

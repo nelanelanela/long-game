@@ -34,7 +34,7 @@ struct WidgetSnapshot: Codable, Equatable, Sendable {
     var craftId: UUID?
 
     /// Shared by the app and the widget extension (both list it in their entitlements).
-    static let groupID = "group.com.wehavesun.LongGame"
+    static let groupID = "group.com.wehavesun.LongGame.shared"
     static let defaultFileName = "widget-data.json"
 
     static func fileURL(_ fileName: String = defaultFileName) -> URL? {

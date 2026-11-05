@@ -2,63 +2,49 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Average hours per week</title>
+<title>Catch up average</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 32px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px">
-<div style="display: flex; align-items: center; justify-content: space-between; height: 44px">
-<a href="CatchUpAsk.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
-<span style="font-size: 15px; font-weight: 600">Catch up</span>
-<div style="width: 34px"></div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column"><div style="height: 44px; display: flex; align-items: center; justify-content: center; position: relative"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0"><path d="M15 6l-6 6 6 6"></path></svg><span style="font-size: 16px; font-weight: 600">Catch up</span></div>
+<h1 style="margin: 8px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">10 weeks have passed</h1><p style="margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: #5E6782">Since 14 August. On average, how many hours a week did you practise?</p><div style="margin-top: 18px; padding: 22px 18px 18px; background: #FFFFFF; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between; align-self: stretch"><span role="button" aria-label="Less" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 28px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></span><span style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 64px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums">7</span><span style="font-size: 14px; color: #5E6782; margin-top: 4px">hours per week</span></span><span role="button" aria-label="More" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 28px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></span></div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center"><span style="padding: 7px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; background: #F3F0EA; color: #16244A">Your usual · 12</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; background: #F3F0EA; color: #16244A">0</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; background: #F3F0EA; color: #16244A">5</span><span style="padding: 7px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; background: #F3F0EA; color: #16244A">10</span></div>
+<span style="font-size: 12px; color: #8A93AB">Tap the number to type it</span>
 </div>
-<div style="display: flex; flex-direction: column; gap: 8px">
-<h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">10 weeks have passed</h1>
-<p style="margin: 0; font-size: 16px; line-height: 1.45; color: #5E6782">Since 14 August. On average, how many hours a week did you practise?</p>
-</div>
-<div style="display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 28px 20px 24px; background: #FFFFFF; border-radius: 24px">
-<div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
-<span style="font-size: 64px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums">{{avg}}</span>
-<span style="font-size: 14px; color: #5E6782">hours per week</span>
-</div>
-<label for="avg" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Average hours per week</label>
-<input id="avg" type="range" min="0" max="40" step="1" value="{{avg}}" onChange="{{setAvg}}" style="width: 100%; margin: 0; accent-color: #16244A">
-<div style="align-self: stretch; display: flex; justify-content: space-between; font-size: 12px; color: #5E6782"><span>0</span><span>20</span><span>40</span></div>
-</div>
-<div style="display: flex; flex-direction: column; padding: 0 18px; background: #FFFFFF; border-radius: 20px">
-<div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 1px solid #F0ECE5">
-<span style="font-size: 15px">Period</span>
-<span style="font-size: 15px; color: #5E6782">15 Aug – 24 Oct · 71 days</span>
-</div>
-<div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 1px solid #F0ECE5">
-<span style="font-size: 15px">Per day in calendar</span>
-<span style="font-size: 15px; color: #5E6782">{{perDay}}</span>
-</div>
-<div style="display: flex; align-items: center; justify-content: space-between; height: 52px">
-<span style="font-size: 15px; font-weight: 600">Adding</span>
-<span style="font-size: 17px; font-weight: 700">{{totalLabel}}</span>
-</div>
-</div>
-<div style="flex-grow: 1"></div>
-<a href="Home.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{buttonLabel}}</a>
-</div>
+<div style="margin-top: 12px; padding: 4px 16px; background: #FFFFFF; border-radius: 20px; font-size: 15px">
+<div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F0ECE5"><span>Period</span><span style="color: #5E6782">15 Aug – 24 Oct · 71 days</span></div>
+<div style="display: flex; justify-content: space-between; padding: 12px 0; font-weight: 600"><span>Adding</span><span>71 h</span></div></div><div style="flex: 1"></div><span style="height: 56px; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center">Add 71 hours</span></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 renderVals() {
-const avg = (this.state && this.state.avg != null) ? this.state.avg : 7;
-const days = 71;
-const total = Math.round(avg * days / 7);
-const m = Math.round(avg / 7 * 60);
-return { avg, total, totalLabel: total + ' h', buttonLabel: 'Add ' + total + ' hours', perDay: Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' m', setAvg: (e) => this.setState({ avg: Number(e.target.value) }) };
+return {};
 }
 }
 </script>

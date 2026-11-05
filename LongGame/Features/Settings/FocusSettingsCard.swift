@@ -49,7 +49,7 @@ struct FocusSettingsCard: View {
                         Text("Choose apps").lgText(.row)
                         Spacer()
                         Text(focus.chosenSummary).lgText(.row, color: LGColor.inkMuted)
-                        Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundStyle(LGColor.inkMuted)
+                        Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
                     }
                     .frame(minHeight: 54)
                     .contentShape(Rectangle())

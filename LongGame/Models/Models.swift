@@ -120,8 +120,17 @@ final class AppSettings {
     var targetPromptShownAt: Date?
     /// The tab Home opens on next: Today, except right after onboarding (The long game, once).
     var lastHomeTabRaw: String = HomeTab.today.rawValue
+    /// Settings → App icon grows with you. On unless turned off.
+    var iconGrows: Bool = true
+    /// The `IconStage` the home-screen icon was last set to.
+    var appliedIconStageRaw: String = IconStage.start.rawValue
 
     init() {}
+
+    var appliedIconStage: IconStage {
+        get { IconStage(rawValue: appliedIconStageRaw) ?? .start }
+        set { appliedIconStageRaw = newValue.rawValue }
+    }
 
     var weekStart: WeekStart {
         get { WeekStart(rawValue: weekStartRaw) ?? .monday }

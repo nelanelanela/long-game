@@ -12,11 +12,8 @@ struct YearlyHoursView: View {
         VStack(alignment: .leading, spacing: 20) {
             OnboardingHeader(step: 3)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Hours per week, each year").lgText(.screenTitle)
-                    .accessibilityAddTraits(.isHeader)
-                Text("This is your starting score. Only focused practice counts.").lgText(.body, color: LGColor.inkMuted)
-            }
+            Text("Hours a week, each year").lgText(.screenTitle)
+                .accessibilityAddTraits(.isHeader)
 
             if model.years.count > 8 {
                 HStack {
@@ -57,7 +54,7 @@ struct YearlyHoursView: View {
             }
 
             HStack(alignment: .firstTextBaseline) {
-                Text("Estimated so far").lgText(.row, color: LGColor.inkMuted)
+                Text("Your starting score").lgText(.row, color: LGColor.inkMuted)
                 Spacer()
                 Text("\(DurationFormat.grouped(Totals.wholeHours(total: model.estimatedSoFar()))) h")
                     .lgNumber(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.5))

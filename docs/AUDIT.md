@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 20 (the app icon that grows). Earlier: update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Accessibility (update prompt 17 and the accessibility pass before it)
@@ -21,6 +21,20 @@ Not done or not testable here:
 - Real VoiceOver speech, Voice Control and the queued ray announcement: need a real iPhone or hands-on Simulator use.
 - Strings: the spoken sentences are one `String(localized:)` each, with the plural parts ("3 days", "1 hour") taken from the existing pluralised catalog entries rather than new catalog variations. The catalog is English only.
 - Dark appearance: not started (a design job of its own).
+
+## App icon (update prompt 20)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Six icons (Start, 1,000, 2,500, 5,000, 7,500, 10,000) in the spec's geometry | ✅ | `Tools/MakeIcon.swift`, `Assets.xcassets/AppIcon*.appiconset` | One `drawIcon(hours:look:)`; number drawn as outlines. The sun is drawn from the same numbers as SunView |
+| Dark and Tinted for every set | ✅ | same | Dark reuses the artwork; Tinted is greyscale |
+| Alternate sets listed in `project.yml` | ✅ | `project.yml` | `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` |
+| `IconStage.for(totalHours:)` and `IconPlan` | ✅ | `Logic/IconStage.swift` | Tests in `IconStageTests.swift` |
+| Icon changes only after a 1,000 h+ celebration's main button | ✅ | `HomeView.celebrationDone` | 100 and 500 h do nothing; jumps go to the highest stage |
+| Quiet lowering on launch / foreground, never during a session | ✅ | `HomeView.syncIconQuietly` | Replace my craft resets at once (`OneCraftSheet`) |
+| Settings switch "App icon grows with you" | ✅ | `SettingsView.iconCard` | Standard Toggle, so VoiceOver and Dynamic Type work |
+| Previews of all six stages, Dark and Tinted | 🟡 | `DesignSystem/IconStageView.swift` | Built; not opened in the Xcode canvas from here |
+| Real alternate-icon switching on a device | ❌ | | Not run on a real iPhone; see "how to check" in the hand-over |
 
 ## Data and maths
 
@@ -42,14 +56,16 @@ Not done or not testable here:
 
 | Requirement | Status | Where | Note |
 | --- | --- | --- | --- |
-| Welcome: sunrise gradient, sun, Get started, no quote | ✅ | `WelcomeView` | |
-| "I already have an account": Sign in with Apple + iCloud restore | 🟡 | `WelcomeView` | Still a stub alert. Needs your Apple Developer account and a real iCloud to build and test, see Decisions |
+| Welcome: sunrise gradient, sun, one line, Get started only (no sign-in button) | ✅ | `WelcomeView` | Update 21 |
+| Welcome back from iCloud: looks quietly for a game for at most 3 s on a first launch; Continue my game / Start a new game (the iCloud game is archived, not deleted) | 🟡 | `AppRoot`, `WelcomeBackView`, `WelcomeBack` (Logic) | Decision logic and timing are unit-tested. The real restore needs a second device or a reinstall with your iCloud, not tried here |
 | Your craft: search, five groups, custom name 2–40 | ✅ | `CraftStepView`, `CraftCatalog` | |
 | When did you start: stepper, default year − 3, 1940…now | ✅ | `StartYearView` | |
 | Current year skips step 3 | ✅ | `StartYearView`, `YearlyHoursView` | Decided: no skip. Step 3 shows one slider for this year; set it to 0 if starting from scratch. Spec updated |
 | Hours per week: one slider per year 0–40, live estimate, Continue | ✅ | `YearlyHoursView` | Design file says max 30; spec says 40, code follows spec. The button now says Continue |
-| Step dots show 4 steps | ✅ | `LGStepBar`, `OnboardingHeader` | |
-| Step 4 "Your pace for the year": big number, slider 1–40 by 0.5, recent pace, Until / About / In a year, Start playing | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Start playing saves the craft, estimates and target and opens Home on The long game |
+| Step dots show 5 steps | ✅ | `LGStepBar`, `OnboardingHeader` | Update 21 |
+| Lighter copy: one title and at most one short line on Welcome, the intro pages and steps 1, 2, 3, 3b; chips under group labels; big − / + year stepper; "Your starting score" under the card | ✅ | `WelcomeView`, `IntroView`, `CraftStepView`, `StartYearView`, `YearlyHoursView` | Update 21. Unused strings removed from the catalog |
+| Step 4 "Your weekly pace": one line, big − / + stepper 1–40 by 0.5, no hint line, no quick-pick chips, one quiet line "About 1 h 43 m a day · until Nov 2027", Continue. From This week it keeps "Your pace for the year" and Save | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Update 21. The quick-pick chips remain only on the catch-up average stepper |
+| Step 5 "Keep your game safe": iCloud card with the switch on by default, privacy line, Start playing saves everything and opens Home on The long game once. Without an iCloud account the switch is off and disabled with the sign-in line | ✅ | `ICloudStepView`, `OnboardingFlow`, `ICloudSwitchState` | Update 21. The signed-out look was seen in the Simulator (no iCloud account there) |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
 
@@ -107,7 +123,7 @@ Not seen: landscape and wide windows on a device, the zoom transition on iOS 26.
 | Primary button: 56 pt ink-tinted glass capsule, white text | ✅ | `LGButtonStyle.primary` | Uses glassEffect with an ink tint rather than `.glassProminent`, so every call site stays `.lg(.primary)` |
 | Secondary button: 48 pt clear glass capsule, navy text (Add past hours, Discard) | ✅ | `LGButtonStyle.quiet` | New kind, a plain text button before iOS 26. 'Keep playing' stays a primary button as before |
 | Toolbar icons: 44 pt glass circles | ✅ | `LGIconButton` | Home's History icon now uses it too |
-| Timer: Pause and Resume clear glass; Finish bright glass with navy text; stretch strip clear glass, radius 22 | ✅ | `LGButtonStyle`, `lgGlassStrip` | The strip keeps its 18 pt corners before iOS 26 |
+| Timer: Pause and Resume clear glass; Finish bright glass with navy text; stretch strip removed in update 21 | ✅ | `LGButtonStyle` | `lgGlassStrip` deleted with the strip |
 | Warm wash #FFF0D6 at the top of Home and History | ✅ | `LGColor.warmWash`, `lgWarmScreen` | iOS 26 only, so iOS 17-25 looks the same |
 | Header floats while content scrolls under it | ✅ | `lgTopBar` | Uses the system's soft scroll edge (`safeAreaBar`) on iOS 26. Home's tabs scroll with the page, as before, so only the header floats |
 | Previews of each style, glass and flat, light and over the night sky | ✅ | `DesignSystem/GlassPreviews.swift` |  |
@@ -164,7 +180,7 @@ Not seen on a device: the camera, and the viewer's gestures. Check them by hand 
 | Arc, gold travelled line, moon; sun glides between arc and scale in 0.6 s (Reduce Motion: no glide) | ✅ | `GaugeHero`, `StretchArt` | Same sun and sea components and water rule |
 | Big number, 'of today's ...', one quiet line, exact texts for every state; VoiceOver reads the picture as one element | ✅ | `TodayContent`, `StretchText` |  |
 | Duo wide layout has the third tab | ✅ | `HomeView.widePage` | Checked in code and the build; not seen on a Duo-shaped simulator |
-| Timer strip with live arc; covered mid-session turns it gold, the sun winks once, gold line under 'Next ray in'; never interrupts; hidden on rest days and covered weeks | ✅ | `StretchStrip`, `TimerView` | Driven by the timer's own TimelineView. No sheet, alert, sound or extra haptic |
+| No strip on the Timer (update 21). When covered mid-session the sun winks once and a quiet gold line 'Today's stretch covered' shows under 'Next ray in'; never interrupts | ✅ | `TimerView` | Driven by the timer's own TimelineView. No sheet, alert, sound or extra haptic. `StretchStrip.swift`, its strings and glass style are deleted. Checked by build and tests; I did not get to look at the Timer in the Simulator after the change |
 | Finish sheet line 'Today's stretch covered.' | ✅ | `FinishSheet` | Only if this session covered it; follows the trimmed time |
 | Live Activity, widgets, Watch unchanged | ✅ |  | They show This week or The long game as before |
 | Debug options for hours this week before today and a rest day | ✅ | Settings, Debug only |  |
@@ -233,7 +249,9 @@ Not seen on a device: the camera, and the viewer's gestures. Check them by hand 
 | Requirement | Status | Where | Note |
 | --- | --- | --- | --- |
 | Works with no account | ✅ | | |
-| Sign in with Apple, CloudKit private DB | 🟡 | `CloudSync.swift`, `SettingsView` | Built and in the project; the toggle now also saves `Settings.syncEnabled`. Cannot be tested here (needs your iCloud account and a real device) |
+| Sign in with Apple | ✅ removed | | Update 21: code, `AuthenticationServices`, entitlement, Settings rows and strings are gone. There was no test for it |
+| Save to iCloud: SwiftData + CloudKit private database only when the setting is on, otherwise a local-only store; switching reopens the same database file without losing data; last edit wins per session; running timer is device-local | 🟡 | `CloudSync.swift` (`StoreHost`), `LongGameApp` | Store choice and switching are unit-tested with in-memory stores. Real syncing between devices needs a real iPhone signed in to iCloud, not tried here |
+| Settings → iCloud group: switch, status line (Up to date / Syncing… / Last synced 10:42 / sign-in hint), Delete iCloud copy with confirmation that leaves this device's data | 🟡 | `SettingsView`, `ICloudMonitor`, `SyncStatus` | Logic tested; "Delete iCloud copy" turns sync off first, then removes the CloudKit zone. The zone delete itself needs a real iCloud to try |
 | Export CSV, Delete all data | ✅ | `SettingsView` | |
 | YearEstimates editable; archived crafts listed | ✅ | `EstimatesEditorView`, `ArchivedCraftsView` | |
 | Settings reachable | ✅ | `HomeView`, `HistoryView` | The gear in the Home bar, and the gear in History |
@@ -313,7 +331,7 @@ Not seen on a device: the camera, and the viewer's gestures. Check them by hand 
 
 ## Decisions for you
 
-1. **"I already have an account" on Welcome.** Sign in with Apple and iCloud restore are in the project (Settings has them), but Welcome still shows a placeholder alert. Wiring it needs your Apple Developer account and a device signed in to iCloud to test, and CloudKit only loads at launch, so "restore" means signing in, then restarting. Tell me when you want me to do it.
+1. ~~"I already have an account" on Welcome.~~ Decided in update 21: no account at all. iCloud saving replaces it, and Welcome back offers the game it finds. See the iCloud rows above.
 2. ~~Starting this year skips step 3?~~ Decided: no skip. Step 3 shows one slider for this year, and the spec now says so.
 3. ~~Welcome after "Switch to a new game"?~~ Decided: show Welcome again. App and spec (Screen 8) updated.
 4. ~~Settings entry.~~ Decided: the gear is in the Home bar (next to History and +). History keeps its own gear; say if you'd rather remove it.
@@ -340,7 +358,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 ## Not done or not testable here
 
 - Live Activity and Dynamic Island: built, but the Simulator cannot show them; check on a device.
-- iCloud sync, Sign in with Apple and iCloud restore: need your Apple Developer account and a real device.
+- iCloud sync between devices, Welcome back from a real iCloud game and the CloudKit zone delete: need a real iPhone signed in to iCloud (the Simulator has no iCloud account unless you sign one in). Also, before a TestFlight or App Store build, the CloudKit schema must be deployed to Production in the CloudKit Dashboard.
 - The Apple Watch app and complications: no watchOS Simulator is installed here (downloading one is several GB), so they are compiled for the watch simulator SDK and checked through shared code, tests and drawn pictures, but never run. Pairing, WatchConnectivity delivery, haptics and the watch face need a real watch or the watchOS Simulator.
 - Lock Screen and medium widgets on a real device, and the Edit Widget choice.
 - Real notification delivery (daily, rhythm nudge, long session, milestone): scheduled in code and unit-tested, but not seen arriving.
@@ -363,7 +381,10 @@ Run with `-demoData` for sample data.
 - **Apple Watch:** open `LongGame.xcodeproj`, run the LongGame scheme on an iPhone paired with a watch (or the watchOS Simulator), then the LongGameWatch scheme target on the watch.
 - **Settings:** the gear at the top right of Home (or History → gear).
 - **Hour steppers (− and +):** Onboarding: Get started → pick a craft → pick a start year → step 3 has one stepper row per year (tap − or +, hold for 0.4 s to repeat, tap the number to type it; changing a year shows "Use N h for the years after YYYY"). Continue gives Your pace for the year, a big stepper in half hours with quick picks. Later: Home → This week → the target row. In Settings, Your estimates uses the same rows. The Simulator has no haptics. Previews of both components (default, AX5, flat look, night sky) are at the bottom of `HoursStepper.swift`. VoiceOver: swipe up/down on a stepper to change it. Growth's "What if I practise more?" is still a slider on purpose.
-- **Welcome back:** Settings → Debug only → set the days with the stepper (7–27 gives one − / + row per week, 28+ gives one big stepper for the average) → "Show Welcome back on Home". It takes you back to Home with the sheet open.
+- **New onboarding (update 21):** delete the app from the Simulator (long-press → Remove App), run it again: Welcome → three intro pages → 1 game → 2 year → 3 hours → 4 weekly pace → 5 Keep your game safe → Start playing.
+- **iCloud switch:** step 5 and Settings → iCloud. On a real iPhone signed in to iCloud the switch is on and you can turn it off and on; the status line shows Syncing… then Up to date. With no iCloud account (the Simulator by default) the switch is off and disabled.
+- **Welcome back from iCloud:** with iCloud saving on and some hours saved, delete the app and install it again on the same Apple Account: after Welcome appears, "Welcome back · We found your game in iCloud" replaces it within 3 seconds.
+- **Welcome back (after a break):** Settings → Debug only → set the days with the stepper (7–27 gives one − / + row per week, 28+ gives one big stepper for the average) → "Show Welcome back on Home". It takes you back to Home with the sheet open.
 - **Hour bounce:** Settings → Debug only → "Jump total to just under a whole hour" → Start session. About 20 seconds later the sun bounces and a ring of sparkles shimmers.
 - **Milestone notification:** same jump, but choose a total just under a milestone first (for example edit estimates in Settings → Your estimates so the total is near 100, 500, 1,000…), allow notifications, start a session and lock the phone.
 - **Reduce Motion:** Settings app → Accessibility → Motion → Reduce Motion, then save a session.

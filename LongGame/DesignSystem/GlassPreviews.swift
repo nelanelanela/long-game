@@ -20,7 +20,6 @@ private struct ControlGallery: View {
                     Button("Pause") {}.buttonStyle(.lg(.translucent))
                     Button("Finish") {}.buttonStyle(.lg(.light))
                 }
-                StretchStrip(done: 65 * 60, target: 105 * 60)
             } else {
                 Button("Start session") {}.buttonStyle(.lg(.primary))
                 Button("Add past hours") {}.buttonStyle(.lg(.quiet))

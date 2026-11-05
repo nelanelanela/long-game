@@ -164,7 +164,7 @@ struct GrowthChartView: View {
             HStack(spacing: 6) {
                 Text(verbatim: label.date).lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote)).lineLimit(1).minimumScaleFactor(0.7)
                 Text(verbatim: label.chip)
-                    .lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2), color: label.chip == "Played" ? LGColor.ink : LGColor.forecast)
+                    .lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2), color: label.chip == "Played" ? LGColor.ink : LGColor.forecastText)
             }
             Text(verbatim: label.hours).lgText(LGTextStyle(size: 17, weight: .bold, relativeTo: .body)).monospacedDigit()
             if !label.blurb.isEmpty {
@@ -189,6 +189,28 @@ private struct ScrubSelection: ViewModifier {
             content.chartXSelection(value: binding)
         } else {
             content
+        }
+    }
+}
+
+/// "Played" (solid line) and "Forecast" (dashed line) in words, so the two lines never rely on colour alone.
+struct ChartLegend: View {
+    var body: some View {
+        HStack(spacing: 18) {
+            item(String(localized: "Played"), dash: [])
+            item(String(localized: "Forecast"), dash: [5, 4])
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityHidden(true)
+    }
+
+    private func item(_ title: String, dash: [CGFloat]) -> some View {
+        HStack(spacing: 6) {
+            Path { $0.move(to: CGPoint(x: 0, y: 1)); $0.addLine(to: CGPoint(x: 22, y: 1)) }
+                .stroke(title == String(localized: "Played") ? LGColor.ink : LGColor.forecast,
+                        style: StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: dash))
+                .frame(width: 22, height: 2)
+            Text(title).lgText(.tiny, color: LGColor.inkMuted)
         }
     }
 }

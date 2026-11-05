@@ -2,120 +2,52 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Growth and forecast</title>
+<title>History, growth</title>
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
 <style>
 body{margin:0}
 a{color:#16244A}a:hover{color:#000000}
+@keyframes hmBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.03)}}
+@keyframes hmTurn{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes hmPeekShow{0%,88%,100%{opacity:0}90%,95%{opacity:1}}
+@keyframes hmPeekHide{0%,88%,100%{opacity:1}90%,95%{opacity:0}}
+@keyframes hmWaveR{from{transform:translateX(0)}to{transform:translateX(20px)}}
+@keyframes hmWaveL{from{transform:translateX(0)}to{transform:translateX(-20px)}}
+@keyframes hmGlint{0%,100%{opacity:0;transform:scaleX(.4)}50%{opacity:1;transform:scaleX(1)}}
+@keyframes hmGlow{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.8;transform:scale(1.06)}}
+.hm-breathe{transform-origin:100px 100px;transform-box:view-box;animation:hmBreathe 4s ease-in-out infinite}
+.hm-turn{transform-origin:100px 100px;transform-box:view-box;animation:hmTurn 90s linear infinite}
+.hm-peek-show{opacity:0;animation:hmPeekShow 7s ease-in-out infinite}
+.hm-peek-hide{animation:hmPeekHide 7s ease-in-out infinite}
+.hm-wave-r{animation:hmWaveR 3.2s linear infinite}
+.hm-wave-l{animation:hmWaveL 5s linear infinite}
+.hm-glint{transform-box:fill-box;transform-origin:center;animation:hmGlint 2.6s ease-in-out infinite}
+.hm-glow{animation:hmGlow 4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.hm-breathe,.hm-turn,.hm-peek-show,.hm-peek-hide,.hm-wave-r,.hm-wave-l,.hm-glint,.hm-glow{animation:none}.hm-glint{opacity:.8}}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 14px">
-<div style="display: flex; align-items: center; height: 44px">
-<a href="Home.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; color: #16244A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></a>
-</div>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px; background: #FAF8F4; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 16px">
+<div style="height: 44px; display: flex; align-items: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></div>
 <h1 style="margin: -6px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em">History</h1>
-<div role="tablist" aria-label="History view" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 3px; background: #EFEBE4; border-radius: 12px">
-<a href="Calendar.dc.html" role="tab" aria-selected="false" style="height: 36px; border-radius: 10px; color: #16244A; font-size: 14px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center">Calendar</a>
-<button type="button" role="tab" aria-selected="true" style="height: 36px; border: 0; border-radius: 10px; background: #FFFFFF; color: #16244A; font: inherit; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(22,36,74,.1)">Growth</button>
+<div style="display: grid; grid-template-columns: 1fr 1fr; padding: 3px; background: #EFEBE4; border-radius: 12px"><span style="height: 36px; font-size: 14px; display: flex; align-items: center; justify-content: center">Calendar</span><span style="height: 36px; border-radius: 10px; background: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,.1)">Growth</span></div>
+<div style="position: relative; display: flex; flex-direction: column; gap: 2px; padding: 18px 16px 12px; background: #FFFFFF; border-radius: 20px">
+<span aria-label="Open full screen" style="position: absolute; right: 12px; top: 12px; width: 36px; height: 36px; border-radius: 18px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg></span>
+<span style="font-size: 14px; color: #5E6782">You’ll finish the game around</span><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em">November 2035</span><span style="font-size: 14px; color: #5E6782; margin-bottom: 10px">Likely between 2034 and later</span><svg aria-hidden="true" width="318" height="190" viewBox="0 0 318 190" style="display:block; overflow: visible"><line x1="32" x2="308" y1="160.0" y2="160.0" stroke="#ECE7DE" stroke-width="1"></line><text x="24" y="164.0" text-anchor="end" font-size="11" fill="#8A93AB">0</text><line x1="32" x2="308" y1="125.5" y2="125.5" stroke="#ECE7DE" stroke-width="1"></line><text x="24" y="129.5" text-anchor="end" font-size="11" fill="#8A93AB">2.5k</text><line x1="32" x2="308" y1="91.0" y2="91.0" stroke="#ECE7DE" stroke-width="1"></line><text x="24" y="95.0" text-anchor="end" font-size="11" fill="#8A93AB">5k</text><line x1="32" x2="308" y1="56.5" y2="56.5" stroke="#ECE7DE" stroke-width="1"></line><text x="24" y="60.5" text-anchor="end" font-size="11" fill="#8A93AB">7.5k</text><line x1="32" x2="308" y1="22.0" y2="22.0" stroke="#C9C3B8" stroke-dasharray="3 4"></line><text x="24" y="26.0" text-anchor="end" font-size="11" fill="#8A93AB">10k</text><text x="36" y="15.0" font-size="11" fill="#5E6782">Finish line · 10,000 h</text><path d="M143.0 114.5 L236.5 22.0 L308.0 22.0 L308.0 44.1Z" fill="rgba(255,154,60,.14)"></path><path d="M44.5 160.0 L47.0 159.9 L49.5 159.6 L51.9 159.3 L54.4 158.9 L56.9 158.4 L59.3 157.8 L61.8 157.2 L64.2 156.5 L66.7 155.8 L69.2 155.1 L71.6 154.2 L74.1 153.4 L76.6 152.5 L79.0 151.5 L81.5 150.5 L83.9 149.5 L86.4 148.4 L88.9 147.3 L91.3 146.2 L93.8 145.0 L96.2 143.8 L98.7 142.5 L101.2 141.2 L103.6 139.9 L106.1 138.6 L108.6 137.2 L111.0 135.8 L113.5 134.3 L115.9 132.8 L118.4 131.3 L120.9 129.8 L123.3 128.2 L125.8 126.6 L128.3 125.0 L130.7 123.3 L133.2 121.6 L135.6 119.9 L138.1 118.1 L140.6 116.3 L143.0 114.5 L143.0 160.0 L44.5 160.0Z" fill="#EFEDEA"></path><path d="M44.5 160.0 L47.0 159.9 L49.5 159.6 L51.9 159.3 L54.4 158.9 L56.9 158.4 L59.3 157.8 L61.8 157.2 L64.2 156.5 L66.7 155.8 L69.2 155.1 L71.6 154.2 L74.1 153.4 L76.6 152.5 L79.0 151.5 L81.5 150.5 L83.9 149.5 L86.4 148.4 L88.9 147.3 L91.3 146.2 L93.8 145.0 L96.2 143.8 L98.7 142.5 L101.2 141.2 L103.6 139.9 L106.1 138.6 L108.6 137.2 L111.0 135.8 L113.5 134.3 L115.9 132.8 L118.4 131.3 L120.9 129.8 L123.3 128.2 L125.8 126.6 L128.3 125.0 L130.7 123.3 L133.2 121.6 L135.6 119.9 L138.1 118.1 L140.6 116.3 L143.0 114.5" fill="none" stroke="#16244A" stroke-width="3" stroke-linecap="round"></path><path d="M143.0 114.5 L255.9 22.0" stroke="#EE6420" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"></path><circle cx="91.3" cy="146.2" r="4.5" fill="#16244A" stroke="#16244A" stroke-width="2"></circle><circle cx="127.4" cy="125.5" r="4.5" fill="#16244A" stroke="#16244A" stroke-width="2"></circle><circle cx="171.8" cy="91.0" r="4.5" fill="#FFFFFF" stroke="#EE6420" stroke-width="2"></circle><circle cx="213.8" cy="56.5" r="4.5" fill="#FFFFFF" stroke="#EE6420" stroke-width="2"></circle><g transform="translate(241.9 8.0) scale(.14)"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="12" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle></g><text x="57.1" y="180" text-anchor="middle" font-size="11" fill="#8A93AB">2020</text><text x="119.8" y="180" text-anchor="middle" font-size="11" fill="#8A93AB">2025</text><text x="182.5" y="180" text-anchor="middle" font-size="11" fill="#8A93AB">2030</text><text x="245.3" y="180" text-anchor="middle" font-size="11" fill="#8A93AB">2035</text><text x="308.0" y="180" text-anchor="middle" font-size="11" fill="#8A93AB">2040</text><text x="143.0" y="168" text-anchor="middle" font-size="10" font-weight="700" fill="#16244A">Today</text></svg>
 </div>
-
-<div style="display: flex; flex-direction: column; gap: 10px; padding: 16px 14px 12px; background: #FFFFFF; border-radius: 20px">
-<div style="display: flex; flex-direction: column; gap: 2px; padding: 0 4px">
-<span style="font-size: 13px; color: #5E6782">You'll finish the game around</span>
-<span style="font-size: 24px; font-weight: 700; letter-spacing: -0.02em">{{midDate}}</span>
-<span style="font-size: 13px; color: #5E6782">{{rangeLabel}}</span>
-</div>
-<svg role="img" aria-label="{{chartLabel}}" width="320" height="210" viewBox="0 0 320 210" style="display: block; width: 100%; height: auto">
-<path d="M34 188H312M34 103.2H312" stroke="#F0ECE5" stroke-width="1"></path>
-<path d="M34 18.5H312" stroke="#16244A" stroke-opacity=".35" stroke-width="1" stroke-dasharray="3 4"></path>
-<text x="38" y="12" text-anchor="start" font-size="10" fill="#5E6782">Finish line · 10,000 h</text>
-<text x="28" y="191" text-anchor="end" font-size="10" fill="#5E6782">0</text>
-<text x="28" y="106" text-anchor="end" font-size="10" fill="#5E6782">5k</text>
-<text x="28" y="22" text-anchor="end" font-size="10" fill="#5E6782">10k</text>
-<path d="{{bandPath}}" fill="#FF9A3C" fill-opacity=".16"></path>
-<path d="{{pastArea}}" fill="#16244A" fill-opacity=".07"></path>
-<path d="{{pastPath}}" fill="none" stroke="#16244A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
-<path d="{{midPath}}" fill="none" stroke="#EE6420" stroke-width="2.5" stroke-dasharray="6 5" stroke-linecap="round"></path>
-<circle cx="132.8" cy="{{todayY}}" r="5" fill="#FFFFFF" stroke="#16244A" stroke-width="2.5"></circle>
-<text x="132.8" y="203" text-anchor="middle" font-size="10" font-weight="600" fill="#16244A">Today</text>
-<g transform="translate({{midX}} 18.5)"><path d="M0 -13V-10M0 10V13M-13 0H-10M10 0H13M-9.2 -9.2L-7 -7M7 7L9.2 9.2M-9.2 9.2L-7 7M7 -7L9.2 -9.2" stroke="#FFB627" stroke-width="2.2" stroke-linecap="round"></path><circle r="6.5" fill="#FFC93C"></circle></g>
-<text x="46.6" y="203" text-anchor="middle" font-size="10" fill="#5E6782">2020</text>
-<text x="173" y="203" text-anchor="middle" font-size="10" fill="#5E6782">2030</text>
-<text x="236.2" y="203" text-anchor="middle" font-size="10" fill="#5E6782">2035</text>
-<text x="299.4" y="203" text-anchor="middle" font-size="10" fill="#5E6782">2040</text>
-</svg>
-</div>
-
-
-<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 18px; background: #FFFFFF; border-radius: 20px">
-<div style="display: flex; align-items: baseline; justify-content: space-between">
-<label for="extra" style="font-size: 15px; font-weight: 600">What if I practise more?</label>
-<span style="font-size: 15px; font-weight: 600">{{extraLabel}}</span>
-</div>
-<input id="extra" type="range" min="0" max="10" step="1" value="{{extra}}" onChange="{{onExtra}}" style="width: 100%; margin: 0; accent-color: #16244A">
-<span style="font-size: 13px; line-height: 1.4; color: #5E6782">{{whatIf}}</span>
+<div style="padding: 16px 18px; background: #FFFFFF; border-radius: 20px; display: flex; flex-direction: column; gap: 10px"><div style="display: flex; justify-content: space-between"><span style="font-size: 16px; font-weight: 600">What if I practise more?</span><span style="font-size: 16px; font-weight: 600">+0 h/wk</span></div><div style="height: 6px; border-radius: 3px; background: #EFEAE1; overflow: hidden"><div style="width: 0%; height: 100%; border-radius: 3px; background: #16244A"></div></div><span style="font-size: 14px; line-height: 1.45; color: #5E6782">Based on your recent pace and how it has been growing.</span></div><div style="box-sizing: border-box; padding: 16px 18px; background: #FFFFFF; border-radius: 20px; font-family: Inter, -apple-system, system-ui, sans-serif; color: #16244A; display: flex; align-items: center; gap: 12px">
+<svg aria-hidden="true" width="40" height="40" viewBox="0 0 200 200" style="display:block"><path d="M100 34V18M133 42.8L146 20.3M157.2 67L171 59M166 100H192M157.2 133L171 141M133 157.2L146 179.7M100 166V182M67 157.2L54 179.7M42.8 133L29 141M34 100H8M42.8 67L29 59M67 42.8L54 20.3" stroke="#FFB627" stroke-width="10" stroke-linecap="round"></path><circle cx="100" cy="100" r="56" fill="#FFC93C"></circle><circle cx="72" cy="113" r="7" fill="#F7A1B5"></circle><circle cx="128" cy="113" r="7" fill="#F7A1B5"></circle><path d="M76 98q8-9 16 0M108 98q8-9 16 0M88 114q12 11 24 0" fill="none" stroke="#16244A" stroke-width="5" stroke-linecap="round"></path></svg><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Your 2026</span><span style="font-size: 13px; color: #5E6782">A card of your year, to keep or share</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA1B5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M9 6l6 6-6 6"></path></svg>
 </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
 renderVals() {
-const extra = (this.state && this.state.extra) || 0;
-const X0 = 2019, X1 = 2041, L = 34, R = 8, T = 10, B = 22, W = 320, H = 210;
-const x = (t) => (L + (t - X0) / (X1 - X0) * (W - L - R)).toFixed(1);
-const y = (v) => (T + (1 - Math.min(v, 10500) / 10500) * (H - T - B)).toFixed(1);
-const now = 2026.82, total = 3294;
-const weekly = [3, 5, 6, 8, 10, 8, 12, 12];
-const past = [[2019, 0]];
-let c = 0;
-weekly.forEach((w, i) => {
-const end = i === 7 ? now : 2020 + i;
-c += w * 52 * (end - (2019 + i));
-past.push([end, i === 7 ? total : c]);
-});
-const pastPath = 'M' + past.map(([t, v]) => x(t) + ',' + y(v)).join(' L');
-const pastArea = pastPath + ' L' + x(now) + ',' + y(0) + ' L' + x(X0) + ',' + y(0) + ' Z';
-const sim = (rate0, slope, cap) => {
-let t = now, v = total, end = null;
-const pts = [[t, v]];
-while (t < X1) {
-const r = Math.min(cap, rate0 + slope * (t - now));
-v += r * 52 / 12; t += 1 / 12;
-if (v >= 10000) { const over = (v - 10000) / (r * 52); t -= over; v = 10000; pts.push([t, v]); end = t; break; }
-pts.push([t, v]);
-}
-return { pts, end };
-};
-const low = sim(9 + extra, 0, 30);
-const mid = sim(12 + extra, 0.5, 22);
-const high = sim(12 + extra, 1.2, 26);
-const toPath = (pts) => 'M' + pts.map(([t, v]) => x(t) + ',' + y(v)).join(' L');
-const bandPath = toPath(high.pts) + ' L' + low.pts.slice().reverse().map(([t, v]) => x(t) + ',' + y(v)).join(' L') + ' Z';
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const fmt = (t) => t ? months[Math.min(11, Math.floor((t % 1) * 12))] + ' ' + Math.floor(t) : 'after 2041';
-const fmtShort = (t) => t ? String(Math.floor(t)) : 'later';
-const base = sim(12, 0.5, 22).end;
-const gain = base && mid.end ? Math.round((base - mid.end) * 12) : 0;
-const whatIf = extra === 0
-? 'Based on your recent pace and how it has been growing.'
-: 'About ' + (gain >= 12 ? (Math.round(gain / 12 * 10) / 10) + ' years' : gain + ' months') + ' sooner, around ' + fmt(mid.end) + '.';
-const maxW = 14;
-const bars = weekly.map((w, i) => ({ h: Math.round(w / maxW * 46) + 4, label: "'" + String(19 + i), fill: i === 7 ? '#FFB347' : '#E4DFD6' }));
-const trend = (Math.round((weekly[7] - weekly[0]) / 7 * 10) / 10).toFixed(1);
-return {
-extra,
-onExtra: (e) => this.setState({ extra: Number(e.target.value) }),
-pastPath, pastArea, bandPath, midPath: toPath(mid.pts),
-todayY: y(total), midX: mid.end ? x(mid.end) : x(X1),
-midDate: fmt(mid.end), highDate: fmtShort(high.end), lowDate: fmtShort(low.end),
-chartLabel: 'Cumulative hours: 3,294 today. Forecast reaches 10,000 hours around ' + fmt(mid.end) + ', likely between ' + fmtShort(high.end) + ' and ' + fmtShort(low.end) + '.',
-bars, trend, whatIf, rangeLabel: 'Likely between ' + fmtShort(high.end) + ' and ' + fmtShort(low.end), trendLabel: '+' + trend + ' h/wk a year', extraLabel: '+' + extra + ' h/wk'
-};
+return {};
 }
 }
 </script>

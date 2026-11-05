@@ -321,7 +321,8 @@ struct TargetSavingTests {
         let model = OnboardingModel(now: Date(), calendar: .current)
         model.craftName = "Piano"
         model.hours[model.currentYear] = 8
-        model.save(in: context, targetHours: 9.5)
+        model.targetHours = 9.5
+        model.save(in: context)
         let settings = try #require(try context.fetch(FetchDescriptor<AppSettings>()).first)
         #expect(try context.fetchCount(FetchDescriptor<Craft>()) == 1)
         #expect(settings.weeklyTargetHours == 9.5)
@@ -329,5 +330,18 @@ struct TargetSavingTests {
         // Home opens on The long game right after onboarding, then on This week at every launch after that.
         #expect(settings.lastHomeTab == .longGame)
         #expect(model.recentPace == 8)
+        // The iCloud choice from the last step is saved with the rest (on by default).
+        #expect(settings.syncEnabled)
+    }
+
+    @Test func onboardingSavesAnICloudSwitchThatWasTurnedOff() throws {
+        let context = try makeContext()
+        let model = OnboardingModel(now: Date(), calendar: .current)
+        model.craftName = "Piano"
+        model.targetHours = 5
+        model.saveToICloud = false
+        model.save(in: context)
+        let settings = try #require(try context.fetch(FetchDescriptor<AppSettings>()).first)
+        #expect(!settings.syncEnabled)
     }
 }

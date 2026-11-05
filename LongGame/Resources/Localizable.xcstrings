@@ -1,17 +1,287 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ days of practice" : {},
-    "%@ h" : {},
-    "%@ hours" : {},
-    "%@ of %@" : {},
-    "%@ of 10,000 h" : {},
-    "%@ to today's resting place" : {},
-    "%@ · covered" : {},
-    "%lld" : {},
-    "%lld / %lld" : {},
+    "" : {
+
+    },
+    " · %@ h" : {
+
+    },
+    " · 10,000 h" : {
+
+    },
+    "A rough guess is fine." : {
+
+    },
+    "About %@ · until %@" : {
+
+    },
+    "Continue my game" : {
+
+    },
+    "Couldn't change iCloud saving. Nothing was lost." : {
+
+    },
+    "Couldn't delete the iCloud copy. Check your connection and try again." : {
+
+    },
+    "Delete iCloud copy" : {
+
+    },
+    "Delete iCloud copy?" : {
+
+    },
+    "For the next 12 months, the only distance to cover." : {
+
+    },
+    "Hours a week, each year" : {
+
+    },
+    "iCloud" : {
+
+    },
+    "Keep your game safe" : {
+
+    },
+    "Last synced %@" : {
+
+    },
+    "Off. Your game stays on this iPhone." : {
+
+    },
+    "On all your Apple devices, and back if you get a new iPhone." : {
+
+    },
+    "Play every day" : {
+
+    },
+    "Private to your Apple Account. Only you can see it. No sign-in needed." : {
+
+    },
+    "Roughly where mastery begins. That’s your finish line." : {
+
+    },
+    "Save to iCloud" : {
+
+    },
+    "Search or type your own" : {
+
+    },
+    "Sign in to iCloud in the Settings app to keep a copy." : {
+
+    },
+    "Start a new game" : {
+
+    },
+    "Start the timer when you practise. Every hour lifts your sun." : {
+
+    },
+    "Syncing…" : {
+
+    },
+    "The hours you’ve already practised are your starting score." : {
+
+    },
+    "The longest game on the App Store. Played in real life." : {
+
+    },
+    "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
+
+    },
+    "Up to date" : {
+
+    },
+    "We found your game in iCloud." : {
+
+    },
+    "Welcome back" : {
+
+    },
+    "You don’t start at zero" : {
+
+    },
+    "Your starting score" : {
+
+    },
+    "Your weekly pace" : {
+
+    },
+    "–" : {
+
+    },
+    "“%@” will be your craft." : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ · the long game" : {
+
+    },
+    "%@ · this session" : {
+
+    },
+    "%@ / %@ h this week" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@ h this week"
+          }
+        }
+      }
+    },
+    "%@ h" : {
+
+    },
+    "%@ h · %lld%% of the long game" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ h · %2$lld%% of the long game"
+          }
+        }
+      }
+    },
+    "%@ hours" : {
+
+    },
+    "%@ hours this week" : {
+
+    },
+    "%@ left" : {
+
+    },
+    "%@ of %@ %@, %@ to go, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ %3$@, %4$@ to go, %5$@."
+          }
+        }
+      }
+    },
+    "%@ of %@ %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ %3$@."
+          }
+        }
+      }
+    },
+    "%@ of %@ h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ h"
+          }
+        }
+      }
+    },
+    "%@ of %@ h this week" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ h this week"
+          }
+        }
+      }
+    },
+    "%@ of %@ hours." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ hours."
+          }
+        }
+      }
+    },
+    "%@ of %@, %@ to go." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@, %3$@ to go."
+          }
+        }
+      }
+    },
+    "%@ of %@. Anything more is a bonus." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@. Anything more is a bonus."
+          }
+        }
+      }
+    },
+    "%@ of 10,000 h" : {
+
+    },
+    "%@ this session. %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ this session. %2$@."
+          }
+        }
+      }
+    },
+    "%@ to %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to %2$@"
+          }
+        }
+      }
+    },
+    "%@ to today's resting place" : {
+
+    },
+    "%@, not yet" : {
+
+    },
+    "%@, rest day" : {
+
+    },
+    "%@. %@, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@, %3$@."
+          }
+        }
+      }
+    },
+    "%@. Rest day." : {
+
+    },
+    "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. Today %2$@. This week %3$@ of %4$@ hours. The long game %5$@ of 10,000 hours."
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
     "%lld days" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -33,8 +303,10 @@
         }
       }
     },
+    "%lld days of practice" : {
+
+    },
     "%lld days/wk" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -57,7 +329,6 @@
       }
     },
     "%lld golden hours so far" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -79,10 +350,13 @@
         }
       }
     },
-    "%lld h" : {},
-    "%lld h per week" : {},
+    "%lld h" : {
+
+    },
+    "%lld h per week" : {
+
+    },
     "%lld hours" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -105,7 +379,6 @@
       }
     },
     "%lld minutes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -128,7 +401,6 @@
       }
     },
     "%lld months" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -151,7 +423,6 @@
       }
     },
     "%lld seconds" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -174,7 +445,6 @@
       }
     },
     "%lld sessions" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -197,7 +467,6 @@
       }
     },
     "%lld weeks" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -220,7 +489,6 @@
       }
     },
     "%lld weeks ago" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -243,7 +511,6 @@
       }
     },
     "%lld weeks have passed" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -266,7 +533,6 @@
       }
     },
     "%lld years ago" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -288,26 +554,88 @@
         }
       }
     },
-    "%lld%% of the way" : {},
-    "%lld, hours per week" : {},
-    "%lldk" : {},
-    "+%lld h/wk" : {},
-    ", with a photo" : {},
-    "0" : {},
-    "10,000 hours" : {},
-    "20" : {},
-    "3,294" : {},
-    "40" : {},
-    "A card of your year, to keep or share" : {},
-    "A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings." : {},
-    "A new year of pace" : {},
-    "A note, if you like" : {},
-    "A smiling sun rising over the sea, %lld%% of the way up" : {},
-    "A thousand-mile walk is made one day’s stretch at a time. Set the 10,000 hours aside for a moment and choose how many hours a week you’ll play for the next 12 months. Each week, that’s the only distance to cover." : {},
-    "About" : {},
-    "Add %lld h %lld m" : {},
+    "%lld%% of the way" : {
+
+    },
+    "+%lld h/wk" : {
+
+    },
+    "+1 h today" : {
+
+    },
+    "3,294" : {
+
+    },
+    "10,000 hours" : {
+
+    },
+    "A big thank-you" : {
+
+    },
+    "A card of your year, to keep or share" : {
+
+    },
+    "A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings." : {
+
+    },
+    "a full day" : {
+
+    },
+    "A golden hour" : {
+
+    },
+    "a good day" : {
+
+    },
+    "a little" : {
+
+    },
+    "A little laugh when you tap the sun. It stays quiet when your iPhone is on silent." : {
+
+    },
+    "A new year of pace" : {
+
+    },
+    "A note, if you like" : {
+
+    },
+    "a quarter of the way" : {
+
+    },
+    "A quarter of the way." : {
+
+    },
+    "A ray of sunshine" : {
+
+    },
+    "a rest-day bonus" : {
+
+    },
+    "A small thank-you" : {
+
+    },
+    "A sunny morning" : {
+
+    },
+    "a third of the way" : {
+
+    },
+    "A whole sunrise" : {
+
+    },
+    "about %@" : {
+
+    },
+    "about %lld h %@ m a day" : {
+
+    },
+    "about %lld m a day" : {
+
+    },
+    "Add %lld h %lld m" : {
+
+    },
     "Add %lld hours" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -330,7 +658,6 @@
       }
     },
     "Add %lld minutes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -352,203 +679,1013 @@
         }
       }
     },
-    "Add a note (optional)" : {},
-    "Add a photo" : {},
-    "Add hours" : {},
-    "Add past hours" : {},
-    "Adding" : {},
-    "Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later." : {},
-    "Afternoon" : {},
-    "Anything more is a bonus." : {},
-    "Archive and replace" : {},
-    "Archived crafts" : {},
-    "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {},
-    "Average hours per week" : {},
-    "Back" : {},
-    "By %@" : {},
-    "Cancel" : {},
-    "Change photo" : {},
-    "Choose a photo" : {},
-    "Choose another year" : {},
-    "Choose from library" : {},
-    "Choose your pace for the year" : {},
-    "Choose…" : {},
-    "Clear" : {},
-    "Close" : {},
-    "Coming later" : {},
-    "Continue" : {},
-    "Daily reminder" : {},
-    "Date" : {},
-    "Day" : {},
-    "Debug only" : {},
-    "Delete" : {},
-    "Delete all data" : {},
-    "Delete all data?" : {},
-    "Delete everything" : {},
-    "Delete session" : {},
-    "Delete this session?" : {},
-    "Design system" : {},
-    "Disabled" : {},
-    "Discard" : {},
-    "Discard this session?" : {},
-    "Each week's hours are spread evenly across its days in your calendar." : {},
-    "Edit note" : {},
-    "Edit or delete this session" : {},
-    "Edit session" : {},
-    "Edit this session" : {},
-    "Estimated so far" : {},
-    "Evening" : {},
-    "Every minute still counts." : {},
-    "Extra hours per week" : {},
-    "Fill a sample year" : {},
-    "Finish" : {},
-    "Finish line" : {},
-    "Finish line · 10,000 h" : {},
-    "Finish session" : {},
-    "Forecast improves as you log more" : {},
-    "Get started" : {},
-    "Goal" : {},
-    "Got it" : {},
-    "High" : {},
-    "History" : {},
-    "History view" : {},
-    "Home view" : {},
-    "Hours" : {},
-    "Hours a week" : {},
-    "Hours a week for the next 12 months" : {},
-    "Hours per week for each year. Only focused practice." : {},
-    "Hours per week, each year" : {},
-    "Hours this week before today: real" : {},
-    "I already have an account" : {},
-    "In a year" : {},
-    "Its hours will be removed from your total." : {},
-    "Jump total to just under a whole hour" : {},
-    "Keep going" : {},
-    "Keep playing" : {},
-    "Last 12 months" : {},
-    "Less" : {},
-    "Long Game" : {},
-    "Long Game · the longest game, played in real life" : {},
-    "Long-press a photo to swap it" : {},
-    "Look of the card" : {},
-    "Low" : {},
-    "Meet your future self" : {},
-    "Minutes" : {},
-    "Monday" : {},
-    "More" : {},
-    "Morning" : {},
-    "Most played" : {},
-    "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {},
-    "My %@ in the long game" : {},
-    "My %@ · %@" : {},
-    "Night" : {},
-    "No note" : {},
-    "No saved account found" : {},
-    "No sessions yet. Start one, or add past hours." : {},
-    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {},
-    "No weekly target yet." : {},
-    "No, I took a break" : {},
-    "Not now" : {},
-    "Nothing here. Crafts you replace are kept here to look back on." : {},
-    "Notifications are off for Long Game. Turn them on in the iPhone's Settings app." : {},
-    "Off shows days and percent instead" : {},
-    "One player, one game" : {},
-    "Opens a short note about where your hours are heading" : {},
-    "Opens the photo" : {},
-    "Opens this day in History" : {},
-    "Opens your pace for the year" : {},
-    "Optional" : {},
-    "Overall total %@ hours, %lld percent of 10,000" : {},
-    "Pace" : {},
-    "Pause" : {},
-    "Pause or resume" : {},
-    "Photo" : {},
-    "Photo from %@, %@ session" : {},
-    "Photo, double-tap to change" : {},
-    "Photos" : {},
-    "Playing anyway? Every minute still counts." : {},
-    "Pretend last session was %@ ago" : {},
-    "Remove photo" : {},
-    "Remove the sample year" : {},
-    "Remove this photo?" : {},
-    "Replace %@?" : {},
-    "Replace my craft" : {},
-    "Rest day" : {},
-    "Rest day: the sun is resting on the horizon." : {},
-    "Rest day: the sun is resting on the horizon. Played anyway: %@." : {},
-    "Resume" : {},
-    "Rhythm" : {},
-    "Rhythm nudge" : {},
-    "Save" : {},
-    "Saved" : {},
-    "Series" : {},
-    "Session saved" : {},
-    "Sessions under a minute can't be saved." : {},
-    "Set all to" : {},
-    "Settings" : {},
-    "Share" : {},
-    "Show Welcome back on Home" : {},
-    "Show hours" : {},
-    "Shows how this is worked out" : {},
-    "Sign in and iCloud restore are coming in a later update. You can start tracking now." : {},
-    "Sign out" : {},
-    "Signed in with Apple" : {},
-    "Since %@. On average, how many hours a week did you practise?" : {},
-    "Start playing" : {},
-    "Start session" : {},
-    "Started %@" : {},
-    "Step %lld of %lld" : {},
-    "Sunday" : {},
-    "Sunrise" : {},
-    "Switch to a new game" : {},
-    "Take photo" : {},
-    "That would be more than 24 hours on this day. Lower the time or pick another day." : {},
-    "The app keeps counting. This is the beginning of the next stretch." : {},
-    "The long game" : {},
-    "The longest game on the App Store. About 10,000 hours long, and played in real life." : {},
-    "The session and its hours stay." : {},
-    "The sun's taking it easy too" : {},
-    "The time won't be added to your hours." : {},
-    "This is your starting score. Only focused practice counts." : {},
-    "This session" : {},
-    "This week" : {},
-    "This week is covered" : {},
-    "This week is covered. Today: %@. Anything more is a bonus." : {},
-    "Time" : {},
-    "Today" : {},
-    "Today is a rest day" : {},
-    "Today's stretch" : {},
-    "Today's stretch covered" : {},
-    "Today's stretch covered, %@" : {},
-    "Today's stretch covered." : {},
-    "Today's stretch covered: %@ of %@. Anything more is a bonus." : {},
-    "Today's stretch: %@ of %@" : {},
-    "Today's stretch: %@ of %@. %@ to go." : {},
-    "Total with your sessions" : {},
-    "Turn on to keep your hours safe and on all your devices. Close and reopen Long Game to apply the change." : {},
-    "Until" : {},
-    "Want a gentle nudge?" : {},
-    "Week starts on" : {},
-    "Welcome back!" : {},
-    "What if I practise more?" : {},
-    "What you made, what needs work" : {},
-    "What's your game?" : {},
-    "When did you start?" : {},
-    "Where 10,000 hours can take you" : {},
-    "White dot: a day with a photo" : {},
-    "Year of pace" : {},
-    "Year of pace ended yesterday" : {},
-    "Year of pace ends in 10 days" : {},
-    "Yes, let me add it" : {},
-    "Yes, remind me" : {},
-    "You can trim up to what you really practised." : {},
-    "You don't start at level one. A rough guess is fine." : {},
-    "You started on %@ — that's %@. Did you practise since then?" : {},
-    "You'll finish the game around" : {},
-    "Your %@" : {},
-    "Your %@ in the long game" : {},
-    "Your %@ in the long game: %@ hours played, practised %lld days a week, most in %@, %@ of 10,000 hours" : {},
-    "Your %@ in the long game: practised on %lld days, %lld days a week, most in %@, %lld percent of the way to 10,000 hours" : {},
+    "Add a photo" : {
+
+    },
+    "Add hours" : {
+
+    },
+    "Add past hours" : {
+
+    },
+    "Adding" : {
+
+    },
+    "Afternoon" : {
+
+    },
+    "almost there" : {
+
+    },
+    "Anything more is a bonus." : {
+
+    },
+    "Archive and replace" : {
+
+    },
+    "Archived crafts" : {
+
+    },
+    "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
+
+    },
+    "At your pace, after %lld." : {
+
+    },
+    "At your pace, around %@." : {
+
+    },
+    "Average hours per week" : {
+
+    },
+    "Back to %@." : {
+
+    },
+    "Back to my game" : {
+
+    },
+    "By %@" : {
+
+    },
+    "Calendar" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Change photo" : {
+
+    },
+    "Choose a photo" : {
+
+    },
+    "Choose another year" : {
+
+    },
+    "Choose apps" : {
+
+    },
+    "Choose from library" : {
+
+    },
+    "Choose your game" : {
+
+    },
+    "Choose your pace for the year" : {
+
+    },
+    "Choose…" : {
+
+    },
+    "Chosen apps are blocked with Screen Time until you finish the session." : {
+
+    },
+    "Clear" : {
+
+    },
+    "Close" : {
+
+    },
+    "Close chart" : {
+
+    },
+    "Continue" : {
+
+    },
+    "Craft" : {
+
+    },
+    "Daily reminder" : {
+
+    },
+    "Date" : {
+
+    },
+    "Day" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete all data" : {
+
+    },
+    "Delete all data?" : {
+
+    },
+    "Delete everything" : {
+
+    },
+    "Delete session" : {
+
+    },
+    "Delete this session?" : {
+
+    },
+    "Design system" : {
+
+    },
+    "Disabled" : {
+
+    },
+    "Discard" : {
+
+    },
+    "Discard this session?" : {
+
+    },
+    "Done" : {
+
+    },
+    "Drag along the line" : {
+
+    },
+    "Dreaming of turning your passion into a career? 10,000 hours is where that starts to become realistic, whenever you begin. In a well-known study of musicians, what set the professionals apart wasn’t talent but the hours they had put in. And you’re not starting from zero: every hour you’ve already practised counts." : {
+
+    },
+    "Each week's hours are spread evenly across its days in your calendar." : {
+
+    },
+    "Edit note" : {
+
+    },
+    "Edit or delete this session" : {
+
+    },
+    "Edit session" : {
+
+    },
+    "Estimate" : {
+
+    },
+    "Evening" : {
+
+    },
+    "Every minute still counts." : {
+
+    },
+    "Expand chart" : {
+
+    },
+    "Extra hours per week" : {
+
+    },
+    "Finish" : {
+
+    },
+    "Finish line" : {
+
+    },
+    "Finish line · 10,000 h" : {
+
+    },
+    "Finish line · 10,000 hours" : {
+
+    },
+    "Finish session" : {
+
+    },
+    "For the biggest fans" : {
+
+    },
+    "Forecast" : {
+
+    },
+    "Forecast improves as you log more" : {
+
+    },
+    "Full screen" : {
+
+    },
+    "Get started" : {
+
+    },
+    "Giggle sound" : {
+
+    },
+    "Goal" : {
+
+    },
+    "Golden hour, all 12 rays lit" : {
+
+    },
+    "Got it" : {
+
+    },
+    "Growth" : {
+
+    },
+    "Growth chart" : {
+
+    },
+    "halfway" : {
+
+    },
+    "Halfway. The sun's at its height." : {
+
+    },
+    "Has a photo." : {
+
+    },
+    "High" : {
+
+    },
+    "History" : {
+
+    },
+    "History view" : {
+
+    },
+    "Home view" : {
+
+    },
+    "hour" : {
+
+    },
+    "hour a week" : {
+
+    },
+    "hours" : {
+
+    },
+    "Hours" : {
+
+    },
+    "hours : minutes" : {
+
+    },
+    "hours · %@" : {
+
+    },
+    "hours a week" : {
+
+    },
+    "Hours a week" : {
+
+    },
+    "Hours a week for the next 12 months" : {
+
+    },
+    "Hours aren't a guarantee, but they're the part you control." : {
+
+    },
+    "hours per week" : {
+
+    },
+    "Hours per week for each year. Only focused practice." : {
+
+    },
+    "Hours played, and your forecast" : {
+
+    },
+    "Hours this week" : {
+
+    },
+    "If you keep your pace" : {
+
+    },
+    "Import sessions" : {
+
+    },
+    "In a year" : {
+
+    },
+    "In the Shortcuts app, make two shortcuts with the “Set Focus” action: one turning Practising on, one turning it off. Use the names above." : {
+
+    },
+    "Its hours will be removed from your total." : {
+
+    },
+    "just over %@" : {
+
+    },
+    "just rising" : {
+
+    },
+    "just under %@" : {
+
+    },
+    "Keep going" : {
+
+    },
+    "Keep playing" : {
+
+    },
+    "Keep the sun shining" : {
+
+    },
+    "Last 12 months" : {
+
+    },
+    "last day of the week" : {
+
+    },
+    "Less" : {
+
+    },
+    "Like buying a coffee" : {
+
+    },
+    "Long Game" : {
+
+    },
+    "Long Game · the longest game, played in real life" : {
+
+    },
+    "Long Game is a projection of you into the future. Every hour you add brings that person a little closer." : {
+
+    },
+    "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip to support it. Tips don’t unlock anything: every feature is free for everyone." : {
+
+    },
+    "Long-press a photo to swap it" : {
+
+    },
+    "Look of the card" : {
+
+    },
+    "Low" : {
+
+    },
+    "Maximum" : {
+
+    },
+    "Meet your future self" : {
+
+    },
+    "Milestone · %@" : {
+
+    },
+    "Milestone · halfway" : {
+
+    },
+    "Milestone reached" : {
+
+    },
+    "Milestone reached · estimate" : {
+
+    },
+    "Minimum" : {
+
+    },
+    "Minus" : {
+
+    },
+    "Minutes" : {
+
+    },
+    "Monday" : {
+
+    },
+    "More" : {
+
+    },
+    "Morning" : {
+
+    },
+    "Most played" : {
+
+    },
+    "Mute chosen apps" : {
+
+    },
+    "My %@ · %@" : {
+
+    },
+    "My %@ in the long game" : {
+
+    },
+    "Next" : {
+
+    },
+    "Night" : {
+
+    },
+    "No note" : {
+
+    },
+    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {
+
+    },
+    "No weekly target yet." : {
+
+    },
+    "No, I took a break" : {
+
+    },
+    "Not now" : {
+
+    },
+    "Nothing here. Crafts you replace are kept here to look back on." : {
+
+    },
+    "Notifications are off for Long Game. Turn them on in the iPhone's Settings app." : {
+
+    },
+    "of %@ · %lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "of %1$@ · %2$lld%%"
+          }
+        }
+      }
+    },
+    "of %@ this week" : {
+
+    },
+    "of %@ this week · %lld%%" : {
+
+    },
+    "of 10,000" : {
+
+    },
+    "of 10,000 · %lld%%" : {
+
+    },
+    "of 10,000 h · %lld%%" : {
+
+    },
+    "of 10,000 hours · %lld%%" : {
+
+    },
+    "of 10,000 hours · 33%" : {
+
+    },
+    "of practice since %@" : {
+
+    },
+    "of practice this year" : {
+
+    },
+    "of the way" : {
+
+    },
+    "of today's %@" : {
+
+    },
+    "Off shows days and percent instead" : {
+
+    },
+    "OK" : {
+
+    },
+    "on the horizon" : {
+
+    },
+    "One game, 10,000 hours" : {
+
+    },
+    "One player, one game" : {
+
+    },
+    "One-time payments through the App Store. Prices are shown in your currency." : {
+
+    },
+    "Open chart full screen" : {
+
+    },
+    "Open full screen" : {
+
+    },
+    "Open Long Game once to choose your craft, then try again." : {
+
+    },
+    "Open the app to begin." : {
+
+    },
+    "Opens a short note about where your hours are heading" : {
+
+    },
+    "Opens the list of apps to mute during a session" : {
+
+    },
+    "Opens the photo" : {
+
+    },
+    "Opens this day in History" : {
+
+    },
+    "Opens your pace for the year" : {
+
+    },
+    "Overall total %@ hours, %lld percent of 10,000" : {
+
+    },
+    "Overall total %@ hours, %lld percent of 10,000. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Overall total %1$@ hours, %2$lld percent of 10,000. %3$@"
+          }
+        }
+      }
+    },
+    "Pace" : {
+
+    },
+    "Page %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Page %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Pause" : {
+
+    },
+    "Pause or resume" : {
+
+    },
+    "Photo" : {
+
+    },
+    "Photo from %@, %@ session" : {
+
+    },
+    "Photo, double-tap to change" : {
+
+    },
+    "Photos" : {
+
+    },
+    "Played" : {
+
+    },
+    "Played anyway: %@." : {
+
+    },
+    "played since %@" : {
+
+    },
+    "played this year" : {
+
+    },
+    "Playing anyway? Every minute still counts." : {
+
+    },
+    "Plus" : {
+
+    },
+    "Practising Focus" : {
+
+    },
+    "Ray %lld lit" : {
+
+    },
+    "Reached %@ hours" : {
+
+    },
+    "Reached 10,000 hours" : {
+
+    },
+    "Remove photo" : {
+
+    },
+    "Remove this photo?" : {
+
+    },
+    "Replace %@?" : {
+
+    },
+    "Replace my craft" : {
+
+    },
+    "rest day" : {
+
+    },
+    "Rest day" : {
+
+    },
+    "Rest day: the sun is resting on the horizon." : {
+
+    },
+    "Rest day: the sun is resting on the horizon. Played anyway: %@." : {
+
+    },
+    "Rest day. The sun is resting on the horizon." : {
+
+    },
+    "Resume" : {
+
+    },
+    "Rhythm" : {
+
+    },
+    "Rhythm nudge" : {
+
+    },
+    "Save" : {
+
+    },
+    "Saved" : {
+
+    },
+    "Series" : {
+
+    },
+    "Session %@. %lld of 12 rays lit, next ray in %@. Total %@ hours." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Session %1$@. %2$lld of 12 rays lit, next ray in %3$@. Total %4$@ hours."
+          }
+        }
+      }
+    },
+    "Session saved" : {
+
+    },
+    "Session saved. %@ added. %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Session saved. %1$@ added. %2$@."
+          }
+        }
+      }
+    },
+    "Sessions under a minute can't be saved." : {
+
+    },
+    "Set all to" : {
+
+    },
+    "Set up Long Game" : {
+
+    },
+    "Set up Long Game on your iPhone first." : {
+
+    },
+    "Settings" : {
+
+    },
+    "Share" : {
+
+    },
+    "Show hours" : {
+
+    },
+    "Shows how this is worked out" : {
+
+    },
+    "Since %@. On average, how many hours a week did you practise?" : {
+
+    },
+    "Skip" : {
+
+    },
+    "some" : {
+
+    },
+    "Start" : {
+
+    },
+    "Start playing" : {
+
+    },
+    "Start playing a craft" : {
+
+    },
+    "Start session" : {
+
+    },
+    "Started %@" : {
+
+    },
+    "Started playing %@." : {
+
+    },
+    "Starts a practice session" : {
+
+    },
+    "Starts a session for your craft by name." : {
+
+    },
+    "Starts a session for your craft." : {
+
+    },
+    "Step %lld of %lld" : {
+
+    },
+    "Sunday" : {
+
+    },
+    "Sunrise" : {
+
+    },
+    "Support Long Game" : {
+
+    },
+    "Swipe up or down to step through your milestones" : {
+
+    },
+    "Switch to a new game" : {
+
+    },
+    "Take photo" : {
+
+    },
+    "Thank you for your support" : {
+
+    },
+    "Thank you!" : {
+
+    },
+    "That would be more than 24 hours on this day. Lower the time or pick another day." : {
+
+    },
+    "The app keeps counting. This is the beginning of the next stretch." : {
+
+    },
+    "the finish line" : {
+
+    },
+    "The finish line" : {
+
+    },
+    "The finish line." : {
+
+    },
+    "The first thousand." : {
+
+    },
+    "The long game" : {
+
+    },
+    "The long game, %@ of 10,000 hours, %lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The long game, %1$@ of 10,000 hours, %2$lld%%"
+          }
+        }
+      }
+    },
+    "The session and its hours stay." : {
+
+    },
+    "The sun fully risen above the sea" : {
+
+    },
+    "The sun has reached %@." : {
+
+    },
+    "The sun high above the sea, under a dashed line marking the finish line at 10,000 hours" : {
+
+    },
+    "The sun is %@ to %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The sun is %1$@ to %2$@."
+          }
+        }
+      }
+    },
+    "The sun is above your weekly target." : {
+
+    },
+    "The sun is almost at %@." : {
+
+    },
+    "The sun is just rising." : {
+
+    },
+    "The sun is on the horizon." : {
+
+    },
+    "The sun just rising out of the sea, above a badge showing your starting score" : {
+
+    },
+    "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
+
+    },
+    "The sun's taking it easy too" : {
+
+    },
+    "The time won't be added to your hours." : {
+
+    },
+    "there" : {
+
+    },
+    "This session" : {
+
+    },
+    "This week" : {
+
+    },
+    "This week is covered" : {
+
+    },
+    "This week is covered. The sun is at the top." : {
+
+    },
+    "This week is covered. Today: %@. Anything more is a bonus." : {
+
+    },
+    "This week, %@ of %@ hours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This week, %1$@ of %2$@ hours"
+          }
+        }
+      }
+    },
+    "This week, %@ of %@ hours. The long game, %@ hours, %lld%%." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This week, %1$@ of %2$@ hours. The long game, %3$@ hours, %4$lld%%."
+          }
+        }
+      }
+    },
+    "three quarters of the way" : {
+
+    },
+    "Three quarters of the way." : {
+
+    },
+    "Tickle the sun" : {
+
+    },
+    "Time" : {
+
+    },
+    "Timer paused" : {
+
+    },
+    "Timer resumed" : {
+
+    },
+    "Tips aren't available right now" : {
+
+    },
+    "Today" : {
+
+    },
+    "Today %@" : {
+
+    },
+    "Today, %@ hours. Forecast finish %@, 10,000 hours." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today, %1$@ hours. Forecast finish %2$@, 10,000 hours."
+          }
+        }
+      }
+    },
+    "Today: %@. Anything more is a bonus." : {
+
+    },
+    "today's %@ · covered" : {
+
+    },
+    "today's resting place" : {
+
+    },
+    "Today's stretch covered" : {
+
+    },
+    "Today's stretch covered: %@ of %@. Anything more is a bonus." : {
+
+    },
+    "Today's stretch covered." : {
+
+    },
+    "Today's stretch is covered. The sun has reached today's resting place." : {
+
+    },
+    "Today's stretch: %@ of %@. %@ to go." : {
+
+    },
+    "Total with your sessions" : {
+
+    },
+    "two thirds of the way" : {
+
+    },
+    "Type a number" : {
+
+    },
+    "Use %lld h for the years after %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use %1$lld h for the years after %2$@"
+          }
+        }
+      }
+    },
+    "Waiting for approval" : {
+
+    },
+    "Want a gentle nudge?" : {
+
+    },
+    "Week starts on" : {
+
+    },
+    "Welcome back!" : {
+
+    },
+    "What if I practise more?" : {
+
+    },
+    "What you made, what needs work" : {
+
+    },
+    "What's your game?" : {
+
+    },
+    "When did you start?" : {
+
+    },
+    "When you start a session, Long Game runs a Shortcut of yours that turns on your Practising Focus, and another when you finish. iOS only lets Shortcuts switch a Focus on." : {
+
+    },
+    "Where 10,000 hours can take you" : {
+
+    },
+    "White dot: a day with a photo" : {
+
+    },
+    "Year" : {
+
+    },
+    "Year of pace" : {
+
+    },
+    "Yes, let me add it" : {
+
+    },
+    "Yes, remind me" : {
+
+    },
+    "You are already playing %@." : {
+
+    },
+    "You can trim up to what you really practised." : {
+
+    },
+    "You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone." : {
+
+    },
+    "You started on %@ — that's %@. Did you practise since then?" : {
+
+    },
+    "You'll finish the game around" : {
+
+    },
+    "Your %@" : {
+
+    },
+    "Your %@ in the long game" : {
+
+    },
+    "Your %@ in the long game: %@ hours played, practised %lld days a week, most in %@, %@ of 10,000 hours" : {
+
+    },
+    "Your %@ in the long game: practised on %lld days, %lld days a week, most in %@, %lld percent of the way to 10,000 hours" : {
+
+    },
     "Your %@ of %@ will be archived. This can't be undone." : {
       "localizations" : {
         "en" : {
@@ -559,37 +1696,33 @@
         }
       }
     },
-    "Your craft" : {},
-    "Your craft is the game. Pick one, or type your own." : {},
-    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {},
-    "Your estimates" : {},
-    "Your hours are kept in your private iCloud. Close and reopen Long Game to apply the change." : {},
-    "Your hours stay on this iPhone for now. Sync and Sign in with Apple need an Apple Developer account to switch on." : {},
-    "Your last session was on %@ — that's %@. Did you practise since then?" : {},
-    "Your pace for the year" : {},
-    "Your recent pace: %@" : {},
-    "a rest-day bonus" : {},
-    "about %lld h %@ m a day" : {},
-    "about %lld m a day" : {},
-    "hour a week" : {},
-    "hours : minutes" : {},
-    "hours a week" : {},
-    "hours per week" : {},
-    "hours · %@" : {},
-    "iCloud sync" : {},
-    "of %@ this week · %lld%%" : {},
-    "of 10,000" : {},
-    "of 10,000 hours · %lld%%" : {},
-    "of 10,000 hours · 33%" : {},
-    "of practice since %@" : {},
-    "of practice this year" : {},
-    "of the way" : {},
-    "of today's %@" : {},
-    "played since %@" : {},
-    "played this year" : {},
-    "today's %@ · covered" : {},
-    "z" : {},
-    "“%@” will be your craft." : {}
+    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {
+
+    },
+    "Your estimates" : {
+
+    },
+    "Your last session was on %@ — that's %@. Did you practise since then?" : {
+
+    },
+    "Your pace for the year" : {
+
+    },
+    "Your starting score · %@ h" : {
+
+    },
+    "Your usual · %lld" : {
+
+    },
+    "your weekly target" : {
+
+    },
+    "z" : {
+
+    },
+    "Zoom in or out" : {
+
+    }
   },
   "version" : "1.0"
 }

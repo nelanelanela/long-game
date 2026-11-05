@@ -66,6 +66,8 @@ enum LGColor {
     static let moon = Color(hex: 0xC9D3EC)
     static let moonOnDark = Color(hex: 0xE6ECF8)
     static let introDot = Color(hex: 0xDDD6CA)
+    /// The iCloud symbol on the Keep your game safe card and the Welcome back illustration.
+    static let icloud = Color(hex: 0x3D8BFD)
     static let futureSky = Gradient(stops: [
         .init(color: .white, location: 0),
         .init(color: Color(hex: 0xFFF1DA), location: 0.7),

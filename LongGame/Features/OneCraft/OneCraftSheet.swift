@@ -46,6 +46,10 @@ struct OneCraftSheet: View {
         timer.clear()
         craft.archivedAt = Date()
         try? context.save()
+        // The new craft starts at zero, so the icon goes back to the start (the new craft's own stage is set later).
+        if let settings = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first {
+            AppIconManager.apply(.start, settings: settings, context: context, timerRunning: false)
+        }
         dismiss()
     }
 }

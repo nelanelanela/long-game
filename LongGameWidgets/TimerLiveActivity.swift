@@ -25,10 +25,12 @@ private func timerText(_ state: TimerActivityAttributes.ContentState) -> Text {
 
 private struct ActivitySun: View {
     let state: TimerActivityAttributes.ContentState
+    var hidden = true
     var body: some View {
         SunView(face: state.pausedElapsed == nil ? .focus : .sleepy,
                 litRays: state.litRays,
                 rayColor: LGColor.sunRaysBright)
+            .accessibilityHidden(hidden)
     }
 }
 
@@ -45,6 +47,8 @@ struct TimerLiveActivity: Widget {
                         .font(.system(size: 34, weight: .light).monospacedDigit())
                         .foregroundStyle(.white)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityValue(context.state.pausedElapsed == nil ? Text("Running") : Text("Paused"))
                 Spacer()
                 Button(intent: ToggleTimerIntent()) {
                     Image(systemName: context.state.pausedElapsed == nil ? "pause.fill" : "play.fill")
@@ -93,8 +97,12 @@ struct TimerLiveActivity: Widget {
                 timerText(context.state)
                     .font(.system(size: 13, weight: .medium).monospacedDigit())
                     .frame(maxWidth: 52)
+                    .accessibilityLabel(Text("Session timer"))
+                    .accessibilityValue(context.state.pausedElapsed == nil ? Text("Running") : Text("Paused"))
             } minimal: {
-                ActivitySun(state: context.state).frame(width: 22, height: 22)
+                ActivitySun(state: context.state, hidden: false).frame(width: 22, height: 22)
+                    .accessibilityLabel(Text("Long Game session"))
+                    .accessibilityValue(context.state.pausedElapsed == nil ? Text("Running") : Text("Paused"))
             }
         }
     }

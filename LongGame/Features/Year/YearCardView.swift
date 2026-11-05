@@ -35,7 +35,7 @@ struct YearCardView: View {
     private var evening: Bool { style == .evening }
     private var ink: Color { evening ? .white : LGColor.ink }
     private var muted: Color { evening ? .white.opacity(0.7) : LGColor.inkMuted }
-    private var label: Color { evening ? LGColor.mote : Color(hex: 0xA0712E) }
+    private var label: Color { evening ? LGColor.mote : LGColor.finishLabel }
 
     var body: some View {
         Group {
@@ -172,7 +172,7 @@ struct YearCardView: View {
         let side = (360 - 44 - 12) / 3.0
         return Group {
             if photos.indices.contains(index) {
-                Image(uiImage: photos[index]).resizable().scaledToFill()
+                Image(uiImage: photos[index]).resizable().scaledToFill().accessibilityIgnoresInvertColors()
             } else {
                 LGColor.chipFill
             }
@@ -194,7 +194,7 @@ struct YearStrip: View {
 
     var body: some View {
         let grid = YearSummary.grid(year: summary.year, levels: summary.levels, now: now, weekStart: weekStart)
-        let rest = evening ? Color(hex: 0x2A3566) : Color(hex: 0xDCE3F3)
+        let rest = evening ? Color(hex: 0x6677B5) : LGColor.rest
         Canvas { context, size in
             guard !grid.isEmpty else { return }
             let pitch = min(size.width / CGFloat(grid.count), size.height / 7)
@@ -204,7 +204,7 @@ struct YearStrip: View {
                 for (r, level) in column.enumerated() {
                     guard let level else { continue }
                     let rect = CGRect(x: left + CGFloat(c) * pitch, y: CGFloat(r) * pitch, width: cell, height: cell)
-                    context.fill(Path(roundedRect: rect, cornerRadius: 1.2), with: .color(level == .rest ? rest : LGColor.calendar(level)))
+                    context.fill(CalendarLevelShape(level: level).path(in: rect), with: .color(level == .rest ? rest : LGColor.calendar(level)))
                 }
             }
         }

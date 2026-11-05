@@ -23,7 +23,6 @@ Long Game is an iPhone app that tracks the hours a person puts into one craft on
 | UI | SwiftUI |
 | Storage | SwiftData, on device |
 | Sync | CloudKit private database, opt-in |
-| Sign in | Sign in with Apple (only needed for sync and restore) |
 | Timer surfaces | ActivityKit Live Activity + Dynamic Island |
 | Charts | Swift Charts for the Growth view; calendar grid drawn in SwiftUI |
 | Animation | SwiftUI animations + Canvas/TimelineView for the timer sun |
@@ -54,50 +53,65 @@ All sessions belong to the active craft; the timer and add-hours flows never ask
 
 ## Screens
 
-Phone screens: Welcome, three intro pages and four setup steps (the last is Your pace for the year); Home with two tabs (This week, The long game), History (Calendar, Growth), Timer and Add past hours; three sheets (One craft, Welcome back, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home.
+Phone screens: Welcome (and Welcome back when iCloud already holds a game), three intro pages and five setup steps (the last is Keep your game safe); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
 
 ### 0 · Welcome (`design/Welcome.dc.html`)
 
 - Shown on first launch only, or after Replace my craft.
-- **Get started** opens the intro pages (0a–0c). **I already have an account** runs Sign in with Apple and restores from iCloud; if nothing is found, it says so and continues to onboarding.
+- Copy: big title **Long Game**, one line "The longest game on the App Store. Played in real life." and **Get started**, which opens the intro pages (0a–0c). There is no sign-in button.
+- **Welcome back** (`design/WelcomeBack.dc.html`): on first launch, if the user's iCloud already holds a Long Game (checked quietly in the background, at most 3 s), Welcome shows instead: "Welcome back", "We found your game in iCloud." and the craft with its total ("Piano · 3,294 hours"), with **Continue my game** (restores and opens Home) and **Start a new game** (normal onboarding; the iCloud game is archived, not deleted).
 
 ### 0a–0c · How the game works (`design/Intro1.dc.html`, `Intro2.dc.html`, `Intro3.dc.html`)
 
-Three swipeable pages between Welcome and "What's your game?", to explain the game and motivate people of any age. Each page: back chevron, **Skip** (goes to step 1), an illustration with the sun and the same animated opaque sea as Home (the sea always covers the lower part of the sun), a title, a short paragraph, page dots and one button.
+Three swipeable pages between Welcome and "What's your game?", to explain the game and motivate people of any age. Each page: back chevron, **Skip** (goes to step 1), an illustration with the sun and the same animated opaque sea as Home (the sea always covers the lower part of the sun), a title, one short line, page dots and one button.
 
 | Page | Illustration | Title | Text | Button |
 | --- | --- | --- | --- | --- |
-| 0a | Sun high above the sea, a dashed gold line above it labelled "Finish line · 10,000 hours" | One game, 10,000 hours | Around 10,000 hours of focused practice is where people tend to reach mastery in their craft: musicians, makers, surgeons, writers. That's your finish line. It's the longest game on the App Store, and it's played in real life. | Next |
-| 0b | Sun just rising out of the sea, chip "Your starting score · 3,208 h" | You don't start at level one | Tell us roughly how much you've practised so far. Those hours become your starting score, whether you began last year or decades ago. It's never too late to play. | Next |
-| 0c | Sun with 8 of 12 rays lit, navy chip "+1 h today" | Play it every day | Start the sun timer when you practise, or add hours afterwards. Every hour lifts your sun a little higher, and Long Game shows you when you'll cross the finish line. | Choose your game |
+| 0a | Sun high above the sea, a dashed gold line above it labelled "Finish line · 10,000 h" | One game, 10,000 hours | Roughly where mastery begins. That's your finish line. | Next |
+| 0b | Sun just rising out of the sea, chip "Your starting score · 3,208 h" | You don't start at zero | The hours you've already practised are your starting score. | Next |
+| 0c | Sun with its rays, navy chip "+1 h today" | Play every day | Start the timer when you practise. Every hour lifts your sun. | Choose your game |
 
 Shown only during first onboarding (not after Switch to a new game, which goes straight to step 1 after Welcome).
 
-### 1 · Your craft (`design/Main.dc.html`)
+### 1 · Your game (`design/Main.dc.html`)
+
+- Title "What's your game?", no subtitle. A search field "Search or type your own", then the suggestions as tappable chips under small group labels.
 
 - Search field filters the suggestion list as you type; any typed text is accepted as a custom craft (2–40 characters).
-- Suggestions in five groups: Music; Visual arts & making; Performing arts; Words & mind; Professions (full lists in the design file). Tapping one fills the field and selects it; only one can be selected.
+- Suggestion chips in five groups: Music; Visual arts & making; Performing arts; Words & mind; Professions (the list scrolls). Tapping one selects it (navy chip) and fills the field; only one can be selected.
 - **Continue** is disabled until a craft name exists.
 
 ### 2 · When did you start? (`design/StartYear.dc.html`)
 
-- Year stepper, default = current year − 3, range 1940 to current year. Shows "N years ago".
-- Choosing the current year still goes to step 3, which then shows a single slider for this year (default 5 h/week). The user can set it to 0 if they are starting from scratch. Baseline comes from this year's estimate only.
+- Title "When did you start?", line "A rough guess is fine." A big stepper (56 pt − and + either side of the year, 64 pt), default = current year − 3, range 1940 to current year, "N years ago" under it.
+- Choosing the current year still goes to step 3, which then shows a single stepper row for this year (default 5 h/week). The user can set it to 0 if they are starting from scratch. Baseline comes from this year's estimate only.
 
-### 3 · Hours per week, each year (`design/YearlyHours.dc.html`)
+### 3 · Hours a week, each year (`design/YearlyHours.dc.html`)
 
-- One slider row per year from start year to now, 0–40 h/week, step 1, default 5.
-- Running "Estimated so far" total updates live using the baseline formula.
-- **Continue** opens step 3b (Your pace for the year).
+- Title "Hours a week, each year", no subtitle.
 
-### 3b · Your pace for the year (`design/WeeklyTarget.dc.html`)
+- One stepper row per year from start year to now (year · − · "N h" · +), 0–40 h/week, step 1, default 5. The year being changed is highlighted (#FFF3D6 behind its value).
+- After the user changes a year that has later years, a text button appears under the card: "Use N h for the years after YYYY"; it copies that value to every later year (one tap, undoable by changing them back).
+- Under the card, "Your starting score" with the live total (baseline formula).
+- **Continue** opens step 3b (Your weekly pace).
+
+### 3b · Your weekly pace (`design/WeeklyTarget.dc.html`)
 
 A weekly target for the next 12 months, counted from the day it's set (not the calendar year). The idea: a long walk is made one day's stretch at a time, so for a year the 10,000 hours step back and each week's target becomes the only distance to cover.
 
-- Last onboarding step (step dots now show 4 steps). Also opened from the target row on the **This week** tab, to change it at any time.
-- Title "Your pace for the year". Text: "A thousand-mile walk is made one day's stretch at a time. Set the 10,000 hours aside for a moment and choose how many hours a week you'll play for the next 12 months. Each week, that's the only distance to cover."
-- Big number with a slider, 1–40 h a week, step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). Under the slider: "Your recent pace: N".
-- Card: **Until** (set date + 12 months), **About** (target ÷ 7 as "1 h 43 m a day"), **In a year** ("+624 h · finish ~2036", using the target as the forecast rate for the next 12 months).
+- Onboarding step 4 of 5 (step dots show 5 steps on steps 1–5). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
+- Title "Your weekly pace". One line: "For the next 12 months, the only distance to cover."
+- Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–40 h a week, step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
+- One quiet line under the chips instead of a card: "About 1 h 43 m a day · until Nov 2027" (target ÷ 7, and the set date + 12 months). The "In a year" forecast moves to the Growth chart.
+- **Continue** opens step 3c.
+
+### 3c · Keep your game safe (`design/ICloud.dc.html`)
+
+- Step 5 of 5. Illustration: the sun over the sea with a small white circle holding a blue iCloud symbol. Title "Keep your game safe".
+- One card: iCloud icon, **Save to iCloud**, line "On all your Apple devices, and back if you get a new iPhone.", and a switch, **on** by default.
+- Under the card, 13 pt muted: "Private to your Apple Account. Only you can see it. No sign-in needed."
+- If the device has no iCloud account (`CKContainer.accountStatus` ≠ available), the switch is off and disabled and the line reads "Sign in to iCloud in the Settings app to keep a copy."
+- **Start playing** saves everything (and the iCloud choice) and opens Home on The long game (once).
 - Button **Start playing** (onboarding) saves the craft, estimates and target and opens Home on The long game tab, once. When editing, the button reads **Save** and the 12 months restart from today.
 - Data: `Settings.weeklyTargetHours`, `targetSetAt`, `targetEndsAt` (= set date + 12 months). Earlier targets are kept in a small `TargetPeriod` list (hours, start, end) so past weeks are judged against the target that applied then.
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
@@ -173,9 +187,9 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 - Segmented control Calendar | Growth.
 - Grid of the last 53 weeks, one square per day, most recent week on the right, scrolled to the end; swipe to go back.
-- Colours by daily logged hours: 0 = blue (rest); < 1 h, 1–2 h, 2–3 h, 3 h+ = yellow → deep orange. Days before onboarding use the same blue.
+- Colours **and shapes** by daily logged hours (section 20): 0 = small blue dot (rest); < 1 h = thin bar, 1–2 h = taller bar, 2–3 h = rounded square, 3 h+ = full circle, coloured yellow → deep orange. Days before onboarding use the same blue dot.
 - Tapping a day shows its total and sessions in the card below; sessions can be edited or deleted there. Each session row shows its photo (56 pt thumbnail) and note if it has them, otherwise "No note" in light grey (section 16).
-- A day with at least one photo gets a tiny white dot (4 pt) in the centre of its square. The legend keeps Rest and Less → More, and adds a second line: a square with the dot and "White dot: a day with a photo" (only once the user has at least one photo).
+- A day with at least one photo gets a tiny white dot (4 pt) in the centre of its square. The legend keeps Rest and Less → More (drawn with the shapes), and adds a second line: a square with the dot and "White dot: a day with a photo" (only once the user has at least one photo).
 - Stats: **Rhythm**, **Steady for**, **Active days** in the window. There are no streaks anywhere in the app: nothing ever "breaks".
   - **Rhythm** = the user's typical practice days per week: the median number of days with any logged time per calendar week (Monday start) over the last 8 complete weeks plus the current week. Shown as "N days/wk".
   - **Steady for** = how many consecutive weeks, counting back from the current week, had at least (Rhythm − 1) practice days. Shown as "N weeks" ("1 week"). If Rhythm is 0, show "–".
@@ -215,16 +229,16 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 - Open-eyed happy sun, "Welcome back!", and "Your last session was on <weekday, date> — that's N weeks ago. Did you practise since then?" (N = whole weeks in the gap).
 - **Yes, let me add it** opens screen 11 or 12. **No, I took a break** closes the sheet; the days stay as rest days.
 
-**Screen 11 · Under 4 weeks (gap of 7–27 days): a slider per week**
+**Screen 11 · Under 4 weeks (gap of 7–27 days): a stepper per week**
 
 - Split the gap into 7-day blocks counting back from yesterday; leftover days (fewer than 7) join the oldest block. Example: a 22-day gap = 3–10 Oct (8 days), 11–17 Oct, 18–24 Oct.
-- One row per block: date range, slider 0–40 h (step 1, default = current pace rounded), and "N days · about H h MM m a day".
+- One stepper row per block: date range with "N days · about H h MM m a day" under it, then − · "N h" · + (0–40 h, step 1, default = current pace rounded).
 - Running total "Adding N h" and the button "Add N hours" (disabled at 0).
 
 **Screen 12 · 4 weeks or more (gap of 28+ days): one average**
 
 - "N weeks have passed. Since <date>. On average, how many hours a week did you practise?"
-- One large slider 0–40 h/week (default = current pace rounded), with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
+- One big stepper 0–40 h/week, step 1 (default = current pace rounded), with quick picks "Your usual · N", 0, 5, 10, with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
 
 **How the hours are stored**
 
@@ -322,32 +336,32 @@ Once a year, the long game in one picture, to keep or share. No competition: not
 - **Sharing:** render the card with `ImageRenderer` at 1080 × 1920 (stories) or 1080 × 1080 (photos), at scale 1 from a 360-pt-wide layout × 3, and share it as a PNG through `ShareLink` (the system share sheet: Instagram Stories, Messages, Save Image, …). The image always uses light or dark exactly as chosen, regardless of the system appearance, and fixed text sizes (not Dynamic Type) so it always fits.
 - **Accessibility:** the preview is one element with a spoken summary ("Your 2026 in the long game: 624 hours played, practised 5 days a week, most in March, 3,294 of 10,000 hours"). The screen around it supports Dynamic Type and VoiceOver.
 
-### 18 · The sun giggles when tapped (`design/SunGiggle.dc.html`)
+### 18 · The sun laughs when tapped (`design/SunGiggle.dc.html`)
 
-A small secret: tapping the sun makes it squish, giggle, wiggle and wink, about one second, with a real child's laugh when the sound is on. No hint, tooltip or counter; it never changes any number.
+A small secret: tapping the sun makes it laugh like a baby. It gasps, scrunches its eyes, tips its head back and bounces in little "ha-ha-ha" hiccups, just over a second, with a real child's laugh when the sound is on. No hint, tooltip or counter; it never changes any number.
 
 - **Where:** the big sun on Home (all three tabs), the intro pages, the future-self sheet and the tip jar. On the Timer a tap only gets a soft wink (no sound, no wiggle), so a session is never disturbed. Not in widgets, the Watch, the Live Activity or the year card image.
 - **Tap target:** the whole sun, at least 44 pt.
-- **Faces:** a new **laughing** face (eyes > <, open mouth with a small pink tongue, deeper cheeks #F48FA8); reuses **surprised** (open eyes, small "o") and **wink**.
+- **Faces:** two new faces. **Gasp:** wide open eyes (r 7.5 with highlights) and a round "o" mouth. **Baby laugh:** eyes as happy upward crescents ^ ^ (6 pt stroke), a big open mouth with a pink tongue, round cheeks (r 11, #F48FA8). Reuses **happy** for the contented end.
 - **Timing:**
 
 | Time | What happens |
 | --- | --- |
 | 0.00 | Tap. Soft haptic. |
-| 0.00–0.08 s | Squash to 107% × 92%, down 6 pt, surprised face. |
-| 0.05 s | Giggle sound starts (if allowed, below). |
-| 0.08–0.70 s | Laughing face. Wiggle −8°, +7°, −5°, +3°, −1° with hops of 6 and 5 pt. Rays scale to 108% and back. Four small gold sparkles pop out and fade. Light haptics at 0.25 s and 0.45 s. |
-| 0.70–1.00 s | Spring back (response 0.35, damping 0.6) to the happy face, with a 0.2 s wink. |
+| 0.00–0.10 s | **Gasp:** stretch to 94% × 108%, up 4 pt, gasp face. |
+| 0.10 s | Laugh sound starts (if allowed, below). |
+| 0.10–0.90 s | **Belly laugh:** baby-laugh face; the sun tips back 5° and does five quick bounces of 0.16 s each (squash 106% × 94%, down 3 pt ↔ stretch 97% × 104%, up 5 pt), each a little smaller. Rays jiggle with the bounces (up to 108%). Four small gold sparkles pop out and fade. Light haptics on the first three bounces (0.12, 0.28, 0.44 s), each softer. |
+| 0.90–1.25 s | **Contented:** spring back (response 0.4, damping 0.55) to the happy face with eyes closed; one tiny 2 pt hiccup at 1.05 s; the deeper blush fades back to normal. |
 
-- **Tapping again:** a tap during a giggle restarts the animation; a new laugh only starts once the current sound has finished (never two at once). Five taps within 2 s: a bigger laugh (the longest clip) and one full spin of the rays, then a 3 s rest during which taps only get the wink.
-- **Stays in place:** at most 6 pt of movement and 8° of turn; the sun's spot on the gauge or arc doesn't change, and the sea and its mask stay in front.
+- **Tapping again:** a tap during the laugh adds two more bounces instead of restarting; a new laugh sound only starts once the current one has finished (never two at once). Five taps within 2 s: a longer belly laugh (the longest clip, eight bounces) and one full spin of the rays, then a 3 s rest during which taps only get the wink.
+- **Stays in place:** at most 6 pt of movement and 5° of tilt; the sun's spot on the gauge or arc doesn't change, and the sea and its mask stay in front.
 - **Sound:**
   - A few short recordings of a child laughing, bundled with the app (`Resources/Sounds/giggle-1.m4a`, `giggle-2.m4a`, …), each about 1 s (max 1.5 s), AAC, with a short fade-out and matched loudness. One is picked at random, never the same twice in a row.
   - Played with `AVAudioSession` category **`.ambient`** (mix with others): silent when the Ring/Silent switch is on silent, follows the ringer volume, never stops or ducks the user's music or podcast. If other audio is playing (`secondaryAudioShouldBeSilencedHint`), skip the sound.
   - Volume 0.7 of the system level. Preloaded once with `AVAudioPlayer` so it starts instantly; no audio work at all if the setting is off.
   - **Settings:** a switch **Giggle sound** (on by default) under a small "Sounds" group.
 - **Haptics:** as in the timing table, only when system haptics are on.
-- **Reduce Motion:** no squish, wiggle, hop or spin; the laughing face shows for 0.8 s, with the haptic and sound as normal.
+- **Reduce Motion:** no gasp, bounce, tilt or spin; the baby-laugh face shows for 0.8 s, with the haptic and sound as normal.
 - **VoiceOver:** the sun keeps its label and gets one custom action, "Tickle the sun", which plays the face change, haptic and sound.
 
 ### 19 · Scrub the forecast — full-screen Growth chart (`design/GrowthScrub.dc.html`)
@@ -370,6 +384,52 @@ The Growth chart opens full screen; drag a finger along the line, from the first
 - **Forecast:** uses the forecast algorithm; if "What if I practise more?" is above 0, the full-screen chart uses that value too (not saved).
 - **VoiceOver:** the chart has an Audio Graph (`accessibilityChartDescriptor`) and an adjustable action: swipe up/down steps through Start → each milestone → Today → Finish line, reading the same text as the headline. The close button is "Close chart".
 - **Build notes:** Swift Charts with `chartXSelection(value:)` (iOS 17) for the scrub value, snapping the dot to the curve; milestones and dates come from `Logic/` (pure functions, tested). Haptics through `sensoryFeedback(.impact(weight: .light), trigger:)` keyed on the milestone index.
+
+### 20 · Accessibility beyond the basics (`design/Accessibility.dc.html`)
+
+Colour is never the only cue, and the sun is always described in words.
+
+**Calendar shapes (for everyone, always on)**
+
+| Level | Hours that day | Shape (in a 14 pt cell) | Colour |
+| --- | --- | --- | --- |
+| Rest | 0 | small dot, Ø 4 pt | #C5D0EC |
+| 1 | < 1 h | thin bar 12 × 4 pt, fully rounded | #FFE48C |
+| 2 | 1–2 h | bar 12 × 8 pt, radius 2.5 | #FFC53D |
+| 3 | 2–3 h | rounded square 12 × 12 pt, radius 3.5 | #FF9A3C |
+| 4 | 3 h + | circle Ø 13 pt | #EE6420 |
+
+- Shapes are centred in the cell; the photo dot sits in the centre on levels 1–4 (white, Ø 3–4 pt). The selected day keeps its navy ring around the cell.
+- The same shapes are used in the legend, the year card's calendar strip and anywhere else the calendar levels appear. With Increase Contrast, level 1 and the rest dot get a 1 pt darker outline.
+
+**VoiceOver: the sun in words**
+
+- Every sun gauge is one accessibility element whose label starts with where the sun is, in words, followed by the numbers. Values update when they change (`accessibilityValue`), without moving focus.
+- Words for a fraction p of the way: 0 → "on the horizon"; < 0.15 → "just rising"; then the nearest of "a quarter" (0.25), "a third" (0.33), "halfway" (0.5), "two thirds" (0.67), "three quarters" (0.75); ≥ 0.9 → "almost there"; ≥ 1 → "there". Add "just over" / "just under" when p is within 0.05 of a step but not on it (≤ 0.01 counts as on it).
+- Texts (one formatted, pluralised String Catalog string each):
+  - This week: "The sun is just over halfway to your weekly target. 6.5 of 12 hours, 5.5 to go, 3 days left." (Above target: "The sun is above your weekly target. 13.5 of 12 hours.") Adjustable: swipe up/down moves through the days of the week, reading "Monday, 1 hour 10".
+  - The long game: "The sun is a third of the way to the finish line. 3,294 of 10,000 hours. At your pace, around November 2035."
+  - Today: "The sun is almost two thirds of the way to today's resting place. 1 hour 5 of 1 hour 45, 40 minutes to go." Rest day: "Rest day. The sun is resting on the horizon."
+  - Timer: "Session 25 minutes. 5 of 12 rays lit, next ray in 2 minutes 42. Total 3,294.7 hours." When a ray lights during a session and VoiceOver is running, post a low-priority announcement "Ray 6 lit" (queued, never interrupting speech).
+  - Calendar day: "Thursday 22 October. 2 hours, a good day. Has a photo." Level words: rest day / a little / some / a good day / a full day.
+  - Growth: as in section 19.
+- **Other non-colour cues:** past vs forecast = solid vs dashed line plus "Played" / "Forecast" text; "Target reached", "covered" and milestones always say so in words; the stretch arc's travelled part is thicker (3 pt) than the dotted track (2 pt).
+- **Contrast and settings:** text at 4.5:1 or better; test with VoiceOver, Voice Control (every button has a visible or `accessibilityInputLabels` name), Dynamic Type up to AX5, Bold Text, Differentiate Without Colour, Increase Contrast, Reduce Motion and a greyscale filter.
+
+### Steppers for choosing hours (`design/Steppers.dc.html`)
+
+Every place where the user picks a number of hours uses a stepper, never a slider: the yearly rows (step 3, and the current-year version), Your pace for the year (3b) and both Catch-up screens (11, 12). The "What if I practise more?" slider on Growth stays a slider: it's for exploring, not choosing.
+
+- **Row stepper:** label (and optional sub-line) on the left, then a 36 pt round − button (#F3F0EA, navy glyph), the value (17 pt semibold, tabular, min 58 pt wide, centred), and a 36 pt + button. Each button has at least a 44 pt touch area.
+- **Big stepper:** 56 pt round − and + either side of the big number (64 pt bold), unit under the number.
+- **Tap:** one step (1 h; 0.5 h for the weekly target), with a selection haptic.
+- **Hold:** after 0.4 s repeats 6 steps a second, after 1.5 s 12 a second, until released. A rigid haptic when a limit is reached.
+- **At a limit:** that button turns pale (#F6F4EF, glyph #C9C3B8) and does nothing, but stays focusable so VoiceOver can say "Minimum" / "Maximum".
+- **Tap the number:** opens a small sheet with the label, the value with a caret, "0 to 40", **Done** and the number pad (decimal pad for the weekly target). Out-of-range values snap to the nearest limit; empty means unchanged.
+- **Quick picks** (Catch-up average only, never on the weekly pace): chips that set the value in one tap; the chip matching the current value is navy.
+- **VoiceOver:** each stepper is one adjustable element ("2023, 10 hours a week"); swipe up/down steps; the two buttons are hidden from VoiceOver. Voice Control: "Tap plus", "Tap minus" work on the buttons.
+- **Dynamic Type:** the value and labels grow; at accessibility sizes the row wraps so the label sits above the − value + group.
+- **Liquid Glass (iOS 26+):** the round buttons use `.glass` (section on Liquid Glass); older iOS keeps the flat fills above.
 
 ## Timer (`design/Timer.dc.html`)
 
@@ -403,10 +463,9 @@ The timer is timestamp-based, survives the app being closed, and turns each sess
 
 ### Today's stretch on the Timer (`design/TodayStretch.dc.html`)
 
-- A slim strip under the Timer header (white 8% background, radius 18): a small version of today's arc (about 84 × 44 pt) filling live, then "Today's stretch" (12 pt, 65% white) and "1 h 05 of 1 h 45" (15 pt semibold, white).
-- When the stretch is covered during the session, the strip turns gold ("1 h 45 · covered" in #FFE08A, arc full with the sun at the end), the sun winks once, and a quiet gold line "Today's stretch covered" (13 pt semibold) appears under "Next ray in". The session keeps running.
+- **No banner or strip on the session screen.** The Timer shows only the sun, the total, the session clock and "Next ray in".
+- When today's stretch is covered during the session, the sun winks once and a quiet gold line "Today's stretch covered" (13 pt semibold, #FFE08A) appears under "Next ray in". The session keeps running.
 - **Never interrupt a session:** no pop-up, sheet, alert, sound or extra haptic for the stretch. The ray haptics stay as they are.
-- On a rest day or when the week is already covered, the strip is hidden.
 - The Finish sheet shows one small line above the buttons when this session covered today's stretch: "Today's stretch covered."
 - Live Activity, widgets and the Watch stay as they are for now.
 
@@ -464,14 +523,15 @@ Rates never go below 0. Each month adds rate × 52 ÷ 12 hours; interpolate with
 
 ## Accounts, sync and notifications
 
-No account is needed to use the app; signing in only adds iCloud backup and multi-device sync.
+No account and no sign-in: the app uses the iCloud account already on the device. iCloud only adds backup and multi-device sync.
 
 **Accounts and sync**
 
-- Sign in with Apple from Welcome ("I already have an account") or Settings.
+- **Save to iCloud** switch in onboarding step 3c and in Settings (on by default when an iCloud account is available). There is no Sign in with Apple. Turning it off keeps the data on the device and stops syncing; the iCloud copy stays until the user chooses "Delete iCloud copy" in Settings.
+- Restore: on a new or reset device with the same Apple Account, Welcome back offers to continue the game (section 0).
 - CloudKit private database mirrors all entities. Conflicts: last edit wins per session; sessions are never merged.
 - A running timer is device-local; the saved session syncs.
-- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
+- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
 **Notifications** (all off by default; asked after the first saved session)
 
@@ -498,7 +558,7 @@ WidgetKit, reading the same data through a shared App Group. No animation (not a
 | Lock Screen, inline | "☀ 6.5 of 12 h". |
 
 - Two widgets: **The sun** (small, with Edit Widget → This week / The long game) and **This week and the long game** (medium, and the three Lock Screen sizes). The medium widget's long-game bar opens the long game tab; everything else opens This week.
-- Data: the app mirrors what is *stored* (craft, estimates, every session's start and length, week start, weekly target) into `widget-data.json` in the App Group `group.com.wehavesun.LongGame`, whenever any of it changes. The widgets compute totals, this week and today from that with the same Logic code; nothing derived is stored.
+- Data: the app mirrors what is *stored* (craft, estimates, every session's start and length, week start, weekly target) into `widget-data.json` in the App Group `group.com.wehavesun.LongGame.shared`, whenever any of it changes. The widgets compute totals, this week and today from that with the same Logic code; nothing derived is stored.
 - Tapping opens Home on the matching tab (deep link `longgame://home/week` or `longgame://home/longGame`).
 - Timeline: reload when a session is saved, edited or deleted, at midnight, and at the start of each week. While a timer runs, widgets show the saved total; the Live Activity shows the live time.
 
@@ -535,6 +595,33 @@ iPhone Duo (iOS 27) has a 5.4-inch outer display (portrait, shorter than other i
 - One running session for the whole app: if the user opens a second window, both show the same timer.
 - Widgets appear in the open Home Screen's Today View, so the small and medium widgets must look right at the larger widget sizes there.
 - Test in the Xcode Simulator with the iPhone Duo device as soon as Xcode offers it (Apple says device support is coming); until then, test with resizable windows on iPad Simulator and the iPhone SE (short screen).
+
+## App icon (the "10,000 ring")
+
+The icon grows with the user. It changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours using iOS alternate app icons.
+
+**Six icons** (asset sets `AppIcon`, `AppIcon-1000`, `-2500`, `-5000`, `-7500`, `-10000`; each has Any, Dark and Tinted):
+
+| Stage | Ring filled | Number | Sun |
+| --- | --- | --- | --- |
+| `.start` (primary) | none, track only | 10,000 | 12 o'clock, happy |
+| `.k1` | 10% | 1,000 | tip of the arc, happy |
+| `.k2_5` | 25% | 2,500 | tip, happy |
+| `.k5` | 50% | 5,000 | tip, happy |
+| `.k7_5` | 75% | 7,500 | tip, happy |
+| `.k10` | 100% | 10,000 | 12 o'clock, celebrate face, 1.3×, halo r 132 |
+
+**Geometry** (1024 × 1024, square, no transparency): ink #16244A background; track = circle at (512, 512), r 360, stroke 56, white 14%; arc = same circle in #FFD15C, round caps, from 12 o'clock clockwise to −90° + 360° × hours ÷ 10,000; sun = SunView geometry at 1.1× centred on the arc's end, on an ink halo r 112; number = SF Pro Bold 176, tracking −6, white, centred, as outlines. **Dark** = same artwork. **Tinted** = black background, white arc, sun and number, track white 20%.
+
+**Generated** by `swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets` (one function, `drawIcon(hours:look:)`). `DesignSystem/IconStageView.swift` draws the same stages with the real SunView for Xcode previews (normal, dark, tinted). The alternate sets are listed in `project.yml` (`ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`).
+
+**When it changes** (`Logic/IconStage.swift`, `App/AppIconManager.swift`):
+- `IconStage.for(totalHours:)` gives the stage; below 1,000 h it is `.start`.
+- Only after the user taps the main button ("Keep going") on a 1,000 h+ celebration, so the system "You have changed the icon" alert never covers it. The 100 and 500 hour celebrations do nothing. A jump over several milestones goes straight to the stage for the whole total: one change, one alert.
+- `setAlternateIconName` is called only when the app is active, `supportsAlternateIcons` is true, no session is running, and the wanted icon differs from `alternateIconName`. `AppSettings.appliedIconStageRaw` records the stage.
+- When the total goes down (deleted sessions, lowered estimates) the icon is lowered quietly, once, on the next launch or return to the foreground (and whenever Home appears). Replace my craft sets the plain icon at once. A higher stage never jumps ahead of a celebration that is due.
+- New users already past 1,000 h get their stage once, when Home first appears after onboarding.
+- Settings → **App icon grows with you** (on by default, below the reminders): "Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours". Off sets the primary icon; on sets the current stage.
 
 ## Visual system
 
@@ -583,7 +670,6 @@ On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–
 | Secondary button (Add past hours, Discard, Keep playing, …) | Clear glass capsule, navy text, 48 pt high | `.buttonStyle(.glass)`, `.buttonBorderShape(.capsule)` |
 | Timer: Pause / Resume | Clear glass capsule on the night sky, white text | `.buttonStyle(.glass)` |
 | Timer: Finish | Bright glass capsule, navy text | `.buttonStyle(.glassProminent)` + `.tint(.white)` |
-| Timer: today's stretch strip | Clear glass, radius 22 | `.glassEffect(.regular, in: .rect(cornerRadius: 22))` |
 
 - **Glass only on controls.** The sun, sea, numbers, cards, the calendar, charts and sheet contents stay flat. No glass on glass.
 - **Something to refract:** Home and History get a soft warm wash at the top of the background (#FFF0D6 fading into #FAF8F4 by about 40% of the screen). The header and tabs float as a glass layer and the content scrolls under them.
@@ -595,9 +681,9 @@ On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–
 
 **Accessibility**
 
-- Dynamic Type up to XXXL; big numbers scale down before wrapping.
+- Dynamic Type up to AX5 (the largest accessibility size); big numbers scale down before wrapping. The three Home tab names and the calendar's weekday and month labels stop growing at XL (like system tab bars) so they stay whole.
 - VoiceOver labels on every icon button and chart (the Growth chart reads its headline and range; calendar days read "Thursday 22 October, 2 hours").
-- Calendar levels also differ in lightness, not only hue; rest days are labelled.
+- Calendar levels differ by shape and lightness, not only hue (section 20); rest days are labelled.
 - Reduce Motion honoured everywhere (see Timer).
 - Text contrast at least 4.5:1 on all backgrounds.
 

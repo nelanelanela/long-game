@@ -232,7 +232,7 @@ private struct ZoomablePhoto: View {
         GeometryReader { geo in
             Group {
                 if let image {
-                    Image(uiImage: image).resizable().scaledToFit()
+                    Image(uiImage: image).resizable().scaledToFit().accessibilityIgnoresInvertColors()
                 } else {
                     ProgressView().tint(.white)
                 }
@@ -264,15 +264,18 @@ private struct ZoomablePhoto: View {
                         }
                     }
             )
-            .onTapGesture(count: 2) {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    let target: CGFloat = committedZoom > 1 ? 1 : 2.5
-                    zoom = target; committedZoom = target
-                    if target == 1 { pan = .zero; committedPan = .zero }
-                }
-            }
+            .onTapGesture(count: 2) { toggleZoom() }
+            .accessibilityAction(named: Text("Zoom in or out")) { toggleZoom() }
         }
         .task(id: data.count) { image = await Self.decode(data) }
+    }
+
+    private func toggleZoom() {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            let target: CGFloat = committedZoom > 1 ? 1 : 2.5
+            zoom = target; committedZoom = target
+            if target == 1 { pan = .zero; committedPan = .zero }
+        }
     }
 
     private static func decode(_ data: Data) async -> UIImage? {

@@ -60,3 +60,25 @@ extension View {
             .minimumScaleFactor(0.4)
     }
 }
+
+/// A symbol that grows with Dynamic Type (chevrons and other icons that sit next to text). Icons inside a fixed-size
+/// circle or button keep their fixed size.
+private struct LGIconModifier: ViewModifier {
+    let weight: Font.Weight
+    @ScaledMetric private var size: CGFloat
+
+    init(size: CGFloat, weight: Font.Weight, relativeTo: Font.TextStyle) {
+        self.weight = weight
+        _size = ScaledMetric(wrappedValue: size, relativeTo: relativeTo)
+    }
+
+    func body(content: Content) -> some View {
+        content.font(.system(size: size, weight: weight))
+    }
+}
+
+extension View {
+    func lgIcon(_ size: CGFloat, weight: Font.Weight = .semibold, relativeTo: Font.TextStyle = .footnote) -> some View {
+        modifier(LGIconModifier(size: size, weight: weight, relativeTo: relativeTo))
+    }
+}

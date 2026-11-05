@@ -29,6 +29,8 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var celebrating: Int?
+    /// A 1,000+ hour celebration is due or showing: the icon waits until its main button is tapped.
+    @State private var iconHeld = false
     @State private var offerSupport = false
     @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
@@ -136,6 +138,7 @@ struct HomeView: View {
             if timer.finishRequested { openTimer(total: s.total) }
             showFutureSelfOnce()
             showTargetSheetOnce()
+            syncIconQuietly(total: s.total)
             checkMilestones(total: s.total)
             refreshNotifications()
             scheduleMilestoneNotification()
@@ -143,7 +146,11 @@ struct HomeView: View {
         }
         .onChange(of: timer.state) { _, _ in scheduleMilestoneNotification() }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { checkCatchUp(summary: summary(now: Date())) }
+            if phase == .active {
+                let now = summary(now: Date())
+                syncIconQuietly(total: now.total)
+                checkCatchUp(summary: now)
+            }
         }
         .sheet(item: $catchUpGap) { gap in
             CatchUpSheet(craft: craft, gap: gap, pace: totalPace, onFinish: catchUpFinished)
@@ -157,7 +164,8 @@ struct HomeView: View {
         .overlay {
             if let hours = celebrating {
                 MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
-                                     onSupport: { celebrating = nil; sheet = .support }) { celebrating = nil }
+                                     onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
+                                     onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)
             }
         }
@@ -182,7 +190,7 @@ struct HomeView: View {
             case .target(let first):
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
                                  initial: first ? nil : target?.hoursPerWeek,
-                                 recentPace: s.pace, summary: s, onSave: saveTarget)
+                                 recentPace: s.pace, onSave: saveTarget)
             }
             }
             .lgSheetCard()
@@ -440,7 +448,7 @@ struct HomeView: View {
     /// Under the day bars: this week against the target; opens "Your pace for the year" to change it.
     private func targetRow(_ s: ProgressSummary, now: Date) -> some View {
         NavigationLink {
-            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, recentPace: s.pace, summary: s, onSave: saveTarget)
+            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, recentPace: s.pace, onSave: saveTarget)
         } label: {
             TargetRow(target: target, hoursThisWeek: s.thisWeek, weekStart: weekStart, now: now)
         }
@@ -603,11 +611,37 @@ struct HomeView: View {
         guard let top = crossed.max() else { return }
         settings.milestonesSeen.append(contentsOf: crossed)
         try? context.save()
+        if top >= IconStage.k1.milestoneHours { iconHeld = true }
         Task {
             // let a saved session's count-up finish first
             try? await Task.sleep(for: .seconds(1.6))
             offerSupport = shouldOfferSupport(settings)
             celebrating = top
+        }
+    }
+
+    /// The celebration's main button: close it, then (only for 1,000 hours and up) let the icon grow. One change,
+    /// straight to the stage for the whole total, even if a big save jumped over several milestones.
+    private func celebrationDone(hours: Int) {
+        celebrating = nil
+        iconHeld = false
+        guard let settings = settingsRows.first else { return }
+        let total = summary(now: Date()).total
+        if let stage = IconPlan.afterCelebration(hours: hours, totalHours: total, growsWithYou: settings.iconGrows) {
+            AppIconManager.apply(stage, settings: settings, context: context, timerRunning: timer.isActive)
+        }
+    }
+
+    /// On launch, on return to the foreground and when Home first appears: set the right icon once, quietly.
+    /// A lower total (Replace my craft, deleted sessions, lower estimates) lowers the icon here; never during a session.
+    private func syncIconQuietly(total: Double) {
+        guard let settings = settingsRows.first, !timer.isActive else { return }
+        let due = !Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
+            .filter { $0 >= IconStage.k1.milestoneHours }.isEmpty
+        if let stage = IconPlan.quietStage(totalHours: total, growsWithYou: settings.iconGrows,
+                                           applied: settings.appliedIconStage,
+                                           celebrationPending: due || iconHeld || celebrating != nil) {
+            AppIconManager.apply(stage, settings: settings, context: context, timerRunning: timer.isActive)
         }
     }
 

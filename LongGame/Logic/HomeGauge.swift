@@ -85,8 +85,9 @@ struct HomeGauge: Equatable, Sendable {
     var ticks: [GaugeTick]
     /// The navy pill beside the sun: "6.5 h", "3,294 h".
     var pill: String
-    /// Read out by VoiceOver for the whole hero.
-    var description: String
+    /// Read out by VoiceOver for the whole hero: the label leads with the sun's place in words, the value has the numbers.
+    var spoken: SpokenGauge
+    var description: String { spoken.text }
 
     /// 0...1: how high the sun is.
     var fraction: Double { maximum > 0 ? GaugeGeometry.clamped(value / maximum) : 0 }
@@ -94,31 +95,30 @@ struct HomeGauge: Equatable, Sendable {
     var reachedTop: Bool { maximum > 0 && value >= maximum }
 
     /// This week: 0 → the weekly target, ticks at 0, half and the target.
-    static func week(hours: Double, target: Double) -> HomeGauge {
+    static func week(hours: Double, target: Double, daysLeft: Int = 0) -> HomeGauge {
         let target = max(0.5, target)
         let gauge = HomeGauge(
             tab: .week, value: max(0, hours), maximum: target,
             ticks: [GaugeTick(fraction: 0, label: DurationFormat.hours(0)),
                     GaugeTick(fraction: 0.5, label: DurationFormat.hours(target / 2)),
                     GaugeTick(fraction: 1, label: DurationFormat.hours(target))],
-            pill: DurationFormat.hours(max(0, hours)), description: "")
-        return gauge.describing("This week", value: WeeklyTarget.number(max(0, hours)), of: WeeklyTarget.number(target))
+            pill: DurationFormat.hours(max(0, hours)), spoken: SunSpeech.week(hours: hours, target: target, daysLeft: daysLeft))
+        return gauge
     }
 
     /// The long game: 0 → 10,000 h, ticks every 2,500.
-    static func longGame(total: Double) -> HomeGauge {
+    static func longGame(total: Double, pace: String? = nil) -> HomeGauge {
         let whole = Totals.wholeHours(total: total)
         let gauge = HomeGauge(
             tab: .longGame, value: max(0, total), maximum: Totals.goalHours,
             ticks: [0, 2_500, 5_000, 7_500, 10_000].map { GaugeTick(fraction: $0 / Totals.goalHours, label: thousands($0)) },
-            pill: "\(DurationFormat.grouped(whole)) h", description: "")
-        return gauge.describing("The long game", value: DurationFormat.grouped(whole), of: DurationFormat.grouped(Int(Totals.goalHours)))
+            pill: "\(DurationFormat.grouped(whole)) h", spoken: SunSpeech.longGame(total: total, pace: pace))
+        return gauge
     }
 
     /// Today: the sun on an arc, no scale. `value`/`maximum` are seconds-free shares so `fraction` is the arc position.
     static func today(_ state: StretchState) -> HomeGauge {
-        HomeGauge(tab: .today, value: state.fraction, maximum: 1, ticks: [], pill: "",
-                  description: StretchText.description(state))
+        HomeGauge(tab: .today, value: state.fraction, maximum: 1, ticks: [], pill: "", spoken: SunSpeech.today(state))
     }
 
     /// "0", "2.5k", "5k", "10k"
@@ -126,14 +126,6 @@ struct HomeGauge: Equatable, Sendable {
         guard hours > 0 else { return "0" }
         let k = hours / 1_000
         return (k == k.rounded() ? String(Int(k)) : String(format: "%.1f", k)) + "k"
-    }
-
-    private func describing(_ name: String, value shown: String, of max: String) -> HomeGauge {
-        var copy = self
-        copy.description = reachedTop
-            ? "\(name): the sun has reached the top, \(shown) of \(max) hours"
-            : "\(name): the sun is \(Int((fraction * 100).rounded()))% of the way up, \(shown) of \(max) hours"
-        return copy
     }
 }
 
