@@ -199,7 +199,12 @@ struct SunriseCanvas: View {
 /// false (Home is not on screen) or Reduce Motion is on.
 struct SunriseHero: View {
     var layout: SunriseLayout
+    /// What VoiceOver reads first: the sun's place in words.
     var label: String
+    /// Then the numbers. Changes are announced without moving focus.
+    var value = ""
+    /// When set (This week), swiping up or down on the sun reads one day of the week at a time.
+    var dayReadings: [String] = []
     var isRunning = true
     /// The future-self sheet: when it opened, so the sun can rise into place.
     var riseStart: Date?
@@ -209,6 +214,7 @@ struct SunriseHero: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.giggleSoundOn) private var soundOn
     @State private var giggle = GiggleController()
+    @State private var dayIndex: Int?
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !isRunning || reduceMotion)) { timeline in
@@ -216,9 +222,20 @@ struct SunriseHero: View {
             SunriseCanvas(layout: layout, frame: current, giggleRun: giggle.run)
                 .overlay { if giggles { tapTarget(frame: current) } }
         }
+        // A tab change must never cross-fade the picture (sun ghosting through a see-through sea). The sun's glide
+        // comes from the parent re-placing it every frame; the sea has nothing to animate and stays put.
+        .transaction { $0.animation = nil }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
+        .accessibilityValue(dayIndex.flatMap { dayReadings.indices.contains($0) ? dayReadings[$0] : nil } ?? value)
         .accessibilityAddTraits(.isImage)
+        .lgAdjustable(!dayReadings.isEmpty) { direction in
+            switch direction {
+            case .increment: dayIndex = min((dayIndex ?? -1) + 1, dayReadings.count - 1)
+            case .decrement: dayIndex = max((dayIndex ?? dayReadings.count) - 1, 0)
+            @unknown default: break
+            }
+        }
         .accessibilityAction(named: Text("Tickle the sun")) { if giggles { tickle() } }
         .task(id: soundOn) { if giggles { giggle.prepare(soundOn: soundOn) } }
     }
@@ -252,10 +269,11 @@ struct SunriseHero: View {
 
 // MARK: Previews (frozen, so every phase can be inspected)
 
-#Preview("Giggle · every frame") {
+#Preview("Giggle · every phase") {
     // The sequence at its key moments, frozen. The sea stays in front at every frame.
-    let moments: [(String, Double)] = [("0 tap", 0), ("0.04 squish", 0.04), ("0.08", 0.08), ("0.14", 0.14), ("0.26", 0.26),
-                                       ("0.38", 0.38), ("0.50", 0.50), ("0.62", 0.62), ("0.72 wink", 0.74), ("0.90", 0.90)]
+    let moments: [(String, Double)] = [("0 tap", 0), ("0.05 gasp", 0.05), ("0.10", 0.10), ("0.18 squash", 0.18), ("0.26 stretch", 0.26),
+                                       ("0.42 squash", 0.42), ("0.58", 0.58), ("0.74", 0.74), ("0.90 contented", 0.90),
+                                       ("1.05 hiccup", 1.05), ("1.15", 1.15), ("1.24", 1.24)]
     ScrollView {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 170))], spacing: 8) {
             ForEach(moments, id: \.0) { name, t in
@@ -274,7 +292,7 @@ struct SunriseHero: View {
 
 #Preview("Giggle · big laugh and Reduce Motion") {
     HStack {
-        ForEach([(GiggleKind.big, 0.6, false), (.big, 1.1, false), (.small, 0.4, true), (.wink, 0.2, false)], id: \.1) { kind, t, reduce in
+        ForEach([(GiggleKind.big, 0.6, false), (.big, 1.5, false), (.small, 0.4, true), (.wink, 0.2, false)], id: \.1) { kind, t, reduce in
             SunriseCanvas(layout: .intro(page: 1), frame: .frozen(phase: 6),
                           gigglePose: GiggleMotion.pose(at: t, kind: kind, reduceMotion: reduce) ?? .rest)
                 .scaleEffect(0.3, anchor: .top).frame(width: 100, height: 100)
@@ -301,5 +319,13 @@ struct SunriseHero: View {
             SunriseCanvas(layout: .futureSelf, frame: .frozen(phase: 9, rise: rise))
                 .background(LinearGradient(gradient: LGColor.futureSky, startPoint: .top, endPoint: .bottom))
         }
+    }
+}
+
+extension View {
+    /// Adds an adjustable action (swipe up or down) only when `enabled`, so other elements are not announced as adjustable.
+    @ViewBuilder
+    func lgAdjustable(_ enabled: Bool, _ action: @escaping (AccessibilityAdjustmentDirection) -> Void) -> some View {
+        if enabled { accessibilityAdjustableAction(action) } else { self }
     }
 }

@@ -26,8 +26,8 @@ struct SystemGiggleAudioSession: GiggleAudioSession {
 final class GiggleSoundPlayer {
     static let shared = GiggleSoundPlayer()
     nonisolated static let volume: Float = 0.7
-    /// The sound starts a hair after the squish (0.05 s in the spec).
-    static let startDelay: TimeInterval = 0.05
+    /// The laugh sound starts after the gasp (0.10 s in the spec).
+    nonisolated static let startDelay: TimeInterval = 0.10
 
     private let session: GiggleAudioSession
     private let loader: () -> [AVAudioPlayer]

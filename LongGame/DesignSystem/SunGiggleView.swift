@@ -9,12 +9,19 @@ struct GiggleRun: Equatable, Sendable {
     var kind: GiggleKind
     var start: Date
     var reduceMotion: Bool
+    /// Bounces added by taps during the laugh.
+    var extraBounces = 0
+    /// Goes up each time a tap extends the laugh, so the redrawing carries on; `id` stays, so haptics don't repeat.
+    var revision = 0
 
-    var duration: TimeInterval { GiggleMotion.duration(of: kind, reduceMotion: reduceMotion) }
+    var token: Int { id * 100 + revision }
+    var duration: TimeInterval { GiggleMotion.duration(of: kind, reduceMotion: reduceMotion, extraBounces: extraBounces) }
     var end: Date { start.addingTimeInterval(duration) }
+    /// When the bouncing stops; a tap before this adds bounces, a tap after it starts a new laugh.
+    var laughEnd: Date { start.addingTimeInterval(GiggleMotion.laughEnd(of: kind, extraBounces: extraBounces)) }
 
     func pose(at date: Date) -> GigglePose? {
-        GiggleMotion.pose(at: date.timeIntervalSince(start), kind: kind, reduceMotion: reduceMotion)
+        GiggleMotion.pose(at: date.timeIntervalSince(start), kind: kind, reduceMotion: reduceMotion, extraBounces: extraBounces)
     }
 }
 
@@ -60,7 +67,18 @@ final class GiggleController {
         switch response.action {
         case .ignore: return
         case .wink: start(.wink, at: now, reduceMotion: reduceMotion)
-        case .giggle: start(.small, at: now, reduceMotion: reduceMotion)
+        case .giggle:
+            if var current = run, current.kind == .small, !current.reduceMotion, !reduceMotion, now < current.laughEnd,
+               current.extraBounces == 0 {
+                // Still laughing: two more bounces instead of starting over.
+                current.extraBounces = min(GiggleMotion.extraPerTap, GiggleMotion.maxBounces - GiggleMotion.smallBounces)
+                current.revision += 1
+                run = current
+            } else if let current = run, current.kind == .small, !current.reduceMotion, !reduceMotion, now < current.laughEnd {
+                break   // already at the most bounces
+            } else {
+                start(.small, at: now, reduceMotion: reduceMotion)
+            }
         case .bigLaugh: start(.big, at: now, reduceMotion: reduceMotion)
         }
         if response.playsSound, let length = player.play(big: response.action == .bigLaugh, enabled: soundOn) {
@@ -91,21 +109,38 @@ extension EnvironmentValues {
 // MARK: The sun with a giggle
 
 /// The sun drawn through a running giggle: redrawn only while it lasts, with the three haptics.
+/// It uses the built-in animation schedule, switched on by each new tap and switched off when the giggle ends,
+/// because a custom schedule is not reliably restarted when a second tap replaces the first giggle.
 struct GigglingSun: View {
     var run: GiggleRun?
     var content: (GigglePose) -> SunView
+    /// The token of the last giggle that has finished, so its redrawing can stop.
+    @State private var finishedToken = 0
+
+    private var isPaused: Bool {
+        guard let run else { return true }
+        return run.token == finishedToken
+    }
 
     var body: some View {
-        TimelineView(GiggleSchedule(run: run)) { timeline in
+        TimelineView(.animation(paused: isPaused)) { timeline in
             let pose = run?.pose(at: timeline.date) ?? .rest
             content(pose)
                 .sensoryFeedback(trigger: (run?.id ?? 0) * 10 + pose.hapticStep) { _, key in
                     switch key % 10 {
                     case 1: .impact(flexibility: .soft)
-                    case 2, 3: .impact(weight: .light)
+                    case 2: .impact(weight: .light, intensity: 1.0)
+                    case 3: .impact(weight: .light, intensity: 0.7)
+                    case 4: .impact(weight: .light, intensity: 0.45)
                     default: nil
                     }
                 }
+        }
+        .task(id: run?.token) {
+            guard let run else { return }
+            let wait = run.end.timeIntervalSinceNow + 0.05
+            if wait > 0 { try? await Task.sleep(for: .seconds(wait)) }
+            if !Task.isCancelled { finishedToken = run.token }
         }
     }
 }

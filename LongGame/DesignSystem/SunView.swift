@@ -2,7 +2,7 @@ import SwiftUI
 
 enum SunFace: Equatable, Sendable {
     case happy, focus, wink, sleepy, celebrate
-    /// Only during a giggle (spec section 18): open eyes and a small "o", then eyes > < and an open laughing mouth.
+    /// Only during a giggle (spec section 18): the gasp (wide eyes, round "o"), then the baby laugh (^ ^ eyes, big open mouth).
     case surprised, laughing
 }
 
@@ -62,6 +62,7 @@ struct SunView: View {
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .aspectRatio(1, contentMode: .fit)
+        .accessibilityIgnoresInvertColors()
         .accessibilityHidden(true)
     }
 
@@ -111,26 +112,31 @@ struct SunView: View {
             EyeArc(x: 92, y: 116, bend: 6).stroke(ink, style: line).opacity(shown == .focus || shown == .wink ? 1 : 0)
             EyeArc(x: 94, y: 118, bend: 3, width: 12).stroke(ink, style: line).opacity(shown == .sleepy ? 1 : 0)
             BigSmile().fill(ink).opacity(shown == .celebrate ? 1 : 0)
-            // surprised: wide eyes and a small "o"
-            OpenEye(cx: 84).opacity(shown == .surprised ? 1 : 0)
-            OpenEye(cx: 116).opacity(shown == .surprised ? 1 : 0)
-            Ellipse().fill(ink).frame(width: 12, height: 14).position(x: 100, y: 118).opacity(shown == .surprised ? 1 : 0)
-            // laughing: eyes > <, deeper cheeks, an open mouth with a small pink tongue
+            // gasp: wide eyes with highlights and a round "o"
+            OpenEye(cx: 84, size: 15).opacity(shown == .surprised ? 1 : 0)
+            OpenEye(cx: 116, size: 15).opacity(shown == .surprised ? 1 : 0)
+            Circle().fill(ink).frame(width: 14, height: 14).position(x: 100, y: 120).opacity(shown == .surprised ? 1 : 0)
+            // baby laugh: happy crescent eyes ^ ^, a big open mouth with a pink tongue
             Group {
-                Circle().fill(LGColor.sunCheeksDeep).frame(width: 18, height: 18).position(x: 70, y: 114)
-                Circle().fill(LGColor.sunCheeksDeep).frame(width: 18, height: 18).position(x: 130, y: 114)
-                LaughEyes().stroke(ink, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                EyeArc(x: 76, y: 98, bend: -9).stroke(ink, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                EyeArc(x: 108, y: 98, bend: -9).stroke(ink, style: StrokeStyle(lineWidth: 6, lineCap: .round))
                 LaughMouth().fill(ink)
                 LaughTongue().fill(LGColor.sunCheeks)
             }
             .opacity(shown == .laughing ? 1 : 0)
+            // deeper blush while the sun laughs, fading in the contented end (round cheeks, r 11)
+            Group {
+                Circle().fill(LGColor.sunCheeksDeep).frame(width: 22, height: 22).position(x: 70, y: 114)
+                Circle().fill(LGColor.sunCheeksDeep).frame(width: 22, height: 22).position(x: 130, y: 114)
+            }
+            .opacity(giggle.blush)
             Text("z")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(ink)
                 .position(x: 134, y: 78)
                 .opacity(shown == .sleepy ? 1 : 0)
         }
-        .animation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
+        .lgAnimation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
     }
 
     /// Four small gold sparkles that pop out around the sun during a giggle.
@@ -203,10 +209,12 @@ private struct DroopyEye: Shape {
 
 private struct OpenEye: View {
     var cx: CGFloat
+    /// Diameter; the gasp uses wider eyes (r 7.5).
+    var size: CGFloat = 12
     var body: some View {
         ZStack {
-            Circle().fill(LGColor.ink).frame(width: 12, height: 12).position(x: cx, y: 96)
-            Circle().fill(.white).frame(width: 4, height: 4).position(x: cx + 2, y: 94)
+            Circle().fill(LGColor.ink).frame(width: size, height: size).position(x: cx, y: 96)
+            Circle().fill(.white).frame(width: size / 3, height: size / 3).position(x: cx + size / 6, y: 96 - size / 6)
         }
     }
 }
@@ -221,22 +229,13 @@ private struct SparkleCross: Shape {
 }
 
 /// Eyes > <
-private struct LaughEyes: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        p.move(to: CGPoint(x: 74, y: 90)); p.addLine(to: CGPoint(x: 87, y: 97)); p.addLine(to: CGPoint(x: 74, y: 104))
-        p.move(to: CGPoint(x: 126, y: 90)); p.addLine(to: CGPoint(x: 113, y: 97)); p.addLine(to: CGPoint(x: 126, y: 104))
-        return p
-    }
-}
-
 private struct LaughMouth: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        p.move(to: CGPoint(x: 82, y: 110))
-        p.addQuadCurve(to: CGPoint(x: 118, y: 110), control: CGPoint(x: 100, y: 110))
-        p.addQuadCurve(to: CGPoint(x: 100, y: 130), control: CGPoint(x: 116, y: 130))
-        p.addQuadCurve(to: CGPoint(x: 82, y: 110), control: CGPoint(x: 84, y: 130))
+        p.move(to: CGPoint(x: 76, y: 108))
+        p.addQuadCurve(to: CGPoint(x: 124, y: 108), control: CGPoint(x: 100, y: 112))
+        p.addQuadCurve(to: CGPoint(x: 100, y: 138), control: CGPoint(x: 122, y: 138))
+        p.addQuadCurve(to: CGPoint(x: 76, y: 108), control: CGPoint(x: 78, y: 138))
         p.closeSubpath()
         return p
     }
@@ -245,10 +244,10 @@ private struct LaughMouth: Shape {
 private struct LaughTongue: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        p.move(to: CGPoint(x: 91, y: 123))
-        p.addQuadCurve(to: CGPoint(x: 109, y: 123), control: CGPoint(x: 100, y: 117))
-        p.addQuadCurve(to: CGPoint(x: 100, y: 129), control: CGPoint(x: 105, y: 129))
-        p.addQuadCurve(to: CGPoint(x: 91, y: 123), control: CGPoint(x: 95, y: 129))
+        p.move(to: CGPoint(x: 88, y: 129))
+        p.addQuadCurve(to: CGPoint(x: 112, y: 129), control: CGPoint(x: 100, y: 120))
+        p.addQuadCurve(to: CGPoint(x: 100, y: 136), control: CGPoint(x: 110, y: 137))
+        p.addQuadCurve(to: CGPoint(x: 88, y: 129), control: CGPoint(x: 90, y: 137))
         p.closeSubpath()
         return p
     }
