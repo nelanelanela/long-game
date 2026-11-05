@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 private enum HomeSheet: Identifiable {
-    case addHours, oneCraft, futureSelf
+    case addHours, oneCraft, futureSelf, support
     /// The target screen as a sheet: a new year of pace, or the first target for an older game.
     case target(first: Bool)
 
@@ -11,6 +11,7 @@ private enum HomeSheet: Identifiable {
         case .addHours: "add"
         case .oneCraft: "one"
         case .futureSelf: "future"
+        case .support: "support"
         case .target: "target"
         }
     }
@@ -28,6 +29,7 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var celebrating: Int?
+    @State private var offerSupport = false
     @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
     /// False while Home is covered or in the background: the hero stops animating.
@@ -154,7 +156,8 @@ struct HomeView: View {
         }
         .overlay {
             if let hours = celebrating {
-                MilestoneCelebration(hours: hours, craftName: craft.name) { celebrating = nil }
+                MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
+                                     onSupport: { celebrating = nil; sheet = .support }) { celebrating = nil }
                     .transition(.opacity)
             }
         }
@@ -174,6 +177,8 @@ struct HomeView: View {
                 OneCraftSheet(craft: craft, totalHours: s.wholeHours)
             case .futureSelf:
                 FutureSelfSheet(total: s.total, forecast: s.forecast.mid)
+            case .support:
+                TipJarView(isSheet: true)
             case .target(let first):
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
                                  initial: first ? nil : target?.hoursPerWeek,
@@ -201,7 +206,28 @@ struct HomeView: View {
     private enum ScrollSpot: Hashable { case top, details }
 
     private func scaleGauge(_ f: HomeFigures) -> HomeGauge {
-        (f.shown.hasScale ? f.shown : lastScaleTab) == .longGame ? .longGame(total: f.total) : .week(hours: f.week, target: f.weekTarget)
+        if (f.shown.hasScale ? f.shown : lastScaleTab) == .longGame {
+            return .longGame(total: f.total, pace: f.summary.hasEnoughData ? SunSpeech.pace(f.summary.forecast.mid, now: f.now) : nil)
+        }
+        let daysLeft = weekBars(f.now).filter(\.isFuture).count
+        return .week(hours: f.week, target: f.weekTarget, daysLeft: daysLeft)
+    }
+
+    private func weekBars(_ now: Date) -> [DayBar] {
+        WeekBars.make(sessions: sessions.map(\.record), now: now, weekStart: weekStart)
+    }
+
+    /// "Monday, 1 hour 10 minutes", "Tuesday, rest day", "Saturday, not yet": read when the sun is swiped on This week.
+    private func dayReadings(_ now: Date) -> [String] {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "EEEE"
+        return weekBars(now).map { bar in
+            let name = formatter.string(from: bar.day)
+            if bar.isFuture { return String(localized: "\(name), not yet") }
+            if bar.hours <= 0 { return String(localized: "\(name), rest day") }
+            return "\(name), " + Labels.spoken(seconds: Int((bar.hours * 60).rounded()) * 60, includeSeconds: false)
+        }
     }
 
     private func hero(_ f: HomeFigures, metrics: GaugeMetrics) -> some View {
@@ -212,8 +238,10 @@ struct HomeView: View {
         let face: SunFace = onToday ? (winking ? .wink : .happy)
                                     : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
-                         face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: !reduceMotion,
-                         metrics: metrics, final: place)
+                         face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
+                         metrics: metrics, final: place, dayReadings: dayReadings(f.now))
+            // The sun and sea change tabs with a clean cut: no glide, no cross-fade, so the water never shows through.
+            .transaction { $0.animation = nil }
     }
 
     /// The big number; each tab's replaces the other's with a cross-fade, stacked so the page doesn't jump.
@@ -376,7 +404,7 @@ struct HomeView: View {
     private func selectTab(_ new: HomeTab) {
         guard new != tab else { return }
         if new.hasScale { lastScaleTab = new }
-        withAnimation(.easeInOut(duration: reduceMotion ? 0.25 : 0.6)) { tab = new }
+        withAnimation(.easeInOut(duration: 0.25)) { tab = new }
     }
 
     /// Opens on Today, except right after onboarding: then on The long game, once, with the whole game in view.
@@ -399,7 +427,7 @@ struct HomeView: View {
     private func weekContent(_ s: ProgressSummary, now: Date, showBars: Bool) -> some View {
         VStack(spacing: 0) {
             if showBars {
-                DayBarsRow(bars: WeekBars.make(sessions: sessions.map(\.record), now: now, weekStart: weekStart)) { day in
+                DayBarsRow(bars: weekBars(now)) { day in
                     historyDay = day
                 }
                 .padding(.top, 18)
@@ -476,7 +504,7 @@ struct HomeView: View {
                 }
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .lgIcon(13, weight: .semibold)
                     .foregroundStyle(LGColor.inkMuted)
                     .accessibilityHidden(true)
             }
@@ -578,8 +606,20 @@ struct HomeView: View {
         Task {
             // let a saved session's count-up finish first
             try? await Task.sleep(for: .seconds(1.6))
+            offerSupport = shouldOfferSupport(settings)
             celebrating = top
         }
+    }
+
+    /// The one gentle offer; recorded as soon as it is shown. Never a pop-up of its own.
+    private func shouldOfferSupport(_ settings: AppSettings) -> Bool {
+        let now = Date()
+        guard TipRules.shouldOffer(now: now, onboardedAt: craft.createdAt, lastOfferAt: settings.lastTipOfferAt,
+                                   lastTipAt: settings.lastTipAt, timerRunning: timer.isActive,
+                                   lastSessionEndedAt: sessions.map(\.end).max()) else { return false }
+        settings.lastTipOfferAt = now
+        try? context.save()
+        return true
     }
 
     private func refreshNotifications() {
