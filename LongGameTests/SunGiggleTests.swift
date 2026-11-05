@@ -283,21 +283,21 @@ struct GiggleSoundTests {
         #expect(loads == 0)
     }
 
-    @Test func withTheSettingOnTheSessionIsSetUpOnceAsAmbient() {
+    @Test func withTheSettingOnTheSessionIsWokenAsAmbientBeforeEveryGiggle() {
         let session = FakeAudioSession()
         let player = GiggleSoundPlayer(session: session) { [] }
         player.prepare(enabled: true)
         _ = player.play(big: false, enabled: true)
         _ = player.play(big: false, enabled: true)
-        #expect(session.useAmbientCalls == 1)
+        #expect(session.useAmbientCalls == 3)
     }
 
-    @Test func itStaysQuietWhenSomethingElseWantsSilence() {
+    @Test func itStillGigglesWhenOtherAudioIsPlaying() {
         let session = FakeAudioSession()
         session.wantsSilence = true
         let player = GiggleSoundPlayer(session: session)
-        #expect(player.play(big: false, enabled: true) == nil)
-        #expect(player.play(big: true, enabled: true) == nil)
+        #expect(player.play(big: false, enabled: true) != nil)
+        #expect(player.play(big: true, enabled: true) != nil)
     }
 
     @Test func theBundledClipsAreShortAndTheLongestIsTheBigOne() {

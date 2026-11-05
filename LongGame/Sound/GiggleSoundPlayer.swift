@@ -34,7 +34,6 @@ final class GiggleSoundPlayer {
     private var players: [AVAudioPlayer] = []
     private var bigIndex: Int?
     private var picker = GiggleClipPicker(count: 0)
-    private var loaded = false
     private var current: AVAudioPlayer?
 
     init(session: GiggleAudioSession = SystemGiggleAudioSession(),
@@ -45,9 +44,15 @@ final class GiggleSoundPlayer {
 
     /// Sets up the audio session and loads the clips, once. Only when the setting is on.
     func prepare(enabled: Bool) {
-        guard enabled, !loaded else { return }
-        loaded = true
+        guard enabled else { return }
         session.useAmbient()
+        loadClipsIfNeeded()
+    }
+
+    private func loadClipsIfNeeded(force: Bool = false) {
+        guard force || players.isEmpty else { return }
+        current?.stop()
+        current = nil
         players = loader()
         bigIndex = players.indices.max(by: { players[$0].duration < players[$1].duration })
         // The other clips take turns at random; the longest is for the big laugh.
@@ -55,20 +60,30 @@ final class GiggleSoundPlayer {
     }
 
     /// Plays a giggle and returns how long it lasts, or nil when nothing was played (setting off, no clips,
-    /// something else wants silence, or a clip is already playing and this is not the big laugh).
+    /// or a clip is already playing and this is not the big laugh).
+    /// The audio session is woken before every giggle (calls, Siri, the timer and the lock screen can all switch
+    /// it off), and if a clip refuses to start the clips are loaded afresh and tried once more, so it always giggles.
     @discardableResult
     func play(big: Bool, enabled: Bool) -> TimeInterval? {
         guard enabled else { return nil }
-        prepare(enabled: true)
-        guard !players.isEmpty, !session.otherAudioWantsSilence else { return nil }
+        session.useAmbient()
+        loadClipsIfNeeded()
+        guard !players.isEmpty else { return nil }
         if current?.isPlaying == true {
             guard big else { return nil }
             current?.stop()
         }
+        if let length = start(big: big) { return length }
+        loadClipsIfNeeded(force: true)
+        return start(big: big)
+    }
+
+    private func start(big: Bool) -> TimeInterval? {
         guard let player = big ? bigIndex.map({ players[$0] }) : nextClip() else { return nil }
         player.currentTime = 0
         player.volume = Self.volume
-        player.play(atTime: player.deviceCurrentTime + Self.startDelay)
+        player.prepareToPlay()
+        guard player.play(atTime: player.deviceCurrentTime + Self.startDelay) else { return nil }
         current = player
         return player.duration + Self.startDelay
     }
