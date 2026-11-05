@@ -43,6 +43,8 @@ final class TimerStore {
         state = TimerState(craftId: craft.id, craftName: craft.name, startedAt: now)
         commit()
         FocusMode.shared.runShortcut(starting: true)
+        // Milestone and "still practising?" alerts need permission, so ask the first time a session starts.
+        Task { if await Notifications.requestIfNeeded() { refreshSurfaces() } }
     }
 
     func pause(now: Date = Date()) {

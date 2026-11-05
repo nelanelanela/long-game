@@ -11,6 +11,19 @@ enum Notifications {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])) ?? false
     }
 
+    /// Asks iOS for permission the first time it is needed (status "not determined"). Does nothing once the
+    /// user has answered, so it is safe to call whenever a notification is about to matter.
+    @discardableResult
+    static func requestIfNeeded() async -> Bool {
+        let center = UNUserNotificationCenter.current()
+        let status = await center.notificationSettings().authorizationStatus
+        switch status {
+        case .notDetermined: return await requestAuthorization()
+        case .authorized, .provisional, .ephemeral: return true
+        default: return false
+        }
+    }
+
     /// "1,000 hours of piano. Sunrise is coming." for the moment a running session carries the total over a
     /// milestone. Pass nil to cancel it.
     static func scheduleMilestone(at date: Date?, message: String) {
