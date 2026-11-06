@@ -5,18 +5,15 @@ struct CumulativePoint: Equatable, Sendable {
     var hours: Double
 }
 
-struct BandPoint: Equatable, Sendable {
-    var date: Date
-    var low: Double
-    var high: Double
-}
-
 /// Everything the Growth chart draws.
 struct GrowthChartData: Sendable {
     var past: [CumulativePoint]
-    var mid: [CumulativePoint]
-    var band: [BandPoint]
-    var masteryDate: Date?
+    /// The dashed line at the chosen pace, from today to its finish (or the 30-year horizon).
+    var chosen: [CumulativePoint]
+    /// The dotted line at the recent pace, from today to its finish (or the 30-year horizon).
+    var recent: [CumulativePoint]
+    /// Where the chosen pace reaches 10,000 h (the sun), nil when it does not within 30 years.
+    var chosenDate: Date?
     var xStart: Date
     var xEnd: Date
 }
@@ -58,17 +55,17 @@ enum GrowthSeries {
         func dated(_ r: ScenarioResult) -> [CumulativePoint] {
             r.points.map { CumulativePoint(date: ForecastEngine.date(afterMonths: $0.monthsFromNow, from: now), hours: $0.hours) }
         }
-        let longest = [forecast.mid, forecast.high, forecast.low].map { $0.monthsToGoal ?? Double(ForecastEngine.horizonMonths) }.max() ?? 0
-        let lastMonth = Int(longest.rounded(.up))
-        let band = (0...max(1, lastMonth)).map { m in
-            BandPoint(date: ForecastEngine.date(afterMonths: Double(m), from: now),
-                      low: forecast.low.hours(atMonth: Double(m)),
-                      high: forecast.high.hours(atMonth: Double(m)))
-        }
-        let midDate = forecast.mid.monthsToGoal.map { ForecastEngine.date(afterMonths: $0, from: now) }
-        let xEnd = ForecastEngine.date(afterMonths: Double(max(lastMonth, 12) + 6), from: now)
-        return GrowthChartData(past: past, mid: dated(forecast.mid), band: band, masteryDate: midDate,
-                               xStart: past.first?.date ?? now, xEnd: xEnd)
+        // The chart runs to the later of the two finishes (30 years at most), plus half a year of room for the sun.
+        let chosenMonths = forecast.chosen.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
+        let recentMonths = forecast.recent.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
+        let lastMonths = max(chosenMonths, recentMonths, 12)
+        let endMonths = lastMonths + 6
+        return GrowthChartData(past: past,
+                               chosen: dated(forecast.chosen),
+                               recent: dated(forecast.recent),
+                               chosenDate: forecast.chosen.monthsToGoal.map { ForecastEngine.date(afterMonths: $0, from: now) },
+                               xStart: past.first?.date ?? now,
+                               xEnd: ForecastEngine.date(afterMonths: endMonths, from: now))
     }
 }
 
@@ -89,16 +86,12 @@ extension ScenarioResult {
 }
 
 enum GrowthText {
-    /// "+0.8 h/wk a year" (or minus).
-    static func trend(_ value: Double) -> String {
-        let rounded = (value * 10).rounded() / 10
-        let sign = rounded < 0 ? "−" : "+"
-        return "\(sign)\(String(format: "%.1f", abs(rounded))) h/wk a year"
-    }
-
+    /// What VoiceOver reads for the chart on the Growth card.
     static func chartLabel(total: Double, forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
-        return "Cumulative hours: \(DurationFormat.grouped(Totals.wholeHours(total: total))) today. Forecast reaches 10,000 hours: "
-            + ForecastText.headline(forecast.mid, now: now, calendar: calendar) + ". "
-            + ForecastText.range(forecast, now: now, calendar: calendar) + "."
+        let today = "Cumulative hours: \(DurationFormat.grouped(Totals.wholeHours(total: total))) today. "
+        if total >= Totals.goalHours { return today + "You have crossed the finish line." }
+        return today + "At your chosen pace you reach 10,000 hours: "
+            + ForecastText.headline(forecast.chosen, now: now, calendar: calendar) + ". "
+            + ForecastText.recentLine(forecast, now: now, calendar: calendar) + "."
     }
 }

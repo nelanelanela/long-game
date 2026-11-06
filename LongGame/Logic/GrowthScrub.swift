@@ -181,11 +181,61 @@ enum GrowthScrub {
     }
 }
 
+// MARK: Draw-in
+
+/// How much of each line is drawn while the full-screen chart opens: the past line first (0.8 s, ease-out), then the
+/// dashed chosen-pace line (0.5 s), then the dotted recent-pace line (0.3 s), then the sun pops onto the finish.
+struct DrawProgress: Equatable, Sendable {
+    var past: Double
+    var chosen: Double
+    var recent: Double
+    var sun: Bool
+
+    static let complete = DrawProgress(past: 1, chosen: 1, recent: 1, sun: true)
+    static let empty = DrawProgress(past: 0, chosen: 0, recent: 0, sun: false)
+
+    static let pastDuration = 0.8
+    static let chosenDuration = 0.5
+    static let recentDuration = 0.3
+    static var total: Double { pastDuration + chosenDuration + recentDuration }
+
+    /// The progress `t` seconds after the chart opened.
+    static func at(_ t: Double) -> DrawProgress {
+        func phase(_ start: Double, _ length: Double) -> Double { min(1, max(0, (t - start) / length)) }
+        func easeOut(_ x: Double) -> Double { 1 - (1 - x) * (1 - x) }
+        func easeInOut(_ x: Double) -> Double { x < 0.5 ? 2 * x * x : 1 - pow(-2 * x + 2, 2) / 2 }
+        return DrawProgress(past: easeOut(phase(0, pastDuration)),
+                            chosen: easeInOut(phase(pastDuration, chosenDuration)),
+                            recent: easeInOut(phase(pastDuration + chosenDuration, recentDuration)),
+                            sun: t >= total)
+    }
+}
+
+enum LineDraw {
+    /// The first part of a straight line, `fraction` of the way along it (points are in order).
+    static func partial(_ points: [CumulativePoint], fraction: Double) -> [CumulativePoint] {
+        guard points.count >= 2 else { return fraction > 0 ? points : [] }
+        guard fraction > 0 else { return [] }
+        guard fraction < 1, let first = points.first, let last = points.last else { return points }
+        let span = last.date.timeIntervalSince(first.date)
+        let cutoff = first.date.addingTimeInterval(span * fraction)
+        var out = points.filter { $0.date < cutoff }
+        let hours: Double
+        if let before = out.last, let after = points.first(where: { $0.date >= cutoff }), after.date > before.date {
+            hours = before.hours + (after.hours - before.hours) * cutoff.timeIntervalSince(before.date) / after.date.timeIntervalSince(before.date)
+        } else {
+            hours = last.hours
+        }
+        out.append(CumulativePoint(date: cutoff, hours: hours))
+        return out
+    }
+}
+
 // MARK: Words
 
 /// The texts of the scrub: the headline block and the floating label.
 struct ScrubReadout: Equatable {
-    /// "Played" or "If you keep your pace".
+    /// "Played" or "At your chosen pace".
     var small: String
     /// "14 Sep 2022 · 1,000 h" (day precision) or "Feb 2029 · 5,000 h" (month precision).
     var big: String
@@ -232,7 +282,7 @@ enum ScrubText {
                                                      : day(point.date, calendar: calendar, locale: locale)
         // A date inside the estimate is only about right.
         let shownDate = (!point.isFuture && point.isEstimate) ? String(localized: "about \(date)") : date
-        let small = point.isFuture ? String(localized: "If you keep your pace") : String(localized: "Played")
+        let small = point.isFuture ? String(localized: "At your chosen pace") : String(localized: "Played")
         let chip = point.isFuture ? String(localized: "Forecast") : String(localized: "Played")
 
         var accent = ""

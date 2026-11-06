@@ -2,7 +2,8 @@ import SwiftUI
 import Charts
 
 /// The Growth chart: the card's chart and the full-screen scrub chart are one piece of code. The card shows the
-/// past line, the grey area under it, the dashed forecast, the likely-range band, the finish line, Today and the sun.
+/// past line, the grey area under it, the dashed line at the chosen pace with its sun, the dotted line at the recent
+/// pace, the finish line and Today.
 /// The full-screen style adds the milestone dots, more labels on the hours axis and the scrub line and dot.
 struct GrowthChartView: View {
     enum Style { case card, full }
@@ -19,7 +20,8 @@ struct GrowthChartView: View {
     var selection: Binding<Date?>?
     /// The sun at the finish pops in: its scale during the draw-in.
     var sunScale: CGFloat = 1
-    var bandOpacity: Double = 1
+    /// How much of each line is drawn (all of it, except while the full-screen chart opens).
+    var draw: DrawProgress = .complete
     /// A gold ring that grows around a milestone's dot for 0.4 s.
     var ring: (index: Int, progress: Double)?
     /// The floating label next to the dot, placed by the chart's own coordinates.
@@ -31,23 +33,45 @@ struct GrowthChartView: View {
         let spanYears = data.xEnd.timeIntervalSince(data.xStart) / (365.25 * 86_400)
         let step = spanYears <= 8 ? 1 : spanYears <= 16 ? 2 : spanYears <= 30 ? 5 : 10
         Chart {
-            ForEach(Array(data.band.enumerated()), id: \.offset) { _, p in
-                AreaMark(x: .value("Date", p.date), yStart: .value("Low", p.low), yEnd: .value("High", p.high), series: .value("Series", "Band"))
-                    .foregroundStyle(LGColor.forecastBand.opacity(0.16 * bandOpacity))
-            }
-            ForEach(Array(data.past.enumerated()), id: \.offset) { _, p in
+            let past = LineDraw.partial(data.past, fraction: draw.past)
+            let chosen = LineDraw.partial(data.chosen, fraction: draw.chosen)
+            let recent = LineDraw.partial(data.recent, fraction: draw.recent)
+            ForEach(Array(past.enumerated()), id: \.offset) { _, p in
                 AreaMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "PastArea"))
                     .foregroundStyle(LGColor.ink.opacity(0.07))
             }
-            ForEach(Array(data.past.enumerated()), id: \.offset) { _, p in
+            ForEach(Array(past.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Past"))
                     .foregroundStyle(LGColor.ink)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
             }
-            ForEach(Array(data.mid.enumerated()), id: \.offset) { _, p in
-                LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Forecast"))
+            // The dotted grey line at the recent pace, labelled below it.
+            ForEach(Array(recent.enumerated()), id: \.offset) { _, p in
+                LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Recent"))
+                    .foregroundStyle(LGColor.recentPace)
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [1, 6]))
+            }
+            if draw.recent >= 1, let spot = Self.labelSpot(data.recent) {
+                PointMark(x: .value("Date", spot.date), y: .value("Hours", spot.hours))
+                    .symbolSize(0)
+                    .annotation(position: .bottomTrailing, spacing: 3) {
+                        Text("Recent pace").lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.gaugeLabel)
+                            .fixedSize()
+                    }
+            }
+            // The dashed orange line at the chosen pace, labelled above it, with the sun at its finish.
+            ForEach(Array(chosen.enumerated()), id: \.offset) { _, p in
+                LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Chosen"))
                     .foregroundStyle(LGColor.forecast)
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [6, 5]))
+                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [7, 6]))
+            }
+            if draw.chosen >= 1, let spot = Self.labelSpot(data.chosen) {
+                PointMark(x: .value("Date", spot.date), y: .value("Hours", spot.hours))
+                    .symbolSize(0)
+                    .annotation(position: .topLeading, spacing: 3) {
+                        Text("Your pace").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2), color: LGColor.forecastText)
+                            .fixedSize()
+                    }
             }
             RuleMark(y: .value("Goal", Totals.goalHours))
                 .foregroundStyle(LGColor.ink.opacity(0.35))
@@ -72,7 +96,7 @@ struct GrowthChartView: View {
                 .annotation(position: .topLeading, spacing: 2) {
                     Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
                 }
-            if let mastery = data.masteryDate {
+            if let mastery = data.chosenDate {
                 PointMark(x: .value("Date", mastery), y: .value("Hours", Totals.goalHours))
                     .symbol { SunView(rayColor: LGColor.sunRays).frame(width: full ? 36 : 28, height: full ? 36 : 28).scaleEffect(sunScale) }
             }
@@ -110,6 +134,13 @@ struct GrowthChartView: View {
         .chartOverlay { proxy in
             if full { overlay(proxy) }
         }
+    }
+
+    /// Where a line's label sits: about 62% of the way along it.
+    static func labelSpot(_ points: [CumulativePoint]) -> CumulativePoint? {
+        guard let a = points.first, let b = points.last, a.date < b.date else { return nil }
+        let t = 0.62
+        return CumulativePoint(date: a.date.addingTimeInterval(b.date.timeIntervalSince(a.date) * t), hours: a.hours + (b.hours - a.hours) * t)
     }
 
     static func axisLabel(_ v: Int) -> String {
@@ -189,28 +220,6 @@ private struct ScrubSelection: ViewModifier {
             content.chartXSelection(value: binding)
         } else {
             content
-        }
-    }
-}
-
-/// "Played" (solid line) and "Forecast" (dashed line) in words, so the two lines never rely on colour alone.
-struct ChartLegend: View {
-    var body: some View {
-        HStack(spacing: 18) {
-            item(String(localized: "Played"), dash: [])
-            item(String(localized: "Forecast"), dash: [5, 4])
-        }
-        .frame(maxWidth: .infinity)
-        .accessibilityHidden(true)
-    }
-
-    private func item(_ title: String, dash: [CGFloat]) -> some View {
-        HStack(spacing: 6) {
-            Path { $0.move(to: CGPoint(x: 0, y: 1)); $0.addLine(to: CGPoint(x: 22, y: 1)) }
-                .stroke(title == String(localized: "Played") ? LGColor.ink : LGColor.forecast,
-                        style: StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: dash))
-                .frame(width: 22, height: 2)
-            Text(title).lgText(.tiny, color: LGColor.inkMuted)
         }
     }
 }

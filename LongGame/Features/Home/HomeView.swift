@@ -184,7 +184,7 @@ struct HomeView: View {
             case .oneCraft:
                 OneCraftSheet(craft: craft, totalHours: s.wholeHours)
             case .futureSelf:
-                FutureSelfSheet(total: s.total, forecast: s.forecast.mid)
+                FutureSelfSheet(total: s.total, forecast: s.forecast.chosen)
             case .support:
                 TipJarView(isSheet: true)
             case .target(let first):
@@ -215,7 +215,7 @@ struct HomeView: View {
 
     private func scaleGauge(_ f: HomeFigures) -> HomeGauge {
         if (f.shown.hasScale ? f.shown : lastScaleTab) == .longGame {
-            return .longGame(total: f.total, pace: f.summary.hasEnoughData ? SunSpeech.pace(f.summary.forecast.mid, now: f.now) : nil)
+            return .longGame(total: f.total, pace: f.summary.hasEnoughData ? SunSpeech.pace(f.summary.forecast.chosen, now: f.now) : nil)
         }
         let daysLeft = weekBars(f.now).filter(\.isFuture).count
         return .week(hours: f.week, target: f.weekTarget, daysLeft: daysLeft)
@@ -368,7 +368,7 @@ struct HomeView: View {
         HStack(spacing: 0) {
             stat("\(DurationFormat.grouped(Totals.wholeHours(total: total))) h", "The long game")
             stat(DurationFormat.perWeek(s.pace), "Pace")
-            stat(ForecastText.homeMastery(s.forecast.mid, now: now), "Finish line")
+            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line")
         }
         .padding(.vertical, 14)
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
@@ -495,7 +495,7 @@ struct HomeView: View {
             } else {
                 stat("–", "Year of pace")
             }
-            stat(ForecastText.homeMastery(s.forecast.mid, now: now), "Finish line")
+            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line")
         }
         .padding(.vertical, 14)
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }

@@ -150,89 +150,53 @@ struct TargetCycleTests {
 struct TargetForecastTests {
     let now = day(2026, 11, 2, hour: 0)
     var target: TargetRecord { record(11, now, WeeklyTarget.endDate(from: now, calendar: utc)) }
+    let estimates = [YearRate(year: 2025, hoursPerWeek: 10), YearRate(year: 2026, hoursPerWeek: 10)]
 
-    @Test func theTargetCountsOnlyWhenThePaceIsWithin25PercentOfIt() {
-        #expect(WeeklyTarget.isWithinReach(pace: 12, target: 12))
-        #expect(WeeklyTarget.isWithinReach(pace: 9, target: 12))     // exactly 25% under
-        #expect(WeeklyTarget.isWithinReach(pace: 15, target: 12))    // exactly 25% over
-        #expect(!WeeklyTarget.isWithinReach(pace: 8.9, target: 12))
-        #expect(!WeeklyTarget.isWithinReach(pace: 15.1, target: 12))
-        #expect(!WeeklyTarget.isWithinReach(pace: 0, target: 1))
+    private func make(_ target: TargetRecord?, extra: Double = 0) -> ProgressSummary {
+        ProgressSummary.make(estimates: estimates, sessions: [], onboardingDate: now, weekStart: .monday,
+                             now: now, extra: extra, target: target, calendar: utc)
     }
 
-    @Test func theWindowIsTheMonthsLeftOfTheYear() throws {
-        let fresh = try #require(WeeklyTarget.forecastWindow(target: target, pace: 10, now: now))
-        #expect(abs(fresh.monthsRemaining - 12) < 0.05)
-        #expect(fresh.hoursPerWeek == 11)
-        let later = try #require(WeeklyTarget.forecastWindow(target: target, pace: 10, now: day(2027, 5, 2, hour: 0)))
-        #expect(abs(later.monthsRemaining - 6) < 0.1)
-    }
-
-    @Test func noWindowWithoutATargetAfterItsYearOrForAnUnrealisticOne() {
-        #expect(WeeklyTarget.forecastWindow(target: nil, pace: 10, now: now) == nil)
-        #expect(WeeklyTarget.forecastWindow(target: target, pace: 10, now: day(2027, 11, 2, hour: 0)) == nil)
-        #expect(WeeklyTarget.forecastWindow(target: record(30, now, target.end), pace: 10, now: now) == nil)
-    }
-
-    @Test func theMidLineRunsOnTheTargetForTheYearThenOnThePace() {
-        let window = ForecastTarget(hoursPerWeek: 11, monthsRemaining: 12)
-        let r = ForecastEngine.simulate(.mid, total: 3_000, pace: 10, trend: 0, target: window)
-        #expect(abs(r.points[12].hours - (3_000 + 12 * 11 * 52 / 12)) < 0.001)
-        #expect(abs(r.points[24].hours - (3_000 + 12 * 11 * 52 / 12 + 12 * 10 * 52 / 12)) < 0.001)
-    }
-
-    @Test func aYearThatEndsMidMonthBlendsThatMonth() {
-        let window = ForecastTarget(hoursPerWeek: 12, monthsRemaining: 0.5)
-        let rate = ForecastEngine.monthlyRate(.mid, month: 0, pace: 10, trend: 0, extra: 0, target: window)
-        #expect(abs(rate - 11) < 0.0001)
-        #expect(ForecastEngine.monthlyRate(.mid, month: 1, pace: 10, trend: 0, extra: 0, target: window) == 10)
-    }
-
-    @Test func aHigherTargetBringsTheFinishLineCloser() throws {
-        let window = ForecastTarget(hoursPerWeek: 11, monthsRemaining: 12)
-        let plain = ForecastEngine.simulate(.mid, total: 3_000, pace: 10, trend: 0)
-        let planned = ForecastEngine.simulate(.mid, total: 3_000, pace: 10, trend: 0, target: window)
-        let sooner = try #require(planned.monthsToGoal)
-        let later = try #require(plain.monthsToGoal)
+    @Test func theChosenLineRunsOnTheChosenPaceWhateverThePlayedPaceIs() throws {
+        // A 30 h target is far from the recent pace of about 10, and still sets the finish line.
+        let bold = make(record(30, now, WeeklyTarget.endDate(from: now, calendar: utc)))
+        let plain = make(nil)
+        #expect(bold.chosenPace == 30)
+        #expect(bold.forecast.chosenRate == 30)
+        #expect(bold.forecast.recentRate == plain.forecast.recentRate)
+        #expect(bold.forecast.recent == plain.forecast.recent)
+        let sooner = try #require(bold.forecast.chosen.monthsToGoal)
+        let later = try #require(plain.forecast.chosen.monthsToGoal)
         #expect(sooner < later)
     }
 
-    @Test func theBandIsUnchanged() {
-        let window = ForecastTarget(hoursPerWeek: 11, monthsRemaining: 12)
-        let plain = ForecastEngine.forecast(total: 3_000, pace: 10, trend: 0.5)
-        let planned = ForecastEngine.forecast(total: 3_000, pace: 10, trend: 0.5, target: window)
-        #expect(planned.high == plain.high)
-        #expect(planned.low == plain.low)
-        #expect(planned.mid != plain.mid)
+    @Test func theChosenPaceStaysAfterItsTwelveMonths() {
+        let old = record(11, day(2025, 1, 2, hour: 0), day(2026, 1, 2, hour: 0))
+        #expect(make(old).chosenPace == 11)
     }
 
-    @Test func theSummaryUsesTheTargetOnlyWhenThePaceIsCloseToIt() throws {
-        let estimates = [YearRate(year: 2025, hoursPerWeek: 10), YearRate(year: 2026, hoursPerWeek: 10)]
-        func make(_ target: TargetRecord?) -> ProgressSummary {
-            ProgressSummary.make(estimates: estimates, sessions: [], onboardingDate: now, weekStart: .monday,
-                                 now: now, target: target, calendar: utc)
-        }
-        let plain = make(nil)
-        let close = make(target)                                  // 11 h against a pace of 10
-        let far = make(record(30, now, WeeklyTarget.endDate(from: now, calendar: utc)))
-        #expect(plain.forecastTarget == nil)
-        #expect(close.forecastTarget?.hoursPerWeek == 11)
-        let withTarget = try #require(close.forecast.mid.monthsToGoal)
-        let without = try #require(plain.forecast.mid.monthsToGoal)
-        #expect(withTarget < without)
-        #expect(far.forecastTarget == nil)
-        #expect(far.forecast == plain.forecast)
+    @Test func withoutATargetTheChosenPaceIsTheRecentPace() {
+        let s = make(nil)
+        #expect(s.chosenPace == s.forecastPace)
+        #expect(s.forecast.chosen == s.forecast.recent)
+        #expect(make(record(0, now, now)).chosenPace == s.forecastPace)
     }
 
-    @Test func theTargetScreenPreviewIgnoresTheRule() throws {
-        let estimates = [YearRate(year: 2025, hoursPerWeek: 10), YearRate(year: 2026, hoursPerWeek: 10)]
-        let s = ProgressSummary.make(estimates: estimates, sessions: [], onboardingDate: now, weekStart: .monday,
-                                     now: now, calendar: utc)
-        // "In a year" shows what a target would do, even a bold one, before it is chosen.
-        let bold = try #require(s.finish(ifTarget: 30).monthsToGoal)
-        let plain = try #require(s.forecast.mid.monthsToGoal)
-        #expect(bold < plain)
-        #expect(s.finish(ifTarget: s.forecastPace, months: 0) == s.forecast.mid)
+    @Test func theWhatIfExtraMovesOnlyTheChosenLine() throws {
+        let t = target
+        let base = make(t), more = make(t, extra: 5)
+        #expect(more.forecast.chosenRate == 16)
+        #expect(more.forecast.recent == base.forecast.recent)
+        let a = try #require(base.forecast.chosen.monthsToGoal), b = try #require(more.forecast.chosen.monthsToGoal)
+        #expect(b < a)
+    }
+
+    @Test func theWhatIfDifferenceIsTheGapBetweenTheTwoChosenDates() throws {
+        let t = target
+        let base = try #require(make(t).forecast.chosen.monthsToGoal)
+        let more = try #require(make(t, extra: 5).forecast.chosen.monthsToGoal)
+        let sooner = try #require(ForecastEngine.monthsSooner(total: make(t).total, chosenPace: 11, extra: 5))
+        #expect(abs(sooner - (base - more)) < 1e-9)
     }
 }
 

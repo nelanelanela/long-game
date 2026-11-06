@@ -11,10 +11,18 @@ struct ScenarioResult: Equatable, Sendable {
     var points: [ForecastPoint]
 }
 
+/// The two straight lines from today to 10,000 hours.
 struct Forecast: Equatable, Sendable {
-    var mid: ScenarioResult
-    var high: ScenarioResult
-    var low: ScenarioResult
+    /// At the chosen pace ("Your pace for the year") plus the What-if extra.
+    var chosen: ScenarioResult
+    /// At the recent pace (lifetime average blended with the last 12 weeks).
+    var recent: ScenarioResult
+    /// Hours a week behind each line.
+    var chosenRate: Double
+    var recentRate: Double
+
+    /// The recent pace is as fast as the chosen one (or faster).
+    var recentIsAsFast: Bool { recentRate >= chosenRate && chosenRate > 0 }
 }
 
 enum ForecastEngine {
@@ -22,22 +30,31 @@ enum ForecastEngine {
     static let horizonMonths = horizonYears * 12
     static let daysPerMonth = 30.436875
 
-    enum Scenario { case mid, high, low }
+    /// Hours added per month at a weekly rate.
+    static func hoursPerMonth(weeklyRate: Double) -> Double { weeklyRate * daysPerMonth / 7 }
 
-    /// Weekly average of each year: estimates for past years, logged data for
-    /// the current year once there are at least 2 weeks of it.
-    static func yearlyRates(estimates: [YearRate], sessions: [SessionRecord], onboardingDate: Date, now: Date, calendar: Calendar = .current) -> [YearRate] {
-        let currentYear = calendar.component(.year, from: now)
-        return estimates.sorted { $0.year < $1.year }.compactMap { e in
-            guard e.year <= currentYear else { return nil }
-            guard e.year == currentYear else { return e }
-            guard let jan1 = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1)) else { return e }
-            let from = max(jan1, calendar.startOfDay(for: onboardingDate))
-            let weeks = now.timeIntervalSince(from) / (7 * 86_400)
-            guard weeks >= 2 else { return e }
-            let logged = sessions.filter { $0.start >= from }.reduce(0) { $0 + $1.hours }
-            return YearRate(year: currentYear, hoursPerWeek: logged / weeks)
+    /// A straight line from today at `weeklyRate` hours a week: finish = today + (10,000 − total) ÷ rate weeks.
+    /// A rate of 0 (or a finish beyond 30 years) has no finish date; its line stops at the 30-year horizon.
+    static func line(total: Double, weeklyRate: Double) -> ScenarioResult {
+        let start = ForecastPoint(monthsFromNow: 0, hours: total)
+        if total >= Totals.goalHours { return ScenarioResult(monthsToGoal: 0, points: [start]) }
+        let perMonth = hoursPerMonth(weeklyRate: max(0, weeklyRate))
+        let months = perMonth > 0 ? (Totals.goalHours - total) / perMonth : .infinity
+        if months <= Double(horizonMonths) {
+            return ScenarioResult(monthsToGoal: months,
+                                  points: [start, ForecastPoint(monthsFromNow: months, hours: Totals.goalHours)])
         }
+        return ScenarioResult(monthsToGoal: nil,
+                              points: [start, ForecastPoint(monthsFromNow: Double(horizonMonths),
+                                                            hours: total + perMonth * Double(horizonMonths))])
+    }
+
+    /// Both lines. The chosen line runs on `chosenPace + extra`; the recent line on `recentPace`.
+    static func forecast(total: Double, chosenPace: Double, extra: Double = 0, recentPace: Double) -> Forecast {
+        let chosenRate = max(0, chosenPace) + max(0, extra)
+        return Forecast(chosen: line(total: total, weeklyRate: chosenRate),
+                        recent: line(total: total, weeklyRate: recentPace),
+                        chosenRate: chosenRate, recentRate: max(0, recentPace))
     }
 
     /// Pace the forecast runs on: the lifetime average (total hours ÷ weeks since
@@ -59,78 +76,14 @@ enum ForecastEngine {
         return weight * recent + (1 - weight) * lifetime
     }
 
-    /// Least-squares slope in h/week per year, clamped to [-2, +2].
-    static func trend(yearly: [YearRate]) -> Double {
-        guard yearly.count >= 2 else { return 0 }
-        let n = Double(yearly.count)
-        let xs = yearly.map { Double($0.year) }, ys = yearly.map(\.hoursPerWeek)
-        let mx = xs.reduce(0, +) / n, my = ys.reduce(0, +) / n
-        let num = zip(xs, ys).reduce(0) { $0 + ($1.0 - mx) * ($1.1 - my) }
-        let den = xs.reduce(0) { $0 + ($1 - mx) * ($1 - mx) }
-        guard den > 0 else { return 0 }
-        return min(2, max(-2, num / den))
-    }
-
-    static func weeklyRate(_ scenario: Scenario, years t: Double, pace r: Double, trend s: Double, extra e: Double) -> Double {
-        let rate: Double
-        switch scenario {
-        case .mid: rate = min(1.5 * r + e, r + e + 0.5 * s * t)
-        case .high: rate = min(2 * r + e, r + e + s * t)
-        case .low: rate = 0.75 * r + e
-        }
-        return max(0, rate)
-    }
-
-    /// The weekly rate for the month starting `m` months from now. While the year of pace lasts, the mid scenario
-    /// runs on the target instead of the pace (the part of a month that falls inside it, if it ends mid-month).
-    /// The low and high edges of the band never use the target.
-    static func monthlyRate(_ scenario: Scenario, month m: Int, pace: Double, trend: Double, extra: Double,
-                            target: ForecastTarget?) -> Double {
-        let years = Double(m) / 12
-        let normal = weeklyRate(scenario, years: years, pace: pace, trend: trend, extra: extra)
-        guard scenario == .mid, let target, Double(m) < target.monthsRemaining else { return normal }
-        let share = min(1, target.monthsRemaining - Double(m))
-        let planned = weeklyRate(.mid, years: years, pace: target.hoursPerWeek, trend: trend, extra: extra)
-        return share * planned + (1 - share) * normal
-    }
-
-    static func simulate(_ scenario: Scenario, total: Double, pace: Double, trend: Double, extra: Double = 0,
-                         target: ForecastTarget? = nil) -> ScenarioResult {
-        var hours = total
-        var points = [ForecastPoint(monthsFromNow: 0, hours: hours)]
-        if total >= Totals.goalHours { return ScenarioResult(monthsToGoal: 0, points: points) }
-        for m in 0..<horizonMonths {
-            let rate = monthlyRate(scenario, month: m, pace: pace, trend: trend, extra: extra, target: target)
-            let add = rate * 52 / 12
-            if add > 0, hours + add >= Totals.goalHours {
-                let months = Double(m) + (Totals.goalHours - hours) / add
-                points.append(ForecastPoint(monthsFromNow: months, hours: Totals.goalHours))
-                return ScenarioResult(monthsToGoal: months, points: points)
-            }
-            hours += add
-            points.append(ForecastPoint(monthsFromNow: Double(m + 1), hours: hours))
-        }
-        return ScenarioResult(monthsToGoal: nil, points: points)
-    }
-
-    static func forecast(total: Double, pace: Double, trend: Double, extra: Double = 0,
-                         target: ForecastTarget? = nil) -> Forecast {
-        Forecast(
-            mid: simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target),
-            high: simulate(.high, total: total, pace: pace, trend: trend, extra: extra),
-            low: simulate(.low, total: total, pace: pace, trend: trend, extra: extra)
-        )
-    }
-
     static func date(afterMonths months: Double, from now: Date) -> Date {
         now.addingTimeInterval(months * daysPerMonth * 86_400)
     }
 
-    /// Months the mid date moves earlier with `extra` h/week (nil if either never arrives).
-    static func monthsSooner(total: Double, pace: Double, trend: Double, extra: Double,
-                             target: ForecastTarget? = nil) -> Double? {
-        guard let base = simulate(.mid, total: total, pace: pace, trend: trend, target: target).monthsToGoal,
-              let with = simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target).monthsToGoal
+    /// Months the chosen-pace date moves earlier with `extra` h/week (nil if either never arrives).
+    static func monthsSooner(total: Double, chosenPace: Double, extra: Double) -> Double? {
+        guard let base = line(total: total, weeklyRate: chosenPace).monthsToGoal,
+              let with = line(total: total, weeklyRate: chosenPace + max(0, extra)).monthsToGoal
         else { return nil }
         return base - with
     }
@@ -145,14 +98,7 @@ enum ForecastText {
         return "\(months[(c.month ?? 1) - 1]) \(c.year ?? 0)"
     }
 
-    /// "Likely between 2034 and 2038", or one sentence when neither edge arrives.
-    static func range(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
-        if forecast.high.monthsToGoal == nil {
-            return "Not within \(ForecastEngine.horizonYears) years at your average pace"
-        }
-        return "Likely between \(year(forecast.high, now: now, calendar: calendar)) and \(year(forecast.low, now: now, calendar: calendar))"
-    }
-
+    /// "November 2035", or "After 2056" past 30 years.
     static func headline(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         guard let m = result.monthsToGoal else {
             return "After \(calendar.component(.year, from: now) + ForecastEngine.horizonYears)"
@@ -160,11 +106,27 @@ enum ForecastText {
         return monthYear(ForecastEngine.date(afterMonths: m, from: now), calendar: calendar)
     }
 
+    /// "2039", or "after 2056" past 30 years.
     static func year(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         guard let m = result.monthsToGoal else {
             return "after \(calendar.component(.year, from: now) + ForecastEngine.horizonYears)"
         }
         return String(calendar.component(.year, from: ForecastEngine.date(afterMonths: m, from: now)))
+    }
+
+    /// The line under the headline: "At your recent pace: around 2039" / "…: after 2056", or, when the recent pace is
+    /// as fast as the chosen one, "You're already playing at this pace".
+    static func recentLine(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        if forecast.recentIsAsFast { return String(localized: "You're already playing at this pace") }
+        if forecast.recent.monthsToGoal == nil {
+            return String(localized: "At your recent pace: \(year(forecast.recent, now: now, calendar: calendar))")
+        }
+        return String(localized: "At your recent pace: around \(year(forecast.recent, now: now, calendar: calendar))")
+    }
+
+    /// "You crossed the finish line on 12 May 2035"
+    static func crossed(on date: Date, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        String(localized: "You crossed the finish line on \(ScrubText.day(date, calendar: calendar, locale: locale))")
     }
 
     private static let shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -181,11 +143,13 @@ enum ForecastText {
         result.monthsToGoal == nil ? year(result, now: now, calendar: calendar) : "~" + year(result, now: now, calendar: calendar)
     }
 
-    static func whatIf(extra: Double, total: Double, pace: Double, trend: Double, target: ForecastTarget? = nil,
-                       now: Date, calendar: Calendar = .current) -> String {
-        guard extra > 0 else { return "Based on your recent pace and how it has been growing." }
-        let with = ForecastEngine.simulate(.mid, total: total, pace: pace, trend: trend, extra: extra, target: target)
-        guard let sooner = ForecastEngine.monthsSooner(total: total, pace: pace, trend: trend, extra: extra, target: target) else {
+    /// Under the What-if slider. With no extra: "On top of your chosen pace of 12 h a week."
+    static func whatIf(extra: Double, total: Double, chosenPace: Double, now: Date, calendar: Calendar = .current) -> String {
+        guard extra > 0 else {
+            return String(localized: "On top of your chosen pace of \(WeeklyTarget.number(chosenPace)) h a week.")
+        }
+        let with = ForecastEngine.line(total: total, weeklyRate: chosenPace + extra)
+        guard let sooner = ForecastEngine.monthsSooner(total: total, chosenPace: chosenPace, extra: extra) else {
             return "Around " + headline(with, now: now, calendar: calendar) + "."
         }
         let months = Int(sooner.rounded())

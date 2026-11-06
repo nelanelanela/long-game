@@ -7,13 +7,12 @@ struct ProgressSummary: Sendable {
     var total: Double
     var thisWeek: Double
     var pace: Double
+    /// The recent pace the dotted line runs on (lifetime average blended with the last 12 weeks).
     var forecastPace: Double
-    var trend: Double
-    var yearlyRates: [YearRate]
+    /// The weekly pace the user chose ("Your pace for the year"); the recent pace when none is set.
+    var chosenPace: Double
     var forecast: Forecast
     var hasEnoughData: Bool
-    /// Set while the mid forecast runs on the weekly target (the recent pace is within 25% of it).
-    var forecastTarget: ForecastTarget?
 
     var progress: Double { Totals.progress(total: total) }
     var percent: Int { Totals.percent(total: total) }
@@ -27,29 +26,18 @@ struct ProgressSummary: Sendable {
         let total = Totals.total(baseline: baseline, logged: logged)
         let latest = estimates.max(by: { $0.year < $1.year })?.hoursPerWeek ?? 0
         let pace = Pace.hoursPerWeek(sessions: sessions, latestEstimate: latest, onboardingDate: onboardingDate, now: now, calendar: calendar)
-        let yearly = ForecastEngine.yearlyRates(estimates: estimates, sessions: sessions, onboardingDate: onboardingDate, now: now, calendar: calendar)
-        let trend = ForecastEngine.trend(yearly: yearly)
-        // The forecast runs on the lifetime average, adjusted by recent entries;
-        // a falling trend is not extrapolated into the future.
+        // The recent pace: the lifetime average, adjusted by recent entries.
         let forecastPace = ForecastEngine.forecastPace(total: total, estimates: estimates, sessions: sessions,
                                                        onboardingDate: onboardingDate, now: now, calendar: calendar)
-        // For the 12 months of the weekly target the mid line runs on it, if the recent pace is close to it.
-        let window = WeeklyTarget.forecastWindow(target: target, pace: pace, now: now)
+        // The finish line runs on the pace the user chose; without one, on the recent pace.
+        let chosen = (target?.hoursPerWeek).flatMap { $0 > 0 ? $0 : nil } ?? forecastPace
         return ProgressSummary(
             baseline: baseline, logged: logged, total: total,
             thisWeek: WeekMath.thisWeekHours(sessions, now: now, weekStart: weekStart, calendar: calendar),
-            pace: pace, forecastPace: forecastPace, trend: trend, yearlyRates: yearly,
-            forecast: ForecastEngine.forecast(total: total, pace: forecastPace, trend: max(0, trend), extra: extra, target: window),
-            hasEnoughData: hasTwoWeeksOfData(sessions, now: now),
-            forecastTarget: window
+            pace: pace, forecastPace: forecastPace, chosenPace: chosen,
+            forecast: ForecastEngine.forecast(total: total, chosenPace: chosen, extra: extra, recentPace: forecastPace),
+            hasEnoughData: hasTwoWeeksOfData(sessions, now: now)
         )
-    }
-
-    /// The mid finish if the next 12 months ran on this weekly target, whatever the recent pace is: the
-    /// "In a year" line of the target screen shows what a target would do, before it is chosen.
-    func finish(ifTarget hours: Double, months: Double = 12) -> ScenarioResult {
-        ForecastEngine.simulate(.mid, total: total, pace: forecastPace, trend: max(0, trend),
-                                target: ForecastTarget(hoursPerWeek: hours, monthsRemaining: months))
     }
 
     /// "Forecast improves as you log more" shows until there are 2 weeks of logged data.

@@ -30,8 +30,7 @@ struct GrowthScrubView: View {
     @State private var hasScrubbed = false
     @State private var stopIndex = 0
     // The draw-in.
-    @State private var reveal: Double
-    @State private var bandOpacity: Double
+    @State private var draw: DrawProgress
     @State private var sunScale: CGFloat
     @State private var fade: Double
 
@@ -49,16 +48,15 @@ struct GrowthScrubView: View {
         self.now = now
         self.hintSeen = hintSeen
         self.onHintSeen = onHintSeen
-        let ms = GrowthScrub.milestoneDates(past: past, forecast: forecast.mid, onboardingDate: onboardingDate, now: now)
-        let span = GrowthScrub.range(past: past, forecast: forecast.mid, now: now)
+        let ms = GrowthScrub.milestoneDates(past: past, forecast: forecast.chosen, onboardingDate: onboardingDate, now: now)
+        let span = GrowthScrub.range(past: past, forecast: forecast.chosen, now: now)
         milestones = ms
         range = span
         // Close enough to count as "still on it": 2% of the line.
         _tracker = State(initialValue: GrowthScrub.Tracker(milestones: ms, now: now, range: span,
                                                            tolerance: span.upperBound.timeIntervalSince(span.lowerBound) * 0.02))
         _scrubDate = State(initialValue: startingAt)
-        _reveal = State(initialValue: drawn ? 1 : 0)
-        _bandOpacity = State(initialValue: drawn ? 1 : 0)
+        _draw = State(initialValue: drawn ? .complete : .empty)
         _sunScale = State(initialValue: drawn ? 1 : 0)
         _fade = State(initialValue: drawn ? 1 : 0)
     }
@@ -71,7 +69,7 @@ struct GrowthScrubView: View {
     private var point: ScrubPoint? {
         guard let scrubDate else { return nil }
         let at = snappedIndex.map { milestones[$0].date } ?? scrubDate
-        return GrowthScrub.curvePoint(at: at, past: past, forecast: forecast.mid, onboardingDate: onboardingDate, now: now)
+        return GrowthScrub.curvePoint(at: at, past: past, forecast: forecast.chosen, onboardingDate: onboardingDate, now: now)
     }
 
     private var readout: ScrubReadout? {
@@ -79,9 +77,9 @@ struct GrowthScrubView: View {
     }
 
     private var idleHeadline: ScrubReadout {
-        ScrubReadout(small: String(localized: "You'll finish the game around"),
-                     big: ForecastText.headline(forecast.mid, now: now),
-                     accent: ForecastText.range(forecast, now: now), chip: "", blurb: "", date: "", hours: "")
+        ScrubReadout(small: String(localized: "At your chosen pace, you'll finish around"),
+                     big: ForecastText.headline(forecast.chosen, now: now),
+                     accent: ForecastText.recentLine(forecast, now: now), chip: "", blurb: "", date: "", hours: "")
     }
 
     // MARK: Body
@@ -156,12 +154,7 @@ struct GrowthScrubView: View {
 
     private var chartArea: some View {
         GrowthChartView(data: data, total: total, now: now, style: .full, milestones: milestones, scrubPoint: point,
-                        selection: $selection, sunScale: sunScale, bandOpacity: bandOpacity, ring: ring, floatingLabel: readout)
-            .mask(alignment: .leading) {
-                GeometryReader { g in
-                    Rectangle().frame(width: reduceMotion ? g.size.width : g.size.width * reveal)
-                }
-            }
+                        selection: $selection, sunScale: sunScale, draw: draw, ring: ring, floatingLabel: readout)
             .opacity(reduceMotion ? fade : 1)
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -170,7 +163,7 @@ struct GrowthScrubView: View {
             .accessibilityValue(readout?.spoken ?? GrowthText.chartLabel(total: total, forecast: forecast, now: now))
             .accessibilityHint("Swipe up or down to step through your milestones")
             .accessibilityAdjustableAction { direction in step(direction == .increment ? 1 : -1) }
-            .accessibilityChartDescriptor(GrowthChartDescriptor(past: data.past, forecast: data.mid, now: now))
+            .accessibilityChartDescriptor(GrowthChartDescriptor(past: data.past, chosen: data.chosen, recent: data.recent, now: now))
     }
 
     /// The hint sits in a fixed-height slot, so the chart does not jump when it goes away.
@@ -230,30 +223,33 @@ struct GrowthScrubView: View {
 
     // MARK: Draw-in
 
-    /// The past line draws left to right (0.8 s, ease-out), then the dashed forecast (0.5 s), the band fades in
-    /// (0.3 s) and the sun pops onto the finish with a small bounce. Reduce Motion: a 0.2 s fade.
+    /// The past line draws left to right (0.8 s, ease-out), then the dashed chosen-pace line (0.5 s), the dotted
+    /// recent-pace line (0.3 s) and the sun pops onto the finish with a small bounce. Reduce Motion: a 0.2 s fade.
     private func drawIn() async {
-        guard reveal < 1 else { return }
+        guard draw != .complete else { return }
         if reduceMotion {
-            withAnimation(.easeOut(duration: 0.2)) { fade = 1; bandOpacity = 1; sunScale = 1; reveal = 1 }
+            draw = .complete
+            withAnimation(.easeOut(duration: 0.2)) { fade = 1; sunScale = 1 }
             return
         }
-        let todayShare = data.xEnd > data.xStart
-            ? now.timeIntervalSince(data.xStart) / data.xEnd.timeIntervalSince(data.xStart) : 0.5
-        withAnimation(.easeOut(duration: 0.8)) { reveal = min(1, todayShare * 0.9 + 0.1) }
-        try? await Task.sleep(for: .seconds(0.8))
-        withAnimation(.easeInOut(duration: 0.5)) { reveal = 1 }
-        try? await Task.sleep(for: .seconds(0.5))
-        withAnimation(.easeOut(duration: 0.3)) { bandOpacity = 1 }
-        try? await Task.sleep(for: .seconds(0.3))
+        let start = Date()
+        while true {
+            let t = Date().timeIntervalSince(start)
+            if t >= DrawProgress.total { break }
+            draw = DrawProgress.at(t)
+            try? await Task.sleep(for: .milliseconds(16))
+            if Task.isCancelled { return }
+        }
+        draw = .complete
         withAnimation(.spring(duration: 0.45, bounce: 0.5)) { sunScale = 1 }
     }
 }
 
-/// The Audio Graph: the past and the forecast as two lines of hours over the years.
+/// The Audio Graph: the past, and the chosen-pace and recent-pace lines, as lines of hours over the years.
 struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
     let past: [CumulativePoint]
-    let forecast: [CumulativePoint]
+    let chosen: [CumulativePoint]
+    let recent: [CumulativePoint]
     let now: Date
 
     private static func year(_ date: Date) -> Double {
@@ -261,7 +257,7 @@ struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
     }
 
     func makeChartDescriptor() -> AXChartDescriptor {
-        let all = past + forecast
+        let all = past + chosen + recent
         let years = all.map { Self.year($0.date) }
         let x = AXNumericDataAxisDescriptor(title: String(localized: "Year"), range: (years.min() ?? 2000)...(years.max() ?? 2001),
                                             gridlinePositions: []) { String(Int($0.rounded())) }
@@ -271,9 +267,11 @@ struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
             AXDataSeriesDescriptor(name: name, isContinuous: true,
                                    dataPoints: points.map { AXDataPoint(x: Self.year($0.date), y: $0.hours) })
         }
-        return AXChartDescriptor(title: String(localized: "Hours played, and your forecast"), summary: nil,
+        return AXChartDescriptor(title: String(localized: "Hours played, and the two paces to 10,000 hours"), summary: nil,
                                  xAxis: x, yAxis: y, additionalAxes: [],
-                                 series: [series(String(localized: "Played"), past), series(String(localized: "Forecast"), forecast)])
+                                 series: [series(String(localized: "Played"), past),
+                                          series(String(localized: "At your chosen pace"), chosen),
+                                          series(String(localized: "At your recent pace"), recent)])
     }
 }
 
@@ -289,12 +287,9 @@ private enum ScrubPreviewData {
         let past = [CumulativePoint(date: date(2018, 1), hours: 0), CumulativePoint(date: date(2020, 1), hours: 900),
                     CumulativePoint(date: date(2023, 1), hours: 2_300), CumulativePoint(date: date(2025, 6), hours: 2_900),
                     CumulativePoint(date: now, hours: 3_294)]
-        let points = (0...360).map { m -> ForecastPoint in
-            ForecastPoint(monthsFromNow: Double(m), hours: min(10_000, 3_294 + perMonth * Double(m)))
-        }
-        let reaches = 3_294 + perMonth * 360 >= 10_000
-        let mid = ScenarioResult(monthsToGoal: reaches ? (10_000 - 3_294) / perMonth : nil, points: points)
-        let forecast = Forecast(mid: mid, high: mid, low: mid)
+        let rate = perMonth * 7 / ForecastEngine.daysPerMonth
+        let forecast = ForecastEngine.forecast(total: 3_294, chosenPace: rate, recentPace: rate * 0.6)
+        let mid = forecast.chosen
         let data = GrowthSeries.chartData(forecast: forecast, past: past, now: now)
         let onboarding = date(2024, 1)
         let ms = GrowthScrub.milestoneDates(past: past, forecast: mid, onboardingDate: onboarding, now: now)

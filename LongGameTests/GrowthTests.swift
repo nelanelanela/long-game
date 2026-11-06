@@ -33,26 +33,56 @@ struct GrowthTests {
     }
 
     @Test func scenarioHoursInterpolateAndCap() {
-        let r = ForecastEngine.simulate(.mid, total: 9000, pace: 20, trend: 0)
+        let r = ForecastEngine.line(total: 9000, weeklyRate: 20)
         #expect(r.hours(atMonth: 0) == 9000)
-        #expect(abs(r.hours(atMonth: 1) - (9000 + 20 * 52 / 12)) < 0.01)
+        #expect(abs(r.hours(atMonth: 1) - (9000 + 20 * ForecastEngine.daysPerMonth / 7)) < 0.01)
         #expect(r.hours(atMonth: 100) == 10_000)
     }
 
-    @Test func chartDataHasAlignedBand() {
-        let f = ForecastEngine.forecast(total: 3294, pace: 12, trend: 0.5)
-        let data = GrowthSeries.chartData(forecast: f, past: [], now: day(2026, 10, 25), calendar: utc)
-        #expect(data.band.allSatisfy { $0.high >= $0.low })
-        #expect(data.band.first?.low == 3294)
-        #expect(data.masteryDate != nil)
-        #expect(data.mid.last?.hours == 10_000)
-        #expect(data.xEnd > (data.masteryDate ?? .distantPast))
+    @Test func chartDataHasTheTwoLinesFromToday() {
+        let now = day(2026, 10, 25)
+        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, recentPace: 8)
+        let data = GrowthSeries.chartData(forecast: f, past: [], now: now, calendar: utc)
+        #expect(data.chosen.first?.hours == 3294 && data.recent.first?.hours == 3294)
+        #expect(data.chosen.first?.date == now && data.recent.first?.date == now)
+        #expect(data.chosen.last?.hours == 10_000)
+        #expect(data.recent.last?.hours == 10_000)
+        #expect(data.chosenDate != nil)
+        // The slower recent pace finishes later, and the chart runs to it.
+        #expect((data.recent.last?.date ?? .distantPast) > (data.chosen.last?.date ?? .distantFuture))
+        #expect(data.xEnd > (data.recent.last?.date ?? .distantFuture))
+    }
+
+    @Test func aLineThatNeverArrivesRunsToTheHorizon() {
+        let now = day(2026, 10, 25)
+        let f = ForecastEngine.forecast(total: 3000, chosenPace: 12, recentPace: 0)
+        let data = GrowthSeries.chartData(forecast: f, past: [], now: now, calendar: utc)
+        #expect(data.recent.last?.hours == 3000)
+        #expect(data.recent.last?.date == ForecastEngine.date(afterMonths: 360, from: now))
+        #expect(data.xEnd > ForecastEngine.date(afterMonths: 360, from: now))
+    }
+
+    @Test func linesDrawInOrderAndCanBeCutShort() {
+        #expect(DrawProgress.at(0) == .empty)
+        let mid = DrawProgress.at(0.4)
+        #expect(mid.past > 0 && mid.past < 1 && mid.chosen == 0 && mid.recent == 0 && !mid.sun)
+        let dashed = DrawProgress.at(1.05)
+        #expect(dashed.past == 1 && dashed.chosen > 0 && dashed.chosen < 1 && dashed.recent == 0)
+        let dotted = DrawProgress.at(1.4)
+        #expect(dotted.chosen == 1 && dotted.recent > 0 && dotted.recent < 1 && !dotted.sun)
+        #expect(DrawProgress.at(1.6) == .complete)
+        let line = [CumulativePoint(date: Date(timeIntervalSince1970: 0), hours: 0),
+                    CumulativePoint(date: Date(timeIntervalSince1970: 100), hours: 1_000)]
+        #expect(LineDraw.partial(line, fraction: 0).isEmpty)
+        #expect(LineDraw.partial(line, fraction: 1) == line)
+        let half = LineDraw.partial(line, fraction: 0.5)
+        #expect(half.last == CumulativePoint(date: Date(timeIntervalSince1970: 50), hours: 500))
     }
 
     @Test func textHelpers() {
-        #expect(GrowthText.trend(0.84) == "+0.8 h/wk a year")
-        #expect(GrowthText.trend(-1.25) == "−1.3 h/wk a year" || GrowthText.trend(-1.25) == "−1.2 h/wk a year")
-        let f = ForecastEngine.forecast(total: 3294, pace: 12, trend: 0.5)
-        #expect(GrowthText.chartLabel(total: 3294, forecast: f, now: day(2026, 10, 25), calendar: utc).contains(" today. Forecast reaches"))
+        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, recentPace: 8)
+        let label = GrowthText.chartLabel(total: 3294, forecast: f, now: day(2026, 10, 25), calendar: utc)
+        #expect(label.contains(" today. At your chosen pace you reach 10,000 hours"))
+        #expect(label.contains("At your recent pace: around"))
     }
 }

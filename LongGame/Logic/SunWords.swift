@@ -128,12 +128,12 @@ enum SunSpeech {
         return SpokenGauge(label: label, value: value)
     }
 
-    /// "At your pace, around November 2035." or, when it is further away than the forecast looks, "At your pace, after 2051."
+    /// "At your chosen pace, around November 2035." or, past 30 years, "At your chosen pace, after 2051."
     static func pace(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {
         if result.monthsToGoal == nil {
-            return String(localized: "At your pace, after \(calendar.component(.year, from: now) + ForecastEngine.horizonYears).")
+            return String(localized: "At your chosen pace, after \(calendar.component(.year, from: now) + ForecastEngine.horizonYears).")
         }
-        return String(localized: "At your pace, around \(ForecastText.headline(result, now: now, calendar: calendar)).")
+        return String(localized: "At your chosen pace, around \(ForecastText.headline(result, now: now, calendar: calendar)).")
     }
 
     /// Today. "The sun is almost two thirds of the way to the moon." / "1 hour 5 minutes of 1 hour 45 minutes,

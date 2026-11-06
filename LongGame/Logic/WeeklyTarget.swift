@@ -18,8 +18,6 @@ enum WeeklyTarget {
     static let step = 0.5
     /// The reminder appears this many days before the year ends.
     static let reminderLeadDays = 14
-    /// The forecast only trusts the target when the recent pace is within this share of it.
-    static let forecastTolerance = 0.25
 
     /// Into the slider's range, in steps of half an hour.
     static func clamped(_ hours: Double) -> Double {
@@ -62,26 +60,6 @@ enum WeeklyTarget {
         let rounded = (hours * 10).rounded() / 10
         return rounded == rounded.rounded() ? String(Int(rounded)) : String(format: "%.1f", rounded)
     }
-
-    /// Whether the user's recent pace is close enough to the target for the forecast to use it.
-    static func isWithinReach(pace: Double, target: Double) -> Bool {
-        target > 0 && abs(pace - target) <= forecastTolerance * target
-    }
-
-    /// The part of the forecast that runs on the target: nil when there is no target, its year is over, or the
-    /// recent pace is too far from it (an unrealistic target must not distort the finish line).
-    static func forecastWindow(target: TargetRecord?, pace: Double, now: Date) -> ForecastTarget? {
-        guard let target, target.hoursPerWeek > 0, target.end > now,
-              isWithinReach(pace: pace, target: target.hoursPerWeek) else { return nil }
-        let months = target.end.timeIntervalSince(now) / (ForecastEngine.daysPerMonth * 86_400)
-        return ForecastTarget(hoursPerWeek: target.hoursPerWeek, monthsRemaining: months)
-    }
-}
-
-/// The mid scenario runs on this weekly rate instead of the pace for this many months from now.
-struct ForecastTarget: Equatable, Sendable {
-    var hoursPerWeek: Double
-    var monthsRemaining: Double
 }
 
 /// The current target plus the finished ones, so a past week is judged against the target of its time.

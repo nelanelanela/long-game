@@ -129,7 +129,7 @@ enum WatchModel {
         let week = WeekTarget.make(hoursThisWeek: widget.weekHours, target: widget.weekTarget, now: now,
                                    weekStart: weekStart, calendar: calendar)
         return WatchHomeState(widget: widget, craftId: merged.craftId, daysLeftText: week.daysLeftText,
-                              finish: ForecastText.homeMastery(summary.forecast.mid, now: now, calendar: calendar))
+                              finish: ForecastText.homeMastery(summary.forecast.chosen, now: now, calendar: calendar))
     }
 
     /// The timer screen's numbers: the clock, the overall total with the session counted in, and the next ray.

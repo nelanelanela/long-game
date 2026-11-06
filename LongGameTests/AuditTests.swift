@@ -41,14 +41,6 @@ struct AuditFixTests {
         #expect(ForecastText.homeMastery(never, now: now) == "after \(year)")
     }
 
-    @Test func rangeShowsAfterYearWhenOnlyTheLateEdgeMisses() {
-        let reaches = ScenarioResult(monthsToGoal: 60, points: [])
-        let never = ScenarioResult(monthsToGoal: nil, points: [])
-        let text = ForecastText.range(Forecast(mid: reaches, high: reaches, low: never), now: now)
-        #expect(text.hasPrefix("Likely between "))
-        #expect(text.hasSuffix(" and after \(Calendar.current.component(.year, from: now) + ForecastEngine.horizonYears)"))
-    }
-
     @Test func wholeNumbersUseCommasOnEveryDevice() {
         #expect(DurationFormat.grouped(3_294) == "3,294")
         #expect(DurationFormat.grouped(10_000) == "10,000")

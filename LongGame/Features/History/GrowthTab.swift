@@ -7,7 +7,7 @@ struct GrowthTab: View {
     let sessions: [Session]
     let estimates: [YearEstimate]
     let weekStart: WeekStart
-    /// The weekly target, so the finish line matches Home (the mid line runs on it for its 12 months).
+    /// The weekly pace, so the finish line matches Home (the dashed line runs on it).
     var target: TargetRecord?
 
     /// "What if I practise more?" — never saved.
@@ -73,11 +73,16 @@ struct GrowthTab: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("You'll finish the game around").lgText(.caption, color: LGColor.inkMuted)
-                Text(ForecastText.headline(s.forecast.mid, now: now))
-                    .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48))
-                Text(ForecastText.range(s.forecast, now: now))
-                    .lgText(.caption, color: LGColor.inkMuted)
+                if s.total >= Totals.goalHours {
+                    Text(ForecastText.crossed(on: data.past.first { $0.hours >= Totals.goalHours }?.date ?? now))
+                        .lgText(LGTextStyle(size: 20, weight: .bold, relativeTo: .title3, tracking: -0.4))
+                } else {
+                    Text("At your chosen pace, you'll finish around").lgText(.caption, color: LGColor.inkMuted)
+                    Text(ForecastText.headline(s.forecast.chosen, now: now))
+                        .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48))
+                    Text(ForecastText.recentLine(s.forecast, now: now))
+                        .lgText(.caption, color: LGColor.inkMuted)
+                }
                 if !s.hasEnoughData {
                     Text("Forecast improves as you log more")
                         .lgText(.caption, color: LGColor.inkMuted)
@@ -109,8 +114,6 @@ struct GrowthTab: View {
                 .accessibilityAction(named: "Open full screen") { scrubbing = true }
                 .scrubTransitionSource(id: "growth-chart", in: chartSpace)
 
-            ChartLegend()
-
         }
         .padding(.horizontal, 14).padding(.vertical, 16)
         .lgCard()
@@ -129,8 +132,7 @@ struct GrowthTab: View {
                 .tint(LGColor.ink)
                 .accessibilityLabel("Extra hours per week")
                 .accessibilityValue("\(Int(extra))")
-            Text(ForecastText.whatIf(extra: extra, total: s.total, pace: s.forecastPace, trend: max(0, s.trend),
-                                     target: s.forecastTarget, now: now))
+            Text(ForecastText.whatIf(extra: extra, total: s.total, chosenPace: s.chosenPace, now: now))
                 .lgText(.caption, color: LGColor.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }

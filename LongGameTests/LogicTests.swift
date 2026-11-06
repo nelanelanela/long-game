@@ -167,101 +167,94 @@ struct CalendarTests {
 }
 
 struct ForecastTests {
-    @Test func trendOfRisingYears() {
-        let rates = (0..<5).map { YearRate(year: 2020 + $0, hoursPerWeek: Double(2 * $0 + 3)) }
-        #expect(abs(ForecastEngine.trend(yearly: rates) - 2) < 0.0001)
+    let now = day(2026, 10, 25)
+    // 52 weeks = 364 days; a month is 30.436875 days, so 10 h a week adds 10 × 30.436875 / 7 hours a month.
+    private func perMonth(_ rate: Double) -> Double { rate * ForecastEngine.daysPerMonth / 7 }
+
+    @Test func theFinishIsTodayPlusHoursToGoOverTheRate() {
+        // 1,500 h to go at 10 h/wk = 150 weeks.
+        let r = ForecastEngine.line(total: 8_500, weeklyRate: 10)
+        #expect(abs((r.monthsToGoal ?? 0) - 1_500 / perMonth(10)) < 1e-9)
+        #expect(r.points.count == 2)
+        #expect(r.points.last?.hours == 10_000)
+        let weeks = (r.monthsToGoal ?? 0) * ForecastEngine.daysPerMonth / 7
+        #expect(abs(weeks - 150) < 1e-9)
     }
 
-    @Test func trendIsClamped() {
-        let rates = [YearRate(year: 2020, hoursPerWeek: 0), YearRate(year: 2021, hoursPerWeek: 30)]
-        #expect(ForecastEngine.trend(yearly: rates) == 2)
-        let falling = [YearRate(year: 2020, hoursPerWeek: 30), YearRate(year: 2021, hoursPerWeek: 0)]
-        #expect(ForecastEngine.trend(yearly: falling) == -2)
+    @Test func severalPaces() {
+        for (rate, total) in [(6.0, 3_294.0), (7, 100), (12, 5_000), (30, 9_000), (168, 0)] {
+            let months = ForecastEngine.line(total: total, weeklyRate: rate).monthsToGoal
+            #expect(abs((months ?? 0) - (10_000 - total) / perMonth(rate)) < 1e-9)
+        }
     }
 
-    @Test func trendNeedsTwoYears() {
-        #expect(ForecastEngine.trend(yearly: [YearRate(year: 2020, hoursPerWeek: 5)]) == 0)
-    }
-
-    @Test func flatPaceReachesGoalOnTime() {
-        // 10 h/wk, no trend: 1,500 h to go; low scenario uses 0.75 r = 7.5 h/wk
-        let r = ForecastEngine.simulate(.low, total: 8500, pace: 10, trend: 0)
-        let expected = 1500 / (7.5 * 52 / 12)
-        #expect(abs((r.monthsToGoal ?? 0) - expected) < 0.01)
-        let mid = ForecastEngine.simulate(.mid, total: 8500, pace: 10, trend: 0)
-        #expect(abs((mid.monthsToGoal ?? 0) - 1500 / (10 * 52 / 12)) < 0.01)
-    }
-
-    @Test func scenariosAreOrdered() {
-        let f = ForecastEngine.forecast(total: 3294, pace: 12, trend: 0.8)
-        let high = f.high.monthsToGoal!, mid = f.mid.monthsToGoal!, low = f.low.monthsToGoal!
-        #expect(high < mid && mid < low)
-    }
-
-    @Test func midRateIsCapped() {
-        let rate = ForecastEngine.weeklyRate(.mid, years: 20, pace: 10, trend: 2, extra: 0)
-        #expect(rate == 15)
-        #expect(ForecastEngine.weeklyRate(.high, years: 20, pace: 10, trend: 2, extra: 0) == 20)
-    }
-
-    @Test func ratesNeverGoNegative() {
-        #expect(ForecastEngine.weeklyRate(.mid, years: 10, pace: 2, trend: -2, extra: 0) == 0)
-    }
-
-    @Test func zeroPaceNeverReaches() {
-        let r = ForecastEngine.simulate(.mid, total: 100, pace: 0, trend: 0)
+    @Test func aPaceOfZeroNeverArrives() {
+        let r = ForecastEngine.line(total: 100, weeklyRate: 0)
         #expect(r.monthsToGoal == nil)
-        #expect(r.points.count == ForecastEngine.horizonMonths + 1)
+        #expect(r.points.last?.monthsFromNow == Double(ForecastEngine.horizonMonths))
+        #expect(r.points.last?.hours == 100)
+        #expect(ForecastEngine.line(total: 100, weeklyRate: -3).monthsToGoal == nil)
     }
 
-    @Test func slowPaceDoesNotReachWithin15Years() {
-        // 1 h/wk for 30 years is 1,560 h
-        #expect(ForecastEngine.simulate(.mid, total: 3000, pace: 1, trend: 0).monthsToGoal == nil)
+    @Test func beyondThirtyYearsLeavesTheDateOutButKeepsTheLine() {
+        // 1 h/wk for 30 years is about 1,566 h.
+        let r = ForecastEngine.line(total: 3_000, weeklyRate: 1)
+        #expect(r.monthsToGoal == nil)
+        let end = r.points.last
+        #expect(end?.monthsFromNow == Double(ForecastEngine.horizonMonths))
+        #expect(abs((end?.hours ?? 0) - (3_000 + perMonth(1) * 360)) < 1e-6)
+        #expect(ForecastText.headline(r, now: now, calendar: utc) == "After 2056")
+        #expect(ForecastText.year(r, now: now, calendar: utc) == "after 2056")
+        #expect(ForecastText.homeMastery(r, now: now, calendar: utc) == "after 2056")
     }
 
-    @Test func alreadyThere() {
-        let r = ForecastEngine.simulate(.mid, total: 10_500, pace: 5, trend: 0)
+    @Test func alreadyPastTenThousand() {
+        let r = ForecastEngine.line(total: 10_500, weeklyRate: 5)
         #expect(r.monthsToGoal == 0)
+        #expect(r.points.count == 1)
+    }
+
+    @Test func theChosenLineAddsTheWhatIfExtraAndTheRecentLineDoesNot() {
+        let base = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: 8)
+        let more = ForecastEngine.forecast(total: 3_294, chosenPace: 12, extra: 5, recentPace: 8)
+        #expect(base.chosenRate == 12 && more.chosenRate == 17)
+        #expect((more.chosen.monthsToGoal ?? 0) < (base.chosen.monthsToGoal ?? 0))
+        #expect(more.recent == base.recent)
     }
 
     @Test func extraHoursMakeItSooner() {
-        let sooner = ForecastEngine.monthsSooner(total: 3294, pace: 12, trend: 0.5, extra: 5)
+        // 6,706 h to go: 12 h/wk is 1,285 weeks away, 17 h/wk about 960 weeks.
+        let sooner = ForecastEngine.monthsSooner(total: 3_294, chosenPace: 12, extra: 5)
         #expect((sooner ?? 0) > 12)
-        #expect(ForecastEngine.monthsSooner(total: 3294, pace: 12, trend: 0.5, extra: 0) == 0)
+        #expect(ForecastEngine.monthsSooner(total: 3_294, chosenPace: 12, extra: 0) == 0)
+        #expect(ForecastEngine.monthsSooner(total: 3_294, chosenPace: 0, extra: 0) == nil)
     }
 
-    @Test func interpolatesInsideCrossingMonth() {
-        // 52/12 * 12 = 52 h per month; 26 h to go => half a month
-        let r = ForecastEngine.simulate(.low, total: 9974, pace: 16, trend: 0)  // low rate 12
-        #expect(abs((r.monthsToGoal ?? 0) - 0.5) < 0.0001)
-    }
-
-    @Test func yearlyRatesUseLoggedDataForCurrentYear() {
-        let est = [YearRate(year: 2025, hoursPerWeek: 5), YearRate(year: 2026, hoursPerWeek: 5)]
-        let onboarding = day(2026, 1, 1, hour: 0)
-        let now = day(2026, 1, 1, hour: 0).addingTimeInterval(10 * 7 * 86_400)
-        let s = [session(day(2026, 2, 1), hours: 40)]    // 40 h over 10 weeks = 4 h/wk
-        let rates = ForecastEngine.yearlyRates(estimates: est, sessions: s, onboardingDate: onboarding, now: now, calendar: utc)
-        #expect(rates.map(\.year) == [2025, 2026])
-        #expect(abs(rates[1].hoursPerWeek - 4) < 0.0001)
-    }
-
-    @Test func yearlyRatesKeepEstimateWithLessThanTwoWeeks() {
-        let est = [YearRate(year: 2026, hoursPerWeek: 7)]
-        let now = day(2026, 10, 25)
-        let rates = ForecastEngine.yearlyRates(estimates: est, sessions: [session(day(2026, 10, 24), hours: 1)],
-                                               onboardingDate: day(2026, 10, 20, hour: 0), now: now, calendar: utc)
-        #expect(rates[0].hoursPerWeek == 7)
+    @Test func theRecentPaceEqualOrFasterIsSaidInWords() {
+        let slower = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: 8)
+        #expect(!slower.recentIsAsFast)
+        #expect(ForecastText.recentLine(slower, now: now, calendar: utc).hasPrefix("At your recent pace: around "))
+        for recent in [12.0, 15] {
+            let f = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: recent)
+            #expect(f.recentIsAsFast)
+            #expect(ForecastText.recentLine(f, now: now, calendar: utc) == "You're already playing at this pace")
+        }
+        let never = ForecastEngine.forecast(total: 3_000, chosenPace: 12, recentPace: 1)
+        #expect(ForecastText.recentLine(never, now: now, calendar: utc) == "At your recent pace: after 2056")
     }
 
     @Test func textFormatting() {
-        let now = day(2026, 10, 25)
         let r = ScenarioResult(monthsToGoal: 12, points: [])
         #expect(ForecastText.headline(r, now: now, calendar: utc).hasSuffix("2027"))
-        #expect(ForecastText.headline(ScenarioResult(monthsToGoal: nil, points: []), now: now, calendar: utc) == "After 2056")
         #expect(ForecastText.homeMastery(r, now: now, calendar: utc) == "~2027")
-        #expect(ForecastText.whatIf(extra: 0, total: 3000, pace: 10, trend: 0, now: now, calendar: utc).hasPrefix("Based on"))
-        #expect(ForecastText.whatIf(extra: 10, total: 3000, pace: 10, trend: 0, now: now, calendar: utc).hasPrefix("About"))
+        #expect(ForecastText.whatIf(extra: 0, total: 3_000, chosenPace: 12, now: now, calendar: utc) == "On top of your chosen pace of 12 h a week.")
+        #expect(ForecastText.whatIf(extra: 0, total: 3_000, chosenPace: 7.5, now: now, calendar: utc) == "On top of your chosen pace of 7.5 h a week.")
+        #expect(ForecastText.whatIf(extra: 10, total: 3_000, chosenPace: 10, now: now, calendar: utc).hasPrefix("About"))
+    }
+
+    @Test func crossedTheFinishLine() {
+        let text = ForecastText.crossed(on: day(2035, 5, 12), calendar: utc, locale: Locale(identifier: "en_GB"))
+        #expect(text == "You crossed the finish line on 12 May 2035")
     }
 }
 
@@ -283,12 +276,5 @@ struct ForecastTests {
         let more = ForecastEngine.forecastPace(total: 1900 + 240, estimates: est, sessions: busy, onboardingDate: onboarding, now: now, calendar: utc)
         #expect(more > none)
         #expect(none > 0)
-    }
-
-    @Test func slowPaceNeverReachingGoalIsConsistentWithText() {
-        let f = ForecastEngine.forecast(total: 1900, pace: 3, trend: 0)
-        #expect(f.mid.monthsToGoal == nil)
-        #expect(ForecastText.range(f, now: day(2026, 10, 25), calendar: utc).hasPrefix("Not within"))
-        #expect((f.mid.points.last?.hours ?? 0) > 5000)
     }
 }

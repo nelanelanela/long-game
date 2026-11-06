@@ -73,7 +73,7 @@ struct ScrubMilestoneTests {
         func finish(extra: Double) throws -> Date {
             let s = ProgressSummary.make(estimates: [2020, 2021, 2022].map { YearRate(year: $0, hoursPerWeek: 10) }, sessions: [session(d(2022, 5, 2), hours: 1)],
                                          onboardingDate: d(2022, 5, 1), weekStart: .monday, now: d(2022, 6, 15), extra: extra, calendar: utc)
-            let all = milestones(s.forecast.mid, now: d(2022, 6, 15))
+            let all = milestones(s.forecast.chosen, now: d(2022, 6, 15))
             let finish = try #require(all.first { $0.isFinish })
             return finish.date
         }
@@ -234,7 +234,7 @@ struct ScrubTextTests {
 
     @Test func aFuturePointHasMonthPrecision() {
         let r = readout(d(2029, 2, 10), future: true, hours: 5_000)
-        #expect(r.small == "If you keep your pace" && r.chip == "Forecast")
+        #expect(r.small == "At your chosen pace" && r.chip == "Forecast")
         #expect(r.big == "Feb 2029 · 5,000 h")
     }
 
