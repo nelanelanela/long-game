@@ -69,7 +69,9 @@ struct CraftStepView: View {
                             .lgText(.row, color: LGColor.inkMuted)
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.top, 4)
+                // Room at the end so the last chips scroll fully clear of the fade.
+                .padding(.bottom, 44)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollDismissesKeyboard(.interactively)
