@@ -182,7 +182,7 @@ struct WidgetPictureTests {
     private func pixels<V: View>(_ view: V, width: CGFloat, height: CGFloat) -> (data: [UInt8], w: Int, h: Int)? {
         let renderer = ImageRenderer(content: view.frame(width: width, height: height).background(Color.white))
         renderer.scale = 2
-        guard let cg = renderer.uiImage?.cgImage else { return nil }
+        guard let cg = renderer.platformImage?.cgImage else { return nil }
         let w = cg.width, h = cg.height
         var data = [UInt8](repeating: 0, count: w * h * 4)
         let ctx = CGContext(data: &data, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
@@ -265,7 +265,7 @@ struct WidgetPictureTests {
             func save<V: View>(_ name: String, _ view: V, _ w: CGFloat, _ h: CGFloat) {
                 let r = ImageRenderer(content: view.frame(width: w, height: h).background(Color.white))
                 r.scale = 3
-                try? r.uiImage?.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("\(name).png"))
+                try? r.platformImage?.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("\(name).png"))
             }
             save("small-week", SmallSunWidgetView(state: state, tab: .week), 158, 158)
             save("small-longgame", SmallSunWidgetView(state: state, tab: .longGame), 158, 158)

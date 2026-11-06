@@ -68,7 +68,7 @@ struct HistoryView: View {
             .lgAnimation(.easeInOut(duration: 0.3), value: wide)
         }
         .lgWarmScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
         // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.
         .fullScreenCover(isPresented: $showSettings) {

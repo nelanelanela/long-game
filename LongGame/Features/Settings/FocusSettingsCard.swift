@@ -1,5 +1,5 @@
 import SwiftUI
-#if canImport(FamilyControls)
+#if os(iOS) && canImport(FamilyControls)
 import FamilyControls
 #endif
 
@@ -7,7 +7,7 @@ import FamilyControls
 struct FocusSettingsCard: View {
     @State private var focus = FocusMode.shared
     @State private var choosingApps = false
-    #if canImport(FamilyControls)
+    #if os(iOS) && canImport(FamilyControls)
     @State private var draft = FamilyActivitySelection()
     #endif
 
@@ -27,7 +27,7 @@ struct FocusSettingsCard: View {
                     .lgText(.caption, color: LGColor.inkMuted)
                     .padding(.vertical, 10)
             }
-            #if canImport(FamilyControls)
+            #if os(iOS) && canImport(FamilyControls)
             Divider().overlay(LGColor.divider)
             Toggle("Mute chosen apps", isOn: Binding(
                 get: { focus.settings.muteApps },

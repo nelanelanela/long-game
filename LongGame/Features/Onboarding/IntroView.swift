@@ -38,12 +38,16 @@ struct IntroView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            #if os(iOS)
             TabView(selection: $page) {
                 ForEach(0..<count, id: \.self) { index in
                     pageContent(index).tag(index)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            #else
+            pageContent(page).id(page).frame(maxWidth: .infinity, maxHeight: .infinity)
+            #endif
 
             dots.padding(.bottom, 20)
             Button(Self.pages[page].button) { next() }

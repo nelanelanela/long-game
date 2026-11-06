@@ -104,7 +104,7 @@ struct HomeView: View {
             .animation(.easeInOut(duration: reduceMotion ? 0.2 : 0.35), value: window.shape)
         }
         .lgWarmScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         .navigationDestination(item: $historyDay) { day in
             HistoryView(craft: craft, day: day)
         }

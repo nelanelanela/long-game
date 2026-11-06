@@ -67,10 +67,13 @@ struct PhotoViewer: View {
             Text("The session and its hours stay.")
         }
         .confirmationDialog("Photo", isPresented: $changingPhoto, titleVisibility: .hidden) {
+            #if os(iOS)
             if CameraPicker.isAvailable { Button("Take photo") { takingPhoto = true } }
+            #endif
             Button("Choose from library") { pickingFromLibrary = true }
         }
         .photosPicker(isPresented: $pickingFromLibrary, selection: $pickerItem, matching: .images)
+        #if os(iOS)
         .fullScreenCover(isPresented: $takingPhoto) {
             CameraPicker { data in
                 takingPhoto = false
@@ -78,6 +81,7 @@ struct PhotoViewer: View {
             }
             .ignoresSafeArea()
         }
+        #endif
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
             Task {
@@ -226,13 +230,13 @@ private struct ZoomablePhoto: View {
     @Binding var committedPan: CGSize
     var onSwipe: (Int) -> Void
 
-    @State private var image: UIImage?
+    @State private var image: PlatformImage?
 
     var body: some View {
         GeometryReader { geo in
             Group {
                 if let image {
-                    Image(uiImage: image).resizable().scaledToFit().accessibilityIgnoresInvertColors()
+                    Image(platformImage: image).resizable().scaledToFit().accessibilityIgnoresInvertColors()
                 } else {
                     ProgressView().tint(.white)
                 }
@@ -278,9 +282,9 @@ private struct ZoomablePhoto: View {
         }
     }
 
-    private static func decode(_ data: Data) async -> UIImage? {
+    private static func decode(_ data: Data) async -> PlatformImage? {
         await Task.detached(priority: .userInitiated) {
-            PhotoProcessing.thumbnail(data, maxPixel: PhotoProcessing.maxSide).map { UIImage(cgImage: $0) }
+            PhotoProcessing.thumbnail(data, maxPixel: PhotoProcessing.maxSide).map { PlatformImage.make(cgImage: $0) }
         }.value
     }
 }

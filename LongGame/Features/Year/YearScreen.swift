@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// "Your year": a calm keepsake of the year, to keep or share. Three looks, a Show hours switch and Share.
 struct YearScreen: View {
@@ -15,7 +14,7 @@ struct YearScreen: View {
     @State private var showHours = true
     /// The six photos on the Photos card, newest first unless swapped.
     @State private var chosen: [UUID] = []
-    @State private var images: [UUID: UIImage] = [:]
+    @State private var images: [UUID: PlatformImage] = [:]
     @State private var swapping: Int?
     @State private var shareURL: URL?
 
@@ -65,7 +64,7 @@ struct YearScreen: View {
         }
         .padding(.horizontal, 24).padding(.bottom, 12)
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         .sheet(item: Binding(get: { swapping.map { Swap(index: $0) } }, set: { swapping = $0?.index })) { swap in
             PhotoSwapSheet(sessions: sessions.filter { $0.hasPhoto && Calendar.current.component(.year, from: $0.start) == year }
                                 .sorted { $0.start > $1.start },
@@ -155,7 +154,7 @@ struct YearScreen: View {
     @ViewBuilder private var shareButton: some View {
         if let shareURL {
             ShareLink(item: shareURL, preview: SharePreview(String(localized: "Your \(String(year)) in the long game"),
-                                                            image: Image(uiImage: UIImage(contentsOfFile: shareURL.path) ?? UIImage()))) {
+                                                            image: Image(platformImage: PlatformImage.make(contentsOf: shareURL) ?? PlatformImage.photoPlaceholder))) {
                 Text("Share").frame(maxWidth: .infinity)
             }
             .buttonStyle(.lg(.primary))
@@ -177,7 +176,7 @@ struct YearScreen: View {
         for id in chosen where images[id] == nil {
             guard let data = sessions.first(where: { $0.id == id })?.photo else { continue }
             let cg = await Task.detached(priority: .utility) { PhotoProcessing.thumbnail(data, maxPixel: 420) }.value
-            if let cg { images[id] = UIImage(cgImage: cg) }
+            if let cg { images[id] = PlatformImage.make(cgImage: cg) }
         }
     }
 
@@ -197,17 +196,21 @@ enum YearCardRender {
     static let scale: CGFloat = 3
 
     static func image(summary: YearSummary, craftName: String, style: YearCardStyle, showHours: Bool, now: Date,
-                      weekStart: WeekStart, photos: [UIImage]) -> UIImage? {
+                      weekStart: WeekStart, photos: [PlatformImage]) -> PlatformImage? {
         let card = YearCardView(summary: summary, craftName: craftName, style: style, showHours: showHours, now: now,
                                 weekStart: weekStart, photos: photos)
         let renderer = ImageRenderer(content: card)
         renderer.scale = scale
         renderer.isOpaque = true
+        #if canImport(UIKit)
         return renderer.uiImage
+        #else
+        return renderer.nsImage
+        #endif
     }
 
     static func png(summary: YearSummary, craftName: String, style: YearCardStyle, showHours: Bool, now: Date,
-                    weekStart: WeekStart, photos: [UIImage]) -> URL? {
+                    weekStart: WeekStart, photos: [PlatformImage]) -> URL? {
         guard let image = image(summary: summary, craftName: craftName, style: style, showHours: showHours, now: now,
                                 weekStart: weekStart, photos: photos),
               let data = image.pngData() else { return nil }

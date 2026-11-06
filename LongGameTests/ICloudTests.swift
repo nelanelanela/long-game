@@ -4,7 +4,10 @@ import SwiftData
 import CloudKit
 @testable import LongGame
 
+// These switch the real CloudKit store on, which only exists in a build that has iCloud (the iPhone app today;
+// the Mac app once its iCloud capability is added).
 @MainActor
+@Suite(.enabled(if: CloudSync.isAvailable))
 struct ICloudTests {
     private let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self])
 

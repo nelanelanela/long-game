@@ -1,6 +1,5 @@
 import Testing
 import SwiftUI
-import UIKit
 @testable import LongGame
 
 struct SunriseMotionTests {
@@ -129,7 +128,7 @@ struct SunriseWaterlineTests {
             .background(Color.white)
         let renderer = ImageRenderer(content: view)
         renderer.scale = 2
-        guard let cg = renderer.uiImage?.cgImage else { return ([], 0, 0, 2) }
+        guard let cg = renderer.platformImage?.cgImage else { return ([], 0, 0, 2) }
         let w = cg.width, h = cg.height
         var data = [UInt8](repeating: 0, count: w * h * 4)
         let ctx = CGContext(data: &data, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,

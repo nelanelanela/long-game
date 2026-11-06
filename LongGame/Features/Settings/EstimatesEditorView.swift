@@ -75,7 +75,7 @@ struct EstimatesEditorView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         .onDisappear {
             // Editing estimates never replays old celebrations.
             if let settings = settingsRows.first {

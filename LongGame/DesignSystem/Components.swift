@@ -34,7 +34,7 @@ struct LGButtonStyle: ButtonStyle {
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
-        if #available(iOS 26, *), !flat, kind != .text {
+        if #available(iOS 26, macOS 26, *), !flat, kind != .text {
             glassBody(configuration)
         } else {
             flatBody(configuration)
@@ -43,7 +43,7 @@ struct LGButtonStyle: ButtonStyle {
 
     /// Liquid Glass: capsules. Primary is ink-tinted (56 pt), secondary clear glass with navy text (48 pt); on the
     /// Timer, Pause and Resume are clear glass with white text and Finish is bright glass with navy text.
-    @available(iOS 26, *)
+    @available(iOS 26, macOS 26, *)
     private func glassBody(_ configuration: Configuration) -> some View {
         let height: CGFloat = (kind == .quiet || kind == .secondary) ? 48 : 56
         return configuration.label
@@ -55,7 +55,7 @@ struct LGButtonStyle: ButtonStyle {
             .contentShape(Capsule())
     }
 
-    @available(iOS 26, *)
+    @available(iOS 26, macOS 26, *)
     private var glass: Glass {
         switch kind {
         case .primary: .regular.tint(LGColor.ink).interactive()
@@ -134,7 +134,7 @@ struct LGIconButton: View {
 
     /// A 44 pt glass circle from iOS 26; the plain icon before.
     @ViewBuilder private var icon: some View {
-        if #available(iOS 26, *), !flat {
+        if #available(iOS 26, macOS 26, *), !flat {
             image.glassEffect(.regular.interactive(), in: .circle).contentShape(Circle())
         } else {
             image.contentShape(Rectangle())
@@ -209,7 +209,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
 
     var body: some View {
         Group {
-            if #available(iOS 26, *), !flat {
+            if #available(iOS 26, macOS 26, *), !flat {
                 glassTabs
             } else {
                 flatTabs
@@ -255,7 +255,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
         .background(LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    @available(iOS 26, *)
+    @available(iOS 26, macOS 26, *)
     private var glassTabs: some View {
         GlassEffectContainer(spacing: 0) {
             HStack(spacing: 0) {
@@ -276,7 +276,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
     }
 
     /// The lens: with Reduce Motion it just appears under the chosen tab instead of stretching across.
-    @available(iOS 26, *)
+    @available(iOS 26, macOS 26, *)
     @ViewBuilder private var lensView: some View {
         if reduceMotion {
             Color.clear.glassEffect(.regular.interactive(), in: .capsule)

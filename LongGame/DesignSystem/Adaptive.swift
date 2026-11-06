@@ -45,7 +45,7 @@ extension View {
 
 private struct SheetSizing: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 18, *) {
+        if #available(iOS 18, macOS 15, *) {
             content.presentationSizing(.form)
         } else {
             content

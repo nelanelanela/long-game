@@ -10,6 +10,7 @@ protocol GiggleAudioSession {
 }
 
 struct SystemGiggleAudioSession: GiggleAudioSession {
+    #if os(iOS)
     var otherAudioWantsSilence: Bool { AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint }
 
     func useAmbient() {
@@ -17,6 +18,11 @@ struct SystemGiggleAudioSession: GiggleAudioSession {
         try? session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
         try? session.setActive(true)
     }
+    #else
+    // The Mac has no audio session or Silent switch: the sound simply mixes in at its own low volume.
+    var otherAudioWantsSilence: Bool { false }
+    func useAmbient() {}
+    #endif
 }
 
 /// Plays the sun's giggles: the clips are loaded once, one is picked at random (never the same twice in a row),

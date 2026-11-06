@@ -1,7 +1,6 @@
 import Testing
 import Foundation
 import SwiftUI
-import UIKit
 @testable import LongGame
 
 private let early = day(2025, 6, 1, hour: 0)      // the game began before 2026
@@ -223,7 +222,7 @@ struct YearDataTests {
 
 @MainActor
 struct YearCardRenderTests {
-    private func render(_ style: YearCardStyle, showHours: Bool = true) throws -> UIImage {
+    private func render(_ style: YearCardStyle, showHours: Bool = true) throws -> PlatformImage {
         let summary = YearSummary.sample()
         return try #require(YearCardRender.image(summary: summary, craftName: "Piano", style: style, showHours: showHours,
                                                  now: day(2026, 12, 20), weekStart: .monday, photos: []))
@@ -232,13 +231,13 @@ struct YearCardRenderTests {
     @Test func storiesRenderAt1080By1920() throws {
         for style in [YearCardStyle.sunrise, .evening] {
             let image = try render(style)
-            #expect(Int(image.size.width * image.scale) == 1080 && Int(image.size.height * image.scale) == 1920)
+            #expect(Int(image.pixelSize.width) == 1080 && Int(image.pixelSize.height) == 1920)
         }
     }
 
     @Test func thePhotoCardRendersAt1080By1080() throws {
         let image = try render(.photos, showHours: false)
-        #expect(Int(image.size.width * image.scale) == 1080 && Int(image.size.height * image.scale) == 1080)
+        #expect(Int(image.pixelSize.width) == 1080 && Int(image.pixelSize.height) == 1080)
     }
 
     @Test func theCardIgnoresTheSystemAppearance() throws {
@@ -248,8 +247,9 @@ struct YearCardRenderTests {
             let card = YearCardView(summary: summary, craftName: "Piano", style: .sunrise, now: day(2026, 12, 20)).environment(\.colorScheme, scheme)
             let r = ImageRenderer(content: card)
             r.scale = 1
-            return r.uiImage?.pngData()
+            return r.platformImage?.pngData()
         }
+        #expect(pixels(.light) == pixels(.light), "rendering is repeatable")
         #expect(pixels(.light) == pixels(.dark))
     }
 }

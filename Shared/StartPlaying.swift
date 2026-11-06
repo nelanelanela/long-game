@@ -1,6 +1,13 @@
 import AppIntents
 import Foundation
 
+/// A Live Activity button on the iPhone; a plain intent on the Mac (it has no Live Activities).
+#if os(iOS)
+typealias SessionIntent = LiveActivityIntent
+#else
+typealias SessionIntent = AppIntent
+#endif
+
 /// Starting a session from anywhere (Control Center, the Action button, Siri, Shortcuts) without opening the app.
 /// The craft comes from the snapshot the app keeps in the shared App Group, and the timer is stored as timestamps
 /// like always, so the app picks it up the next time it opens.
@@ -43,7 +50,7 @@ enum StartPlaying {
 }
 
 /// "Start playing": no choices, so it can sit on a Control Center button or the Action button.
-struct StartPlayingIntent: LiveActivityIntent {
+struct StartPlayingIntent: SessionIntent {
     static let title: LocalizedStringResource = "Start playing"
     static let description = IntentDescription("Starts a session for your craft.")
 
@@ -83,7 +90,7 @@ struct CraftQuery: EntityQuery {
 
 /// The same thing with the craft named, for "Hey Siri, start playing piano". There is only one active craft, so the
 /// name is only there so the phrase sounds natural.
-struct StartPlayingCraftIntent: LiveActivityIntent {
+struct StartPlayingCraftIntent: SessionIntent {
     static let title: LocalizedStringResource = "Start playing a craft"
     static let description = IntentDescription("Starts a session for your craft by name.")
 

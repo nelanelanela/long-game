@@ -123,7 +123,7 @@ private enum SessionsPreview {
     static func row(_ h: Int, _ m: Int, minutes: Int, note: String?, photo: Bool = false) -> TodaySession {
         let start = at(h, m)
         return TodaySession(id: UUID(), start: start, end: start.addingTimeInterval(Double(minutes) * 60), durationSec: Double(minutes) * 60,
-                            note: note, photo: photo ? UIImage(systemName: "photo")?.pngData() : nil)
+                            note: note, photo: photo ? PlatformImage.photoPlaceholder.pngData() : nil)
     }
     static let six = [
         row(7, 40, minutes: 40, note: "Scales and arpeggios", photo: true),

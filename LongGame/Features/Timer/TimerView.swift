@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
+#if os(iOS)
 import UIKit
+#endif
 
 /// The full-screen timer: the sun's hour. Everything on screen is derived from
 /// the stored timestamps and the clock; nothing is counted in memory.
@@ -81,10 +83,16 @@ struct TimerView: View {
             dismiss()
         }
         .onAppear {
+            #if os(iOS)
             UIApplication.shared.isIdleTimerDisabled = true
+            #endif
             if store.finishRequested { openFinishFromActivity() }
         }
-        .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+        .onDisappear {
+            #if os(iOS)
+            UIApplication.shared.isIdleTimerDisabled = false
+            #endif
+        }
     }
 
     private func openFinishFromActivity() {
@@ -248,11 +256,17 @@ private struct RunningScene: View {
     private func rayLit(sun: SunHour, paused: Bool) {
         if voiceOverOn && !paused {
             // Quiet and queued: it waits for VoiceOver to finish speaking and never interrupts.
+            #if os(iOS)
             let text = NSAttributedString(string: SunSpeech.rayLit(sun), attributes: [
                 .accessibilitySpeechQueueAnnouncement: true,
                 .accessibilitySpeechAnnouncementPriority: UIAccessibilityPriority.low,
             ])
             UIAccessibility.post(notification: .announcement, argument: text)
+            #else
+            var announcement = AttributedString(SunSpeech.rayLit(sun))
+            announcement.accessibilitySpeechAnnouncementPriority = .low
+            AccessibilityNotification.Announcement(announcement).post()
+            #endif
         }
         LiveActivityManager.sync(state, now: now)
     }

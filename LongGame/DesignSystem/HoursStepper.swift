@@ -53,7 +53,7 @@ private struct StepButton: View {
             .font(.system(size: diameter > 40 ? 24 : 16, weight: .semibold))
             .foregroundStyle(atLimit ? LGColor.stepperGlyphLimit : LGColor.ink)
             .frame(width: diameter, height: diameter)
-        if #available(iOS 26, *), !flat {
+        if #available(iOS 26, macOS 26, *), !flat {
             glyph.glassEffect(.regular.interactive(), in: .circle).opacity(atLimit ? 0.55 : 1)
         } else {
             glyph.background(atLimit ? LGColor.stepperButtonLimit : LGColor.stepperButton, in: Circle())

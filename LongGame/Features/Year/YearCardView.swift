@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// The three looks of the year card.
 enum YearCardStyle: String, CaseIterable, Hashable {
@@ -28,7 +27,7 @@ struct YearCardView: View {
     let now: Date
     var weekStart: WeekStart = .monday
     /// The six photos of the Photos card (already chosen), in order.
-    var photos: [UIImage] = []
+    var photos: [PlatformImage] = []
     /// In the preview only: long-pressing a photo tile asks to swap it.
     var onSwapTile: ((Int) -> Void)?
 
@@ -172,7 +171,7 @@ struct YearCardView: View {
         let side = (360 - 44 - 12) / 3.0
         return Group {
             if photos.indices.contains(index) {
-                Image(uiImage: photos[index]).resizable().scaledToFill().accessibilityIgnoresInvertColors()
+                Image(platformImage: photos[index]).resizable().scaledToFill().accessibilityIgnoresInvertColors()
             } else {
                 LGColor.chipFill
             }
@@ -237,7 +236,7 @@ extension YearSummary {
             ForEach(YearCardStyle.allCases, id: \.self) { style in
                 YearCardView(summary: .sample(), craftName: "Piano", style: style,
                              now: Calendar.current.date(from: DateComponents(year: 2026, month: 12, day: 20))!,
-                             photos: (0..<6).map { i in UIImage(systemName: "photo")!.withTintColor(.brown) })
+                             photos: (0..<6).map { _ in PlatformImage.photoPlaceholder })
             }
         }
         .padding()

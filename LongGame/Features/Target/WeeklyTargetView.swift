@@ -71,7 +71,7 @@ struct WeeklyTargetView: View {
         .safeAreaInset(edge: .bottom) { actions }
         .lgScreen()
         .navigationBarBackButtonHidden()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
     }
 
     // MARK: Pieces

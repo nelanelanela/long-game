@@ -1,6 +1,9 @@
 import SwiftUI
 import PhotosUI
+#if os(iOS)
 import UIKit
+#endif
+import UniformTypeIdentifiers
 
 /// The two optional fields of section 16: a photo square and a soft note field. Nothing opens or focuses by
 /// itself, and nothing is ever required. Used in the Finish sheet and when a session is edited later.
@@ -23,12 +26,15 @@ struct NotePhotoRow: View {
             noteField
         }
         .confirmationDialog("Photo", isPresented: $choosing, titleVisibility: .hidden) {
+            #if os(iOS)
             if CameraPicker.isAvailable {
                 Button("Take photo") { takingPhoto = true }
             }
+            #endif
             Button("Choose from library") { pickingFromLibrary = true }
         }
         .photosPicker(isPresented: $pickingFromLibrary, selection: $pickerItem, matching: .images)
+        #if os(iOS)
         .fullScreenCover(isPresented: $takingPhoto) {
             CameraPicker { data in
                 takingPhoto = false
@@ -36,6 +42,14 @@ struct NotePhotoRow: View {
             }
             .ignoresSafeArea()
         }
+        #else
+        // On the Mac a picture can also be dragged straight onto the square (or the whole row).
+        .dropDestination(for: Data.self) { items, _ in
+            guard let data = items.first else { return false }
+            prepare(data)
+            return true
+        }
+        #endif
         .onChange(of: pickerItem) { _, item in
             guard let item else { return }
             Task {
@@ -123,6 +137,7 @@ struct NotePhotoRow: View {
     }
 }
 
+#if os(iOS)
 /// The system camera. The permission is asked by the system the first time it opens, never earlier.
 struct CameraPicker: UIViewControllerRepresentable {
     var onFinish: (Data?) -> Void
@@ -152,3 +167,4 @@ struct CameraPicker: UIViewControllerRepresentable {
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { onFinish(nil) }
     }
 }
+#endif

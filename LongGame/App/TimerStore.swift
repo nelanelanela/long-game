@@ -105,7 +105,9 @@ final class TimerStore {
     private func refreshSurfaces() {
         let now = Date()
         Notifications.scheduleLongSession(at: state?.longSessionDate(at: now))
+        #if os(iOS)
         LiveActivityManager.sync(state, now: now)
+        #endif
         // Mutes the chosen apps while a session exists, and lets them go the moment it ends, wherever it ended.
         FocusMode.shared.sync(sessionActive: state != nil)
     }

@@ -1,7 +1,9 @@
 import Foundation
 import Observation
+#if os(iOS)
 import UIKit
-#if canImport(FamilyControls)
+#endif
+#if os(iOS) && canImport(FamilyControls)
 import FamilyControls
 import ManagedSettings
 #endif
@@ -17,7 +19,7 @@ final class FocusMode {
     private(set) var settings: FocusSettings
     /// Set when asking Screen Time for permission failed or was refused, in words for the person.
     private(set) var permissionProblem: String?
-    #if canImport(FamilyControls)
+    #if os(iOS) && canImport(FamilyControls)
     private(set) var selection: FamilyActivitySelection
     #endif
 
@@ -32,7 +34,7 @@ final class FocusMode {
         } else {
             settings = FocusSettings()
         }
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         if let data = UserDefaults.standard.data(forKey: Self.selectionKey),
            let saved = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data) {
             selection = saved
@@ -71,7 +73,7 @@ final class FocusMode {
     /// Called whenever the timer changes. Idempotent: it only makes the block match what the plan says.
     func sync(sessionActive active: Bool) {
         sessionActive = active
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         let shield = FocusPlan.shouldShield(settings, sessionActive: active, hasChosenApps: hasChosenApps, authorised: isAuthorised)
         let store = ManagedSettingsStore(named: .init("practising"))
         if shield {
@@ -90,15 +92,17 @@ final class FocusMode {
         guard let name = FocusPlan.shortcutName(settings, starting: starting), let url = FocusPlan.shortcutURL(name: name) else { return }
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(FocusPlan.shortcutDelay))
+            #if os(iOS)
             guard UIApplication.shared.applicationState == .active else { return }
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            #endif
         }
     }
 
     // MARK: Screen Time
 
     var isAuthorised: Bool {
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         AuthorizationCenter.shared.authorizationStatus == .approved
         #else
         false
@@ -106,7 +110,7 @@ final class FocusMode {
     }
 
     var hasChosenApps: Bool {
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         !selection.applicationTokens.isEmpty || !selection.categoryTokens.isEmpty || !selection.webDomainTokens.isEmpty
         #else
         false
@@ -114,7 +118,7 @@ final class FocusMode {
     }
 
     var chosenSummary: String {
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         FocusPlan.chosenSummary(apps: selection.applicationTokens.count, categories: selection.categoryTokens.count,
                                 websites: selection.webDomainTokens.count)
         #else
@@ -122,7 +126,7 @@ final class FocusMode {
         #endif
     }
 
-    #if canImport(FamilyControls)
+    #if os(iOS) && canImport(FamilyControls)
     func setSelection(_ new: FamilyActivitySelection) {
         selection = new
         if let data = try? JSONEncoder().encode(new) { UserDefaults.standard.set(data, forKey: Self.selectionKey) }
@@ -131,7 +135,7 @@ final class FocusMode {
     #endif
 
     private func requestPermission() async -> Bool {
-        #if canImport(FamilyControls)
+        #if os(iOS) && canImport(FamilyControls)
         do {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
             return isAuthorised

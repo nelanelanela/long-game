@@ -65,7 +65,7 @@ struct TipJarView: View {
             .padding(.bottom, 32)
         }
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         .task { await tips.loadProducts() }
         .sheet(isPresented: $tips.showThanks) {
             TipThanksSheet { tips.showThanks = false; if isSheet { dismiss() } }

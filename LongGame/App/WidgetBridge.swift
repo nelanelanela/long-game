@@ -29,7 +29,9 @@ enum WidgetBridge {
             LongGameShortcuts.updateAppShortcutParameters()
         }
         // The watch gets the same stored data.
+        #if os(iOS)
         WatchBridge.shared.snapshotChanged(snapshot)
+        #endif
     }
 }
 

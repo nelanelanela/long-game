@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import UIKit
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
@@ -59,7 +58,9 @@ struct SettingsView: View {
                     iconCard(settings)
                     soundsCard(settings)
                 }
+                #if os(iOS)
                 FocusSettingsCard()
+                #endif
                 practiceCard
                 dataCard
                 #if DEBUG
@@ -70,7 +71,7 @@ struct SettingsView: View {
             .padding(.bottom, 32)
         }
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
         .onAppear { ensureSettings(); buildCSV() }
         .onChange(of: allSessions.count) { _, _ in buildCSV() }
         .fileImporter(isPresented: $pickingCSV, allowedContentTypes: [.commaSeparatedText, .plainText]) { result in
@@ -434,13 +435,19 @@ struct SettingsView: View {
     /// A soft coloured picture, prepared the same way as a real photo.
     private static func samplePhoto(seed: Int) -> Data? {
         let hue = Double((seed * 47) % 100) / 100
-        let image = UIGraphicsImageRenderer(size: CGSize(width: 900, height: 900)).image { ctx in
-            UIColor(hue: hue, saturation: 0.35, brightness: 0.95, alpha: 1).setFill()
-            ctx.fill(CGRect(x: 0, y: 0, width: 900, height: 900))
-            UIColor(hue: hue, saturation: 0.6, brightness: 0.75, alpha: 1).setFill()
-            ctx.cgContext.fillEllipse(in: CGRect(x: 250, y: 250, width: 400, height: 400))
+        let view = ZStack {
+            Color(hue: hue, saturation: 0.35, brightness: 0.95)
+            Circle().fill(Color(hue: hue, saturation: 0.6, brightness: 0.75)).frame(width: 400, height: 400)
         }
-        return image.jpegData(compressionQuality: 0.9).flatMap(PhotoProcessing.prepare)
+        .frame(width: 900, height: 900)
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = 1
+        #if canImport(UIKit)
+        let image = renderer.uiImage
+        #else
+        let image = renderer.nsImage
+        #endif
+        return image?.jpegData(compressionQuality: 0.9).flatMap(PhotoProcessing.prepare)
     }
 
     private func pretendYearOfPaceEnds(inDays days: Int) {

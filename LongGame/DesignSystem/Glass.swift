@@ -2,7 +2,7 @@ import SwiftUI
 
 // Liquid Glass (iOS 26 and later) for controls only: tabs, buttons, toolbar icons and the Timer's strip.
 // Only Apple's glass APIs are used (glassEffect, GlassEffectContainer, glassEffectID), never a home-made blur.
-// Every use sits behind `if #available(iOS 26, *)`; before that the app looks exactly as it always did.
+// Every use sits behind `if #available(iOS 26, macOS 26, *)`; before that the app looks exactly as it always did.
 // The shared styles in Components.swift pick the look, so feature views do not change per OS.
 
 private struct LGFlatKey: EnvironmentKey { static let defaultValue = false }
@@ -31,7 +31,7 @@ extension View {
     /// (the content blurs gently under it); before that it has the screen colour behind it, as it always did.
     @ViewBuilder
     func lgTopBar<Bar: View>(@ViewBuilder _ bar: () -> Bar) -> some View {
-        if #available(iOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             safeAreaBar(edge: .top, spacing: 0) { bar() }
         } else {
             safeAreaInset(edge: .top, spacing: 0) { bar().background(LGColor.background) }
@@ -46,7 +46,7 @@ private struct WarmScreenModifier: ViewModifier {
         content.background {
             ZStack(alignment: .top) {
                 LGColor.background
-                if #available(iOS 26, *), !flat {
+                if #available(iOS 26, macOS 26, *), !flat {
                     LinearGradient(stops: [.init(color: LGColor.warmWash, location: 0), .init(color: LGColor.background, location: 0.4)],
                                    startPoint: .top, endPoint: .bottom)
                 }
@@ -61,7 +61,7 @@ extension View {
     /// cover simply slides up).
     @ViewBuilder
     func scrubTransitionSource(id: String, in namespace: Namespace.ID) -> some View {
-        if #available(iOS 18, *) {
+        if #available(iOS 18, macOS 15, *) {
             matchedTransitionSource(id: id, in: namespace)
         } else {
             self
@@ -71,10 +71,14 @@ extension View {
     /// The full-screen chart zooms out of its source over the system's 0.4 s or so.
     @ViewBuilder
     func scrubTransition(id: String, in namespace: Namespace.ID) -> some View {
+        #if os(iOS)
         if #available(iOS 18, *) {
             navigationTransition(.zoom(sourceID: id, in: namespace))
         } else {
             self
         }
+        #else
+        self
+        #endif
     }
 }

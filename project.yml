@@ -8,7 +8,7 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
-    TARGETED_DEVICE_FAMILY: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
     MARKETING_VERSION: "1.0"
     DEVELOPMENT_TEAM: 7DKPSXJRS9
     CODE_SIGN_STYLE: Automatic
@@ -44,7 +44,7 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Long Game
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UIApplicationSupportsMultipleScenes: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         ENABLE_PREVIEWS: YES
@@ -152,6 +152,56 @@ targets:
         TARGETED_DEVICE_FAMILY: "4"
         CODE_SIGN_ENTITLEMENTS: LongGameWatchWidgets/LongGameWatchWidgets.entitlements
         SKIP_INSTALL: YES
+  # The Mac app. Runs locally from Xcode ("LongGame Mac" scheme, My Mac) with no Apple account changes: it is signed
+  # to run locally and has no iCloud yet (the CLOUD_SYNC flag is added once the Mac is registered, see docs/AUDIT.md).
+  LongGameMac:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - LongGameMac
+      - LongGame/Models
+      - LongGame/Logic
+      - LongGame/DesignSystem
+      - LongGame/Sound
+      - LongGame/Resources
+      - LongGame/App/TimerStore.swift
+      - LongGame/App/CloudSync.swift
+      - LongGame/App/Notifications.swift
+      - LongGame/App/NotificationPlanner.swift
+      - LongGame/App/TargetSaving.swift
+      - LongGame/App/StretchSource.swift
+      - LongGame/App/DemoData.swift
+      - LongGame/App/DebugOptions.swift
+      - LongGame/App/FocusMode.swift
+      - LongGame/App/WidgetBridge.swift
+      - LongGame/App/TipStore.swift
+      - LongGame/Features
+      - Shared/WidgetSnapshot.swift
+      - Shared/StartPlaying.swift
+      - Shared/TimerPersistence.swift
+      - Shared/WidgetViews.swift
+      - WatchShared/WatchSync.swift
+      - LongGame/App/AppShortcuts.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
+        PRODUCT_NAME: Long Game
+        PRODUCT_MODULE_NAME: LongGame
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SDKROOT: macosx
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        ENABLE_HARDENED_RUNTIME: YES
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Long Game
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
   LongGameTests:
     type: bundle.unit-test
     platform: iOS
@@ -164,6 +214,30 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameTests
+  # The same Logic tests, run against the Mac app ("LongGame Mac" scheme, Test).
+  LongGameMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: LongGameTests
+        excludes:
+          # These touch iPhone-only things (the Watch, Live Activities, the App Store test sandbox, UIKit).
+          - WatchTests.swift
+          - StoreLocationTests.swift
+          # Needs the App Store test sandbox (the iPhone scheme's .storekit file).
+          - TipTests.swift
+    dependencies:
+      - target: LongGameMac
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameMacTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Long Game.app/Contents/MacOS/Long Game"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        SWIFT_VERSION: "6.0"
 schemes:
   LongGame:
     run:
@@ -175,3 +249,13 @@ schemes:
     test:
       targets:
         - LongGameTests
+  "LongGame Mac":
+    build:
+      targets:
+        LongGameMac: all
+        LongGameMacTests: [test]
+    run:
+      config: Debug
+    test:
+      targets:
+        - LongGameMacTests

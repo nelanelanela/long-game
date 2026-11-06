@@ -47,7 +47,7 @@ struct ArchivedCraftsView: View {
             .padding(.horizontal, 24)
         }
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
     }
 }
 
@@ -109,6 +109,6 @@ struct ArchivedCraftDetail: View {
             .padding(.bottom, 24)
         }
         .lgScreen()
-        .toolbar(.hidden, for: .navigationBar)
+        .lgHidesNavigationBar()
     }
 }

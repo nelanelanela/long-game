@@ -119,7 +119,7 @@ struct OnboardingFlow: View {
                     ICloudStepView(model: model, onStart: startPlaying)
                 }
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .lgHidesNavigationBar()
         }
     }
 }
