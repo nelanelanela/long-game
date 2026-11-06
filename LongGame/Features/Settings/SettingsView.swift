@@ -328,9 +328,6 @@ struct SettingsView: View {
     #if DEBUG
     @AppStorage("debug.pretendDays") private var pretendDays = 10
     @State private var confirmResetOnboarding = false
-    /// Today's stretch: -1 = use the real hours logged this week before today.
-    @State private var stretchHoursBefore: Double = DebugOptions.stretchHoursBeforeToday ?? -1
-    @State private var stretchFreeDay = DebugOptions.stretchFreeDay
 
     private var debugCard: some View {
         card {
@@ -344,22 +341,6 @@ struct SettingsView: View {
                     (closeAll ?? { dismiss() })()
                 }
                 .lgText(.rowStrong).frame(minHeight: 54)
-                Divider().overlay(LGColor.divider)
-                VStack(alignment: .leading, spacing: 2) {
-                    Stepper(stretchHoursBefore < 0 ? "Hours this week before today: real"
-                                                   : "Hours this week before today: \(WeeklyTarget.number(stretchHoursBefore)) h",
-                            value: $stretchHoursBefore, in: -1...60, step: 0.5)
-                        .lgText(.row).frame(minHeight: 54)
-                        .onChange(of: stretchHoursBefore) { _, new in
-                            DebugOptions.stretchHoursBeforeToday = new < 0 ? nil : new
-                        }
-                    Toggle("Today is a free day", isOn: $stretchFreeDay)
-                        .lgText(.row).frame(minHeight: 54)
-                        .onChange(of: stretchFreeDay) { _, new in DebugOptions.stretchFreeDay = new }
-                    Text("Changes today's stretch on Home and the Timer. Set the hours to your weekly target or more to see \"This week is covered\"; below 0 h goes back to the real hours.")
-                        .lgText(.caption, color: LGColor.inkMuted)
-                        .padding(.bottom, 12)
-                }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
                     Button("Fill a sample year") { fillSampleYear() }

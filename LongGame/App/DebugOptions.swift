@@ -8,27 +8,6 @@ enum DebugOptions {
     private static let argumentKey = "debug.lastSessionDaysAgo"
     private static var argumentUsed = false
 
-    private static let stretchHoursKey = "debug.stretch.hoursBefore"
-    private static let stretchFreeKey = "debug.stretch.freeDay"
-
-    /// Today's stretch: pretend this many hours were logged this week before today. Nil = use the real ones.
-    static var stretchHoursBeforeToday: Double? {
-        get {
-            let d = UserDefaults.standard
-            return d.object(forKey: stretchHoursKey) == nil ? nil : d.double(forKey: stretchHoursKey)
-        }
-        set {
-            if let newValue { UserDefaults.standard.set(newValue, forKey: stretchHoursKey) }
-            else { UserDefaults.standard.removeObject(forKey: stretchHoursKey) }
-        }
-    }
-
-    /// Today's stretch: pretend today is not one of the practice days.
-    static var stretchFreeDay: Bool {
-        get { UserDefaults.standard.bool(forKey: stretchFreeKey) }
-        set { UserDefaults.standard.set(newValue, forKey: stretchFreeKey) }
-    }
-
     /// Settings button: pretend the last session was this many days ago, once.
     static func setPretendLastSessionDaysAgo(_ days: Int) {
         UserDefaults.standard.set(days, forKey: settingKey)

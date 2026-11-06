@@ -8,12 +8,7 @@ enum StretchSource {
         let weekStart = settings?.weekStart ?? .localeDefault
         let hours = Stretch.weeklyTarget(now: now, weekStart: weekStart, periods: periods.map(\.record),
                                          current: settings?.currentTarget, calendar: calendar)
-        #if DEBUG
-        return Stretch.plan(sessions: sessions, weeklyTargetHours: hours, now: now, weekStart: weekStart, calendar: calendar,
-                            hoursBeforeToday: DebugOptions.stretchHoursBeforeToday, forceFreeDay: DebugOptions.stretchFreeDay)
-        #else
         return Stretch.plan(sessions: sessions, weeklyTargetHours: hours, now: now, weekStart: weekStart, calendar: calendar)
-        #endif
     }
 
     /// A running session belongs to the day it started: only one that started today counts towards today.

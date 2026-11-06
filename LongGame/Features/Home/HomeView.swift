@@ -128,7 +128,7 @@ struct HomeView: View {
     /// The page's lifecycle, sheets and alerts, kept apart from `body` so the compiler can type-check each.
     private func lifecycle<V: View>(_ page: V, figures: HomeFigures, s: ProgressSummary) -> some View {
         page
-        .modifier(TodayLive(winkWhen: figures.shown == .today && figures.stretch.isCovered && !figures.stretch.isWeekCovered,
+        .modifier(TodayLive(winkWhen: figures.shown == .today && figures.stretch.isCovered,
                             ticksWhen: tab == .today && onScreen && !showTimer && scenePhase == .active,
                             everySecond: timer.isActive, winking: $winking, tick: $tick))
         .onAppear {

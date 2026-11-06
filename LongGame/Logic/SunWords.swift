@@ -137,21 +137,15 @@ enum SunSpeech {
     }
 
     /// Today. "The sun is almost two thirds of the way to the moon." / "1 hour 5 minutes of 1 hour 45 minutes,
-    /// 40 minutes to go." Free day: "Free day, no stretch today. Playing anyway brings your future closer."
+    /// 40 minutes to go."
     static func today(_ state: StretchState) -> SpokenGauge {
         switch state {
-        case .stretch(let target, let done):
+        case .inProgress(let target, let done):
             let label = sunPositionWords(fraction: state.fraction).sentence(to: String(localized: "the moon"))
             return SpokenGauge(label: label, value: String(localized: "\(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target)), \(StretchText.spokenUp(seconds: target - done)) to go."))
         case .covered(let target, let done):
             return SpokenGauge(label: String(localized: "Today's stretch is covered. The sun has reached the moon."),
                                value: String(localized: "\(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target)). Anything more is a bonus."))
-        case .weekCovered(let done):
-            return SpokenGauge(label: String(localized: "This week is covered. The sun is at the top."),
-                               value: String(localized: "Today: \(StretchText.spoken(seconds: done)). Anything more is a bonus."))
-        case .freeDay(let done):
-            return SpokenGauge(label: String(localized: "Free day, no stretch today. Playing anyway brings your future closer."),
-                               value: done > 0 ? String(localized: "Played anyway: \(StretchText.spoken(seconds: done)).") : "")
         case .noTarget:
             return SpokenGauge(label: String(localized: "No weekly target yet."), value: "")
         }
