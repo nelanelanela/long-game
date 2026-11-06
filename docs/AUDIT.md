@@ -22,18 +22,20 @@ Not done or not testable here:
 - Strings: the spoken sentences are one `String(localized:)` each, with the plural parts ("3 days", "1 hour") taken from the existing pluralised catalog entries rather than new catalog variations. The catalog is English only.
 - Dark appearance: not started (a design job of its own).
 
-## App icon (update prompt 20)
+## App icon (update prompts 20 and 25)
 
 | Requirement | Status | Where | Note |
 | --- | --- | --- | --- |
-| Six icons (Start, 1,000, 2,500, 5,000, 7,500, 10,000) in the spec's geometry | ✅ | `Tools/MakeIcon.swift`, `Assets.xcassets/AppIcon*.appiconset` | One `drawIcon(hours:look:)`; number drawn as outlines. The sun is drawn from the same numbers as SunView |
+| Eleven icons (Start, then 1,000 … 10,000) in the spec's geometry | ✅ | `Tools/MakeIcon.swift`, `Assets.xcassets/AppIcon*.appiconset` | One `drawIcon(hours:look:)`; number drawn as outlines. The sun is drawn from the same numbers as SunView |
 | Dark and Tinted for every set | ✅ | same | Dark reuses the artwork; Tinted is greyscale |
 | Alternate sets listed in `project.yml` | ✅ | `project.yml` | `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` |
 | `IconStage.for(totalHours:)` and `IconPlan` | ✅ | `Logic/IconStage.swift` | Tests in `IconStageTests.swift` |
-| Icon changes only after a 1,000 h+ celebration's main button | ✅ | `HomeView.celebrationDone` | 100 and 500 h do nothing; jumps go to the highest stage |
+| 1,000, 5,000 and 10,000 change the icon after the celebration's main button | ✅ | `HomeView.celebrationDone` | 2,500 and 7,500 celebrate but never change it themselves; jumps go to the highest stage |
+| Other thousands change the icon once the sheet or timer has closed | ✅ | `HomeView.sheetClosed`, `syncIconQuietly` | Uses each sheet's `onDismiss`; Watch / Live Activity saves wait for the next active Home |
+| `IconStage` is a count of thousands; old stored value treated as unknown | ✅ | `Logic/IconStage.swift`, `Models.swift` | No migration |
 | Quiet lowering on launch / foreground, never during a session | ✅ | `HomeView.syncIconQuietly` | Replace my craft resets at once (`OneCraftSheet`) |
 | Settings switch "App icon grows with you" | ✅ | `SettingsView.iconCard` | Standard Toggle, so VoiceOver and Dynamic Type work |
-| Previews of all six stages, Dark and Tinted | 🟡 | `DesignSystem/IconStageView.swift` | Built; not opened in the Xcode canvas from here |
+| Previews of all eleven stages, Dark and Tinted | 🟡 | `DesignSystem/IconStageView.swift` | Built; not opened in the Xcode canvas from here |
 | Real alternate-icon switching on a device | ❌ | | Not run on a real iPhone; see "how to check" in the hand-over |
 
 ## Data and maths

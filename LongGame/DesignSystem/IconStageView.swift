@@ -9,7 +9,7 @@ struct IconStageView: View {
     var body: some View {
         let ink = tinted ? Color.black : LGColor.ink
         let gold = tinted ? Color.white : LGColor.sunRaysBright
-        let celebrate = stage == .k10
+        let celebrate = stage.thousands == IconStage.maxThousands
         let fill = stage.ringFill
         let angle = Angle.degrees(-90 + 360 * (fill >= 1 ? 0 : fill))
         let k: CGFloat = celebrate ? 1.3 : 1.1
@@ -50,8 +50,8 @@ struct IconStageView: View {
 private struct IconStageGrid: View {
     var tinted = false
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.fixed(150), spacing: 12), count: 3), spacing: 12) {
-            ForEach(IconStage.allCases, id: \.self) { stage in
+        LazyVGrid(columns: Array(repeating: GridItem(.fixed(150), spacing: 12), count: 4), spacing: 12) {
+            ForEach(IconStage.all, id: \.self) { stage in
                 IconStageView(stage: stage, tinted: tinted)
                     .scaleEffect(150.0 / 1024, anchor: .topLeading)
                     .frame(width: 150, height: 150)

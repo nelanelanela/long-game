@@ -165,7 +165,7 @@ struct SettingsView: View {
         return card {
             VStack(alignment: .leading, spacing: 2) {
                 Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.ink)
-                Text("Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours")
+                Text("Grows every 1,000 hours")
                     .lgText(.caption, color: LGColor.inkMuted)
             }
             .padding(.vertical, 10)

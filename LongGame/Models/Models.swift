@@ -123,13 +123,14 @@ final class AppSettings {
     /// Settings → App icon grows with you. On unless turned off.
     var iconGrows: Bool = true
     /// The `IconStage` the home-screen icon was last set to.
-    var appliedIconStageRaw: String = IconStage.start.rawValue
+    var appliedIconStageRaw: String = IconStage.start.stored
 
     init() {}
 
-    var appliedIconStage: IconStage {
-        get { IconStage(rawValue: appliedIconStageRaw) ?? .start }
-        set { appliedIconStageRaw = newValue.rawValue }
+    /// Nil when the stored value is unknown (for example from before the icon grew every 1,000 hours).
+    var appliedIconStage: IconStage? {
+        get { IconStage(stored: appliedIconStageRaw) }
+        set { appliedIconStageRaw = (newValue ?? .start).stored }
     }
 
     var weekStart: WeekStart {

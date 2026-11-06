@@ -152,7 +152,7 @@ struct HomeView: View {
                 checkCatchUp(summary: now)
             }
         }
-        .sheet(item: $catchUpGap) { gap in
+        .sheet(item: $catchUpGap, onDismiss: sheetClosed) { gap in
             CatchUpSheet(craft: craft, gap: gap, pace: totalPace, onFinish: catchUpFinished)
                 .lgSheetCard()
         }
@@ -176,7 +176,7 @@ struct HomeView: View {
         } message: {
             Text("A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings.")
         }
-        .sheet(item: $sheet) { item in
+        .sheet(item: $sheet, onDismiss: sheetClosed) { item in
             Group {
             switch item {
             case .addHours:
@@ -394,7 +394,7 @@ struct HomeView: View {
         .frame(minHeight: 44)
         // Settings has its own stack: a screen that hides the navigation bar, pushed on top of another pushed screen
         // (Settings → Your estimates), sent SwiftUI into an endless layout loop. It closes back to Home.
-        .fullScreenCover(isPresented: $showSettings) {
+        .fullScreenCover(isPresented: $showSettings, onDismiss: sheetClosed) {
             NavigationStack {
                 SettingsView(craft: craft, closeAll: { showSettings = false })
             }
@@ -611,7 +611,7 @@ struct HomeView: View {
         guard let top = crossed.max() else { return }
         settings.milestonesSeen.append(contentsOf: crossed)
         try? context.save()
-        if top >= IconStage.k1.milestoneHours { iconHeld = true }
+        if top >= IconPlan.heldBelow { iconHeld = true }
         Task {
             // let a saved session's count-up finish first
             try? await Task.sleep(for: .seconds(1.6))
@@ -627,17 +627,27 @@ struct HomeView: View {
         iconHeld = false
         guard let settings = settingsRows.first else { return }
         let total = summary(now: Date()).total
-        if let stage = IconPlan.afterCelebration(hours: hours, totalHours: total, growsWithYou: settings.iconGrows) {
+        if let stage = IconPlan.afterCelebration(hours: hours, totalHours: total, growsWithYou: settings.iconGrows,
+                                                  applied: settings.appliedIconStage) {
             AppIconManager.apply(stage, settings: settings, context: context, timerRunning: timer.isActive)
         }
+    }
+
+    /// A sheet, the timer or Settings has fully closed (their `onDismiss` runs after the animation): a thousand that
+    /// the saved session crossed, and that has no celebration, changes the icon now, over Home.
+    private func sheetClosed() {
+        syncIconQuietly(total: summary(now: Date()).total)
     }
 
     /// On launch, on return to the foreground and when Home first appears: set the right icon once, quietly.
     /// A lower total (Replace my craft, deleted sessions, lower estimates) lowers the icon here; never during a session.
     private func syncIconQuietly(total: Double) {
-        guard let settings = settingsRows.first, !timer.isActive else { return }
+        // Never while a sheet or the timer is up: iOS's "You have changed the icon" alert must land over Home.
+        // Each of them calls this again once it has fully closed.
+        guard let settings = settingsRows.first, !timer.isActive, sheet == nil, catchUpGap == nil, !showTimer,
+              !showSettings else { return }
         let due = !Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
-            .filter { $0 >= IconStage.k1.milestoneHours }.isEmpty
+            .filter { $0 >= IconPlan.heldBelow }.isEmpty
         if let stage = IconPlan.quietStage(totalHours: total, growsWithYou: settings.iconGrows,
                                            applied: settings.appliedIconStage,
                                            celebrationPending: due || iconHeld || celebrating != nil) {
@@ -700,6 +710,7 @@ struct HomeView: View {
 
     /// After a saved session the total counts up from old to new.
     private func timerDismissed() {
+        defer { sheetClosed() }
         guard timer.savedSession else { return }
         timer.savedSession = false
         guard !reduceMotion else { return }

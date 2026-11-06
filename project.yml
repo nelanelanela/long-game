@@ -49,8 +49,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: LongGame/LongGame.entitlements
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) CLOUD_SYNC"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        # The icon grows at milestones (Logic/IconStage.swift); these are the alternate sets next to AppIcon.
-        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-1000 AppIcon-2500 AppIcon-5000 AppIcon-7500 AppIcon-10000"
+        # The icon grows every 1,000 hours (Logic/IconStage.swift); these are the alternate sets next to AppIcon.
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-1000 AppIcon-2000 AppIcon-3000 AppIcon-4000 AppIcon-5000 AppIcon-6000 AppIcon-7000 AppIcon-8000 AppIcon-9000 AppIcon-10000"
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
   LongGameWidgets:
     type: app-extension

@@ -1,4 +1,4 @@
-// Draws the six "10,000 ring" app icons (see docs/SPEC.md, "App icon") from the same sun geometry as SunView
+// Draws the eleven "10,000 ring" app icons (see docs/SPEC.md, "App icon") from the same sun geometry as SunView
 // (200 × 200 space), and writes the asset sets with their Dark and Tinted versions.
 // Run from the project folder:
 //   swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets
@@ -27,7 +27,7 @@ func grouped(_ n: Int) -> String {
 }
 
 /// The one drawing function: the icon for a total of `hours` (0 = the start icon), in a normal or tinted look.
-/// `hours` should be one of 0, 1000, 2500, 5000, 7500, 10000.
+/// `hours` should be 0 or a multiple of 1000 up to 10000.
 func drawIcon(hours: Int, look: Look = .normal) -> CGImage {
     let tinted = look == .tinted
     let ctx = CGContext(data: nil, width: size, height: size, bitsPerComponent: 8, bytesPerRow: 0, space: space,
@@ -152,10 +152,7 @@ func write(_ image: CGImage, to path: String) {
     CGImageDestinationFinalize(dest)
 }
 
-let stages: [(name: String, hours: Int)] = [
-    ("AppIcon", 0), ("AppIcon-1000", 1000), ("AppIcon-2500", 2500),
-    ("AppIcon-5000", 5000), ("AppIcon-7500", 7500), ("AppIcon-10000", 10000),
-]
+let stages: [(name: String, hours: Int)] = [("AppIcon", 0)] + (1...10).map { ("AppIcon-\($0 * 1000)", $0 * 1000) }
 
 let contents = """
 {

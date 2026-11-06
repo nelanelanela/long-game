@@ -598,30 +598,30 @@ iPhone Duo (iOS 27) has a 5.4-inch outer display (portrait, shorter than other i
 
 ## App icon (the "10,000 ring")
 
-The icon grows with the user. It changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours using iOS alternate app icons.
+The icon grows with the user: one new icon for every 1,000 hours, using iOS alternate app icons.
 
-**Six icons** (asset sets `AppIcon`, `AppIcon-1000`, `-2500`, `-5000`, `-7500`, `-10000`; each has Any, Dark and Tinted):
+**Eleven icons** (asset sets `AppIcon`, then `AppIcon-1000`, `-2000`, … `-10000`; each has Any, Dark and Tinted):
 
-| Stage | Ring filled | Number | Sun |
+| Stage (`IconStage(thousands:)`) | Ring filled | Number | Sun |
 | --- | --- | --- | --- |
-| `.start` (primary) | none, track only | 10,000 | 12 o'clock, happy |
-| `.k1` | 10% | 1,000 | tip of the arc, happy |
-| `.k2_5` | 25% | 2,500 | tip, happy |
-| `.k5` | 50% | 5,000 | tip, happy |
-| `.k7_5` | 75% | 7,500 | tip, happy |
-| `.k10` | 100% | 10,000 | 12 o'clock, celebrate face, 1.3×, halo r 132 |
+| 0 (primary, the start icon) | none, track only | 10,000 | 12 o'clock, happy |
+| 1 … 9 | 10% … 90%, a tenth more each | 1,000 … 9,000 | tip of the arc, happy |
+| 10 | 100% | 10,000 | 12 o'clock, celebrate face, 1.3×, halo r 132 |
 
 **Geometry** (1024 × 1024, square, no transparency): ink #16244A background; track = circle at (512, 512), r 360, stroke 56, white 14%; arc = same circle in #FFD15C, round caps, from 12 o'clock clockwise to −90° + 360° × hours ÷ 10,000; sun = SunView geometry at 1.1× centred on the arc's end, on an ink halo r 112; number = SF Pro Bold 176, tracking −6, white, centred, as outlines. **Dark** = same artwork. **Tinted** = black background, white arc, sun and number, track white 20%.
 
-**Generated** by `swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets` (one function, `drawIcon(hours:look:)`). `DesignSystem/IconStageView.swift` draws the same stages with the real SunView for Xcode previews (normal, dark, tinted). The alternate sets are listed in `project.yml` (`ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`).
+**Generated** by `swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets` (one function, `drawIcon(hours:look:)`). `DesignSystem/IconStageView.swift` draws all eleven stages with the real SunView for Xcode previews (normal, dark, tinted). The alternate sets are listed in `project.yml` (`ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`).
 
 **When it changes** (`Logic/IconStage.swift`, `App/AppIconManager.swift`):
-- `IconStage.for(totalHours:)` gives the stage; below 1,000 h it is `.start`.
-- Only after the user taps the main button ("Keep going") on a 1,000 h+ celebration, so the system "You have changed the icon" alert never covers it. The 100 and 500 hour celebrations do nothing. A jump over several milestones goes straight to the stage for the whole total: one change, one alert.
-- `setAlternateIconName` is called only when the app is active, `supportsAlternateIcons` is true, no session is running, and the wanted icon differs from `alternateIconName`. `AppSettings.appliedIconStageRaw` records the stage.
-- When the total goes down (deleted sessions, lowered estimates) the icon is lowered quietly, once, on the next launch or return to the foreground (and whenever Home appears). Replace my craft sets the plain icon at once. A higher stage never jumps ahead of a celebration that is due.
+- `IconStage.for(totalHours:)` is the whole thousands reached, capped at 10 (2,500 h is still stage 2). `IconStage` is a count of thousands, not named cases.
+- **1,000, 5,000 and 10,000** have a milestone celebration: the icon changes after the user taps its main button, so the system "You have changed the icon" alert never covers it. The 2,500 and 7,500 celebrations never change the icon themselves; they only release a stage that a jump was waiting for. 100 and 500 do nothing.
+- **Every other thousand** (2,000, 3,000, 4,000, 6,000 … 9,000) has no celebration. The icon changes right after the user saves the session that crossed it (Finish sheet, Add past hours, Catch-up), once the sheet or timer has fully closed (`onDismiss`), so the alert appears over Home. While a sheet, the timer or Settings is up, nothing changes.
+- A session saved from the Live Activity or the Watch while the app isn't active changes the icon the next time the app becomes active and Home appears.
+- A jump over several thousands goes straight to the highest stage: one change, one alert.
+- `setAlternateIconName` is called only when the app is active, `supportsAlternateIcons` is true, no session is running, and the wanted icon differs from `alternateIconName`. `AppSettings.appliedIconStageRaw` records the stage as a number; an unknown value (for example an old name) is treated as "set it again".
+- When the total goes down (deleted sessions, lowered estimates) the icon is lowered quietly, once, on the next launch or return to the foreground (and whenever Home appears). Replace my craft sets the plain icon at once. A higher stage never jumps ahead of a celebration of 1,000 h or more that is due.
 - New users already past 1,000 h get their stage once, when Home first appears after onboarding.
-- Settings → **App icon grows with you** (on by default, below the reminders): "Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours". Off sets the primary icon; on sets the current stage.
+- Settings → **App icon grows with you** (on by default, below the reminders): "Grows every 1,000 hours". Off sets the primary icon; on sets the current stage.
 
 ## Visual system
 
