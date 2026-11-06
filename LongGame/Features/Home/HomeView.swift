@@ -119,6 +119,7 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $showTimer, onDismiss: timerDismissed) {
             // Read live rather than from state, so the timer never starts from a stale total.
             TimerView(craft: craft, baseTotal: summary(now: Date()).total)
+                .allowsRotation()
         }
         .onChange(of: timer.finishRequested) { _, requested in
             if requested { openTimer(total: s.total) }

@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct LongGameApp: App {
+    @UIApplicationDelegateAdaptor(LongGameAppDelegate.self) private var appDelegate
     @State private var store: StoreHost
     @State private var timerStore = TimerStore()
     @State private var iCloud = ICloudMonitor()
