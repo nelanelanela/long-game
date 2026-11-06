@@ -18,20 +18,20 @@ struct WeeklyTargetView: View {
 
     let mode: Mode
     /// Where the stepper starts when there is no target yet.
-    let recentPace: Double
+    let actualPace: Double
     let onSave: (Double) -> Void
     var now: Date = Date()
 
     @State private var hours: Double
     @Environment(\.dismiss) private var dismiss
 
-    init(mode: Mode, initial: Double? = nil, recentPace: Double, now: Date = Date(),
+    init(mode: Mode, initial: Double? = nil, actualPace: Double, now: Date = Date(),
          onSave: @escaping (Double) -> Void) {
         self.mode = mode
-        self.recentPace = recentPace
+        self.actualPace = actualPace
         self.now = now
         self.onSave = onSave
-        _hours = State(initialValue: WeeklyTarget.clamped(initial ?? WeeklyTarget.suggested(pace: recentPace)))
+        _hours = State(initialValue: WeeklyTarget.clamped(initial ?? WeeklyTarget.suggested(pace: actualPace)))
     }
 
     private var title: LocalizedStringKey {
@@ -118,6 +118,6 @@ struct WeeklyTargetView: View {
 
 #Preview("Your pace for the year") {
     NavigationStack {
-        WeeklyTargetView(mode: .onboarding, recentPace: 12) { _ in }
+        WeeklyTargetView(mode: .onboarding, actualPace: 12) { _ in }
     }
 }

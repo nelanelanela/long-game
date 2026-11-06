@@ -80,7 +80,7 @@ struct GrowthTab: View {
                     Text("At your chosen pace, you'll finish around").lgText(.caption, color: LGColor.inkMuted)
                     Text(ForecastText.headline(s.forecast.chosen, now: now))
                         .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48))
-                    Text(ForecastText.recentLine(s.forecast, now: now))
+                    Text(ForecastText.actualLine(s.forecast, now: now))
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
                 if !s.hasEnoughData {
@@ -114,6 +114,11 @@ struct GrowthTab: View {
                 .accessibilityAction(named: "Open full screen") { scrubbing = true }
                 .scrubTransitionSource(id: "growth-chart", in: chartSpace)
 
+            if s.total < Totals.goalHours {
+                Rectangle().fill(LGColor.hairline).frame(height: 1)
+                GrowthKey(forecast: s.forecast, now: now)
+                    .padding(.horizontal, 4)
+            }
         }
         .padding(.horizontal, 14).padding(.vertical, 16)
         .lgCard()

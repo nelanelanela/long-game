@@ -10,8 +10,8 @@ struct GrowthChartData: Sendable {
     var past: [CumulativePoint]
     /// The dashed line at the chosen pace, from today to its finish (or the 30-year horizon).
     var chosen: [CumulativePoint]
-    /// The dotted line at the recent pace, from today to its finish (or the 30-year horizon).
-    var recent: [CumulativePoint]
+    /// The dotted line at the actual pace, from today to its finish (or the 30-year horizon).
+    var actual: [CumulativePoint]
     /// Where the chosen pace reaches 10,000 h (the sun), nil when it does not within 30 years.
     var chosenDate: Date?
     var xStart: Date
@@ -57,12 +57,12 @@ enum GrowthSeries {
         }
         // The chart runs to the later of the two finishes (30 years at most), plus half a year of room for the sun.
         let chosenMonths = forecast.chosen.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
-        let recentMonths = forecast.recent.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
-        let lastMonths = max(chosenMonths, recentMonths, 12)
+        let actualMonths = forecast.actual.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
+        let lastMonths = max(chosenMonths, actualMonths, 12)
         let endMonths = lastMonths + 6
         return GrowthChartData(past: past,
                                chosen: dated(forecast.chosen),
-                               recent: dated(forecast.recent),
+                               actual: dated(forecast.actual),
                                chosenDate: forecast.chosen.monthsToGoal.map { ForecastEngine.date(afterMonths: $0, from: now) },
                                xStart: past.first?.date ?? now,
                                xEnd: ForecastEngine.date(afterMonths: endMonths, from: now))
@@ -92,6 +92,38 @@ enum GrowthText {
         if total >= Totals.goalHours { return today + "You have crossed the finish line." }
         return today + "At your chosen pace you reach 10,000 hours: "
             + ForecastText.headline(forecast.chosen, now: now, calendar: calendar) + ". "
-            + ForecastText.recentLine(forecast, now: now, calendar: calendar) + "."
+            + ForecastText.actualLine(forecast, now: now, calendar: calendar) + "."
+    }
+}
+
+/// The words in the key under the Growth chart. Live: the chosen pace includes the What-if extra.
+enum GrowthKeyText {
+    /// "12 h a week · Nov 2035"
+    static func chosenNumbers(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        let finish = forecast.chosen.monthsToGoal == nil
+            ? ForecastText.year(forecast.chosen, now: now, calendar: calendar)
+            : ForecastText.shortMonthYear(ForecastEngine.date(afterMonths: forecast.chosen.monthsToGoal ?? 0, from: now), calendar: calendar)
+        return "\(WeeklyTarget.number(forecast.chosenRate)) h a week · \(finish)"
+    }
+
+    /// "9.5 h a week · 2039", or "… · after 2056" beyond 30 years.
+    static func actualNumbers(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        "\(WeeklyTarget.number(forecast.actualRate)) h a week · \(ForecastText.year(forecast.actual, now: now, calendar: calendar))"
+    }
+
+    /// One VoiceOver sentence for the whole key.
+    static func spoken(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        func rate(_ r: Double) -> String { WeeklyTarget.number(r) }
+        let chosen: String
+        if let m = forecast.chosen.monthsToGoal {
+            chosen = "finishes around " + ForecastText.monthYear(ForecastEngine.date(afterMonths: m, from: now), calendar: calendar)
+        } else {
+            chosen = "finishes " + ForecastText.year(forecast.chosen, now: now, calendar: calendar)
+        }
+        let actual = forecast.actual.monthsToGoal == nil
+            ? "finishes " + ForecastText.year(forecast.actual, now: now, calendar: calendar)
+            : "finishes around " + ForecastText.year(forecast.actual, now: now, calendar: calendar)
+        return "Your chosen pace, \(rate(forecast.chosenRate)) hours a week, \(chosen). "
+            + "Your actual pace, \(rate(forecast.actualRate)) hours a week, \(actual)."
     }
 }

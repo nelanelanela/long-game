@@ -79,7 +79,7 @@ struct GrowthScrubView: View {
     private var idleHeadline: ScrubReadout {
         ScrubReadout(small: String(localized: "At your chosen pace, you'll finish around"),
                      big: ForecastText.headline(forecast.chosen, now: now),
-                     accent: ForecastText.recentLine(forecast, now: now), chip: "", blurb: "", date: "", hours: "")
+                     accent: ForecastText.actualLine(forecast, now: now), chip: "", blurb: "", date: "", hours: "")
     }
 
     // MARK: Body
@@ -91,11 +91,16 @@ struct GrowthScrubView: View {
                 top
                 if wide {
                     HStack(alignment: .top, spacing: 8) {
-                        headline.frame(width: min(320, geo.size.width * 0.36))
+                        VStack(alignment: .leading, spacing: 10) {
+                            headline
+                            key
+                        }
+                        .frame(width: min(320, geo.size.width * 0.36))
                         chartArea
                     }
                 } else {
                     headline
+                    key.padding(.top, 10)
                     chartArea.padding(.top, 14)
                 }
                 hint
@@ -152,6 +157,14 @@ struct GrowthScrubView: View {
         .accessibilityElement(children: .combine)
     }
 
+    /// Names the two forecast lines, which carry no text of their own.
+    @ViewBuilder
+    private var key: some View {
+        if total < Totals.goalHours {
+            GrowthKey(forecast: forecast, now: now, style: .full).padding(.horizontal, 24)
+        }
+    }
+
     private var chartArea: some View {
         GrowthChartView(data: data, total: total, now: now, style: .full, milestones: milestones, scrubPoint: point,
                         selection: $selection, sunScale: sunScale, draw: draw, ring: ring, floatingLabel: readout)
@@ -163,7 +176,7 @@ struct GrowthScrubView: View {
             .accessibilityValue(readout?.spoken ?? GrowthText.chartLabel(total: total, forecast: forecast, now: now))
             .accessibilityHint("Swipe up or down to step through your milestones")
             .accessibilityAdjustableAction { direction in step(direction == .increment ? 1 : -1) }
-            .accessibilityChartDescriptor(GrowthChartDescriptor(past: data.past, chosen: data.chosen, recent: data.recent, now: now))
+            .accessibilityChartDescriptor(GrowthChartDescriptor(past: data.past, chosen: data.chosen, actual: data.actual, now: now))
     }
 
     /// The hint sits in a fixed-height slot, so the chart does not jump when it goes away.
@@ -224,7 +237,7 @@ struct GrowthScrubView: View {
     // MARK: Draw-in
 
     /// The past line draws left to right (0.8 s, ease-out), then the dashed chosen-pace line (0.5 s), the dotted
-    /// recent-pace line (0.3 s) and the sun pops onto the finish with a small bounce. Reduce Motion: a 0.2 s fade.
+    /// actual-pace line (0.3 s) and the sun pops onto the finish with a small bounce. Reduce Motion: a 0.2 s fade.
     private func drawIn() async {
         guard draw != .complete else { return }
         if reduceMotion {
@@ -245,11 +258,11 @@ struct GrowthScrubView: View {
     }
 }
 
-/// The Audio Graph: the past, and the chosen-pace and recent-pace lines, as lines of hours over the years.
+/// The Audio Graph: the past, and the chosen-pace and actual-pace lines, as lines of hours over the years.
 struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
     let past: [CumulativePoint]
     let chosen: [CumulativePoint]
-    let recent: [CumulativePoint]
+    let actual: [CumulativePoint]
     let now: Date
 
     private static func year(_ date: Date) -> Double {
@@ -257,7 +270,7 @@ struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
     }
 
     func makeChartDescriptor() -> AXChartDescriptor {
-        let all = past + chosen + recent
+        let all = past + chosen + actual
         let years = all.map { Self.year($0.date) }
         let x = AXNumericDataAxisDescriptor(title: String(localized: "Year"), range: (years.min() ?? 2000)...(years.max() ?? 2001),
                                             gridlinePositions: []) { String(Int($0.rounded())) }
@@ -271,7 +284,7 @@ struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
                                  xAxis: x, yAxis: y, additionalAxes: [],
                                  series: [series(String(localized: "Played"), past),
                                           series(String(localized: "At your chosen pace"), chosen),
-                                          series(String(localized: "At your recent pace"), recent)])
+                                          series(String(localized: "At your actual pace"), actual)])
     }
 }
 
@@ -288,7 +301,7 @@ private enum ScrubPreviewData {
                     CumulativePoint(date: date(2023, 1), hours: 2_300), CumulativePoint(date: date(2025, 6), hours: 2_900),
                     CumulativePoint(date: now, hours: 3_294)]
         let rate = perMonth * 7 / ForecastEngine.daysPerMonth
-        let forecast = ForecastEngine.forecast(total: 3_294, chosenPace: rate, recentPace: rate * 0.6)
+        let forecast = ForecastEngine.forecast(total: 3_294, chosenPace: rate, actualPace: rate * 0.6)
         let mid = forecast.chosen
         let data = GrowthSeries.chartData(forecast: forecast, past: past, now: now)
         let onboarding = date(2024, 1)

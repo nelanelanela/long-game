@@ -7,9 +7,9 @@ struct ProgressSummary: Sendable {
     var total: Double
     var thisWeek: Double
     var pace: Double
-    /// The recent pace the dotted line runs on (lifetime average blended with the last 12 weeks).
+    /// The actual pace the dotted line runs on (lifetime average blended with the last 12 weeks).
     var forecastPace: Double
-    /// The weekly pace the user chose ("Your pace for the year"); the recent pace when none is set.
+    /// The weekly pace the user chose ("Your pace for the year"); the actual pace when none is set.
     var chosenPace: Double
     var forecast: Forecast
     var hasEnoughData: Bool
@@ -26,16 +26,16 @@ struct ProgressSummary: Sendable {
         let total = Totals.total(baseline: baseline, logged: logged)
         let latest = estimates.max(by: { $0.year < $1.year })?.hoursPerWeek ?? 0
         let pace = Pace.hoursPerWeek(sessions: sessions, latestEstimate: latest, onboardingDate: onboardingDate, now: now, calendar: calendar)
-        // The recent pace: the lifetime average, adjusted by recent entries.
+        // The actual pace: the lifetime average, adjusted by recent entries.
         let forecastPace = ForecastEngine.forecastPace(total: total, estimates: estimates, sessions: sessions,
                                                        onboardingDate: onboardingDate, now: now, calendar: calendar)
-        // The finish line runs on the pace the user chose; without one, on the recent pace.
+        // The finish line runs on the pace the user chose; without one, on the actual pace.
         let chosen = (target?.hoursPerWeek).flatMap { $0 > 0 ? $0 : nil } ?? forecastPace
         return ProgressSummary(
             baseline: baseline, logged: logged, total: total,
             thisWeek: WeekMath.thisWeekHours(sessions, now: now, weekStart: weekStart, calendar: calendar),
             pace: pace, forecastPace: forecastPace, chosenPace: chosen,
-            forecast: ForecastEngine.forecast(total: total, chosenPace: chosen, extra: extra, recentPace: forecastPace),
+            forecast: ForecastEngine.forecast(total: total, chosenPace: chosen, extra: extra, actualPace: forecastPace),
             hasEnoughData: hasTwoWeeksOfData(sessions, now: now)
         )
     }

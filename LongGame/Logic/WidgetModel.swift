@@ -37,7 +37,7 @@ enum WidgetModel {
         let total = Totals.total(baseline: baseline, logged: Totals.loggedHours(sessions))
         let weekHours = WeekMath.thisWeekHours(sessions, now: now, weekStart: weekStart, calendar: calendar)
 
-        // The same fallback as Home: with no target chosen yet, the recent pace stands in for it.
+        // The same fallback as Home: with no target chosen yet, the actual pace stands in for it.
         let latest = rates.max(by: { $0.year < $1.year })?.hoursPerWeek ?? 0
         let pace = Pace.hoursPerWeek(sessions: sessions, latestEstimate: latest, onboardingDate: snapshot.onboardingDate,
                                      now: now, calendar: calendar)

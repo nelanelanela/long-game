@@ -184,20 +184,20 @@ enum GrowthScrub {
 // MARK: Draw-in
 
 /// How much of each line is drawn while the full-screen chart opens: the past line first (0.8 s, ease-out), then the
-/// dashed chosen-pace line (0.5 s), then the dotted recent-pace line (0.3 s), then the sun pops onto the finish.
+/// dashed chosen-pace line (0.5 s), then the dotted actual-pace line (0.3 s), then the sun pops onto the finish.
 struct DrawProgress: Equatable, Sendable {
     var past: Double
     var chosen: Double
-    var recent: Double
+    var actual: Double
     var sun: Bool
 
-    static let complete = DrawProgress(past: 1, chosen: 1, recent: 1, sun: true)
-    static let empty = DrawProgress(past: 0, chosen: 0, recent: 0, sun: false)
+    static let complete = DrawProgress(past: 1, chosen: 1, actual: 1, sun: true)
+    static let empty = DrawProgress(past: 0, chosen: 0, actual: 0, sun: false)
 
     static let pastDuration = 0.8
     static let chosenDuration = 0.5
-    static let recentDuration = 0.3
-    static var total: Double { pastDuration + chosenDuration + recentDuration }
+    static let actualDuration = 0.3
+    static var total: Double { pastDuration + chosenDuration + actualDuration }
 
     /// The progress `t` seconds after the chart opened.
     static func at(_ t: Double) -> DrawProgress {
@@ -206,7 +206,7 @@ struct DrawProgress: Equatable, Sendable {
         func easeInOut(_ x: Double) -> Double { x < 0.5 ? 2 * x * x : 1 - pow(-2 * x + 2, 2) / 2 }
         return DrawProgress(past: easeOut(phase(0, pastDuration)),
                             chosen: easeInOut(phase(pastDuration, chosenDuration)),
-                            recent: easeInOut(phase(pastDuration + chosenDuration, recentDuration)),
+                            actual: easeInOut(phase(pastDuration + chosenDuration, actualDuration)),
                             sun: t >= total)
     }
 }

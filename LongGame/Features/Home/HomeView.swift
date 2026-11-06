@@ -196,7 +196,7 @@ struct HomeView: View {
             case .target(let first):
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
                                  initial: first ? nil : target?.hoursPerWeek,
-                                 recentPace: s.pace, onSave: saveTarget)
+                                 actualPace: s.pace, onSave: saveTarget)
             }
             }
             .lgSheetCard()
@@ -473,7 +473,7 @@ struct HomeView: View {
     /// Under the day bars: this week against the target; opens "Your pace for the year" to change it.
     private func targetRow(_ s: ProgressSummary, now: Date) -> some View {
         NavigationLink {
-            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, recentPace: s.pace, onSave: saveTarget)
+            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, onSave: saveTarget)
         } label: {
             TargetRow(target: target, hoursThisWeek: s.thisWeek, weekStart: weekStart, now: now)
         }

@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 /// The Growth chart: the card's chart and the full-screen scrub chart are one piece of code. The card shows the
-/// past line, the grey area under it, the dashed line at the chosen pace with its sun, the dotted line at the recent
+/// past line, the grey area under it, the dashed line at the chosen pace with its sun, the dotted line at the actual
 /// pace, the finish line and Today.
 /// The full-screen style adds the milestone dots, more labels on the hours axis and the scrub line and dot.
 struct GrowthChartView: View {
@@ -35,7 +35,7 @@ struct GrowthChartView: View {
         Chart {
             let past = LineDraw.partial(data.past, fraction: draw.past)
             let chosen = LineDraw.partial(data.chosen, fraction: draw.chosen)
-            let recent = LineDraw.partial(data.recent, fraction: draw.recent)
+            let actual = LineDraw.partial(data.actual, fraction: draw.actual)
             ForEach(Array(past.enumerated()), id: \.offset) { _, p in
                 AreaMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "PastArea"))
                     .foregroundStyle(LGColor.ink.opacity(0.07))
@@ -45,33 +45,17 @@ struct GrowthChartView: View {
                     .foregroundStyle(LGColor.ink)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
             }
-            // The dotted grey line at the recent pace, labelled below it.
-            ForEach(Array(recent.enumerated()), id: \.offset) { _, p in
+            // The dotted grey line at the actual pace (named in the key, not on the chart).
+            ForEach(Array(actual.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Recent"))
-                    .foregroundStyle(LGColor.recentPace)
+                    .foregroundStyle(LGColor.actualPace)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [1, 6]))
             }
-            if draw.recent >= 1, let spot = Self.labelSpot(data.recent) {
-                PointMark(x: .value("Date", spot.date), y: .value("Hours", spot.hours))
-                    .symbolSize(0)
-                    .annotation(position: .bottomTrailing, spacing: 3) {
-                        Text("Recent pace").lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.gaugeLabel)
-                            .fixedSize()
-                    }
-            }
-            // The dashed orange line at the chosen pace, labelled above it, with the sun at its finish.
+            // The dashed orange line at the chosen pace (the sun sits at its finish).
             ForEach(Array(chosen.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Chosen"))
                     .foregroundStyle(LGColor.forecast)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [7, 6]))
-            }
-            if draw.chosen >= 1, let spot = Self.labelSpot(data.chosen) {
-                PointMark(x: .value("Date", spot.date), y: .value("Hours", spot.hours))
-                    .symbolSize(0)
-                    .annotation(position: .topLeading, spacing: 3) {
-                        Text("Your pace").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2), color: LGColor.forecastText)
-                            .fixedSize()
-                    }
             }
             RuleMark(y: .value("Goal", Totals.goalHours))
                 .foregroundStyle(LGColor.ink.opacity(0.35))
@@ -134,13 +118,6 @@ struct GrowthChartView: View {
         .chartOverlay { proxy in
             if full { overlay(proxy) }
         }
-    }
-
-    /// Where a line's label sits: about 62% of the way along it.
-    static func labelSpot(_ points: [CumulativePoint]) -> CumulativePoint? {
-        guard let a = points.first, let b = points.last, a.date < b.date else { return nil }
-        let t = 0.62
-        return CumulativePoint(date: a.date.addingTimeInterval(b.date.timeIntervalSince(a.date) * t), hours: a.hours + (b.hours - a.hours) * t)
     }
 
     static func axisLabel(_ v: Int) -> String {

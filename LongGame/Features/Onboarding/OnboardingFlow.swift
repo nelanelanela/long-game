@@ -34,7 +34,7 @@ final class OnboardingModel {
     }
 
     /// This year's estimate is the pace on offer in step 4: there are no sessions to measure yet.
-    var recentPace: Double { Double(hoursFor(currentYear)) }
+    var actualPace: Double { Double(hoursFor(currentYear)) }
 
     /// Saves the craft, the estimates, the weekly target and the iCloud choice; Home then opens on The long game, once.
     func save(in context: ModelContext, now: Date = Date()) {
@@ -111,7 +111,7 @@ struct OnboardingFlow: View {
                 case .hours:
                     YearlyHoursView(model: model) { path.append(.pace) }
                 case .pace:
-                    WeeklyTargetView(mode: .onboarding, recentPace: model.recentPace) { hours in
+                    WeeklyTargetView(mode: .onboarding, actualPace: model.actualPace) { hours in
                         model.targetHours = hours
                         path.append(.keepSafe)
                     }

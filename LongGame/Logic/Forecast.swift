@@ -15,14 +15,14 @@ struct ScenarioResult: Equatable, Sendable {
 struct Forecast: Equatable, Sendable {
     /// At the chosen pace ("Your pace for the year") plus the What-if extra.
     var chosen: ScenarioResult
-    /// At the recent pace (lifetime average blended with the last 12 weeks).
-    var recent: ScenarioResult
+    /// At the actual pace (lifetime average blended with the last 12 weeks).
+    var actual: ScenarioResult
     /// Hours a week behind each line.
     var chosenRate: Double
-    var recentRate: Double
+    var actualRate: Double
 
-    /// The recent pace is as fast as the chosen one (or faster).
-    var recentIsAsFast: Bool { recentRate >= chosenRate && chosenRate > 0 }
+    /// The actual pace is as fast as the chosen one (or faster).
+    var actualIsAsFast: Bool { actualRate >= chosenRate && chosenRate > 0 }
 }
 
 enum ForecastEngine {
@@ -49,16 +49,16 @@ enum ForecastEngine {
                                                             hours: total + perMonth * Double(horizonMonths))])
     }
 
-    /// Both lines. The chosen line runs on `chosenPace + extra`; the recent line on `recentPace`.
-    static func forecast(total: Double, chosenPace: Double, extra: Double = 0, recentPace: Double) -> Forecast {
+    /// Both lines. The chosen line runs on `chosenPace + extra`; the actual line on `actualPace`.
+    static func forecast(total: Double, chosenPace: Double, extra: Double = 0, actualPace: Double) -> Forecast {
         let chosenRate = max(0, chosenPace) + max(0, extra)
         return Forecast(chosen: line(total: total, weeklyRate: chosenRate),
-                        recent: line(total: total, weeklyRate: recentPace),
-                        chosenRate: chosenRate, recentRate: max(0, recentPace))
+                        actual: line(total: total, weeklyRate: actualPace),
+                        chosenRate: chosenRate, actualRate: max(0, actualPace))
     }
 
     /// Pace the forecast runs on: the lifetime average (total hours ÷ weeks since
-    /// the first estimate year began), nudged towards the recent logged pace as
+    /// the first estimate year began), nudged towards the actual logged pace as
     /// real entries arrive. Recent logging gets up to half the weight, reached
     /// after 12 weeks of data.
     static func forecastPace(total: Double, estimates: [YearRate], sessions: [SessionRecord], onboardingDate: Date,
@@ -71,9 +71,9 @@ enum ForecastEngine {
         guard weeks > 0 else { return lifetime }
         let endOfToday = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) ?? now
         let windowStart = now.addingTimeInterval(-weeks * 7 * 86_400)
-        let recent = sessions.filter { $0.start >= windowStart && $0.start < endOfToday }.reduce(0) { $0 + $1.hours } / weeks
+        let actual = sessions.filter { $0.start >= windowStart && $0.start < endOfToday }.reduce(0) { $0 + $1.hours } / weeks
         let weight = 0.5 * weeks / Pace.windowWeeks
-        return weight * recent + (1 - weight) * lifetime
+        return weight * actual + (1 - weight) * lifetime
     }
 
     static func date(afterMonths months: Double, from now: Date) -> Date {
@@ -114,14 +114,14 @@ enum ForecastText {
         return String(calendar.component(.year, from: ForecastEngine.date(afterMonths: m, from: now)))
     }
 
-    /// The line under the headline: "At your recent pace: around 2039" / "…: after 2056", or, when the recent pace is
+    /// The line under the headline: "At your actual pace: around 2039" / "…: after 2056", or, when the actual pace is
     /// as fast as the chosen one, "You're already playing at this pace".
-    static func recentLine(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
-        if forecast.recentIsAsFast { return String(localized: "You're already playing at this pace") }
-        if forecast.recent.monthsToGoal == nil {
-            return String(localized: "At your recent pace: \(year(forecast.recent, now: now, calendar: calendar))")
+    static func actualLine(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+        if forecast.actualIsAsFast { return String(localized: "You're already playing at this pace") }
+        if forecast.actual.monthsToGoal == nil {
+            return String(localized: "At your actual pace: \(year(forecast.actual, now: now, calendar: calendar))")
         }
-        return String(localized: "At your recent pace: around \(year(forecast.recent, now: now, calendar: calendar))")
+        return String(localized: "At your actual pace: around \(year(forecast.actual, now: now, calendar: calendar))")
     }
 
     /// "You crossed the finish line on 12 May 2035"
@@ -130,6 +130,12 @@ enum ForecastText {
     }
 
     private static let shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    /// "Nov 2035"
+    static func shortMonthYear(_ date: Date, calendar: Calendar = .current) -> String {
+        let c = calendar.dateComponents([.year, .month], from: date)
+        return "\(shortMonths[(c.month ?? 1) - 1]) \(c.year ?? 0)"
+    }
 
     /// "~Nov 2035" at the end of the future-self track, or "after 2056" when it is more than 30 years away.
     static func shortFinish(_ result: ScenarioResult, now: Date, calendar: Calendar = .current) -> String {

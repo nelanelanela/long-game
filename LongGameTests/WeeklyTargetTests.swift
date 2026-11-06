@@ -158,13 +158,13 @@ struct TargetForecastTests {
     }
 
     @Test func theChosenLineRunsOnTheChosenPaceWhateverThePlayedPaceIs() throws {
-        // A 30 h target is far from the recent pace of about 10, and still sets the finish line.
+        // A 30 h target is far from the actual pace of about 10, and still sets the finish line.
         let bold = make(record(30, now, WeeklyTarget.endDate(from: now, calendar: utc)))
         let plain = make(nil)
         #expect(bold.chosenPace == 30)
         #expect(bold.forecast.chosenRate == 30)
-        #expect(bold.forecast.recentRate == plain.forecast.recentRate)
-        #expect(bold.forecast.recent == plain.forecast.recent)
+        #expect(bold.forecast.actualRate == plain.forecast.actualRate)
+        #expect(bold.forecast.actual == plain.forecast.actual)
         let sooner = try #require(bold.forecast.chosen.monthsToGoal)
         let later = try #require(plain.forecast.chosen.monthsToGoal)
         #expect(sooner < later)
@@ -178,7 +178,7 @@ struct TargetForecastTests {
     @Test func withoutATargetTheChosenPaceIsTheRecentPace() {
         let s = make(nil)
         #expect(s.chosenPace == s.forecastPace)
-        #expect(s.forecast.chosen == s.forecast.recent)
+        #expect(s.forecast.chosen == s.forecast.actual)
         #expect(make(record(0, now, now)).chosenPace == s.forecastPace)
     }
 
@@ -186,7 +186,7 @@ struct TargetForecastTests {
         let t = target
         let base = make(t), more = make(t, extra: 5)
         #expect(more.forecast.chosenRate == 16)
-        #expect(more.forecast.recent == base.forecast.recent)
+        #expect(more.forecast.actual == base.forecast.actual)
         let a = try #require(base.forecast.chosen.monthsToGoal), b = try #require(more.forecast.chosen.monthsToGoal)
         #expect(b < a)
     }
@@ -295,7 +295,7 @@ struct TargetSavingTests {
         #expect(settings.currentTarget != nil)
         // Home opens on The long game right after onboarding, then on This week at every launch after that.
         #expect(settings.lastHomeTab == .longGame)
-        #expect(model.recentPace == 8)
+        #expect(model.actualPace == 8)
         // The iCloud choice from the last step is saved with the rest (on by default).
         #expect(settings.syncEnabled)
     }

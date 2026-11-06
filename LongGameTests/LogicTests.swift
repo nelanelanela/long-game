@@ -215,11 +215,11 @@ struct ForecastTests {
     }
 
     @Test func theChosenLineAddsTheWhatIfExtraAndTheRecentLineDoesNot() {
-        let base = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: 8)
-        let more = ForecastEngine.forecast(total: 3_294, chosenPace: 12, extra: 5, recentPace: 8)
+        let base = ForecastEngine.forecast(total: 3_294, chosenPace: 12, actualPace: 8)
+        let more = ForecastEngine.forecast(total: 3_294, chosenPace: 12, extra: 5, actualPace: 8)
         #expect(base.chosenRate == 12 && more.chosenRate == 17)
         #expect((more.chosen.monthsToGoal ?? 0) < (base.chosen.monthsToGoal ?? 0))
-        #expect(more.recent == base.recent)
+        #expect(more.actual == base.actual)
     }
 
     @Test func extraHoursMakeItSooner() {
@@ -231,16 +231,16 @@ struct ForecastTests {
     }
 
     @Test func theRecentPaceEqualOrFasterIsSaidInWords() {
-        let slower = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: 8)
-        #expect(!slower.recentIsAsFast)
-        #expect(ForecastText.recentLine(slower, now: now, calendar: utc).hasPrefix("At your recent pace: around "))
-        for recent in [12.0, 15] {
-            let f = ForecastEngine.forecast(total: 3_294, chosenPace: 12, recentPace: recent)
-            #expect(f.recentIsAsFast)
-            #expect(ForecastText.recentLine(f, now: now, calendar: utc) == "You're already playing at this pace")
+        let slower = ForecastEngine.forecast(total: 3_294, chosenPace: 12, actualPace: 8)
+        #expect(!slower.actualIsAsFast)
+        #expect(ForecastText.actualLine(slower, now: now, calendar: utc).hasPrefix("At your actual pace: around "))
+        for actual in [12.0, 15] {
+            let f = ForecastEngine.forecast(total: 3_294, chosenPace: 12, actualPace: actual)
+            #expect(f.actualIsAsFast)
+            #expect(ForecastText.actualLine(f, now: now, calendar: utc) == "You're already playing at this pace")
         }
-        let never = ForecastEngine.forecast(total: 3_000, chosenPace: 12, recentPace: 1)
-        #expect(ForecastText.recentLine(never, now: now, calendar: utc) == "At your recent pace: after 2056")
+        let never = ForecastEngine.forecast(total: 3_000, chosenPace: 12, actualPace: 1)
+        #expect(ForecastText.actualLine(never, now: now, calendar: utc) == "At your actual pace: after 2056")
     }
 
     @Test func textFormatting() {

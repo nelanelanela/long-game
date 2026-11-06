@@ -25,7 +25,7 @@ enum WeeklyTarget {
         return min(range.upperBound, max(range.lowerBound, stepped))
     }
 
-    /// Where the slider starts: the recent pace, rounded to whole hours.
+    /// Where the slider starts: the actual pace, rounded to whole hours.
     static func suggested(pace: Double) -> Double { clamped(pace.rounded()) }
 
     /// Counted from the day it is set, not from the calendar year.

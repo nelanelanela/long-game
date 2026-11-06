@@ -41,35 +41,35 @@ struct GrowthTests {
 
     @Test func chartDataHasTheTwoLinesFromToday() {
         let now = day(2026, 10, 25)
-        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, recentPace: 8)
+        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, actualPace: 8)
         let data = GrowthSeries.chartData(forecast: f, past: [], now: now, calendar: utc)
-        #expect(data.chosen.first?.hours == 3294 && data.recent.first?.hours == 3294)
-        #expect(data.chosen.first?.date == now && data.recent.first?.date == now)
+        #expect(data.chosen.first?.hours == 3294 && data.actual.first?.hours == 3294)
+        #expect(data.chosen.first?.date == now && data.actual.first?.date == now)
         #expect(data.chosen.last?.hours == 10_000)
-        #expect(data.recent.last?.hours == 10_000)
+        #expect(data.actual.last?.hours == 10_000)
         #expect(data.chosenDate != nil)
-        // The slower recent pace finishes later, and the chart runs to it.
-        #expect((data.recent.last?.date ?? .distantPast) > (data.chosen.last?.date ?? .distantFuture))
-        #expect(data.xEnd > (data.recent.last?.date ?? .distantFuture))
+        // The slower actual pace finishes later, and the chart runs to it.
+        #expect((data.actual.last?.date ?? .distantPast) > (data.chosen.last?.date ?? .distantFuture))
+        #expect(data.xEnd > (data.actual.last?.date ?? .distantFuture))
     }
 
     @Test func aLineThatNeverArrivesRunsToTheHorizon() {
         let now = day(2026, 10, 25)
-        let f = ForecastEngine.forecast(total: 3000, chosenPace: 12, recentPace: 0)
+        let f = ForecastEngine.forecast(total: 3000, chosenPace: 12, actualPace: 0)
         let data = GrowthSeries.chartData(forecast: f, past: [], now: now, calendar: utc)
-        #expect(data.recent.last?.hours == 3000)
-        #expect(data.recent.last?.date == ForecastEngine.date(afterMonths: 360, from: now))
+        #expect(data.actual.last?.hours == 3000)
+        #expect(data.actual.last?.date == ForecastEngine.date(afterMonths: 360, from: now))
         #expect(data.xEnd > ForecastEngine.date(afterMonths: 360, from: now))
     }
 
     @Test func linesDrawInOrderAndCanBeCutShort() {
         #expect(DrawProgress.at(0) == .empty)
         let mid = DrawProgress.at(0.4)
-        #expect(mid.past > 0 && mid.past < 1 && mid.chosen == 0 && mid.recent == 0 && !mid.sun)
+        #expect(mid.past > 0 && mid.past < 1 && mid.chosen == 0 && mid.actual == 0 && !mid.sun)
         let dashed = DrawProgress.at(1.05)
-        #expect(dashed.past == 1 && dashed.chosen > 0 && dashed.chosen < 1 && dashed.recent == 0)
+        #expect(dashed.past == 1 && dashed.chosen > 0 && dashed.chosen < 1 && dashed.actual == 0)
         let dotted = DrawProgress.at(1.4)
-        #expect(dotted.chosen == 1 && dotted.recent > 0 && dotted.recent < 1 && !dotted.sun)
+        #expect(dotted.chosen == 1 && dotted.actual > 0 && dotted.actual < 1 && !dotted.sun)
         #expect(DrawProgress.at(1.6) == .complete)
         let line = [CumulativePoint(date: Date(timeIntervalSince1970: 0), hours: 0),
                     CumulativePoint(date: Date(timeIntervalSince1970: 100), hours: 1_000)]
@@ -80,9 +80,32 @@ struct GrowthTests {
     }
 
     @Test func textHelpers() {
-        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, recentPace: 8)
+        let f = ForecastEngine.forecast(total: 3294, chosenPace: 12, actualPace: 8)
         let label = GrowthText.chartLabel(total: 3294, forecast: f, now: day(2026, 10, 25), calendar: utc)
         #expect(label.contains(" today. At your chosen pace you reach 10,000 hours"))
-        #expect(label.contains("At your recent pace: around"))
+        #expect(label.contains("At your actual pace: around"))
+    }
+}
+
+struct GrowthKeyTests {
+    let now = day(2026, 11, 4)
+
+    @Test func theKeyNumbersAreLiveAndNameBothPaces() {
+        let f = ForecastEngine.forecast(total: 3_294, chosenPace: 12, extra: 2, actualPace: 9.5)
+        #expect(GrowthKeyText.chosenNumbers(f, now: now, calendar: utc).hasPrefix("14 h a week · "))
+        #expect(GrowthKeyText.actualNumbers(f, now: now, calendar: utc).hasPrefix("9.5 h a week · 20"))
+    }
+
+    @Test func anActualPaceBeyondThirtyYearsSaysAfter() {
+        let f = ForecastEngine.forecast(total: 3_000, chosenPace: 12, actualPace: 1)
+        #expect(GrowthKeyText.actualNumbers(f, now: now, calendar: utc) == "1 h a week · after 2056")
+        #expect(GrowthKeyText.spoken(f, now: now, calendar: utc).hasSuffix("Your actual pace, 1 hours a week, finishes after 2056."))
+    }
+
+    @Test func theSpokenKeyReadsAsOneSentencePair() {
+        let f = ForecastEngine.forecast(total: 3_294, chosenPace: 12, actualPace: 9.5)
+        let said = GrowthKeyText.spoken(f, now: now, calendar: utc)
+        #expect(said.hasPrefix("Your chosen pace, 12 hours a week, finishes around "))
+        #expect(said.contains("Your actual pace, 9.5 hours a week, finishes around 20"))
     }
 }

@@ -44,8 +44,10 @@ enum LGColor {
     static let forecast = Color(hex: 0xEE6420)
     /// The forecast orange darkened to 4.5:1 for words (the lines and band keep the brighter orange).
     static let forecastText = Color(hex: 0xB8470E)
-    /// The dotted line at the recent pace.
-    static let recentPace = Color(hex: 0x9AA1B5)
+    /// The dotted line at the actual pace.
+    static let actualPace = Color(hex: 0x9AA1B5)
+    /// The name "Your chosen pace" in the Growth key (a darker orange for words, as the spec asks).
+    static let chosenPaceName = Color(hex: 0xC2531A)
     static let currentBar = Color(hex: 0xFFB347)
 
     // Sunrise hero (Home, intro pages, future-self sheet). The sea is fully opaque: nothing shows through it.
