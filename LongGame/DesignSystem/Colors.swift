@@ -20,6 +20,8 @@ enum LGColor {
     static let chipBorder = Color(hex: 0xE4DFD6)
     static let danger = Color(hex: 0xB3341A)
     static let chipFill = Color(hex: 0xF3EFE8)
+    /// The small clock tile for a session without a photo.
+    static let clockTile = Color(hex: 0xF1EDE6)
     static let segmentTrack = Color(hex: 0xEFEBE4)
     // Hour steppers
     static let stepperButton = Color(hex: 0xF3F0EA)

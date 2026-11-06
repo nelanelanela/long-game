@@ -34,6 +34,8 @@ struct HomeView: View {
     @State private var offerSupport = false
     @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
+    /// The session opened from Today's sessions to edit.
+    @State private var editingSession: Session?
     /// False while Home is covered or in the background: the hero stops animating.
     @State private var onScreen = true
     /// Scene storage: after the system closes and reopens a window, a running session is still in front.
@@ -176,6 +178,10 @@ struct HomeView: View {
         } message: {
             Text("A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings.")
         }
+        .sheet(item: $editingSession, onDismiss: sheetClosed) { session in
+            SessionFormView(craft: craft, sessions: sessions, editing: session)
+                .lgSheetCard()
+        }
         .sheet(item: $sheet, onDismiss: sheetClosed) { item in
             Group {
             switch item {
@@ -238,6 +244,20 @@ struct HomeView: View {
         }
     }
 
+    /// Today's sessions: the saved ones that started today, oldest first, and the running timer as the first row.
+    /// The rows add up to the big number above.
+    private func todaySessions(_ f: HomeFigures) -> some View {
+        let today = TodaySessions.startedToday(sessions, start: \.start, now: f.now)
+        let rows = today.map { TodaySession(id: $0.id, start: $0.start, end: $0.end, durationSec: $0.durationSec,
+                                            note: $0.note, photo: $0.hasPhoto ? $0.photo : nil) }
+        let running = timer.state.flatMap { state -> TimeInterval? in
+            state.craftId == craft.id && StretchSource.startedToday(state, now: f.now) ? state.elapsed(at: f.now) : nil
+        }
+        return TodaySessionsList(rows: rows, running: running) { id in
+            editingSession = today.first { $0.id == id }
+        }
+    }
+
     private func hero(_ f: HomeFigures, metrics: GaugeMetrics) -> some View {
         let scale = scaleGauge(f)
         let onToday = f.shown == .today
@@ -286,9 +306,12 @@ struct HomeView: View {
                 ZStack(alignment: .top) {
                     switch f.shown {
                     case .today:
-                        TodayQuietLine(state: f.stretch)
-                            .padding(.top, short ? 6 : 14)
-                            .transition(.opacity)
+                        VStack(spacing: short ? 12 : 18) {
+                            TodayQuietLine(state: f.stretch)
+                            todaySessions(f)
+                        }
+                        .padding(.top, short ? 6 : 14)
+                        .transition(.opacity)
                     case .week:
                         weekContent(f.summary, now: f.now, showBars: !short)
                             .transition(.opacity)
@@ -341,6 +364,8 @@ struct HomeView: View {
                         case .today:
                             TodayQuietLine(state: f.stretch, leading: true)
                                 .padding(.top, 6)
+                            todaySessions(f)
+                                .padding(.top, 18)
                         case .week:
                             weekContent(f.summary, now: f.now, showBars: true)
                             wideStatsRow(f.summary, now: f.now, total: f.total)
@@ -644,7 +669,7 @@ struct HomeView: View {
     private func syncIconQuietly(total: Double) {
         // Never while a sheet or the timer is up: iOS's "You have changed the icon" alert must land over Home.
         // Each of them calls this again once it has fully closed.
-        guard let settings = settingsRows.first, !timer.isActive, sheet == nil, catchUpGap == nil, !showTimer,
+        guard let settings = settingsRows.first, !timer.isActive, sheet == nil, editingSession == nil, catchUpGap == nil, !showTimer,
               !showSettings else { return }
         let due = !Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
             .filter { $0 >= IconPlan.heldBelow }.isEmpty

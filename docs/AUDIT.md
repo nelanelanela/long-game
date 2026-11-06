@@ -1,7 +1,7 @@
 # Audit: app vs `docs/SPEC.md` and `design/`
 
 Source of truth: the spec. ✅ done · 🟡 partly done · ❌ missing.
-Updated after update prompt 20 (the app icon that grows). Earlier: update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
+Updated after update prompt 26 (a simple daily stretch, no 40 h cap, a forecast at the chosen pace, today's sessions). Earlier: update prompt 20 (the app icon that grows). Earlier: update prompt 16 (scrub the forecast). Earlier: update prompt 14 (Liquid Glass). Earlier: update prompt 13 (your year card). Earlier: update prompt 12 (a note and a photo). Earlier: update prompt 11 (Today's stretch, no glints on the water). Earlier: update prompt 09 (your pace for the year, Home tabs, widgets, Apple Watch). Every row shows its final status, with what changed in the Note column.
 Updated after the fixes: every row below shows its final status, with what changed in the Note column. Decisions for you, the things I could not do and how to check each flow are at the bottom.
 
 ## Accessibility (update prompt 17 and the accessibility pass before it)
@@ -169,13 +169,33 @@ Not seen on a device: the share sheet (Instagram Stories and so on).
 
 Not seen on a device: the camera, and the viewer's gestures. Check them by hand (below).
 
+## A simple stretch, no 40 h cap, the chosen-pace forecast, today's sessions (update prompt 26)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Stretch = weekly pace ÷ 7, nearest 5 min, same every day (7 h → 1 h, 12 h → 1 h 45, 3 h → 25 m) | ✅ | `Stretch.stretch(weeklyHours:)` | Never 0: a tiny pace gives 5 m. **100 h gives 855 m, not 857:** 857 is not a multiple of 5, so I followed the "nearest 5 minutes" rule. Tell me if you want 857 |
+| Practice-day guessing, free day, "week covered", carry-over removed (logic, screens, strings, VoiceOver, debug switches, tests) | ✅ | `TodayStretch.swift`, `TodayContent`, `SunWords`, `DebugOptions`, `SettingsView` | The two Debug rows for the stretch are gone |
+| `StretchState` has `.inProgress` and `.covered` | 🟡 | `StretchState` | Plus `.noTarget`, which Home needs to fall back to This week when no pace is set yet |
+| Covered state, moon and "40 m to the moon" kept | ✅ | `TodayNumber`, `TodayQuietLine` | |
+| Hours-per-week limits are 168 (yearly rows 0–168, pace 1–168 in halves, Catch-up 0–168); `YearEstimate` clamps to 0–168; entry sheet says "0 to 168" | ✅ | `WeeklyTarget.maxHours`, `HoursStepSpec`, `CatchUp.maxWeeklyHours`, `YearEstimate.clamped` | One constant. The 24 h limit for a single day is unchanged |
+| Forecast = two straight lines from today: chosen pace (+ What-if extra) and recent pace; Low/Mid/High, trend, band and the 25% rule removed | ✅ | `ForecastEngine.line`, `Forecast`, `ProgressSummary` | With no pace chosen, the chosen line uses the recent pace |
+| Chosen-pace date everywhere: Growth headline, Home Finish line, Meet your future self, Your year, scrubbing, Watch | ✅ | `forecast.chosen` | |
+| Growth chart: dashed orange chosen line with the sun and "Your pace"; dotted grey (#9AA1B5, dash 1–6, round caps) recent line with "Recent pace"; no band, no legend | ✅ | `GrowthChartView` | The chart runs to the later of the two finish dates (30 years at most) |
+| Headline, "At your recent pace: around 2039", "after YYYY", "You're already playing at this pace", "You crossed the finish line on 12 May 2035"; What-if text "On top of your chosen pace of 12 h a week." | ✅ | `ForecastText`, `GrowthTab` | |
+| Full screen: same two lines, draw-in past → dashed → dotted → sun, future points read "At your chosen pace", VoiceOver describes both lines | ✅ | `GrowthScrubView`, `DrawProgress`, `GrowthChartDescriptor` | The draw-in is now driven frame by frame (it used to be a sliding mask). Reduce Motion: a 0.2 s fade |
+| Today's sessions: header, one row per session that started today (oldest first), "Now · 12 m" with a pulsing dot first, tap to edit in the History sheet, hidden when empty, VoiceOver text | ✅ | `TodaySessionsView.swift`, `Logic/TodaySessions.swift`, `HomeView` | The whole Today page scrolls (hero included) with Start session and Add past hours pinned, as on the other tabs. A running row is not tappable |
+| Previews with 0, 2 and 6 sessions plus a running timer, and AX5 | ✅ | `TodaySessionsView.swift` | |
+| Tests | ✅ | `TodayStretchTests`, `HoursSteppingTests`, `WeeklyTargetTests`, `CatchUpTests`, `LogicTests`, `GrowthTests`, `TodaySessionsTests` | 476 tests pass |
+
+Not seen: the Growth chart, its full-screen draw-in and the Today list at AX5 in the Simulator (only the Today tab with one session). Check them by hand (below).
+
 ## Today's stretch (update prompt 11)
 
 | Requirement | Status | Where | Note |
 | --- | --- | --- | --- |
 | No gold glints on or in the water, anywhere | ✅ | `SunriseHero`, `SunriseMotion` | Layer order glow, sun, sea fill, pale wave, navy line. The widgets and Watch draw their own sea and have no glints |
 | Practice days: practised on the weekday in at least 2 of the last 4 full weeks; under 2 full weeks of history, or none qualify, every day counts | ✅ | `Stretch.practiceDays` | A full week is a finished week that began on or after the first logged day |
-| Stretch states stretch, covered, freeDay, weekCovered, noTarget; stretch = (target - hours before today) / practice days left, nearest 5 min, at least 15 | ✅ | `StretchState`, `Stretch.todayStretch` | Nothing stored. `StretchPlan` is the fixed part, so today's own sessions never move it. Target from the TargetPeriod history |
+| Stretch states stretch, covered, freeDay, weekCovered, noTarget; stretch = (target - hours before today) / practice days left, nearest 5 min, at least 15 — **replaced in update 26 by weekly pace ÷ 7** | ✅ | `StretchState`, `Stretch.todayStretch` | Nothing stored. `StretchPlan` is the fixed part, so today's own sessions never move it. Target from the TargetPeriod history |
 | Done today = every session that starts today plus the running timer | ✅ | `StretchSource.runningSeconds` | A timer started before midnight counts towards the day it started |
 | Tests for rounding, minimum, short yesterday, today's sessions, rest days, week covered, no history, Sunday vs Monday, midnight, time zone | ✅ | `LongGameTests/TodayStretchTests.swift` | 308 tests pass |
 | Home third tab Today / This week / The long game; opens on Today, after onboarding on The long game once | ✅ | `HomeView`, `HomeTab`, `AppSettings.lastHomeTab` | A value saved by an older version (This week) also opens on Today. With no target, Today shows This week instead |
@@ -214,10 +234,10 @@ Not seen on a device: the camera, and the viewer's gestures. Check them by hand 
 | --- | --- | --- | --- |
 | Calendar: 53 weeks, blue rest, four levels, tap a day, edit/delete | ✅ | `CalendarTab`, `Practice.swift` | |
 | Rhythm, Steady for, Active days; no streaks; no icon by Rhythm | ✅ | `CalendarTab`, `Practice.swift` | `README.md` and `CLAUDE.md` said "streaks": reworded |
-| Growth: past, dashed forecast, band, sun, "Finish line · 10,000 h", no legend, no weekly card | ✅ | `GrowthTab` | |
+| Growth: past, dashed chosen-pace line with the sun, dotted recent-pace line, "Finish line · 10,000 h", no band, no legend, no weekly card (update 26) | ✅ | `GrowthTab`, `GrowthChartView` | |
 | Forecast per "Forecast algorithm" (30 y limit, blended pace) | ✅ | `Logic/Forecast.swift` | |
-| "after YYYY" for a scenario that misses 30 years | ✅ | `ForecastText.range` | Fixed: "Likely between 2034 and after 2056" |
-| "Not within 30 years" text | ✅ | `ForecastText.range` | |
+| "after YYYY" for a line that misses 30 years | ✅ | `ForecastText.headline`, `year`, `recentLine` | "At your recent pace: after 2056" |
+| "Not within 30 years" text | ✅ | `ForecastText.headline` | The likely-range sentence is gone (update 26) |
 | What-if slider live, not saved | ✅ | `GrowthTab` | |
 
 ## Timer
@@ -371,7 +391,10 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 
 Run with `-demoData` for sample data.
 
-- **Today's stretch:** Home opens on Today. In Settings, Debug only, set 'Hours this week before today' (0 for a fresh week, a few hours for a short week, your target or more for 'This week is covered') and switch 'Today is a rest day' on or off, then go back to Home. Start a session to watch the Timer strip fill. With a stretch of 15 minutes, a 15 minute session shows the gold covered state, the wink and the Finish line.
+- **Today's stretch (update 26):** Home opens on Today. The stretch is your weekly pace ÷ 7, the same every day (12 h a week gives "of today's 1 h 45"). Change the pace on This week → the target row and come back. Add past hours (or run a short session) for today: the sun climbs; once the stretch is covered the arc turns gold and it says "You reached the moon."
+- **Today's sessions:** on Today, under "45 m to the moon", add a few sessions for today with Add past hours (with and without a note, one with a photo). Each shows as a row with its time range and duration. Tap a row to edit it. Start a timer and go back to Home: a "Now · 12 m" row with a pulsing dot comes first. With no sessions today the section is hidden. Largest text: Settings app → Accessibility → Display & Text Size → Larger Text.
+- **No 40 h cap:** in onboarding step 3, the Hours steppers go up to 168; tap the number and type 200: it becomes 168. Your pace for the year also stops at 168 (in half hours).
+- **Finish line at the chosen pace:** History → Growth. Dashed orange line "Your pace" ends at the small sun; dotted grey "Recent pace" is below it. The headline says "At your chosen pace, you'll finish around …" and the line under it gives the recent pace. Move the What-if slider: only the orange line and the date move. Tap the chart for full screen: the lines draw in one after another.
 - **The sun giggles:** tap the sun on Home (any tab), on an intro page or in 'Meet your future self'. Tap it five times quickly for the big laugh with the spinning rays; for the next 3 seconds taps only get a wink. On the Timer a tap only winks. Settings -> Giggle sound turns the laugh off. The Simulator plays the sound through your Mac (keep the volume up); the Ring/Silent switch and the haptics need a real iPhone.
 - **Scrub the forecast:** Run with `-demoData`, open History (calendar icon), Growth, tap the chart or the small expand button. Drag a finger along the line; the hint disappears for good after the first drag. The Simulator has no haptics, so the taps need a real iPhone.
 - **Compare the two looks (Liquid Glass):** run the LongGame scheme on an iOS 26 or later Simulator for the glass look, and on an iOS 18 Simulator (or any version before 26) for the flat look. In Xcode, open `GlassPreviews.swift` and its canvas: each preview shows glass on the left and the old flat look on the right.
