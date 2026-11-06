@@ -7,21 +7,21 @@ struct HoursSteppingTests {
         let spec = HoursStepSpec.wholeHours
         #expect(HoursStepping.stepped(10, direction: 1, spec) == 11)
         #expect(HoursStepping.stepped(10, direction: -1, spec) == 9)
-        #expect(HoursStepping.stepped(40, direction: 1, spec) == 40)
+        #expect(HoursStepping.stepped(168, direction: 1, spec) == 168)
         #expect(HoursStepping.stepped(0, direction: -1, spec) == 0)
         #expect(HoursStepping.atLimit(0, direction: -1, spec))
         #expect(!HoursStepping.atLimit(0, direction: 1, spec))
-        #expect(HoursStepping.atLimit(40, direction: 1, spec))
+        #expect(HoursStepping.atLimit(168, direction: 1, spec))
     }
 
-    @Test func halfHourStepsMoveByHalfAndStopAtOneAndForty() {
+    @Test func halfHourStepsMoveByHalfAndStopAtOneAnd168() {
         let spec = HoursStepSpec.pace
         #expect(HoursStepping.stepped(8, direction: 1, spec) == 8.5)
         #expect(HoursStepping.stepped(8.5, direction: -1, spec) == 8)
         #expect(HoursStepping.stepped(1, direction: -1, spec) == 1)
-        #expect(HoursStepping.stepped(40, direction: 1, spec) == 40)
+        #expect(HoursStepping.stepped(168, direction: 1, spec) == 168)
         #expect(HoursStepping.atLimit(1, direction: -1, spec))
-        #expect(HoursStepping.atLimit(40, direction: 1, spec))
+        #expect(HoursStepping.atLimit(168, direction: 1, spec))
         #expect(spec.needsDecimals)
         #expect(!HoursStepSpec.wholeHours.needsDecimals)
     }
@@ -33,7 +33,9 @@ struct HoursSteppingTests {
         #expect(HoursStepping.parse("   ", whole, locale: en) == nil)
         #expect(HoursStepping.parse("abc", whole, locale: en) == nil)
         #expect(HoursStepping.parse("12", whole, locale: en) == 12)
-        #expect(HoursStepping.parse("99", whole, locale: en) == 40)
+        #expect(HoursStepping.parse("200", whole, locale: en) == 168)
+        #expect(HoursStepping.parse("99", whole, locale: en) == 99)
+        #expect(HoursStepping.parse("200", HoursStepSpec.pace, locale: en) == 168)
         #expect(HoursStepping.parse("-5", whole, locale: en) == 0)
         #expect(HoursStepping.parse("0", HoursStepSpec.pace, locale: en) == 1)
     }

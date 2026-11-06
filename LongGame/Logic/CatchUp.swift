@@ -6,7 +6,7 @@ enum CatchUp {
     static let minGapDays = 7
     static let averageModeDays = 28
     static let promptEveryDays = 7
-    static let maxWeeklyHours = 40
+    static let maxWeeklyHours = Int(WeeklyTarget.maxHours)
 
     struct Gap: Equatable, Sendable, Identifiable {
         var id: Date { first }

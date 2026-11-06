@@ -87,7 +87,7 @@ struct CatchUpWeekBlockTests {
 
 struct CatchUpSplitTests {
     @Test func evenSplitKeepsTheTotalExact() {
-        for hours in [1.0, 5, 12, 13, 40] {
+        for hours in [1.0, 5, 12, 13, 40, 168] {
             for days in [7, 8, 13, 28, 71, 365] {
                 let minutes = CatchUp.dailyMinutes(totalHours: hours, days: days)
                 #expect(minutes.count == days)
@@ -107,12 +107,15 @@ struct CatchUpSplitTests {
     @Test func averageTotalIsAverageTimesDaysOverSeven() {
         #expect(CatchUp.averageTotal(hoursPerWeek: 10, days: 71) == 10 * 71.0 / 7)
         #expect(CatchUp.minutesPerDay(totalHours: 8, days: 8) == 60)
+        // Every hour of every week: 168 h a week for 28 days.
+        #expect(CatchUp.averageTotal(hoursPerWeek: 168, days: 28) == 672)
     }
 
     @Test func defaultFollowsPaceAndStaysOnTheSlider() {
         #expect(CatchUp.defaultHours(pace: 11.8) == 12)
         #expect(CatchUp.defaultHours(pace: -3) == 0)
-        #expect(CatchUp.defaultHours(pace: 90) == 40)
+        #expect(CatchUp.defaultHours(pace: 90) == 90)
+        #expect(CatchUp.defaultHours(pace: 400) == 168)
     }
 
     @Test func sessionsStartAtNoon() {

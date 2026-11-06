@@ -20,9 +20,10 @@ struct TargetWindowTests {
         #expect(WeeklyTarget.endDate(from: day(2028, 2, 29, hour: 0), calendar: utc) == day(2029, 2, 28, hour: 0))
     }
 
-    @Test func theSliderRunsFromOneToFortyInHalfHours() {
+    @Test func theSliderRunsFromOneTo168InHalfHours() {
         #expect(WeeklyTarget.clamped(0) == 1)
-        #expect(WeeklyTarget.clamped(55) == 40)
+        #expect(WeeklyTarget.clamped(55) == 55)
+        #expect(WeeklyTarget.clamped(200) == 168)
         #expect(WeeklyTarget.clamped(6.3) == 6.5)
         #expect(WeeklyTarget.clamped(6.2) == 6)
     }
@@ -30,7 +31,8 @@ struct TargetWindowTests {
     @Test func theSliderStartsOnTheRecentPaceRoundedToWholeHours() {
         #expect(WeeklyTarget.suggested(pace: 11.6) == 12)
         #expect(WeeklyTarget.suggested(pace: 0.2) == 1)
-        #expect(WeeklyTarget.suggested(pace: 60) == 40)
+        #expect(WeeklyTarget.suggested(pace: 60) == 60)
+        #expect(WeeklyTarget.suggested(pace: 500) == 168)
     }
 
     @Test func theCardShowsADayAndAYearOfHours() {

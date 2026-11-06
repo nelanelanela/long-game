@@ -3,13 +3,13 @@ import Foundation
 // The maths behind the − and + hour steppers: stepping, typed values and hold-to-repeat.
 // Pure functions only; the buttons themselves are in DesignSystem/HoursStepper.swift.
 
-/// A range and a step size: 0 to 40 in whole hours, or 1 to 40 in halves for the weekly target.
+/// A range and a step size: 0 to 168 in whole hours, or 1 to 168 in halves for the weekly target.
 struct HoursStepSpec: Equatable, Sendable {
     var range: ClosedRange<Double>
     var step: Double
 
     /// Yearly rows and both Catch-up screens.
-    static let wholeHours = HoursStepSpec(range: 0...40, step: 1)
+    static let wholeHours = HoursStepSpec(range: 0...WeeklyTarget.maxHours, step: 1)
     /// Your pace for the year.
     static let pace = HoursStepSpec(range: WeeklyTarget.range, step: WeeklyTarget.step)
 

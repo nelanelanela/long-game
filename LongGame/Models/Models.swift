@@ -33,8 +33,11 @@ final class YearEstimate {
     init(craftId: UUID, year: Int, hoursPerWeek: Int) {
         self.craftId = craftId
         self.year = year
-        self.hoursPerWeek = hoursPerWeek
+        self.hoursPerWeek = Self.clamped(hoursPerWeek)
     }
+
+    /// 0 to 168: every hour of a week.
+    static func clamped(_ hours: Int) -> Int { min(Int(WeeklyTarget.maxHours), max(0, hours)) }
 
     var rate: YearRate { YearRate(year: year, hoursPerWeek: Double(hoursPerWeek)) }
 }

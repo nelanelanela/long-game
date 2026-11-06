@@ -91,7 +91,7 @@ private struct StepButton: View {
 
 // MARK: Entry sheet
 
-/// "Tap the number": the label, the value with a caret, "0 to 40", Done and a number pad.
+/// "Tap the number": the label, the value with a caret, "0 to 168", Done and a number pad.
 struct HoursEntrySheet: View {
     let label: String
     let value: Double
@@ -313,7 +313,7 @@ struct HoursBigStepper: View {
 
 private struct StepperPreviewBench: View {
     @State var low = 0.0
-    @State var high = 40.0
+    @State var high = 168.0
     @State var middle = 10.0
     @State var pace = 8.0
     var body: some View {

@@ -12,7 +12,9 @@ struct TargetRecord: Equatable, Sendable {
 }
 
 enum WeeklyTarget {
-    static let range: ClosedRange<Double> = 1...40
+    /// Every hour of a week.
+    static let maxHours = 168.0
+    static let range: ClosedRange<Double> = 1...maxHours
     static let step = 0.5
     /// The reminder appears this many days before the year ends.
     static let reminderLeadDays = 14
