@@ -91,7 +91,7 @@ struct SunriseFrame {
     var eyesOpen: Double = 0
     var glowOpacity: Double = 0.55
     var glowScale: Double = 1
-    /// How far below its resting place the sun still is (the future-self sheet).
+    /// How far below its place on the horizon the sun still is (the future-self sheet).
     var rise: CGFloat = 0
 
     static let still = SunriseFrame()

@@ -30,7 +30,7 @@ There's already a `docs/ACCESSIBILITY_REPORT.md` from earlier work. Read it firs
 **2. VoiceOver: the sun in words**
 - Add a pure function to `Logic/`: `sunPositionWords(fraction:) -> SunPhrase`. It returns the words from the spec ("just rising", "a third", "halfway", "two thirds", "almost there"…), plus "just over" or "just under".
 - Use it in one formatted, pluralised String Catalog string per screen:
-  - Home: This week, The long game and Today (including the rest-day and above-target versions);
+  - Home: This week, The long game and Today (including the free-day and above-target versions);
   - the Timer;
   - the calendar day;
   - Growth (as in section 19).

@@ -26,7 +26,7 @@ struct GiggleRun: Equatable, Sendable {
 }
 
 /// Redraws at the screen's pace from the giggle's first moment to its last, then stops. With no giggle it
-/// gives a single entry, so a resting sun costs nothing.
+/// gives a single entry, so a still sun costs nothing.
 struct GiggleSchedule: TimelineSchedule {
     var run: GiggleRun?
 

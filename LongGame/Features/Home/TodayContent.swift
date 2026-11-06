@@ -18,12 +18,12 @@ struct TodayNumber: View {
             case .weekCovered(let done):
                 big(StretchText.clock(seconds: done))
                 sub(String(localized: "This week is covered"))
-            case .restDay(let done) where done > 0:
+            case .freeDay(let done) where done > 0:
                 big(StretchText.clock(seconds: done))
-                sub(String(localized: "a rest-day bonus"))
-            case .restDay, .noTarget:
-                big(String(localized: "Rest day"))
-                sub(String(localized: "The sun's taking it easy too"))
+                sub(String(localized: "a step ahead"))
+            case .freeDay, .noTarget:
+                big(String(localized: "Free day"))
+                sub(String(localized: "Not one of your usual days"))
             }
         }
     }
@@ -46,9 +46,9 @@ struct TodayQuietLine: View {
     private var text: String {
         switch state {
         case .stretch(let target, let done): StretchText.toGo(target - done)
-        case .covered, .weekCovered: String(localized: "Anything more is a bonus.")
-        case .restDay(let done) where done > 0: String(localized: "Every minute still counts.")
-        case .restDay, .noTarget: String(localized: "Playing anyway? Every minute still counts.")
+        case .covered: String(localized: "You reached the moon.")
+        case .weekCovered: String(localized: "Anything more is a bonus.")
+        case .freeDay, .noTarget: String(localized: "Playing anyway brings your future a little closer.")
         }
     }
 
@@ -58,4 +58,24 @@ struct TodayQuietLine: View {
             .multilineTextAlignment(leading ? .leading : .center)
             .frame(maxWidth: .infinity, alignment: leading ? .leading : .center)
     }
+}
+
+#Preview("Today · in progress, covered, week covered, free day, free day while playing") {
+    let states: [StretchState] = [
+        .stretch(target: 6_300, done: 3_900),
+        .covered(target: 3_600, done: 3_700),
+        .weekCovered(done: 0),
+        .freeDay(done: 0),
+        .freeDay(done: 900),
+    ]
+    VStack(spacing: 24) {
+        ForEach(Array(states.enumerated()), id: \.offset) { _, state in
+            VStack(spacing: 4) {
+                TodayNumber(state: state)
+                TodayQuietLine(state: state)
+            }
+        }
+    }
+    .padding()
+    .background(LGColor.background)
 }

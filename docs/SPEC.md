@@ -141,11 +141,11 @@ No cards on Home: everything sits directly on the warm-white background. A segme
 
 Your weekly target, turned into today's distance. "A thousand-mile walk is made one day's stretch at a time": this tab shows just today's stretch.
 
-- **The picture:** instead of a vertical scale, a wide dotted arc rises from the sea on the left and comes down on the right to a small pale-blue moon sitting on the horizon, *today's resting place*. The part of the arc the sun has travelled is a solid gold line. The sun (same sun, same animation, about 120 pt) sits on the arc at `done ÷ stretch` (0 = on the horizon on the left, 1 = at the moon). No ticks or labels: the arc is the scale. Same sea, same water rule as the other tabs (at 0 the sun's lower half is hidden by the sea).
-- **Big number:** today's time ("1 h 05", or "40 m" under an hour). **Under it:** "of today's 1 h 45". **One quiet line** (14 pt, #8A93AB): "40 m to today's resting place".
+- **The picture:** instead of a vertical scale, a wide dotted arc rises from the sea on the left and comes down on the right to a small pale-blue moon on the horizon. Reaching the moon is today's stretch done: one more step towards the future the user is playing for. The part of the arc the sun has travelled is a solid gold line. The sun (same sun, same animation, about 120 pt) sits on the arc at `done ÷ stretch` (0 = on the horizon on the left, 1 = at the moon). No ticks or labels: the arc is the scale. Same sea, same water rule as the other tabs (at 0 the sun's lower half is hidden by the sea). The words "rest", "resting place" and "goal" are not used for the stretch: the copy talks about reaching the moon.
+- **Big number:** today's time ("1 h 05", or "40 m" under an hour). **Under it:** "of today's 1 h 45". **One quiet line** (14 pt, #8A93AB): "40 m to the moon". When covered: "You reached the moon."
 - **Stretch covered** (done ≥ stretch): the sun sits at the moon with the wink face for a moment, then happy; the whole arc is gold. Number = today's time, under it "today's 1 h 45 · covered", line "Anything more is a bonus."
 - **Week covered** (this week ≥ weekly target): the arc is drawn fully gold with the sun at the moon; number = today's time (or "0 m"), under it "This week is covered", line "Anything more is a bonus."
-- **Rest day** (today isn't one of your practice days): the sun rests on the horizon at the left, no gold on the arc. Big text "Rest day", under it "The sun's taking it easy too", line "Playing anyway? Every minute still counts." If you play anyway, the number shows today's time with "a rest-day bonus" under it; the sun stays on the horizon.
+- **Free day** (today isn't one of your practice days): no stretch is set; the sun waits on the horizon at the left, no gold on the arc, the moon still at the end. Big text "Free day", under it "Not one of your usual days", line "Playing anyway brings your future a little closer." If you play anyway, the number shows today's time with "a step ahead" under it, and the sun moves along the arc as if the stretch were 30 minutes.
 - **No target yet** (shouldn't happen after onboarding): show the This week tab instead.
 - **Never a penalty:** a missed stretch isn't shown or remembered anywhere. Tomorrow simply has its own stretch.
 - VoiceOver: the picture is one element, e.g. "Today's stretch: 1 hour 5 minutes of 1 hour 45. 40 minutes to go."
@@ -154,7 +154,7 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 - **Practice days:** a weekday counts as a practice day if you practised on that weekday in at least 2 of the last 4 full weeks. With less than 2 full weeks of history, or if this finds no days at all, every day is a practice day.
 - **Stretch for today** = (weekly target − hours logged this week *before today*) ÷ (practice days left this week, including today), rounded to the nearest 5 minutes, at least 15 minutes. It is fixed for the day: what you play today doesn't change it, and a short yesterday spreads over the remaining days.
-- If today isn't a practice day → rest day. If the week is already covered at the start of today → week covered.
+- If today isn't a practice day → free day. If the week is already covered at the start of today → week covered.
 - **Done today** = all sessions that start today (timer, manual and catch-up), plus the running timer's elapsed time live.
 - A day starts at local midnight. A session that crosses midnight counts towards the day it started (same as the calendar).
 
@@ -409,7 +409,7 @@ Colour is never the only cue, and the sun is always described in words.
 - Texts (one formatted, pluralised String Catalog string each):
   - This week: "The sun is just over halfway to your weekly target. 6.5 of 12 hours, 5.5 to go, 3 days left." (Above target: "The sun is above your weekly target. 13.5 of 12 hours.") Adjustable: swipe up/down moves through the days of the week, reading "Monday, 1 hour 10".
   - The long game: "The sun is a third of the way to the finish line. 3,294 of 10,000 hours. At your pace, around November 2035."
-  - Today: "The sun is almost two thirds of the way to today's resting place. 1 hour 5 of 1 hour 45, 40 minutes to go." Rest day: "Rest day. The sun is resting on the horizon."
+  - Today: "The sun is almost two thirds of the way to the moon. 1 hour 5 of 1 hour 45, 40 minutes to go." Free day: "Free day, no stretch today. Playing anyway brings your future closer."
   - Timer: "Session 25 minutes. 5 of 12 rays lit, next ray in 2 minutes 42. Total 3,294.7 hours." When a ray lights during a session and VoiceOver is running, post a low-priority announcement "Ray 6 lit" (queued, never interrupting speech).
   - Calendar day: "Thursday 22 October. 2 hours, a good day. Has a photo." Level words: rest day / a little / some / a good day / a full day.
   - Growth: as in section 19.

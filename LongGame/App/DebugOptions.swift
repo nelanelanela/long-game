@@ -9,7 +9,7 @@ enum DebugOptions {
     private static var argumentUsed = false
 
     private static let stretchHoursKey = "debug.stretch.hoursBefore"
-    private static let stretchRestKey = "debug.stretch.restDay"
+    private static let stretchFreeKey = "debug.stretch.freeDay"
 
     /// Today's stretch: pretend this many hours were logged this week before today. Nil = use the real ones.
     static var stretchHoursBeforeToday: Double? {
@@ -24,9 +24,9 @@ enum DebugOptions {
     }
 
     /// Today's stretch: pretend today is not one of the practice days.
-    static var stretchRestDay: Bool {
-        get { UserDefaults.standard.bool(forKey: stretchRestKey) }
-        set { UserDefaults.standard.set(newValue, forKey: stretchRestKey) }
+    static var stretchFreeDay: Bool {
+        get { UserDefaults.standard.bool(forKey: stretchFreeKey) }
+        set { UserDefaults.standard.set(newValue, forKey: stretchFreeKey) }
     }
 
     /// Settings button: pretend the last session was this many days ago, once.

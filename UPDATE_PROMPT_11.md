@@ -48,9 +48,9 @@ Also read `design/TodayStretch.dc.html`, `design/HomeWeek.dc.html` and `design/H
 - The segmented control becomes **Today | This week | The long game**.
 - Home opens on **Today** every time the app starts. Right after onboarding it still opens on The long game, once. Update `lastHomeTab`.
 - The Today tab:
-  - The sun moves along a wide dotted arc from the sea on the left to a small pale-blue moon on the horizon on the right, "today's resting place".
+  - The sun moves along a wide dotted arc from the sea on the left to a small pale-blue moon on the horizon on the right.
   - The part the sun has travelled is a solid gold line. There are no ticks or labels.
-  - Big number: today's time ("1 h 05"). Under it: "of today's 1 h 45". Then one quiet line: "40 m to today's resting place".
+  - Big number: today's time ("1 h 05"). Under it: "of today's 1 h 45". Then one quiet line: "40 m to the moon".
   - Use the exact text from the spec for the other states: covered, week covered, rest day and playing on a rest day.
 - Reuse the same sun and sea components and the same water rule. At 0 the sun's lower half is hidden by the sea.
 - Switching tabs: the sun glides between its spot on the arc and its spot on the scale (0.6 s). With Reduce Motion it moves without animating.

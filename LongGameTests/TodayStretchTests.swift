@@ -103,7 +103,7 @@ struct StretchSpreadTests {
         let done = StretchPlan(kind: .stretch(target: 3600), doneSaved: 3600)
         #expect(!done.isCovered(byAdding: 600))
         #expect(done.coveredAfter() == nil)
-        #expect(!StretchPlan(kind: .restDay, doneSaved: 0).isCovered(byAdding: 9999))
+        #expect(!StretchPlan(kind: .freeDay, doneSaved: 0).isCovered(byAdding: 9999))
     }
 
     @Test func theTargetThatAppliesThisWeekComesFromTheHistory() {
@@ -173,20 +173,23 @@ struct StretchPracticeDaysTests {
     }
 }
 
-struct StretchRestAndWeekTests {
-    @Test func aDayYouDoNotUsuallyPractiseIsARestDay() {
+struct StretchFreeAndWeekTests {
+    @Test func aDayYouDoNotUsuallyPractiseIsAFreeDay() {
         // Mon/Wed/Fri habit; today is Tuesday 10 Nov.
         let sessions = routine(weeks: 4, offsets: [0, 2, 4], from: monday)
         let s = Stretch.todayStretch(sessions: sessions, weeklyTargetHours: 6, now: day(2026, 11, 10, hour: 10), weekStart: .monday, calendar: utc)
-        #expect(s == .restDay(done: 0))
+        #expect(s == .freeDay(done: 0))
         #expect(s.fraction == 0)
     }
 
-    @Test func playingOnARestDayIsCountedButStaysARestDay() {
+    @Test func playingOnAFreeDayIsCountedAndMovesTheSun() {
         let sessions = routine(weeks: 4, offsets: [0, 2, 4], from: monday) + [session(day(2026, 11, 10, hour: 9), hours: 0.5)]
         let s = Stretch.todayStretch(sessions: sessions, weeklyTargetHours: 6, now: day(2026, 11, 10, hour: 10),
                                      weekStart: .monday, running: 600, calendar: utc)
-        #expect(s == .restDay(done: 1800 + 600))
+        #expect(s == .freeDay(done: 1800 + 600))
+        // The sun moves as if the stretch were 30 minutes, and stops at the moon.
+        #expect(s.fraction == 1)
+        #expect(StretchState.freeDay(done: 900).fraction == 0.5)
     }
 
     @Test func onlyPracticeDaysShareTheRemainingHours() {
@@ -232,7 +235,7 @@ struct StretchRestAndWeekTests {
         #expect(Stretch.todayStretch(sessions: [], weeklyTargetHours: 12, now: now, weekStart: .monday, calendar: utc,
                                      hoursBeforeToday: 12) == .weekCovered(done: 0))
         #expect(Stretch.todayStretch(sessions: [], weeklyTargetHours: 12, now: now, weekStart: .monday, calendar: utc,
-                                     forceRestDay: true) == .restDay(done: 0))
+                                     forceFreeDay: true) == .freeDay(done: 0))
     }
 }
 
@@ -322,16 +325,16 @@ struct StretchPictureTests {
         #expect(StretchText.clock(seconds: mins(59) + 59) == "59 m")
         #expect(StretchText.clock(seconds: 2 * 3600) == "2 h 00")
         #expect(StretchText.ofToday(mins(105)) == "of today's 1 h 45")
-        #expect(StretchText.toGo(mins(40)) == "40 m to today's resting place")
+        #expect(StretchText.toGo(mins(40)) == "40 m to the moon")
         // A part-minute left still reads as a minute to go.
-        #expect(StretchText.toGo(mins(39) + 10) == "40 m to today's resting place")
+        #expect(StretchText.toGo(mins(39) + 10) == "40 m to the moon")
         #expect(StretchText.clockUp(seconds: 0) == "0 m")
     }
 
     @Test func voiceOverReadsThePictureAsOneSentence() {
         let s = StretchState.stretch(target: mins(105), done: mins(65))
         #expect(StretchText.description(s) == "Today's stretch: 1 hour 5 minutes of 1 hour 45 minutes. 40 minutes to go.")
-        #expect(StretchText.description(.restDay(done: 0)) == "Rest day: the sun is resting on the horizon.")
+        #expect(StretchText.description(.freeDay(done: 0)) == "Free day, no stretch today. Playing anyway brings your future closer.")
         #expect(StretchText.description(.covered(target: 3600, done: 3600)).hasPrefix("Today's stretch covered"))
     }
 

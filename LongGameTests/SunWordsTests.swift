@@ -113,14 +113,14 @@ struct SunSpeechTests {
         #expect(SunSpeech.longGame(total: 10_100, pace: "At your pace, around 2040.").value == "10,100 of 10,000 hours.")
     }
 
-    @Test func todayDescribesTheStretchAndTheRestDay() {
+    @Test func todayDescribesTheStretchAndTheFreeDay() {
         let s = SunSpeech.today(.stretch(target: 6_300, done: 3_900))
-        #expect(s.label == "The sun is about two thirds of the way to today's resting place.")
+        #expect(s.label == "The sun is about two thirds of the way to the moon.")
         #expect(s.value == "1 hour 5 minutes of 1 hour 45 minutes, 40 minutes to go.")
-        let rest = SunSpeech.today(.restDay(done: 0))
-        #expect(rest.label == "Rest day. The sun is resting on the horizon.")
+        let rest = SunSpeech.today(.freeDay(done: 0))
+        #expect(rest.label == "Free day, no stretch today. Playing anyway brings your future closer.")
         #expect(rest.value == "")
-        #expect(SunSpeech.today(.restDay(done: 600)).value == "Played anyway: 10 minutes.")
+        #expect(SunSpeech.today(.freeDay(done: 600)).value == "Played anyway: 10 minutes.")
         #expect(SunSpeech.today(.covered(target: 3_600, done: 3_700)).label.contains("covered"))
         #expect(SunSpeech.today(.weekCovered(done: 0)).label.contains("covered"))
     }

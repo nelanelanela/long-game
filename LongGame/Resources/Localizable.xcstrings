@@ -1,129 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Music" : {
-
-    },
-    "Piano" : {
-
-    },
-    "Guitar" : {
-
-    },
-    "Violin" : {
-
-    },
-    "Cello" : {
-
-    },
-    "Drums" : {
-
-    },
-    "Bass" : {
-
-    },
-    "Saxophone" : {
-
-    },
-    "Flute" : {
-
-    },
-    "Trumpet" : {
-
-    },
-    "Singing" : {
-
-    },
-    "Composing" : {
-
-    },
-    "Visual arts & making" : {
-
-    },
-    "Painting" : {
-
-    },
-    "Drawing" : {
-
-    },
-    "Sculpture" : {
-
-    },
-    "Woodworking" : {
-
-    },
-    "Ceramics" : {
-
-    },
-    "Photography" : {
-
-    },
-    "Illustration" : {
-
-    },
-    "Printmaking" : {
-
-    },
-    "Textiles" : {
-
-    },
-    "Jewellery" : {
-
-    },
-    "Performing arts" : {
-
-    },
-    "Acting" : {
-
-    },
-    "Dance" : {
-
-    },
-    "Ballet" : {
-
-    },
-    "Directing" : {
-
-    },
-    "Words & mind" : {
-
-    },
-    "Writing" : {
-
-    },
-    "Poetry" : {
-
-    },
-    "Languages" : {
-
-    },
-    "Chess" : {
-
-    },
-    "Coding" : {
-
-    },
-    "Professions" : {
-
-    },
-    "Medicine" : {
-
-    },
-    "Law" : {
-
-    },
-    "Architecture" : {
-
-    },
-    "Design" : {
-
-    },
-    "Cooking" : {
-
-    },
-    "Teaching" : {
-
-    },
     "" : {
 
     },
@@ -131,102 +8,6 @@
 
     },
     " · 10,000 h" : {
-
-    },
-    "A rough guess is fine." : {
-
-    },
-    "About %@ · until %@" : {
-
-    },
-    "Continue my game" : {
-
-    },
-    "Couldn't change iCloud saving. Nothing was lost." : {
-
-    },
-    "Couldn't delete the iCloud copy. Check your connection and try again." : {
-
-    },
-    "Delete iCloud copy" : {
-
-    },
-    "Delete iCloud copy?" : {
-
-    },
-    "For the next 12 months, the only distance to cover." : {
-
-    },
-    "Hours a week, each year" : {
-
-    },
-    "iCloud" : {
-
-    },
-    "Keep your game safe" : {
-
-    },
-    "Last synced %@" : {
-
-    },
-    "Off. Your game stays on this iPhone." : {
-
-    },
-    "On all your Apple devices, and back if you get a new iPhone." : {
-
-    },
-    "Play every day" : {
-
-    },
-    "Private to your Apple Account. Only you can see it. No sign-in needed." : {
-
-    },
-    "Roughly where mastery begins. That’s your finish line." : {
-
-    },
-    "Save to iCloud" : {
-
-    },
-    "Search or type your own" : {
-
-    },
-    "Sign in to iCloud in the Settings app to keep a copy." : {
-
-    },
-    "Start a new game" : {
-
-    },
-    "Start the timer when you practise. Every hour lifts your sun." : {
-
-    },
-    "Syncing…" : {
-
-    },
-    "The hours you’ve already practised are your starting score." : {
-
-    },
-    "The longest game on the App Store. Played in real life." : {
-
-    },
-    "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
-
-    },
-    "Up to date" : {
-
-    },
-    "We found your game in iCloud." : {
-
-    },
-    "Welcome back" : {
-
-    },
-    "You don’t start at zero" : {
-
-    },
-    "Your starting score" : {
-
-    },
-    "Your weekly pace" : {
 
     },
     "–" : {
@@ -369,7 +150,7 @@
         }
       }
     },
-    "%@ to today's resting place" : {
+    "%@ to the moon" : {
 
     },
     "%@, not yet" : {
@@ -731,7 +512,10 @@
     "A ray of sunshine" : {
 
     },
-    "a rest-day bonus" : {
+    "a step ahead" : {
+
+    },
+    "A rough guess is fine." : {
 
     },
     "A small thank-you" : {
@@ -747,6 +531,9 @@
 
     },
     "about %@" : {
+
+    },
+    "About %@ · until %@" : {
 
     },
     "about %lld h %@ m a day" : {
@@ -823,6 +610,9 @@
     "Anything more is a bonus." : {
 
     },
+    "App icon grows with you" : {
+
+    },
     "Archive and replace" : {
 
     },
@@ -857,6 +647,9 @@
 
     },
     "Change photo" : {
+
+    },
+    "Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours" : {
 
     },
     "Choose a photo" : {
@@ -895,6 +688,15 @@
     "Continue" : {
 
     },
+    "Continue my game" : {
+
+    },
+    "Couldn't change iCloud saving. Nothing was lost." : {
+
+    },
+    "Couldn't delete the iCloud copy. Check your connection and try again." : {
+
+    },
     "Craft" : {
 
     },
@@ -917,6 +719,12 @@
 
     },
     "Delete everything" : {
+
+    },
+    "Delete iCloud copy" : {
+
+    },
+    "Delete iCloud copy?" : {
 
     },
     "Delete session" : {
@@ -964,7 +772,7 @@
     "Evening" : {
 
     },
-    "Every minute still counts." : {
+    "You reached the moon." : {
 
     },
     "Expand chart" : {
@@ -991,6 +799,9 @@
     "For the biggest fans" : {
 
     },
+    "For the next 12 months, the only distance to cover." : {
+
+    },
     "Forecast" : {
 
     },
@@ -1001,12 +812,6 @@
 
     },
     "Get started" : {
-
-    },
-    "App icon grows with you" : {
-
-    },
-    "Changes at 1,000, 2,500, 5,000, 7,500 and 10,000 hours" : {
 
     },
     "Giggle sound" : {
@@ -1075,6 +880,9 @@
     "Hours a week for the next 12 months" : {
 
     },
+    "Hours a week, each year" : {
+
+    },
     "Hours aren't a guarantee, but they're the part you control." : {
 
     },
@@ -1090,13 +898,13 @@
     "Hours this week" : {
 
     },
+    "iCloud" : {
+
+    },
     "If you keep your pace" : {
 
     },
     "Import sessions" : {
-
-    },
-    "In a year" : {
 
     },
     "In the Shortcuts app, make two shortcuts with the “Set Focus” action: one turning Practising on, one turning it off. Use the names above." : {
@@ -1123,10 +931,16 @@
     "Keep the sun shining" : {
 
     },
+    "Keep your game safe" : {
+
+    },
     "Last 12 months" : {
 
     },
     "last day of the week" : {
+
+    },
+    "Last synced %@" : {
 
     },
     "Less" : {
@@ -1277,7 +1091,13 @@
     "Off shows days and percent instead" : {
 
     },
+    "Off. Your game stays on this iPhone." : {
+
+    },
     "OK" : {
+
+    },
+    "On all your Apple devices, and back if you get a new iPhone." : {
 
     },
     "on the horizon" : {
@@ -1363,6 +1183,9 @@
     "Photos" : {
 
     },
+    "Play every day" : {
+
+    },
     "Played" : {
 
     },
@@ -1375,13 +1198,16 @@
     "played this year" : {
 
     },
-    "Playing anyway? Every minute still counts." : {
+    "Playing anyway brings your future a little closer." : {
 
     },
     "Plus" : {
 
     },
     "Practising Focus" : {
+
+    },
+    "Private to your Apple Account. Only you can see it. No sign-in needed." : {
 
     },
     "Ray %lld lit" : {
@@ -1408,16 +1234,16 @@
     "rest day" : {
 
     },
+    "Free day" : {
+
+    },
     "Rest day" : {
 
     },
-    "Rest day: the sun is resting on the horizon." : {
+    "Free day, no stretch today. Playing anyway brings your future closer." : {
 
     },
-    "Rest day: the sun is resting on the horizon. Played anyway: %@." : {
-
-    },
-    "Rest day. The sun is resting on the horizon." : {
+    "Free day, no stretch today. Played anyway: %@. Playing anyway brings your future closer." : {
 
     },
     "Resume" : {
@@ -1429,10 +1255,19 @@
     "Rhythm nudge" : {
 
     },
+    "Roughly where mastery begins. That’s your finish line." : {
+
+    },
     "Save" : {
 
     },
+    "Save to iCloud" : {
+
+    },
     "Saved" : {
+
+    },
+    "Search or type your own" : {
 
     },
     "Series" : {
@@ -1485,6 +1320,9 @@
     "Shows how this is worked out" : {
 
     },
+    "Sign in to iCloud in the Settings app to keep a copy." : {
+
+    },
     "Since %@. On average, how many hours a week did you practise?" : {
 
     },
@@ -1497,6 +1335,9 @@
     "Start" : {
 
     },
+    "Start a new game" : {
+
+    },
     "Start playing" : {
 
     },
@@ -1504,6 +1345,9 @@
 
     },
     "Start session" : {
+
+    },
+    "Start the timer when you practise. Every hour lifts your sun." : {
 
     },
     "Started %@" : {
@@ -1539,6 +1383,9 @@
     "Switch to a new game" : {
 
     },
+    "Syncing…" : {
+
+    },
     "Take photo" : {
 
     },
@@ -1566,6 +1413,9 @@
     "The first thousand." : {
 
     },
+    "The hours you’ve already practised are your starting score." : {
+
+    },
     "The long game" : {
 
     },
@@ -1578,6 +1428,9 @@
           }
         }
       }
+    },
+    "The longest game on the App Store. Played in real life." : {
+
     },
     "The session and its hours stay." : {
 
@@ -1619,13 +1472,16 @@
     "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
 
     },
-    "The sun's taking it easy too" : {
+    "Not one of your usual days" : {
 
     },
     "The time won't be added to your hours." : {
 
     },
     "there" : {
+
+    },
+    "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
 
     },
     "This session" : {
@@ -1706,7 +1562,7 @@
     "today's %@ · covered" : {
 
     },
-    "today's resting place" : {
+    "the moon" : {
 
     },
     "Today's stretch covered" : {
@@ -1718,7 +1574,7 @@
     "Today's stretch covered." : {
 
     },
-    "Today's stretch is covered. The sun has reached today's resting place." : {
+    "Today's stretch is covered. The sun has reached the moon." : {
 
     },
     "Today's stretch: %@ of %@. %@ to go." : {
@@ -1731,6 +1587,9 @@
 
     },
     "Type a number" : {
+
+    },
+    "Up to date" : {
 
     },
     "Use %lld h for the years after %@" : {
@@ -1749,7 +1608,13 @@
     "Want a gentle nudge?" : {
 
     },
+    "We found your game in iCloud." : {
+
+    },
     "Week starts on" : {
+
+    },
+    "Welcome back" : {
 
     },
     "Welcome back!" : {
@@ -1792,6 +1657,9 @@
 
     },
     "You can trim up to what you really practised." : {
+
+    },
+    "You don’t start at zero" : {
 
     },
     "You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone." : {
@@ -1837,10 +1705,16 @@
     "Your pace for the year" : {
 
     },
+    "Your starting score" : {
+
+    },
     "Your starting score · %@ h" : {
 
     },
     "Your usual · %lld" : {
+
+    },
+    "Your weekly pace" : {
 
     },
     "your weekly target" : {

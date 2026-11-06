@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · covered" : {
-
-    },
     "%@ / %@ h this week" : {
 
     },
@@ -12,16 +9,6 @@
     },
     "%@ left" : {
 
-    },
-    "%@ of %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@"
-          }
-        }
-      }
     },
     "%@ of %@ %@, %@ to go, %@." : {
       "localizations" : {
@@ -79,7 +66,7 @@
     "%@ this session. %@." : {
 
     },
-    "%@ to today's resting place" : {
+    "%@ to the moon" : {
 
     },
     "%@. %@, %@." : {
@@ -262,6 +249,9 @@
     "last day of the week" : {
 
     },
+    "Last synced %@" : {
+
+    },
     "Milestone · %@" : {
 
     },
@@ -296,6 +286,9 @@
 
     },
     "of today's %@" : {
+
+    },
+    "Off. Your game stays on this iPhone." : {
 
     },
     "on the horizon" : {
@@ -338,13 +331,10 @@
     "rest day" : {
 
     },
-    "Rest day: the sun is resting on the horizon." : {
+    "Free day, no stretch today. Playing anyway brings your future closer." : {
 
     },
-    "Rest day: the sun is resting on the horizon. Played anyway: %@." : {
-
-    },
-    "Rest day. The sun is resting on the horizon." : {
+    "Free day, no stretch today. Played anyway: %@. Playing anyway brings your future closer." : {
 
     },
     "Resume" : {
@@ -369,6 +359,9 @@
     "Set up Long Game on your iPhone first." : {
 
     },
+    "Sign in to iCloud in the Settings app to keep a copy." : {
+
+    },
     "some" : {
 
     },
@@ -376,6 +369,9 @@
 
     },
     "Starts a practice session" : {
+
+    },
+    "Syncing…" : {
 
     },
     "the finish line" : {
@@ -448,7 +444,7 @@
     "today's %@ · covered" : {
 
     },
-    "today's resting place" : {
+    "the moon" : {
 
     },
     "Today's stretch covered: %@ of %@. Anything more is a bonus." : {
@@ -461,7 +457,7 @@
         }
       }
     },
-    "Today's stretch is covered. The sun has reached today's resting place." : {
+    "Today's stretch is covered. The sun has reached the moon." : {
 
     },
     "Today's stretch: %@ of %@. %@ to go." : {
@@ -475,6 +471,9 @@
       }
     },
     "two thirds of the way" : {
+
+    },
+    "Up to date" : {
 
     },
     "Your %@ in the long game: %@ hours played, practised %lld days a week, most in %@, %@ of 10,000 hours" : {

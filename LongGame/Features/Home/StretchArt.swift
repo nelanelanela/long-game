@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Today's arc and its moon: a wide half-ellipse from the sea on the left to a small moon on the horizon on the
-/// right ("today's resting place"). The dotted road is always whole; the part travelled is a solid gold line.
+/// right. The dotted road is always whole; the part travelled is a solid gold line.
 /// No ticks, no labels: the arc is the scale.
 
 /// Where the arc sits inside a hero `width` wide.
@@ -87,7 +87,7 @@ struct StretchArcLayer: View {
                 .stroke(LGColor.arcDots, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [2, 8]))
             ArcShape(geometry: g, upTo: fraction)
                 .stroke(LGColor.sunRays, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-            // Resting on the horizon: its bottom edge a little above the waterline.
+            // Sitting on the horizon: its bottom edge a little above the waterline.
             MoonShape()
                 .fill(moon)
                 .frame(width: moonSize, height: moonSize)

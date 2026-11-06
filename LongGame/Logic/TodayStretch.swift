@@ -10,8 +10,8 @@ enum StretchState: Equatable, Sendable {
     case stretch(target: TimeInterval, done: TimeInterval)
     /// Today's stretch is done; anything more is a bonus.
     case covered(target: TimeInterval, done: TimeInterval)
-    /// Today is not one of the user's practice days. `done` is any time played anyway.
-    case restDay(done: TimeInterval)
+    /// Today is not one of the user's practice days (a free day). `done` is any time played anyway.
+    case freeDay(done: TimeInterval)
     /// This week's target was already reached when today began.
     case weekCovered(done: TimeInterval)
     /// No weekly target chosen yet.
@@ -20,7 +20,7 @@ enum StretchState: Equatable, Sendable {
     /// Seconds played today (0 when there is no target).
     var done: TimeInterval {
         switch self {
-        case .stretch(_, let d), .covered(_, let d), .restDay(let d), .weekCovered(let d): d
+        case .stretch(_, let d), .covered(_, let d), .freeDay(let d), .weekCovered(let d): d
         case .noTarget: 0
         }
     }
@@ -32,12 +32,13 @@ enum StretchState: Equatable, Sendable {
         }
     }
 
-    /// How far along the arc the sun is, 0...1. Rest days stay at the start; a covered week sits at the end.
+    /// How far along the arc the sun is, 0...1. A free day counts as a 30-minute stretch when played anyway; a covered week sits at the end.
     var fraction: Double {
         switch self {
         case .stretch(let t, let d): t > 0 ? min(1, max(0, d / t)) : 0
         case .covered, .weekCovered: 1
-        case .restDay, .noTarget: 0
+        case .freeDay(let d): min(1, max(0, d / Stretch.freeDayStretch))
+        case .noTarget: 0
         }
     }
 
@@ -62,7 +63,7 @@ enum StretchState: Equatable, Sendable {
 struct StretchPlan: Equatable, Sendable {
     enum Kind: Equatable, Sendable {
         case stretch(target: TimeInterval)
-        case restDay
+        case freeDay
         case weekCovered
         case noTarget
     }
@@ -76,7 +77,7 @@ struct StretchPlan: Equatable, Sendable {
         let done = doneSaved + max(0, running)
         switch kind {
         case .noTarget: return .noTarget
-        case .restDay: return .restDay(done: done)
+        case .freeDay: return .freeDay(done: done)
         case .weekCovered: return .weekCovered(done: done)
         case .stretch(let target): return done >= target ? .covered(target: target, done: done) : .stretch(target: target, done: done)
         }
@@ -97,6 +98,9 @@ struct StretchPlan: Equatable, Sendable {
 }
 
 enum Stretch {
+    /// On a free day the sun moves as if the stretch were 30 minutes.
+    static let freeDayStretch: TimeInterval = 30 * 60
+
     /// The stretch is rounded to the nearest 5 minutes, and is never shorter than 15.
     static let rounding: TimeInterval = 5 * 60
     static let minimum: TimeInterval = 15 * 60
@@ -144,9 +148,9 @@ enum Stretch {
     }
 
     /// Today's stretch, with the saved part of today's time. `weeklyTargetHours` is the target that applies this
-    /// week (nil or 0 = none). `hoursBeforeToday` and `forceRestDay` exist so the debug options can show every state.
+    /// week (nil or 0 = none). `hoursBeforeToday` and `forceFreeDay` exist so the debug options can show every state.
     static func plan(sessions: [SessionRecord], weeklyTargetHours: Double?, now: Date, weekStart: WeekStart,
-                     calendar: Calendar = .current, hoursBeforeToday: Double? = nil, forceRestDay: Bool = false) -> StretchPlan {
+                     calendar: Calendar = .current, hoursBeforeToday: Double? = nil, forceFreeDay: Bool = false) -> StretchPlan {
         let cal = WeekMath.calendar(calendar, weekStart: weekStart)
         let today = cal.startOfDay(for: now)
         let tomorrow = cal.date(byAdding: .day, value: 1, to: today) ?? today.addingTimeInterval(86_400)
@@ -156,7 +160,7 @@ enum Stretch {
 
         let practice = practiceDays(sessions: sessions, today: today, weekStart: weekStart, calendar: calendar)
         let todayWeekday = cal.component(.weekday, from: today)
-        if forceRestDay || !practice.contains(todayWeekday) { return StretchPlan(kind: .restDay, doneSaved: doneSaved) }
+        if forceFreeDay || !practice.contains(todayWeekday) { return StretchPlan(kind: .freeDay, doneSaved: doneSaved) }
 
         let weekFirst = WeekMath.startOfWeek(now, weekStart: weekStart, calendar: calendar)
         let before = hoursBeforeToday
@@ -178,9 +182,9 @@ enum Stretch {
     /// The state in one go: the plan plus the running timer's elapsed time.
     static func todayStretch(sessions: [SessionRecord], weeklyTargetHours: Double?, now: Date, weekStart: WeekStart,
                              running: TimeInterval = 0, calendar: Calendar = .current,
-                             hoursBeforeToday: Double? = nil, forceRestDay: Bool = false) -> StretchState {
+                             hoursBeforeToday: Double? = nil, forceFreeDay: Bool = false) -> StretchState {
         plan(sessions: sessions, weeklyTargetHours: weeklyTargetHours, now: now, weekStart: weekStart,
-             calendar: calendar, hoursBeforeToday: hoursBeforeToday, forceRestDay: forceRestDay).state(running: running)
+             calendar: calendar, hoursBeforeToday: hoursBeforeToday, forceFreeDay: forceFreeDay).state(running: running)
     }
 
     /// The target in force this week from the history of weekly targets (nil before the first).
@@ -219,8 +223,8 @@ enum StretchText {
     /// "today's 1 h 45 · covered"
     static func coveredToday(_ target: TimeInterval) -> String { String(localized: "today's \(clock(seconds: target)) · covered") }
 
-    /// "40 m to today's resting place"
-    static func toGo(_ remaining: TimeInterval) -> String { String(localized: "\(clockUp(seconds: remaining)) to today's resting place") }
+    /// "40 m to the moon"
+    static func toGo(_ remaining: TimeInterval) -> String { String(localized: "\(clockUp(seconds: remaining)) to the moon") }
 
     /// "1 hour 5 minutes" (spoken), whole minutes.
     static func spoken(seconds: TimeInterval) -> String { Labels.spoken(seconds: Int(max(0, seconds) / 60) * 60, includeSeconds: false) }
@@ -237,9 +241,9 @@ enum StretchText {
             return String(localized: "Today's stretch covered: \(spoken(seconds: done)) of \(spoken(seconds: target)). Anything more is a bonus.")
         case .weekCovered(let done):
             return String(localized: "This week is covered. Today: \(spoken(seconds: done)). Anything more is a bonus.")
-        case .restDay(let done):
-            return done > 0 ? String(localized: "Rest day: the sun is resting on the horizon. Played anyway: \(spoken(seconds: done)).")
-                            : String(localized: "Rest day: the sun is resting on the horizon.")
+        case .freeDay(let done):
+            return done > 0 ? String(localized: "Free day, no stretch today. Played anyway: \(spoken(seconds: done)). Playing anyway brings your future closer.")
+                            : String(localized: "Free day, no stretch today. Playing anyway brings your future closer.")
         case .noTarget:
             return String(localized: "No weekly target yet.")
         }

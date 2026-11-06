@@ -169,7 +169,7 @@ struct ScrubTrackerTests {
         var t = tracker()
         _ = t.move(to: d(2022, 5, 1))
         #expect(t.move(to: d(2022, 6, 3)) == .milestone(1))
-        // Resting on it, and wobbling across it, never repeats.
+        // Sitting on it, and wobbling across it, never repeats.
         #expect(t.move(to: d(2022, 6, 3)) == nil)
         #expect(t.move(to: d(2022, 5, 30)) == nil)
         #expect(t.move(to: d(2022, 6, 2)) == nil)

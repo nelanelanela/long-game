@@ -10,7 +10,7 @@ enum StretchSource {
                                          current: settings?.currentTarget, calendar: calendar)
         #if DEBUG
         return Stretch.plan(sessions: sessions, weeklyTargetHours: hours, now: now, weekStart: weekStart, calendar: calendar,
-                            hoursBeforeToday: DebugOptions.stretchHoursBeforeToday, forceRestDay: DebugOptions.stretchRestDay)
+                            hoursBeforeToday: DebugOptions.stretchHoursBeforeToday, forceFreeDay: DebugOptions.stretchFreeDay)
         #else
         return Stretch.plan(sessions: sessions, weeklyTargetHours: hours, now: now, weekStart: weekStart, calendar: calendar)
         #endif

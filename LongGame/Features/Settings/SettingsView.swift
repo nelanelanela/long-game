@@ -330,7 +330,7 @@ struct SettingsView: View {
     @State private var confirmResetOnboarding = false
     /// Today's stretch: -1 = use the real hours logged this week before today.
     @State private var stretchHoursBefore: Double = DebugOptions.stretchHoursBeforeToday ?? -1
-    @State private var stretchRestDay = DebugOptions.stretchRestDay
+    @State private var stretchFreeDay = DebugOptions.stretchFreeDay
 
     private var debugCard: some View {
         card {
@@ -353,9 +353,9 @@ struct SettingsView: View {
                         .onChange(of: stretchHoursBefore) { _, new in
                             DebugOptions.stretchHoursBeforeToday = new < 0 ? nil : new
                         }
-                    Toggle("Today is a rest day", isOn: $stretchRestDay)
+                    Toggle("Today is a free day", isOn: $stretchFreeDay)
                         .lgText(.row).frame(minHeight: 54)
-                        .onChange(of: stretchRestDay) { _, new in DebugOptions.stretchRestDay = new }
+                        .onChange(of: stretchFreeDay) { _, new in DebugOptions.stretchFreeDay = new }
                     Text("Changes today's stretch on Home and the Timer. Set the hours to your weekly target or more to see \"This week is covered\"; below 0 h goes back to the real hours.")
                         .lgText(.caption, color: LGColor.inkMuted)
                         .padding(.bottom, 12)

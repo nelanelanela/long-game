@@ -388,7 +388,7 @@ struct GiggleControllerTests {
 
 @Suite("Giggle · redraws only while it lasts")
 struct GiggleScheduleTests {
-    @Test func aRestingSunHasASingleEntry() {
+    @Test func aStillSunHasASingleEntry() {
         let now = Date()
         #expect(GiggleSchedule(run: nil).entries(from: now, mode: .normal) == [now])
     }

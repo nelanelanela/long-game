@@ -54,7 +54,7 @@ enum SunriseMotion {
     static func glowOpacity(_ t: TimeInterval) -> Double { 0.55 + 0.25 * breathe(t) }
     static func glowScale(_ t: TimeInterval) -> Double { 1 + 0.06 * breathe(t) }
 
-    /// How far below its resting place the sun still is, `seconds` after the sheet opened (1.6 s ease-out).
+    /// How far below its place on the horizon the sun still is, `seconds` after the sheet opened (1.6 s ease-out).
     static func rise(after seconds: TimeInterval) -> CGFloat {
         let p = min(1, max(0, seconds / riseDuration))
         return riseDistance * CGFloat(pow(1 - p, 4))
