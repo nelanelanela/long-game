@@ -44,7 +44,7 @@ struct TimerView: View {
                 SavedScene(now: timeline.date, since: savedAt, reduceMotion: reduceMotion)
             } else if let state = store.state {
                 RunningScene(
-                    now: timeline.date, state: state, craftName: craft.name, baseTotal: baseTotal, reduceMotion: reduceMotion,
+                    now: timeline.date, state: state, craftName: craft.name + (store.startedOn.map { " · " + ActiveSessionText.startedOn($0) } ?? ""), baseTotal: baseTotal, reduceMotion: reduceMotion,
                     stretchPlan: plan,
                     onMinimise: { dismiss() },
                     onToggle: { store.togglePause() },

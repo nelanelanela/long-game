@@ -73,11 +73,7 @@ private struct SessionRow: View {
         }
         .buttonStyle(.plain)
         .lgPointerHighlight()
-        .dropDestination(for: Data.self) { items, _ in
-            guard let onDrop, let data = items.first else { return false }
-            onDrop(data)
-            return true
-        } isTargeted: { dropping = $0 }
+        .lgImageDrop(isTargeted: $dropping) { onDrop?($0) }
         .background(dropping ? LGColor.stepperHighlight : .clear, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(TodaySessions.spoken(row, calendar: calendar))

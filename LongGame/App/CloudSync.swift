@@ -89,7 +89,7 @@ final class StoreHost {
 
     init(defaults: UserDefaults = .standard, isFreshInstall: Bool? = nil, make: ((Bool) throws -> ModelContainer)? = nil) throws {
         self.defaults = defaults
-        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self])
+        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self, ActiveSession.self])
         self.make = make ?? { iCloud in
             try ModelContainer(for: schema, configurations: CloudSync.configuration(for: schema, iCloud: iCloud))
         }

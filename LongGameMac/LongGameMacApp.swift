@@ -12,6 +12,7 @@ struct LongGameMacApp: App {
     @State private var iCloud = ICloudMonitor()
     @State private var tips = TipStore()
     @State private var commands = CommandCenter()
+    @State private var sessionSync = ActiveSessionSyncer()
 
     init() {
         do {
@@ -38,6 +39,13 @@ struct LongGameMacApp: App {
                 .background(MacWindowSetup())
                 .task(id: store.generation) { tips.start(context: store.container.mainContext) }
                 .task { await iCloud.refresh(); iCloud.start() }
+                // The running session follows you between your devices when Save to iCloud is on.
+                .task(id: store.generation) { sessionSync.start(timer: timerStore, container: store.container) }
+                // The Dock icon is not remembered between launches, so draw the stage again when the app opens.
+                .task(id: store.generation) {
+                    let rows = (try? store.container.mainContext.fetch(FetchDescriptor<AppSettings>())) ?? []
+                    if let settings = rows.first, settings.iconGrows { AppIconManager.setDockIcon(settings.appliedIconStage ?? .start) }
+                }
                 .preferredColorScheme(.light)
         }
         .defaultSize(width: 1180, height: 740)

@@ -184,7 +184,8 @@ struct MenuBarPopover: View {
         HStack(spacing: 14) {
             SunView(face: .focus).frame(width: 64, height: 64).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
-                Text("This session").lgText(.caption, color: .white.opacity(0.7))
+                Text(timer.startedOn.map { ActiveSessionText.startedOn($0) } ?? String(localized: "This session"))
+                    .lgText(.caption, color: .white.opacity(0.7))
                 Text(DurationFormat.clock(seconds: state.elapsed(at: now)))
                     .lgText(LGTextStyle(size: 38, weight: .light, relativeTo: .largeTitle, tracking: -1.4), color: .white)
                     .monospacedDigit()

@@ -77,11 +77,7 @@ struct NotePhotoRow: View {
             .buttonStyle(.plain)
             .accessibilityLabel(photo == nil ? "Add a photo" : "Photo, double-tap to change")
             // A picture dragged in from Photos or Files (iPad, Mac) goes through the same processing as the picker's.
-            .dropDestination(for: Data.self) { items, _ in
-                guard let data = items.first else { return false }
-                prepare(data)
-                return true
-            } isTargeted: { dropping = $0 }
+            .lgImageDrop(isTargeted: $dropping) { prepare($0) }
             .overlay {
                 if dropping {
                     RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(LGColor.ink, lineWidth: 2)

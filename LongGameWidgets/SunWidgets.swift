@@ -112,7 +112,11 @@ struct OverviewWidget: Widget {
         }
         .configurationDisplayName("This week and the long game")
         .description("This week against your weekly target, and the long game against 10,000 hours.")
+        #if os(iOS)
         .supportedFamilies([.systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
+        #else
+        .supportedFamilies([.systemMedium])
+        #endif
         .contentMarginsDisabled()
     }
 }

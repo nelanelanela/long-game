@@ -9,6 +9,7 @@ struct LongGameApp: App {
     @State private var iCloud = ICloudMonitor()
     @State private var tips = TipStore()
     @State private var commands = CommandCenter()
+    @State private var sessionSync = ActiveSessionSyncer()
 
     init() {
         do {
@@ -35,6 +36,8 @@ struct LongGameApp: App {
                 .task { await iCloud.refresh(); iCloud.start() }
                 // The Apple Watch follows the timer and the stored data from here on.
                 .task(id: store.generation) { WatchBridge.shared.start(timer: timerStore, container: store.container) }
+                // The running session follows you between your devices when Save to iCloud is on.
+                .task(id: store.generation) { sessionSync.start(timer: timerStore, container: store.container) }
                 .preferredColorScheme(.light)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility5)
         }

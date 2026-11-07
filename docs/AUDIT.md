@@ -377,6 +377,54 @@ Not seen: the Growth chart, its full-screen draw-in and the Today list at AX5 in
 
 Also: the spec's Forecast section says the Growth card "still shows the real value" of the yearly trend, but Screen 6 removes the weekly-rate card, so nothing on screen shows it any more.
 
+## Mac app (update 28)
+
+**Done**
+- **Part 1, shared code:** target "LongGame Mac" (macOS 14+, bundle ID `com.wehavesun.LongGame`, the same as the iPhone's, which is what universal purchase needs). It compiles `Models/`, `Logic/`, `DesignSystem/`, `Features/` and the shared app files. iPhone-only code is behind `#if os(iOS)`: Live Activities (`LiveActivityManager` is a no-op stub on Mac), the Watch link (`WidgetBridge`), alternate icons (`AppIconManager` has a Mac twin in `LongGameMac/`), camera, haptics, Screen Time apps in Focus. UIKit images became `PlatformImage` (`DesignSystem/PlatformImage.swift`); iPhone-only modifiers have Mac stand-ins in `PlatformShims.swift`. The Mac test scheme runs the same `LongGameTests` (iCloud, Tip jar, Watch and store-location tests are skipped there).
+- **Part 2, the window:** 1180 x 740 (minimum 900 x 600), hidden title bar, the iPad sidebar layout at Mac size (a plain sidebar, not `NavigationSplitView`: the iPad layout already did the job and the two stay identical), File/View/Session menus with the shortcuts.
+- **Part 3, the menu bar:** `MenuBarExtra` in window style (`LongGameMac/MenuBarSun.swift`). The words come from `Logic/MenuBarText.swift`; the running clock is `Text(timerInterval:)`, never a counter. Settings -> Show in Dock (on by default, stored on this Mac only); off uses the accessory activation policy.
+- **Part 4, one session everywhere:** `ActiveSession` is a new SwiftData model in the same store. When Save to iCloud is on, every timer change is written to it and every record that arrives from another device is turned into what this timer does (`Logic/ActiveSessionLogic.swift`, `App/ActiveSessionSyncer.swift`). The earlier start wins; the later device switches to it and shows "Started on <device>". Pause, resume and finish on either device reach the other. The Watch still talks to the iPhone through WatchConnectivity, and a change that comes from iCloud is passed on to it.
+- **Images:** drop a picture (or a picture file from the Finder) on a session row or the Finish sheet's photo square (`DesignSystem/ImageDrop.swift`).
+- **Dock icon:** with "App icon grows with you" on, the Dock icon is drawn for the current stage at launch and whenever the stage changes (`NSApp.applicationIconImage`).
+- **Widgets:** target "LongGameMacWidgets" (the sun, and this week with the long game; no Lock Screen shapes). It builds, but it is not embedded in the Mac app yet (see below).
+- **Tests:** `ActiveSessionTests` (earlier start wins, pause/resume/finish from the other device, stale records), `MenuBarTests` (menu bar text running, paused and idle, Dock default).
+
+**Not checked, and why**
+- I could not open the Mac app's window or menu bar on a screen here, so none of it has been seen running. Please run it (below) and look at the window, the menu bar sun and its popover. If the sun and the text do not show side by side in the menu bar, tell me.
+- iCloud sync between a Mac and an iPhone cannot run until the steps below are done. The conflict rules are unit-tested; the sync itself has never run on two real devices.
+- A session started on the Mac reaches an iPhone that is in the background only as fast as iCloud delivers it (usually seconds, sometimes longer); the Live Activity can only start while the iPhone app is open.
+- A session started on a Mac that is asleep or offline has no record in iCloud until it is back online; if two sessions start in that time the earlier start still wins afterwards.
+- Notifications: the same code as the iPhone (`Notifications.swift`) runs on Mac and is unit-tested, but I have not seen one arrive. macOS asks for permission the first time a session starts.
+- Liquid Glass on macOS 26 is used through the shared button styles behind `if #available(iOS 26, macOS 26, *)`; not seen.
+- The File menu's Start session does nothing while the window is closed; the menu bar popover's buttons do open it.
+- Accessibility: the same labels as the iPhone; the menu bar item and popover have their own labels. Keyboard: the menus carry every shortcut. I have not run VoiceOver or the Accessibility Inspector on the Mac.
+
+## What to do in your Apple Developer account and App Store Connect for the Mac version
+
+None of this has been done. Until you do it, the Mac app runs locally from Xcode with no iCloud, and the Mac widgets are not embedded.
+
+1. **developer.apple.com -> Certificates, Identifiers & Profiles -> Identifiers**
+   - Open the app ID `com.wehavesun.LongGame`. Under the **Mac** (macOS) platform, make sure it is enabled for both iOS and macOS (a universal app ID). If Xcode offers to register the Mac app for you when you choose your team in Signing, that does the same thing.
+   - Tick **iCloud** and open Configure: choose the existing container `iCloud.com.wehavesun.LongGame` (the same one the iPhone uses). Do not make a new container.
+   - Tick **App Groups** and choose `group.com.wehavesun.LongGame.shared`. On a Mac the group name for a sandboxed app is usually prefixed with your Team ID (for example `ABCDE12345.com.wehavesun.LongGame.shared`); Xcode shows the right name when you add the capability. Tell me what it says and I will change `WidgetSnapshot.groupID` for the Mac.
+   - Add a second identifier for the Mac widgets, `com.wehavesun.LongGame.sunwidgets`, with the same App Group.
+2. **In Xcode** (project -> target "LongGame Mac" -> Signing & Capabilities)
+   - Choose your team (We Have Sun). Add **iCloud** (tick CloudKit and the same container), **App Groups** and **App Sandbox** (tick Outgoing Connections; File Access: User Selected File Read Only for the picture drop and the CSV import). Do the same for "LongGameMacWidgets" (App Sandbox and App Groups).
+   - Stop here and tell me. I then turn on the `CLOUD_SYNC` flag for the Mac target, add the entitlements to `project.yml`, embed the widget extension in the Mac app, and check that it still builds. I will not touch signing before you say.
+3. **CloudKit Dashboard** (icloud.developer.apple.com -> container `iCloud.com.wehavesun.LongGame`)
+   - Run the Mac app (or the iPhone app) once from Xcode with iCloud on so the new `ActiveSession` record type appears in the **Development** environment.
+   - Then **Deploy Schema Changes to Production**. Without this the running-session sync works in testing but not for App Store and TestFlight builds. This is the same step as for the other record types.
+4. **App Store Connect**
+   - Open the Long Game app record and choose to add the macOS platform (**+ next to the platform list -> macOS**). Using the same bundle ID gives you universal purchase: one purchase and one price for iPhone, iPad and Mac. The first macOS version number can match the iPhone's.
+   - Fill in the Mac version page: screenshots (the Mac sizes are 1280 x 800 up to 2880 x 1800; at least one), description, keywords, and the Mac category (Productivity). The privacy answers are the same as the iPhone's.
+   - The tip jar in-app purchases are shared by universal purchase; nothing to recreate.
+   - Upload the Mac build from Xcode (Product -> Archive with "My Mac" as destination -> Distribute App -> App Store Connect). Mac apps are notarised automatically on upload.
+5. **Signing for people outside the App Store** is not needed unless you want to hand out the Mac app yourself; say so and I will cover Developer ID and notarisation.
+
+## How to run the Mac app from Xcode
+
+Open `LongGame.xcodeproj`, choose the **LongGame Mac** scheme and the destination **My Mac**, press Run. Add `-demoData` under Product -> Scheme -> Edit Scheme -> Run -> Arguments for a sample Piano craft. The sun in the menu bar appears at the top right; click it for the popover. Settings (Cmd+,) has Show in Dock. Run the tests with Product -> Test on the same scheme.
+
 ## Not done or not testable here
 
 - Live Activity and Dynamic Island: built, but the Simulator cannot show them; check on a device.

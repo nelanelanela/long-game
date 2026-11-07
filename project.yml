@@ -184,6 +184,7 @@ targets:
       - Shared/WidgetViews.swift
       - WatchShared/WatchSync.swift
       - LongGame/App/AppShortcuts.swift
+      - LongGame/App/ActiveSessionSyncer.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
@@ -203,6 +204,38 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ENABLE_PREVIEWS: YES
         SWIFT_EMIT_LOC_STRINGS: YES
+  # Mac desktop and Notification Center widgets. Built, but not yet embedded in the Mac app: that needs the App Group and
+  # the sandbox, which are signing steps (see docs/AUDIT.md).
+  LongGameMacWidgets:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - LongGameMacWidgets
+      - LongGameWidgets/SunWidgets.swift
+      - Shared/WidgetSnapshot.swift
+      - Shared/WidgetViews.swift
+      - LongGame/DesignSystem/SunView.swift
+      - LongGame/DesignSystem/Motion.swift
+      - LongGame/DesignSystem/Colors.swift
+      - LongGame/DesignSystem/Typography.swift
+      - LongGame/DesignSystem/Water.swift
+      - LongGame/Logic
+    info:
+      path: LongGameMacWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Long Game
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.sunwidgets
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SDKROOT: macosx
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        SKIP_INSTALL: YES
   LongGameTests:
     type: bundle.unit-test
     platform: iOS

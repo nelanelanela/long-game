@@ -9,7 +9,7 @@ import SwiftData
 private enum DuoPreviewData {
     /// An in-memory Piano craft with the design's numbers, and a running timer for the Timer previews.
     static func make(runningTimer: Bool = false) -> (container: ModelContainer, craft: Craft, timer: TimerStore) {
-        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self])
+        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self, ActiveSession.self])
         let container = try! ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
         let context = container.mainContext
         let now = Date()

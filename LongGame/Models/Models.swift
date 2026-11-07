@@ -169,3 +169,43 @@ final class TargetPeriod {
 
     var record: TargetRecord { TargetRecord(hoursPerWeek: hoursPerWeek, start: start, end: end) }
 }
+
+
+/// The running session, shared through iCloud so any device can show, pause or finish it. The timer itself is still
+/// timestamps on each device; this record is how they agree. All values have defaults so CloudKit can hold it.
+@Model
+final class ActiveSession {
+    var id: UUID = UUID()
+    var craftId: UUID = UUID()
+    var craftName: String = ""
+    var startedAt: Date = Date()
+    var pausedAt: Date?
+    var accumulatedPause: Double = 0
+    var deviceName: String = ""
+    var changedAt: Date = Date()
+    var endedAt: Date?
+
+    init(_ record: ActiveSessionRecord) {
+        id = record.id
+        apply(record)
+    }
+
+    func apply(_ record: ActiveSessionRecord) {
+        craftId = record.craftId
+        craftName = record.craftName
+        startedAt = record.startedAt
+        pausedAt = record.pausedAt
+        accumulatedPause = record.accumulatedPause
+        deviceName = record.deviceName
+        changedAt = record.changedAt
+        endedAt = record.endedAt
+    }
+
+    var record: ActiveSessionRecord {
+        var r = ActiveSessionRecord(id: id, state: TimerState(craftId: craftId, craftName: craftName, startedAt: startedAt,
+                                                              pausedAt: pausedAt, accumulatedPause: accumulatedPause),
+                                    deviceName: deviceName, changedAt: changedAt)
+        r.endedAt = endedAt
+        return r
+    }
+}
