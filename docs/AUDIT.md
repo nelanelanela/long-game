@@ -396,7 +396,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 - A session started on a Mac that is asleep or offline has no record in iCloud until it is back online; if two sessions start in that time the earlier start still wins afterwards.
 - Notifications: the same code as the iPhone (`Notifications.swift`) runs on Mac and is unit-tested, but I have not seen one arrive. macOS asks for permission the first time a session starts.
 - Liquid Glass on macOS 26 is used through the shared button styles behind `if #available(iOS 26, macOS 26, *)`; not seen.
-- The File menu's Start session does nothing while the window is closed; the menu bar popover's buttons do open it.
+- Menu commands (Start session, Add past hours, the View shortcuts) open the window first if it was closed; not seen on screen.
 - Accessibility: the same labels as the iPhone; the menu bar item and popover have their own labels. Keyboard: the menus carry every shortcut. I have not run VoiceOver or the Accessibility Inspector on the Mac.
 
 ## What to do in your Apple Developer account and App Store Connect for the Mac version

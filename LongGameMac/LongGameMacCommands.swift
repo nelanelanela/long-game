@@ -4,34 +4,40 @@ import SwiftUI
 struct LongGameMacCommands: Commands {
     let center: CommandCenter
     let timer: TimerStore
+    @Environment(\.openWindow) private var openWindow
+
+    /// Opens the window first when it has been closed, then sends the command once the screens can hear it.
+    private func send(_ command: AppCommand) {
+        MacActions.openMain(openWindow) { center.send(command) }
+    }
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
-            Button(timer.isActive ? "Finish session" : "Start session") { center.send(.startOrFinish) }
+            Button(timer.isActive ? "Finish session" : "Start session") { send(.startOrFinish) }
                 .keyboardShortcut("n", modifiers: .command)
-            Button("Add past hours") { center.send(.addHours) }
+            Button("Add past hours") { send(.addHours) }
                 .keyboardShortcut("l", modifiers: .command)
         }
         CommandGroup(after: .toolbar) {
             Divider()
-            Button("Today") { center.send(.show(.today)) }.keyboardShortcut("1", modifiers: .command)
-            Button("This week") { center.send(.show(.week)) }.keyboardShortcut("2", modifiers: .command)
-            Button("The long game") { center.send(.show(.longGame)) }.keyboardShortcut("3", modifiers: .command)
+            Button("Today") { send(.show(.today)) }.keyboardShortcut("1", modifiers: .command)
+            Button("This week") { send(.show(.week)) }.keyboardShortcut("2", modifiers: .command)
+            Button("The long game") { send(.show(.longGame)) }.keyboardShortcut("3", modifiers: .command)
             Divider()
-            Button("Calendar") { center.send(.show(.calendar)) }.keyboardShortcut("4", modifiers: .command)
-            Button("Growth") { center.send(.show(.growth)) }.keyboardShortcut("5", modifiers: .command)
+            Button("Calendar") { send(.show(.calendar)) }.keyboardShortcut("4", modifiers: .command)
+            Button("Growth") { send(.show(.growth)) }.keyboardShortcut("5", modifiers: .command)
         }
         CommandMenu("Session") {
             // Space itself is caught by the Timer screen (so it never gets in the way of typing a note);
             // the menu item does the same thing for anyone who prefers the mouse.
-            Button(timer.state?.isPaused(at: Date()) == true ? "Resume (Space)" : "Pause (Space)") { center.send(.pauseResume) }
+            Button(timer.state?.isPaused(at: Date()) == true ? "Resume (Space)" : "Pause (Space)") { send(.pauseResume) }
                 .disabled(!timer.isActive)
             Divider()
-            Button(timer.isActive ? "Finish session" : "Start session") { center.send(.startOrFinish) }
-            Button("Add past hours") { center.send(.addHours) }
+            Button(timer.isActive ? "Finish session" : "Start session") { send(.startOrFinish) }
+            Button("Add past hours") { send(.addHours) }
         }
         CommandGroup(replacing: .appSettings) {
-            Button("Settings…") { center.send(.settings) }.keyboardShortcut(",", modifiers: .command)
+            Button("Settings…") { send(.settings) }.keyboardShortcut(",", modifiers: .command)
         }
     }
 }
