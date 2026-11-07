@@ -36,7 +36,7 @@ Four stored entities; every total on screen is derived from them, never stored.
 | Entity | Fields | Notes |
 | --- | --- | --- |
 | Craft | id, name, category, startYear, createdAt, archivedAt? | Exactly one with archivedAt = nil. Archived crafts keep their data, read-only. |
-| YearEstimate | craftId, year, hoursPerWeek (0–40, step 1) | One row per year from startYear to the onboarding year. Editable later in Settings. |
+| YearEstimate | craftId, year, hoursPerWeek (0–168, step 1) | One row per year from startYear to the onboarding year. Editable later in Settings. |
 | Session | id, craftId, start, end, durationSec, source (timer / manual / catchUp), note?, photo? (image data, external storage), createdAt, editedAt? | Manual sessions store start = chosen day at 12:00 local, end = start + duration. note and photo are optional (section 16). |
 | Settings | weekStart (Mon/Sun, default from locale), reminderTime?, reminderDays, syncEnabled, milestonesSeen[], lastTipAt?, tipCount, lastTipOfferAt?, scrubHintSeen, weeklyTargetHours, targetSetAt, targetEndsAt, lastHomeTab (the tab Home opens on next: Today, except right after onboarding) | Single row. |
 | TargetPeriod | hoursPerWeek, start, end | One row per year of pace (history of weekly targets). |
@@ -90,7 +90,7 @@ Shown only during first onboarding (not after Switch to a new game, which goes s
 
 - Title "Hours a week, each year", no subtitle.
 
-- One stepper row per year from start year to now (year · − · "N h" · +), 0–40 h/week, step 1, default 5. The year being changed is highlighted (#FFF3D6 behind its value).
+- One stepper row per year from start year to now (year · − · "N h" · +), 0–168 h/week (no limit below the 168 hours in a week), step 1, default 5. The year being changed is highlighted (#FFF3D6 behind its value).
 - After the user changes a year that has later years, a text button appears under the card: "Use N h for the years after YYYY"; it copies that value to every later year (one tap, undoable by changing them back).
 - Under the card, "Your starting score" with the live total (baseline formula).
 - **Continue** opens step 3b (Your weekly pace).
@@ -101,7 +101,7 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 
 - Onboarding step 4 of 5 (step dots show 5 steps on steps 1–5). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
 - Title "Your weekly pace". One line: "For the next 12 months, the only distance to cover."
-- Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–40 h a week, step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
+- Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–168 h a week (no limit below the 168 hours in a week), step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
 - One quiet line under the chips instead of a card: "About 1 h 43 m a day · until Nov 2027" (target ÷ 7, and the set date + 12 months). The "In a year" forecast moves to the Growth chart.
 - **Continue** opens step 3c.
 
@@ -115,7 +115,7 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 - Button **Start playing** (onboarding) saves the craft, estimates and target and opens Home on The long game tab, once. When editing, the button reads **Save** and the 12 months restart from today.
 - Data: `Settings.weeklyTargetHours`, `targetSetAt`, `targetEndsAt` (= set date + 12 months). Earlier targets are kept in a small `TargetPeriod` list (hours, start, end) so past weeks are judged against the target that applied then.
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
-- Effect on the forecast: for the 12 months of the target, the mid scenario uses the target instead of the current pace when the user is within 25% of it (so an unrealistic target doesn't distort the finish line); otherwise the normal pace. The low/high band is unchanged.
+- Effect on the forecast: the finish-line forecast everywhere uses this chosen pace (see Forecast algorithm), so changing it moves the finish line straight away.
 
 ### 4 · Home (`design/TodayStretch.dc.html`, `design/HomeWeek.dc.html`, `design/Home.dc.html`)
 
@@ -144,17 +144,14 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 - **The picture:** instead of a vertical scale, a wide dotted arc rises from the sea on the left and comes down on the right to a small pale-blue moon on the horizon. Reaching the moon is today's stretch done: one more step towards the future the user is playing for. The part of the arc the sun has travelled is a solid gold line. The sun (same sun, same animation, about 120 pt) sits on the arc at `done ÷ stretch` (0 = on the horizon on the left, 1 = at the moon). No ticks or labels: the arc is the scale. Same sea, same water rule as the other tabs (at 0 the sun's lower half is hidden by the sea). The words "rest", "resting place" and "goal" are not used for the stretch: the copy talks about reaching the moon.
 - **Big number:** today's time ("1 h 05", or "40 m" under an hour). **Under it:** "of today's 1 h 45". **One quiet line** (14 pt, #8A93AB): "40 m to the moon". When covered: "You reached the moon."
 - **Stretch covered** (done ≥ stretch): the sun sits at the moon with the wink face for a moment, then happy; the whole arc is gold. Number = today's time, under it "today's 1 h 45 · covered", line "Anything more is a bonus."
-- **Week covered** (this week ≥ weekly target): the arc is drawn fully gold with the sun at the moon; number = today's time (or "0 m"), under it "This week is covered", line "Anything more is a bonus."
-- **Free day** (today isn't one of your practice days): no stretch is set; the sun waits on the horizon at the left, no gold on the arc, the moon still at the end. Big text "Free day", under it "Not one of your usual days", line "Playing anyway brings your future a little closer." If you play anyway, the number shows today's time with "a step ahead" under it, and the sun moves along the arc as if the stretch were 30 minutes.
+- **Today's sessions:** under the quiet line, a small header "Today's sessions" (13 pt semibold, #8A93AB) and one row per session that started today, oldest first, between hairlines: a 40 pt photo thumbnail (or a small clock icon on #F1EDE6 when there's no photo), the time range "07:40 – 08:20" (14 pt semibold) with the note under it (13 pt, one line, ellipsis; "No note" in light grey when empty), and the duration on the right ("40 m", 15 pt semibold). A running timer shows as the first row "Now · 12 m" with a small pulsing dot. Tapping a row opens that session to edit (same sheet as in History). No rows today: the section is hidden. If there are more rows than fit, the area under the hero scrolls; Start session and Add past hours stay fixed at the bottom.
 - **No target yet** (shouldn't happen after onboarding): show the This week tab instead.
 - **Never a penalty:** a missed stretch isn't shown or remembered anywhere. Tomorrow simply has its own stretch.
 - VoiceOver: the picture is one element, e.g. "Today's stretch: 1 hour 5 minutes of 1 hour 45. 40 minutes to go."
 
 **How the stretch is worked out** (all in `Logic/`, nothing stored):
 
-- **Practice days:** a weekday counts as a practice day if you practised on that weekday in at least 2 of the last 4 full weeks. With less than 2 full weeks of history, or if this finds no days at all, every day is a practice day.
-- **Stretch for today** = (weekly target − hours logged this week *before today*) ÷ (practice days left this week, including today), rounded to the nearest 5 minutes, at least 15 minutes. It is fixed for the day: what you play today doesn't change it, and a short yesterday spreads over the remaining days.
-- If today isn't a practice day → free day. If the week is already covered at the start of today → week covered.
+- **Stretch for today** = weekly pace ÷ 7, rounded to the nearest 5 minutes (7 h a week → 1 h a day; 12 h → 1 h 45; 3 h → 25 m). It is the same every day of the week: no guessing which days the user will play, no rest days or free days, and nothing carried over from other days.
 - **Done today** = all sessions that start today (timer, manual and catch-up), plus the running timer's elapsed time live.
 - A day starts at local midnight. A session that crosses midnight counts towards the day it started (same as the calendar).
 
@@ -196,9 +193,13 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 ### 6 · History — Growth (`design/Growth.dc.html`)
 
-- Chart of cumulative hours over time: solid navy line for the past, dashed orange forecast to 10,000 h, soft orange band for the likely range, a small sun at the forecast finish point. The dashed 10,000 h line is labelled "Finish line · 10,000 h" at its left end. No legend.
-- Headline: forecast month + year; "Likely between YYYY and YYYY".
-- **What if I practise more?** slider, 0–10 extra h/week; the forecast, band and text update live ("About 1.4 years sooner, around May 2035"). Not saved.
+- Chart of cumulative hours over time: solid navy line for the past; from Today, a **dashed orange line at your chosen pace** up to 10,000 h with a small sun at its finish point, and a **dotted grey line (#9AA1B5) at your actual pace**. No band, and **no text on or next to the lines** (they can sit close together). The dashed 10,000 h line is labelled "Finish line · 10,000 h" at its left end.
+- **Key under the chart** (above a hairline, 12 pt; 13 pt and placed between the headline and the chart in the full-screen version): two rows, each with a short sample of its line (26 pt wide), the name and the numbers on the right:
+  - dashed orange — **Your chosen pace** (semibold, #C2531A) — "12 h a week · Nov 2035";
+  - dotted grey — **Your actual pace** (semibold, #5E6782) — "9.5 h a week · 2039".
+  - The key is one VoiceOver element: "Your chosen pace, 12 hours a week, finishes around November 2035. Your actual pace, 9.5 hours a week, finishes around 2039."
+- Headline: "At your chosen pace, you'll finish around" / the chosen-pace month + year / "At your actual pace: around YYYY" (or "At your actual pace: after YYYY" beyond 30 years). When the actual pace is equal or faster, the last line reads "You're already playing at this pace".
+- **What if I practise more?** slider, 0–10 extra h/week on top of the chosen pace; the orange line, its sun and the text update live ("About 1.4 years sooner, around May 2035"); without a change it reads "On top of your chosen pace of 12 h a week." Not saved.
 - The chart card has a small expand button (36 pt circle, top right); tapping it or the chart opens the full-screen chart (section 19).
 - At the bottom: a quiet **Your 2026** row (small sun, "A card of your year, to keep or share", chevron) that opens the year card (section 17). It is there all year.
 
@@ -232,13 +233,13 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 **Screen 11 · Under 4 weeks (gap of 7–27 days): a stepper per week**
 
 - Split the gap into 7-day blocks counting back from yesterday; leftover days (fewer than 7) join the oldest block. Example: a 22-day gap = 3–10 Oct (8 days), 11–17 Oct, 18–24 Oct.
-- One stepper row per block: date range with "N days · about H h MM m a day" under it, then − · "N h" · + (0–40 h, step 1, default = current pace rounded).
+- One stepper row per block: date range with "N days · about H h MM m a day" under it, then − · "N h" · + (0–168 h, step 1, default = current pace rounded).
 - Running total "Adding N h" and the button "Add N hours" (disabled at 0).
 
 **Screen 12 · 4 weeks or more (gap of 28+ days): one average**
 
 - "N weeks have passed. Since <date>. On average, how many hours a week did you practise?"
-- One big stepper 0–40 h/week, step 1 (default = current pace rounded), with quick picks "Your usual · N", 0, 5, 10, with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
+- One big stepper 0–168 h/week, step 1 (default = current pace rounded), with quick picks "Your usual · N", 0, 5, 10, with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
 
 **How the hours are stored**
 
@@ -254,7 +255,7 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 - Title "Meet your future self". Text:
   - "Long Game is a projection of you into the future. Every hour you add brings that person a little closer."
   - "Dreaming of turning your passion into a career? 10,000 hours is where that starts to become realistic, whenever you begin. In a well-known study of musicians, what set the professionals apart wasn’t talent but the hours they had put in. And you’re not starting from zero: every hour you’ve already practised counts."
-- A progress track from Today (current total) to the forecast finish date (mid scenario, "~Mon YYYY · 10,000 h"), with the sun at the end.
+- A progress track from Today (current total) to the forecast finish date (at the chosen pace, "~Mon YYYY · 10,000 h"), with the sun at the end.
 - Small note: "Hours aren't a guarantee, but they're the part you control."
 - One button: **Keep playing** closes the sheet.
 
@@ -369,13 +370,13 @@ A small secret: tapping the sun makes it laugh like a baby. It gasps, scrunches 
 The Growth chart opens full screen; drag a finger along the line, from the first hour to the finish, and feel a light tap at each milestone.
 
 - **Open:** tap the Growth chart or its expand button. The card grows into a full-screen cover (matched geometry, 0.4 s). Close with the ✕ (top right) or a swipe down. Works in portrait and landscape (landscape gives a wider chart); on wide windows (iPhone Duo open, iPad) it uses the full width.
-- **Layout (portrait):** "Piano · the long game" and ✕ at the top; a headline block (small line, big line, accent line); the chart, same colours and parts as the card (past line, grey area under it, dashed forecast, likely-range band, dashed "Finish line · 10,000 h", the sun at the finish, "Today" on the time axis), with y labels 0 · 2.5k · 5k · 7.5k · 10k. A quiet capsule hint "Drag along the line" at the bottom, hidden after the first scrub ever (Settings.scrubHintSeen).
+- **Layout (portrait):** "Piano · the long game" and ✕ at the top; a headline block (small line, big line, accent line); the chart, same colours and parts as the card (past line, grey area under it, dashed chosen-pace line, dotted actual-pace line and the key, dashed "Finish line · 10,000 h", the sun at the finish, "Today" on the time axis), with y labels 0 · 2.5k · 5k · 7.5k · 10k. A quiet capsule hint "Drag along the line" at the bottom, hidden after the first scrub ever (Settings.scrubHintSeen).
 - **Idle headline:** "You'll finish the game around" / "November 2035" / "Likely between 2034 and later" (same as the card).
-- **Draw-in:** on open, the past line draws left to right (0.8 s, ease-out), then the dashed forecast (0.5 s), the band fades in (0.3 s) and the sun pops onto the finish point with a small bounce. Reduce Motion: a 0.2 s fade instead.
+- **Draw-in:** on open, the past line draws left to right (0.8 s, ease-out), then the dashed chosen-pace line (0.5 s), the dotted actual-pace line (0.3 s) and the sun pops onto the finish point with a small bounce. Reduce Motion: a 0.2 s fade instead.
 - **Milestone dots:** 1,000 · 2,500 · 5,000 · 7,500 h as small dots on the line (4.5 pt radius, 2 pt stroke): filled navy when reached, white with an orange outline when ahead. 10,000 is the sun.
 - **Scrubbing:** touch and drag anywhere on the chart (no long-press needed). A navy vertical line and a white dot with a navy ring follow the finger along the curve (past line or forecast). The headline shows the point:
   - Past: "Played" / "14 Sep 2022 · 1,000 h" (day precision), plus a "Played" chip in the floating label.
-  - Future: "If you keep your pace" / "Feb 2029 · 5,000 h" (month precision), plus a "Forecast" chip.
+  - Future: "At your chosen pace" / "Feb 2029 · 5,000 h" (month precision), plus a "Forecast" chip.
   - On a milestone the accent line reads "Milestone reached" (past) or "Milestone · halfway" / "Milestone · 7,500 h" (ahead); at 10,000, "The finish line".
   - A floating white label (radius 14, soft shadow) next to the dot repeats the date, hours and a short line; it flips side so it never leaves the screen or sits under the finger.
   - Releasing the finger keeps the point for 1.5 s, then the headline fades back to the idle text.
@@ -409,7 +410,7 @@ Colour is never the only cue, and the sun is always described in words.
 - Texts (one formatted, pluralised String Catalog string each):
   - This week: "The sun is just over halfway to your weekly target. 6.5 of 12 hours, 5.5 to go, 3 days left." (Above target: "The sun is above your weekly target. 13.5 of 12 hours.") Adjustable: swipe up/down moves through the days of the week, reading "Monday, 1 hour 10".
   - The long game: "The sun is a third of the way to the finish line. 3,294 of 10,000 hours. At your pace, around November 2035."
-  - Today: "The sun is almost two thirds of the way to the moon. 1 hour 5 of 1 hour 45, 40 minutes to go." Free day: "Free day, no stretch today. Playing anyway brings your future closer."
+  - Today: "The sun is almost two thirds of the way to the moon. 1 hour 5 of 1 hour 45, 40 minutes to go."
   - Timer: "Session 25 minutes. 5 of 12 rays lit, next ray in 2 minutes 42. Total 3,294.7 hours." When a ray lights during a session and VoiceOver is running, post a low-priority announcement "Ray 6 lit" (queued, never interrupting speech).
   - Calendar day: "Thursday 22 October. 2 hours, a good day. Has a photo." Level words: rest day / a little / some / a good day / a full day.
   - Growth: as in section 19.
@@ -425,7 +426,7 @@ Every place where the user picks a number of hours uses a stepper, never a slide
 - **Tap:** one step (1 h; 0.5 h for the weekly target), with a selection haptic.
 - **Hold:** after 0.4 s repeats 6 steps a second, after 1.5 s 12 a second, until released. A rigid haptic when a limit is reached.
 - **At a limit:** that button turns pale (#F6F4EF, glyph #C9C3B8) and does nothing, but stays focusable so VoiceOver can say "Minimum" / "Maximum".
-- **Tap the number:** opens a small sheet with the label, the value with a caret, "0 to 40", **Done** and the number pad (decimal pad for the weekly target). Out-of-range values snap to the nearest limit; empty means unchanged.
+- **Tap the number:** opens a small sheet with the label, the value with a caret, "0 to 168" ("1 to 168" for the weekly pace), **Done** and the number pad (decimal pad for the weekly target). Out-of-range values snap to the nearest limit; empty means unchanged.
 - **Quick picks** (Catch-up average only, never on the weekly pace): chips that set the value in one tap; the chip matching the current value is navy.
 - **VoiceOver:** each stepper is one adjustable element ("2023, 10 hours a week"); swipe up/down steps; the two buttons are hidden from VoiceOver. Voice Control: "Tap plus", "Tap minus" work on the buttons.
 - **Dynamic Type:** the value and labels grow; at accessibility sizes the row wraps so the label sits above the − value + group.
@@ -495,31 +496,31 @@ Build notes: drive everything from elapsed time in a TimelineView (do not use ti
 
 ## Forecast algorithm
 
-The mastery date comes from simulating three pace scenarios month by month from today until the total reaches 10,000 h (stop at 30 years out).
+The finish line is worked out from the pace the user has **chosen** (Your pace for the year), so it's motivating and in their hands. The pace they have actually played lately ("your actual pace") is shown next to it for comparison. "Rhythm" stays reserved for days per week in History.
 
 **Inputs**
 
-- *r* = forecast pace, h/week: the lifetime average (total hours ÷ weeks since 1 January of the first estimate year), blended with the recent 12-week logged pace. Recent logging gets weight 0.5 × (weeks of data ÷ 12), so up to half. This is separate from the Home "Pace" stat.
-- *s* = yearly trend: slope of a least-squares line through the weekly average of each year (YearEstimates for past years, logged data for the current year), in h/week per year. Clamp to [−2, +2]. The forecast only uses a rising trend (negative is treated as 0), and the Growth card still shows the real value.
+- *T* = total hours now (baseline + logged).
+- *p* = chosen weekly pace (`Settings.weeklyTargetHours`).
 - *e* = extra hours from the What-if slider (0 when not used).
+- *r* = actual pace, h/week: the lifetime average (total hours ÷ weeks since 1 January of the first estimate year), blended with the recent 12-week logged pace. Recent logging gets weight 0.5 × (weeks of data ÷ 12), so up to half. This is separate from the Home "Pace" stat.
 
-**Scenarios** (weekly rate at *t* years from now)
+**Lines** (straight lines from Today)
 
-| Scenario | Weekly rate | Cap | Used for |
-| --- | --- | --- | --- |
-| Mid | r + e + 0.5 × s × t | 1.5 × r + e | Headline date, Home "Finish line", dashed line |
-| High | r + e + s × t | 2 × r + e | Early edge of the band |
-| Low | 0.75 × r + e | — | Late edge of the band |
+| Line | Weekly rate | Used for |
+| --- | --- | --- |
+| Chosen pace | p + e | Headline date, Home "Finish line" stat, Meet your future self, Your year, the dashed orange line and its sun, Growth scrubbing |
+| Actual pace | r | The dotted grey line, the key and "At your actual pace: around YYYY" |
 
-Rates never go below 0. Each month adds rate × 52 ÷ 12 hours; interpolate within the crossing month for the date.
+Finish date = today + (10,000 − T) ÷ rate weeks. A rate of 0 means "not within 30 years".
 
 **Display rules**
 
-- Headline = Mid date as "Month YYYY"; band label = High year to Low year.
-- If a scenario does not reach 10,000 h within 30 years, show "after YYYY". If even the High scenario misses, the line under the headline reads "Not within 30 years at your average pace"; the dashed line still rises at the forecast pace.
-- Fewer than 2 weeks of logged data: show "Forecast improves as you log more" under the headline.
-- What-if text = difference between the Mid date with and without *e*, in months (under 12) or years to one decimal.
-- Recompute when a session is saved, edited or deleted, and when estimates change.
+- Headline = chosen-pace date as "Month YYYY"; the line under it = actual-pace year.
+- If a line doesn't reach 10,000 h within 30 years, show "after YYYY" for it.
+- Past 10,000 h: no forecast; the headline reads "You crossed the finish line on 12 May 2035".
+- What-if text = difference between the chosen-pace date with and without *e*, in months (under 12) or years to one decimal.
+- Recompute when the chosen pace changes, a session is saved, edited or deleted, and when estimates change.
 
 ## Accounts, sync and notifications
 
@@ -530,7 +531,7 @@ No account and no sign-in: the app uses the iCloud account already on the device
 - **Save to iCloud** switch in onboarding step 3c and in Settings (on by default when an iCloud account is available). There is no Sign in with Apple. Turning it off keeps the data on the device and stops syncing; the iCloud copy stays until the user chooses "Delete iCloud copy" in Settings.
 - Restore: on a new or reset device with the same Apple Account, Welcome back offers to continue the game (section 0).
 - CloudKit private database mirrors all entities. Conflicts: last edit wins per session; sessions are never merged.
-- A running timer is device-local; the saved session syncs.
+- A running timer syncs its timestamps (startedAt, pausedAt, accumulated pause, device) through iCloud as one small `ActiveSession` record, so a session started on one device shows on the others (iPhone, Mac) and any of them can pause or finish it. Only one active session at a time; if two devices start at once, the earlier start wins and the other device shows it. The Watch keeps using WatchConnectivity with the iPhone.
 - Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
 **Notifications** (all off by default; asked after the first saved session)
@@ -595,6 +596,32 @@ iPhone Duo (iOS 27) has a 5.4-inch outer display (portrait, shorter than other i
 - One running session for the whole app: if the user opens a second window, both show the same timer.
 - Widgets appear in the open Home Screen's Today View, so the small and medium widgets must look right at the larger widget sizes there.
 - Test in the Xcode Simulator with the iPhone Duo device as soon as Xcode offers it (Apple says device support is coming); until then, test with resizable windows on iPad Simulator and the iPhone SE (short screen).
+
+## iPad (`design/iPad.dc.html`)
+
+The same universal app on iPad (iPadOS 17 or later): no separate download, the same iCloud game, and one running session shared with iPhone, Mac and Watch. The layout is chosen by window size (as for iPhone Duo), never by device.
+
+- **Wide windows** (landscape full screen, or a Stage Manager window at least 1000 pt wide): the sidebar layout shared with the Mac app. Sidebar (260 pt, #EFEBE4): craft name and "3,294 of 10,000 h", **Play** (Today, This week, The long game), **History** (Calendar, Growth, Your 2026), **Settings** at the bottom; 40 pt rows, 15 pt text. Content: a 28 pt title with capsule buttons **Add past hours** (#EFEBE4) and **Start session** (navy) on the right; the sun gauge with its scale and the big total on the left; on the right a 340 pt column of cards: chosen pace · finish line · By Nov 2027 · Rhythm; Today with today's sessions; Meet your future self.
+- **Tall full-screen windows** (portrait): Home's three tabs as a floating capsule at the top (Today · This week · The long game); "Piano" (34 pt) with round History and + buttons; a larger sun gauge (sun 220 pt); the big total (72 pt); two cards side by side (numbers, and Today with today's sessions); the Meet your future self row; **Add past hours** and **Start session** side by side at the bottom, 56 pt capsules. History, Growth and Your year open full screen as on iPhone, with wider content (max 760 pt).
+- **Narrow windows** (Slide Over, a third or half of Split View, under about 600 pt wide): exactly the iPhone layout.
+- **Timer** in wide windows: the focus sun (about 340 pt, with glow) on the left; on the right the craft, the gold total (56 pt), "of 10,000 hours · 33%", then "This session", a 104 pt clock and "Next ray in", and Pause / Finish as 180 pt capsules. Readable from a music stand or across a studio. Tall windows use the iPhone Timer, scaled up.
+- **Keyboard** (when one is attached): ⌘N start or finish a session, Space pause or resume, ⌘L Add past hours, ⌘1–⌘5 views, ⌘, Settings; all listed when holding ⌘.
+- **Also:** pointer hover effects on rows and buttons and pointer scrubbing on the Growth chart; drag an image from Photos or Files onto a session or the Finish sheet's photo square; Apple Pencil Scribble in the note field; the widgets on the iPad Home Screen and Lock Screen; the Live Activity where iPadOS supports it; Liquid Glass on iPadOS 26; alternate app icons as on iPhone.
+
+## Mac app (`design/Mac.dc.html`)
+
+For crafts practised at a desk (writing, coding, design, composing). A native SwiftUI Mac app, macOS 14 Sonoma or later, in the same Xcode project as a second app target that shares `Models/`, `Logic/` and `DesignSystem/`. Universal purchase: the same free App Store app on iPhone and Mac. With Save to iCloud on, everything syncs with the iPhone through the same CloudKit container.
+
+- **Main window** (default 1180 × 740, min 900 × 600): a sidebar on #EFEBE4 with the craft name and "3,294 of 10,000 h", then groups **Play** (Today, This week, The long game) and **History** (Calendar, Growth, Your 2026), and **Settings** at the bottom. A toolbar with the view's title, **Add past hours** (bordered) and **Start session ⌘N** (navy). The Timer opens in the window when a session runs (Finish → the Finish sheet).
+- **The long game view:** the sun gauge with its scale on the left (about 520 × 340, sun 190 pt, same sea and water rule) with the big total and "of 10,000 hours · 33%" under it; on the right a column (330 pt) of three white cards: (1) a 2 × 2 grid Your chosen pace · Finish line · By Nov 2027 · Rhythm; (2) Today: "1 h 05 of 1 h 45 · 40 m to the moon" and today's sessions; (3) Meet your future self. Today and This week use the same two-column layout with their own gauge and numbers.
+- **History views** reuse the iPhone layouts at a wider size (Calendar and the day card side by side; Growth with its key, full width; scrubbing with the pointer, haptics on Force Touch trackpads only).
+- **Menu bar extra** (`MenuBarExtra`, window style): a small sun icon; while a session runs it shows the clock ("25:18"), otherwise today's time ("1 h 05"). The popover (320 pt):
+  - running: craft name and total, a navy card with the focus sun, "This session", the clock and "Next ray in", today's arc with "1 h 30 of 1 h 45 · 15 m to the moon", **Pause** (Space) and **Finish**, and "Open Long Game ⌘O";
+  - idle: today's arc with the big time and "of today's 1 h 45 · 40 m to the moon", **Start session ⌘N**, and links Add past hours / Open Long Game.
+  - Settings option **Show in Dock** (on by default); off keeps only the menu bar sun.
+- **Keyboard:** ⌘N start or finish a session · Space pause or resume (when the window or popover is focused) · ⌘L Add past hours · ⌘1 ⌘2 ⌘3 Today, This week, The long game · ⌘4 ⌘5 Calendar, Growth · ⌘, Settings. All in the menus (File, View, Session).
+- **Also:** the same widgets on the desktop and in Notification Center (WidgetKit for macOS); notifications as on iPhone; drag an image onto a session (or the Finish sheet's photo square) to attach it; Liquid Glass on macOS 26 behind `if #available`; full keyboard access, VoiceOver, and Dynamic Type equivalents (the app follows the system text size where SwiftUI supports it).
+- **Not on Mac:** Live Activities, the Apple Watch link and the alternate app icons (the Mac shows the current icon stage as its Dock icon instead, via `NSApp.applicationIconImage`, when "App icon grows with you" is on).
 
 ## App icon (the "10,000 ring")
 

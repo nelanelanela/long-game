@@ -40,6 +40,7 @@ struct GrowthTab: View {
                             onboardingDate: craft.createdAt, now: now, hintSeen: settingsRows.first?.scrubHintSeen ?? false,
                             onHintSeen: markHintSeen)
                 .scrubTransition(id: "growth-chart", in: chartSpace)
+                .allowsRotation()
         }
     }
 

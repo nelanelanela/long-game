@@ -62,6 +62,11 @@ struct HomeView: View {
     @State private var historyDay: Date?
     /// The gear in the bar at the top.
     @State private var showSettings = false
+    /// The sidebar layout's view (the Play views follow `tab`; History and Settings are kept here).
+    @SceneStorage("sidebar.section") private var section: SidebarSection = .today
+    /// The window's layout, kept for the keyboard commands.
+    @State private var shape: WindowShape = .compact
+    @Environment(CommandCenter.self) private var commands: CommandCenter?
 
     init(craft: Craft, initialTab: HomeTab = .today) {
         self.craft = craft
@@ -94,7 +99,11 @@ struct HomeView: View {
         let _ = tick
         let page = AdaptiveLayout { window in
             Group {
-                if window.shape.isWide {
+                if window.shape == .sidebar {
+                    sidebarPage(figures, window: window)
+                } else if window.shape == .tall {
+                    tallPage(figures)
+                } else if window.shape.isWide {
                     widePage(figures, window: window)
                 } else {
                     columnPage(figures, short: window.shape == .short)
@@ -102,9 +111,21 @@ struct HomeView: View {
             }
             // Folding, unfolding or resizing moves to the matching layout; the tab, sheets and timer live above it.
             .animation(.easeInOut(duration: reduceMotion ? 0.2 : 0.35), value: window.shape)
+            .onAppear { shape = window.shape }
+            .onChange(of: window.shape) { _, new in shape = new }
         }
         .lgWarmScreen()
         .lgHidesNavigationBar()
+        // Settings has its own stack: a screen that hides the navigation bar, pushed on top of another pushed screen
+        // (Settings → Your estimates), sent SwiftUI into an endless layout loop. It closes back to Home.
+        .fullScreenCover(isPresented: $showSettings, onDismiss: sheetClosed) {
+            NavigationStack {
+                SettingsView(craft: craft, closeAll: { showSettings = false })
+            }
+        }
+        .onChange(of: commands?.issued) { _, issued in
+            if let command = issued?.command { handle(command, total: s.total) }
+        }
         .navigationDestination(item: $historyDay) { day in
             HistoryView(craft: craft, day: day)
         }
@@ -245,6 +266,17 @@ struct HomeView: View {
         }
     }
 
+    /// A picture dropped on a session row: processed like the picker's, then saved with that session.
+    private func attachDropped(_ data: Data, to session: Session?) {
+        guard let session else { return }
+        Task {
+            let prepared = await Task.detached(priority: .userInitiated) { PhotoProcessing.prepare(data) }.value
+            guard let prepared else { return }
+            session.setPhoto(prepared)
+            try? context.save()
+        }
+    }
+
     /// Today's sessions: the saved ones that started today, oldest first, and the running timer as the first row.
     /// The rows add up to the big number above.
     private func todaySessions(_ f: HomeFigures) -> some View {
@@ -254,9 +286,9 @@ struct HomeView: View {
         let running = timer.state.flatMap { state -> TimeInterval? in
             state.craftId == craft.id && StretchSource.startedToday(state, now: f.now) ? state.elapsed(at: f.now) : nil
         }
-        return TodaySessionsList(rows: rows, running: running) { id in
+        return TodaySessionsList(rows: rows, running: running, onSelect: { id in
             editingSession = today.first { $0.id == id }
-        }
+        }, onDropImage: { id, data in attachDropped(data, to: today.first { $0.id == id }) })
     }
 
     private func hero(_ f: HomeFigures, metrics: GaugeMetrics) -> some View {
@@ -275,7 +307,7 @@ struct HomeView: View {
 
     /// The big number; each tab's replaces the other's with a cross-fade, stacked so the page doesn't jump.
     private func number(_ f: HomeFigures, style: NumberLayout) -> some View {
-        ZStack(alignment: style == .leading ? .topLeading : .top) {
+        ZStack(alignment: style.isLeading ? .topLeading : .top) {
             switch f.shown {
             case .today:
                 TodayNumber(state: f.stretch, style: style)
@@ -288,7 +320,7 @@ struct HomeView: View {
                     .transition(.opacity)
             }
         }
-        .frame(maxWidth: .infinity, alignment: style == .leading ? .leading : .center)
+        .frame(maxWidth: .infinity, alignment: style.isLeading ? .leading : .center)
         .accessibilityElement(children: .combine)
     }
 
@@ -400,6 +432,220 @@ struct HomeView: View {
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
     }
 
+
+    // MARK: iPad
+
+    /// The view on show in the sidebar layout. The Play views are the Home tab; the others are kept in `section`.
+    private var sidebarSelection: SidebarSection {
+        section.homeTab == nil ? section : SidebarSection(tab: tab)
+    }
+
+    private func selectSection(_ new: SidebarSection) {
+        if let homeTab = new.homeTab { selectTab(homeTab) }
+        section = new
+    }
+
+    /// ⌘N, ⌘L, ⌘1–⌘5 and ⌘, from the keyboard (the timer handles Space and ⌘N while it is open).
+    private func handle(_ command: AppCommand, total: Double) {
+        guard !showTimer else { return }
+        switch command {
+        case .startOrFinish:
+            guard sheet == nil, editingSession == nil else { return }
+            openTimer(total: summary(now: Date()).total)
+        case .addHours:
+            guard sheet == nil, editingSession == nil else { return }
+            sheet = .addHours
+        case .show(let new):
+            if shape == .sidebar { selectSection(new) }
+            else if let homeTab = new.homeTab { selectTab(homeTab) }
+            else if new != .settings { historyDay = Calendar.current.startOfDay(for: Date()) }
+        case .settings:
+            if shape == .sidebar { selectSection(.settings) } else { showSettings = true }
+        case .pauseResume:
+            break
+        }
+    }
+
+    /// "1 h 05 of 1 h 45 · 40 m to the moon" for the Today card.
+    private func todayLine(_ stretch: StretchState) -> String {
+        switch stretch {
+        case .inProgress(let target, let done):
+            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target)) · \(StretchText.toGo(target - done))"
+        case .covered(let target, let done):
+            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target))"
+        case .noTarget:
+            ""
+        }
+    }
+
+    private func numbersCard(_ f: HomeFigures) -> some View {
+        let added = WeeklyTarget.addedByEnd(target, now: f.now)
+        let records = sessions.map(\.record)
+        let rhythm = Rhythm.compute(daily: IPadFigures.daily(records), since: craft.createdAt, now: f.now, weekStart: weekStart)
+        return IPadNumbersCard(
+            pace: target.map { DurationFormat.perWeek($0.hoursPerWeek) } ?? DurationFormat.perWeek(f.summary.pace),
+            finish: ForecastText.homeMastery(f.summary.forecast.chosen, now: f.now),
+            byValue: added.map { "+\(DurationFormat.grouped(Int($0.rounded()))) h" } ?? "–",
+            byLabel: target.map { "By \(DateText.monthYear($0.end))" } ?? "Year of pace",
+            rhythm: IPadFigures.rhythmText(daysPerWeek: rhythm.daysPerWeek))
+    }
+
+    private func todayCard(_ f: HomeFigures) -> some View {
+        IPadCard {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Today").lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline))
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: 8)
+                    Text(verbatim: todayLine(f.stretch))
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .multilineTextAlignment(.trailing)
+                }
+                todaySessions(f)
+            }
+        }
+    }
+
+    private func futureSelfCard() -> some View {
+        FutureSelfRowCard { sheet = .futureSelf }
+    }
+
+    /// The cards under (or beside) the sun on the iPad: the numbers, Today with today's sessions, Meet your future self.
+    @ViewBuilder
+    private func cardColumn(_ f: HomeFigures, sideBySide: Bool = false) -> some View {
+        if f.shown == .week {
+            IPadCard {
+                VStack(spacing: 0) {
+                    DayBarsRow(bars: weekBars(f.now)) { day in historyDay = day }
+                    targetRow(f.summary, now: f.now)
+                }
+            }
+        }
+        if sideBySide {
+            HStack(alignment: .top, spacing: 14) {
+                numbersCard(f)
+                todayCard(f)
+            }
+        } else if f.shown == .today {
+            todayCard(f)
+            numbersCard(f)
+        } else {
+            numbersCard(f)
+            todayCard(f)
+        }
+        futureSelfCard()
+        if f.shown == .longGame { yearRow(now: f.now) }
+    }
+
+    /// Wide iPad windows: a sidebar, a title bar, the sun gauge on the left and a 340 pt column of cards on the right.
+    private func sidebarPage(_ f: HomeFigures, window: WindowInfo) -> some View {
+        let current = sidebarSelection
+        let hasBar = current != .settings && current != .year
+        let barTitle: LocalizedStringKey = SidebarView.title(current)
+        let metrics = GaugeMetrics.large(height: min(340, max(260, window.size.height - 330)), sun: 190)
+        return HStack(spacing: 0) {
+            SidebarView(craftName: craft.name, totalHours: f.summary.wholeHours,
+                        yearTitle: String(YearSummary.defaultYear(now: f.now)),
+                        selection: Binding(get: { sidebarSelection }, set: { selectSection($0) }))
+            VStack(spacing: 0) {
+                if hasBar {
+                    SidebarTitleBar(title: barTitle, startTitle: startTitle(at: f.now),
+                                    onAddHours: { sheet = .addHours },
+                                    onStart: { openTimer(total: summary(now: Date()).total) })
+                }
+                Group {
+                    switch current {
+                    case .today, .week, .longGame:
+                        HStack(alignment: .top, spacing: 28) {
+                            VStack(alignment: .leading, spacing: 10) {
+                                hero(f, metrics: metrics).frame(maxWidth: 560)
+                                number(f, style: .sidebar).padding(.leading, 4)
+                                Spacer(minLength: 0)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            ScrollView {
+                                VStack(spacing: 14) { cardColumn(f) }
+                                    .padding(.bottom, 8)
+                            }
+                            .frame(width: 340)
+                        }
+                        .padding(.horizontal, 24).padding(.top, 8).padding(.bottom, 24)
+                    case .calendar:
+                        ScrollView {
+                            CalendarTab(craft: craft, sessions: sessions, weekStart: weekStart, initialDay: historyDay)
+                                .padding(.horizontal, 24).padding(.bottom, 24)
+                                .lgReadableColumn(980)
+                        }
+                    case .growth:
+                        ScrollView {
+                            GrowthTab(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, target: target)
+                                .padding(.horizontal, 24).padding(.bottom, 24)
+                                .lgReadableColumn(980)
+                        }
+                    case .year:
+                        YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart,
+                                   year: YearSummary.defaultYear(now: f.now))
+                            .environment(\.lgEmbedded, true)
+                    case .settings:
+                        SettingsView(craft: craft, closeAll: { selectSection(.longGame) })
+                            .environment(\.lgEmbedded, true)
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+    }
+
+    /// Tall iPad windows (portrait): floating tabs, the craft name at 34 pt, a bigger sun, two cards side by side and
+    /// the two 56 pt buttons at the bottom. Content is no wider than 760 pt.
+    private func tallPage(_ f: HomeFigures) -> some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+                    .frame(maxWidth: 520)
+                    .padding(.top, 12)
+                    .id(ScrollSpot.top)
+                HStack {
+                    Text(craft.name).lgText(.ipadCraftTitle)
+                        .lineLimit(1).minimumScaleFactor(0.6)
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer()
+                    HStack(spacing: 10) {
+                        LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
+                            historyDay = Calendar.current.startOfDay(for: Date())
+                        }
+                        LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
+                    }
+                    .padding(.trailing, -10)
+                }
+                .frame(minHeight: 56)
+                .padding(.top, 14)
+                hero(f, metrics: .large(height: 440, sun: 220)).padding(.top, 4)
+                number(f, style: .tall).padding(.top, 8)
+                VStack(spacing: 14) {
+                    cardColumn(f, sideBySide: true)
+                }
+                .padding(.top, 22)
+                .id(ScrollSpot.details)
+            }
+            .padding(.horizontal, 32).padding(.bottom, 24)
+            .frame(maxWidth: 760)
+            .frame(maxWidth: .infinity)
+            .scrollTargetLayout()
+        }
+        .scrollPosition(id: $scrollSpot)
+        .safeAreaInset(edge: .bottom) {
+            HStack(spacing: 16) {
+                Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.secondary))
+                startButton
+            }
+            .frame(maxWidth: 760 - 64)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 32).padding(.top, 12).padding(.bottom, 4)
+            .background(LGColor.background.opacity(0.94))
+        }
+    }
+
     // MARK: Pieces
 
     private var header: some View {
@@ -418,13 +664,6 @@ struct HomeView: View {
             .padding(.trailing, -10)
         }
         .frame(minHeight: 44)
-        // Settings has its own stack: a screen that hides the navigation bar, pushed on top of another pushed screen
-        // (Settings → Your estimates), sent SwiftUI into an endless layout loop. It closes back to Home.
-        .fullScreenCover(isPresented: $showSettings, onDismiss: sheetClosed) {
-            NavigationStack {
-                SettingsView(craft: craft, closeAll: { showSettings = false })
-            }
-        }
     }
 
     private static func title(_ tab: HomeTab) -> LocalizedStringKey {

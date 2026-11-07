@@ -66,6 +66,16 @@
     "%@ this session. %@." : {
 
     },
+    "%@ to %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to %2$@, %3$@"
+          }
+        }
+      }
+    },
     "%@ to the moon" : {
 
     },
@@ -192,10 +202,19 @@
     "almost there" : {
 
     },
-    "At your pace, after %lld." : {
+    "At your actual pace: %@" : {
 
     },
-    "At your pace, around %@." : {
+    "At your actual pace: around %@" : {
+
+    },
+    "At your chosen pace" : {
+
+    },
+    "At your chosen pace, after %lld." : {
+
+    },
+    "At your chosen pace, around %@." : {
 
     },
     "Done" : {
@@ -234,9 +253,6 @@
     "Hours this week" : {
 
     },
-    "If you keep your pace" : {
-
-    },
     "just over %@" : {
 
     },
@@ -273,6 +289,12 @@
     "No weekly target yet." : {
 
     },
+    "Now · %@" : {
+
+    },
+    "Now, %@. Session running." : {
+
+    },
     "of 10,000" : {
 
     },
@@ -294,6 +316,9 @@
     "on the horizon" : {
 
     },
+    "On top of your chosen pace of %@ h a week." : {
+
+    },
     "Pause" : {
 
     },
@@ -308,9 +333,6 @@
       }
     },
     "Played" : {
-
-    },
-    "Played anyway: %@." : {
 
     },
     "played since %@" : {
@@ -329,12 +351,6 @@
 
     },
     "rest day" : {
-
-    },
-    "Free day, no stretch today. Playing anyway brings your future closer." : {
-
-    },
-    "Free day, no stretch today. Played anyway: %@. Playing anyway brings your future closer." : {
 
     },
     "Resume" : {
@@ -389,6 +405,9 @@
     "The long game" : {
 
     },
+    "the moon" : {
+
+    },
     "The sun has reached %@." : {
 
     },
@@ -420,12 +439,6 @@
     "This week" : {
 
     },
-    "This week is covered. The sun is at the top." : {
-
-    },
-    "This week is covered. Today: %@. Anything more is a bonus." : {
-
-    },
     "This week, %@ of %@ hours" : {
 
     },
@@ -438,13 +451,7 @@
     "Three quarters of the way." : {
 
     },
-    "Today: %@. Anything more is a bonus." : {
-
-    },
     "today's %@ · covered" : {
-
-    },
-    "the moon" : {
 
     },
     "Today's stretch covered: %@ of %@. Anything more is a bonus." : {
@@ -474,6 +481,12 @@
 
     },
     "Up to date" : {
+
+    },
+    "You crossed the finish line on %@" : {
+
+    },
+    "You're already playing at this pace" : {
 
     },
     "Your %@ in the long game: %@ hours played, practised %lld days a week, most in %@, %@ of 10,000 hours" : {

@@ -8,6 +8,7 @@ struct YearScreen: View {
     let weekStart: WeekStart
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.lgEmbedded) private var embedded
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var year: Int
     @State private var style: YearCardStyle = .sunrise
@@ -87,8 +88,12 @@ struct YearScreen: View {
 
     private var header: some View {
         HStack {
-            LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                .padding(.leading, -10)
+            if embedded {
+                Color.clear.frame(width: 34, height: 44)
+            } else {
+                LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
+                    .padding(.leading, -10)
+            }
             Spacer()
             title
             Spacer()

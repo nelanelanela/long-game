@@ -7,6 +7,8 @@ struct TodaySessionsList: View {
     /// Seconds of the running timer when it started today, nil when none runs.
     var running: TimeInterval?
     var onSelect: (UUID) -> Void = { _ in }
+    /// A picture dropped on a row (Photos or Files on an iPad or Mac): attach it to that session.
+    var onDropImage: ((UUID, Data) -> Void)?
     var calendar: Calendar = .current
 
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -24,7 +26,8 @@ struct TodaySessionsList: View {
                 }
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { Divider().overlay(LGColor.divider) }
-                    SessionRow(row: row, calendar: calendar, stacked: typeSize.isAccessibilitySize) { onSelect(row.id) }
+                    SessionRow(row: row, calendar: calendar, stacked: typeSize.isAccessibilitySize,
+                               onDrop: onDropImage.map { drop in { data in drop(row.id, data) } }) { onSelect(row.id) }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -36,7 +39,9 @@ private struct SessionRow: View {
     let row: TodaySession
     let calendar: Calendar
     let stacked: Bool
+    var onDrop: ((Data) -> Void)?
     let action: () -> Void
+    @State private var dropping = false
 
     var body: some View {
         Button(action: action) {
@@ -67,6 +72,13 @@ private struct SessionRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .lgPointerHighlight()
+        .dropDestination(for: Data.self) { items, _ in
+            guard let onDrop, let data = items.first else { return false }
+            onDrop(data)
+            return true
+        } isTargeted: { dropping = $0 }
+        .background(dropping ? LGColor.stepperHighlight : .clear, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(TodaySessions.spoken(row, calendar: calendar))
         .accessibilityHint("Edit or delete this session")

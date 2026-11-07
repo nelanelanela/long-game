@@ -22,6 +22,7 @@ struct TimerView: View {
     @Query private var targetPeriods: [TargetPeriod]
 
     @State private var showFinish = false
+    @Environment(CommandCenter.self) private var commands: CommandCenter?
     @State private var savedAt: Date?
 
     init(craft: Craft, baseTotal: Double) {
@@ -67,6 +68,22 @@ struct TimerView: View {
                             onSave: save, onDiscard: discard)
                     .lgSheetCard()
             }
+        }
+        // ⌘N finishes the session; Space (below) pauses or resumes it. Neither while the Finish sheet is up.
+        .onChange(of: commands?.issued) { _, issued in
+            guard !showFinish, store.state != nil, savedAt == nil else { return }
+            switch issued?.command {
+            case .startOrFinish: store.pause(); showFinish = true
+            case .pauseResume: store.togglePause()
+            default: break
+            }
+        }
+        .background {
+            Button("Pause or resume") { store.togglePause() }
+                .keyboardShortcut(.space, modifiers: [])
+                .disabled(showFinish || savedAt != nil)
+                .frame(width: 0, height: 0).opacity(0)
+                .accessibilityHidden(true)
         }
         .onChange(of: store.state == nil) { _, gone in
             if gone && savedAt == nil { dismiss() }
@@ -176,11 +193,17 @@ private struct RunningScene: View {
             return 1 + (sun.hourFraction - 1) * Self.smooth(g)
         }()
 
-        GeometryReader { geo in
-            // Wide windows put the sun on the left and the clock and buttons on the right.
-            let full = CGSize(width: geo.size.width + geo.safeAreaInsets.leading + geo.safeAreaInsets.trailing,
-                              height: geo.size.height + geo.safeAreaInsets.top + geo.safeAreaInsets.bottom)
-            let wide = WindowShape.make(width: full.width, height: full.height, isRegularWidth: horizontalSizeClass == .regular).isWide
+        GeometryReader { outer in
+            // Wide windows put the sun on the left and the clock and buttons on the right. A big iPad window gets the
+            // 340 pt sun and the 104 pt clock; a tall one is the iPhone Timer laid out small and scaled up to fit.
+            let full = CGSize(width: outer.size.width + outer.safeAreaInsets.leading + outer.safeAreaInsets.trailing,
+                              height: outer.size.height + outer.safeAreaInsets.top + outer.safeAreaInsets.bottom)
+            let shape = WindowShape.make(width: full.width, height: full.height, isRegularWidth: horizontalSizeClass == .regular)
+            let wide = shape.isWide
+            let big = shape == .sidebar
+            let k: CGFloat = shape.isTall ? 1.35 : 1
+            let geo = VirtualCanvas(size: CGSize(width: outer.size.width / k, height: outer.size.height / k))
+            let sunSize: CGFloat = big ? 340 : 220
             let centre = wide ? CGPoint(x: geo.size.width * 0.28, y: geo.size.height / 2)
                               : CGPoint(x: geo.size.width / 2, y: geo.size.height * 0.29)
             ZStack {
@@ -190,7 +213,7 @@ private struct RunningScene: View {
                     .fill(RadialGradient(colors: [LGColor.sunBody.opacity(0.32), LGColor.sunBody.opacity(0)],
                                          center: .center, startRadius: 0, endRadius: 150))
                     .frame(width: 300, height: 300)
-                    .scaleEffect(1 + 0.08 * breath)
+                    .scaleEffect((sunSize / 220) * (1 + 0.08 * breath))
                     .opacity(paused ? 0.3 : 0.55 + 0.3 * breath)
                     .position(centre)
                     .animation(.easeOut(duration: 0.5), value: paused)
@@ -204,7 +227,7 @@ private struct RunningScene: View {
                 if let g = golden, !reduceMotion {
                     Circle()
                         .stroke(LGColor.sunRaysBright.opacity(1 - g), lineWidth: 4)
-                        .frame(width: 220, height: 220)
+                        .frame(width: sunSize, height: sunSize)
                         .scaleEffect(1 + 1.4 * g)
                         .position(centre)
                 }
@@ -220,9 +243,10 @@ private struct RunningScene: View {
                         raysOpacity: paused ? 0.4 : 1,
                         rayColor: LGColor.sunRaysBright,
                         raySpread: golden.map { 1 + 1.2 * sin($0 * .pi) } ?? 1)
-                    .frame(width: 220, height: 220)
+                    .frame(width: sunSize, height: sunSize)
                     .overlay {
                         SparkleRing(opacity: sparkle, progress: (win ?? 0) / TimerMoments.shimmerDuration, still: reduceMotion)
+                            .scaleEffect(sunSize / 220)
                     }
                     .scaleEffect(winScale)
                     .offset(y: paused ? 24 : 0)
@@ -237,12 +261,16 @@ private struct RunningScene: View {
                     .onTapGesture { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
 
                 if wide {
-                    wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink)
+                    wideControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink,
+                                 big: big)
                         .padding(.leading, geo.size.width * 0.5)
                 } else {
                     controls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, coverWink: coverWink)
                 }
             }
+            .frame(width: geo.size.width, height: geo.size.height)
+            .scaleEffect(k, anchor: .topLeading)
+            .frame(width: outer.size.width, height: outer.size.height, alignment: .topLeading)
         }
         .sensoryFeedback(trigger: sun.litRays) { old, new in new > old ? .impact(weight: .light) : nil }
         .sensoryFeedback(.success, trigger: sun.hoursCompleted)
@@ -340,9 +368,10 @@ private struct RunningScene: View {
 
     /// The wide window's right side: clock and total on the left-aligned column, the buttons under them.
     private func wideControls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?,
-                              stretch: StretchState, coverWink: Bool) -> some View {
+                              stretch: StretchState, coverWink: Bool, big: Bool = false) -> some View {
         let total = baseTotal + elapsed / 3600
-        return VStack(alignment: .leading, spacing: 10) {
+        if big { return AnyView(bigControls(elapsed: elapsed, paused: paused, sun: sun, golden: golden, stretch: stretch, total: total)) }
+        return AnyView(VStack(alignment: .leading, spacing: 10) {
             HStack {
                 LGIconButton(systemName: "chevron.down", label: "Minimise", tint: .white, action: onMinimise)
                     .padding(.leading, -10)
@@ -371,6 +400,40 @@ private struct RunningScene: View {
             }
             .padding(.top, 18)
 
+            Spacer(minLength: 0)
+        }
+        .padding(.trailing, 36)
+        .padding(.vertical, 8))
+    }
+
+    /// An iPad window wide enough for the sidebar: the craft, the gold total (56), "of 10,000 hours · 33%", then
+    /// "This session", a 104 pt clock and "Next ray in", with Pause and Finish as 180 pt capsules.
+    private func bigControls(elapsed: TimeInterval, paused: Bool, sun: SunHour, golden: Double?,
+                             stretch: StretchState, total: Double) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                LGIconButton(systemName: "chevron.down", label: "Minimise", tint: .white, action: onMinimise)
+                    .padding(.leading, -10)
+                Spacer()
+            }
+            .frame(height: 44)
+            Spacer(minLength: 0)
+            Text(craftName).lgText(.rowStrong, color: .white.opacity(0.8))
+            Text(DurationFormat.totalHours(total)).lgNumber(.timerTotal, color: LGColor.mote)
+            Text("of 10,000 hours · \(Totals.percent(total: total))%").lgText(.row, color: .white.opacity(0.8))
+                .accessibilityLabel("Overall total \(DurationFormat.grouped(Totals.wholeHours(total: total))) hours, \(Totals.percent(total: total)) percent of 10,000")
+            Text("This session").lgText(.caption, color: .white.opacity(0.8)).padding(.top, 22)
+            Text(DurationFormat.clock(seconds: elapsed))
+                .lgNumber(.timerNumberIPad, color: .white)
+                .accessibilityLabel("This session, " + Self.spoken(elapsed))
+            Text(paused ? "Paused" : sun.caption).lgText(.row, color: .white.opacity(0.8))
+            coveredLine(stretch)
+            beadRow(hours: sun.hoursCompleted, golden: golden).padding(.top, 4)
+            HStack(spacing: 14) {
+                Button(paused ? "Resume" : "Pause", action: onToggle).buttonStyle(.lg(.translucent)).frame(width: 180)
+                Button("Finish", action: onFinish).buttonStyle(.lg(.light)).frame(width: 180)
+            }
+            .padding(.top, 20)
             Spacer(minLength: 0)
         }
         .padding(.trailing, 36)
@@ -423,6 +486,9 @@ private struct RunningScene: View {
         Labels.spoken(seconds: Int(seconds), includeSeconds: true)
     }
 }
+
+/// The size the Timer is laid out in; a tall iPad window lays out small and scales up.
+private struct VirtualCanvas { var size: CGSize }
 
 /// A ring of gold sparkles that shimmers once around the sun.
 private struct SparkleRing: View {

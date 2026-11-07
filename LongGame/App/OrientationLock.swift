@@ -7,9 +7,13 @@ import UIKit
 enum OrientationLock {
     static var allowed: UIInterfaceOrientationMask = .portrait
 
+    /// An iPad turns freely on every screen (its layouts are chosen by window size); only the iPhone is held upright.
+    static var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
     /// Allow (or stop allowing) rotation, and turn the screen upright when rotation is taken away.
     static func set(rotating: Bool) {
-        allowed = rotating ? .allButUpsideDown : .portrait
+        if isPad { allowed = .all; return }
+        allowed = rotating ? .all : .portrait
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         for scene in scenes {
             if !rotating { scene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait)) }
@@ -20,7 +24,7 @@ enum OrientationLock {
 
 final class LongGameAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        MainActor.assumeIsolated { OrientationLock.allowed }
+        MainActor.assumeIsolated { OrientationLock.isPad ? .all : OrientationLock.allowed }
     }
 }
 

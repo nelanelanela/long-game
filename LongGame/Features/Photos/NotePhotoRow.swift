@@ -17,6 +17,7 @@ struct NotePhotoRow: View {
     @State private var pickingFromLibrary = false
     @State private var takingPhoto = false
     @State private var pickerItem: PhotosPickerItem?
+    @State private var dropping = false
 
     private let squareSize: CGFloat = 64
 
@@ -41,13 +42,6 @@ struct NotePhotoRow: View {
                 if let data { prepare(data) }
             }
             .ignoresSafeArea()
-        }
-        #else
-        // On the Mac a picture can also be dragged straight onto the square (or the whole row).
-        .dropDestination(for: Data.self) { items, _ in
-            guard let data = items.first else { return false }
-            prepare(data)
-            return true
         }
         #endif
         .onChange(of: pickerItem) { _, item in
@@ -82,6 +76,17 @@ struct NotePhotoRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(photo == nil ? "Add a photo" : "Photo, double-tap to change")
+            // A picture dragged in from Photos or Files (iPad, Mac) goes through the same processing as the picker's.
+            .dropDestination(for: Data.self) { items, _ in
+                guard let data = items.first else { return false }
+                prepare(data)
+                return true
+            } isTargeted: { dropping = $0 }
+            .overlay {
+                if dropping {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(LGColor.ink, lineWidth: 2)
+                }
+            }
 
             if photo != nil {
                 Button { photo = nil } label: {

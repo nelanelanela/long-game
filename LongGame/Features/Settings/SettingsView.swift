@@ -8,6 +8,7 @@ struct SettingsView: View {
     var closeAll: (() -> Void)?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.lgEmbedded) private var embedded
     @Environment(\.modelContext) private var context
     @Environment(TimerStore.self) private var timer
     @Query private var settingsRows: [AppSettings]
@@ -40,14 +41,16 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                HStack {
-                    LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                        .padding(.leading, -10)
-                    Spacer()
+                if !embedded {
+                    HStack {
+                        LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
+                            .padding(.leading, -10)
+                        Spacer()
+                    }
+                    .frame(height: 44)
                 }
-                .frame(height: 44)
 
-                Text("Settings").lgText(.screenTitle).padding(.top, -6)
+                Text("Settings").lgText(.screenTitle).padding(.top, embedded ? 8 : -6)
                     .accessibilityAddTraits(.isHeader)
 
                 supportCard

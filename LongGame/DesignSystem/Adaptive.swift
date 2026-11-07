@@ -29,6 +29,16 @@ struct AdaptiveLayout<Content: View>: View {
     }
 }
 
+private struct EmbeddedKey: EnvironmentKey { static let defaultValue = false }
+
+extension EnvironmentValues {
+    /// True when a screen sits in the iPad sidebar layout's detail pane: it has no Back button of its own there.
+    var lgEmbedded: Bool {
+        get { self[EmbeddedKey.self] }
+        set { self[EmbeddedKey.self] = newValue }
+    }
+}
+
 extension View {
     /// Sheets become centred cards, no wider than 520 pt, when the window is wide; on a phone they stay as they were.
     func lgSheetCard() -> some View {

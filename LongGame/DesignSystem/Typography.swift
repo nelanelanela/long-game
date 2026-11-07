@@ -16,6 +16,14 @@ struct LGTextStyle: Sendable {
     static let gaugeNumber = LGTextStyle(size: 56, weight: .bold, relativeTo: .largeTitle, tracking: -2.5)
     /// The number in a short window, where it shares a line with its caption.
     static let gaugeNumberShort = LGTextStyle(size: 40, weight: .bold, relativeTo: .largeTitle, tracking: -1.6)
+    /// iPad: the big total in the portrait layout (72) and under the sidebar layout's sun (64).
+    static let gaugeNumberTall = LGTextStyle(size: 72, weight: .bold, relativeTo: .largeTitle, tracking: -3)
+    static let gaugeNumberSidebar = LGTextStyle(size: 64, weight: .bold, relativeTo: .largeTitle, tracking: -2.8)
+    /// iPad title bar (28) and the portrait layout's craft name (34).
+    static let ipadBarTitle = LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56)
+    static let ipadCraftTitle = LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -0.7)
+    /// The wide Timer on an iPad: a clock to read across a studio.
+    static let timerNumberIPad = LGTextStyle(size: 104, weight: .light, relativeTo: .largeTitle, tracking: -4)
     static let yearNumber = LGTextStyle(size: 64, weight: .bold, relativeTo: .largeTitle, tracking: -2.5)
     static let timerNumber = LGTextStyle(size: 80, weight: .light, relativeTo: .largeTitle, tracking: -3.2)
     static let timerNumberWide = LGTextStyle(size: 88, weight: .light, relativeTo: .largeTitle, tracking: -3.5)

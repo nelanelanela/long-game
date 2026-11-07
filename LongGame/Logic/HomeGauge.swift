@@ -66,6 +66,15 @@ struct GaugeMetrics: Equatable, Sendable {
             scaleX: x + 42, pillX: x + 52, dashStartX: x + 46)
     }
 
+    /// The iPad's big gauge: a `height` tall hero with a `sun` pt sun (190 beside the sidebar, 220 in portrait).
+    /// Same rule as every size: the sea starts below the sun's centre at the lowest point, so it always covers it.
+    static func large(height: CGFloat, sun: CGFloat) -> GaugeMetrics {
+        let water = height - 52
+        return GaugeMetrics(
+            height: height, waterY: water, zeroY: water - 8, topY: sun / 2 + 8, sunSize: sun, sunOffsetX: 40,
+            scaleX: 50, pillX: 60, dashStartX: 54)
+    }
+
     func centreY(fraction: Double) -> CGFloat {
         zeroY - CGFloat(GaugeGeometry.clamped(fraction)) * (zeroY - topY)
     }

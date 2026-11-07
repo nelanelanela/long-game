@@ -23,6 +23,9 @@ enum LGColor {
     /// The small clock tile for a session without a photo.
     static let clockTile = Color(hex: 0xF1EDE6)
     static let segmentTrack = Color(hex: 0xEFEBE4)
+    /// The iPad/Mac sidebar and its quiet capsule button (#EFEBE4), and the chosen row's wash.
+    static let sidebar = Color(hex: 0xEFEBE4)
+    static let sidebarSelection = Color(hex: 0x16244A).opacity(0.10)
     // Hour steppers
     static let stepperButton = Color(hex: 0xF3F0EA)
     static let stepperButtonLimit = Color(hex: 0xF6F4EF)

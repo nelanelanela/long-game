@@ -4,14 +4,25 @@ import SwiftUI
 /// and left-aligned in the wide window's right pane.
 enum NumberLayout {
     case stacked, inline, leading
+    /// iPad: 72 pt centred (portrait), and 64 pt left-aligned under the sidebar layout's sun.
+    case tall, sidebar
 
-    var numberStyle: LGTextStyle { self == .inline ? .gaugeNumberShort : .gaugeNumber }
+    var isLeading: Bool { self == .leading || self == .sidebar }
+
+    var numberStyle: LGTextStyle {
+        switch self {
+        case .inline: .gaugeNumberShort
+        case .tall: .gaugeNumberTall
+        case .sidebar: .gaugeNumberSidebar
+        default: .gaugeNumber
+        }
+    }
 
     @ViewBuilder
     func container<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
         switch self {
-        case .stacked: VStack(spacing: 4, content: content)
-        case .leading: VStack(alignment: .leading, spacing: 4, content: content)
+        case .stacked, .tall: VStack(spacing: 4, content: content)
+        case .leading, .sidebar: VStack(alignment: .leading, spacing: 4, content: content)
         case .inline: HStack(alignment: .firstTextBaseline, spacing: 8, content: content)
         }
     }

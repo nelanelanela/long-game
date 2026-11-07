@@ -387,6 +387,39 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 - The 14 pt calendar squares are smaller than 44 pt by design. Each day is still a single tap target with a VoiceOver label.
 - `design/About.dc.html` is still in the folder (the app has no About screen). Delete it if you do not want it.
 
+## iPad (update 29)
+
+**Done**
+- The app is now universal (`TARGETED_DEVICE_FAMILY = 1,2`); `UIRequiresFullScreen` is removed, so Split View, Slide Over and Stage Manager work. An iPad turns freely on every screen (the iPhone is still held upright except on the timer).
+- Layout is chosen from the window's real size (`Logic/WindowShape.swift`), never from the device: sidebar (regular width, wider than tall, at least 1000 pt), tall (regular width, at least 600 pt, taller than wide), the existing two-pane for in-between landscape windows, and the iPhone layouts under about 600 pt. Tests: `WindowShapeTests.swift`.
+- Sidebar layout (`Features/Home/SidebarLayout.swift`, `HomeView.sidebarPage`): 260 pt sidebar, 28 pt title bar with the two capsule buttons, sun gauge and 64 pt total on the left, 340 pt card column on the right. Calendar, Growth, Your year and Settings open in the same pane. The code has no iPad-only calls except hover effects, so the Mac app can reuse it.
+- Tall layout (`HomeView.tallPage`): floating tabs, 34 pt craft name, 220 pt sun, 72 pt total, two cards side by side, Meet your future self, two 56 pt buttons; content at most 760 pt wide.
+- Timer: big iPad windows get the 340 pt sun, the gold 56 pt total and a 104 pt clock with 180 pt Pause/Finish; tall windows lay out like the iPhone timer and scale up 1.35 times.
+- Home, the timer and sheets stay where they are while the window changes size: Home is one view that swaps layouts, and the timer and tab live in scene storage.
+- Keyboard: ⌘N, Space (timer, not while the Finish sheet is up), ⌘L, ⌘1–⌘5, ⌘, through `App/LongGameCommands.swift` and the timer's own Space button, so holding ⌘ lists them.
+- Pointer hover on the sidebar rows, capsules, cards and session rows. Dropping an image on a session row or the Finish sheet's photo square uses the same `PhotoProcessing.prepare` as the picker.
+
+**Not checked, and why**
+- Real landscape, Split View and Stage Manager: the iPad Simulator here runs in a windowed mode that won't rotate from code, so I checked the sidebar and tall layouts by laying the app out at 1194 × 834 and at the portrait size (`-debug.windowSize 1194x834`, debug builds only). Please try the real thing with the steps below.
+- Pointer scrubbing on Growth uses the chart's own `chartXSelection`, which follows a pointer as well as a finger; not tried with a real pointer. Scribble: the note is a plain `TextField` with nothing blocking it; not tried with a real Pencil.
+- Widgets: `SunWidgets.swift` offers small, medium and the Lock Screen sizes; iPad Home Screen also offers large and extra large, which I did not add. Live Activity: unchanged; it shows where iPadOS supports it.
+- Tests: all 484 pass on iPhone 16. On the iPad Simulator the four `TipPurchaseTests` (App Store test sandbox) fail some runs and pass others, with different failures each time; nothing else fails.
+- Changing the window size from the sidebar layout to another keeps the Play view (Today, This week, The long game) but not Calendar, Growth, Your year or Settings: those fall back to the Home tab.
+- Settings is not a button in the tall layout (the spec lists only History and +); reach it from History's gear or ⌘,.
+- App Store screenshots for iPad (13-inch, 12.9-inch) will be needed; nothing else in your Apple account.
+
+## How to try the iPad layouts in the Simulator
+
+Run the LongGame scheme on an iPad Pro 11-inch with `-demoData`.
+- **Portrait (tall):** the default. Floating tabs on top, big sun, two cards, two buttons at the bottom.
+- **Landscape (sidebar):** Simulator menu → Device → Rotate Left (⌘←). The sidebar appears.
+- **Split View:** in the Simulator, open Long Game, drag up from the bottom edge for the Dock, press and hold another app's icon and drop it at the right or left edge. Drag the divider: half and a third are the iPhone layout, two thirds is the two-pane layout.
+- **Slide Over:** the same, but drop the second app in the middle of the screen.
+- **Stage Manager:** Control Centre (swipe down from the top right) → the Stage Manager button. Then drag the window's corner handle to resize: wider than about 1000 pt gives the sidebar, narrow gives the iPhone layout.
+- **Keyboard:** press ⌘ to see the shortcuts (the Simulator's hardware keyboard must be on: I/O → Keyboard → Connect Hardware Keyboard). Space pauses the timer.
+- **Pointer, drag and drop:** hover with the Mac mouse over rows; drag a picture from Photos (in Split View) onto a session row on Today, or onto the photo square in the Finish sheet.
+- **Debug aid:** a debug build also accepts `-debug.windowSize 1194x834` to lay the app out at any size, shrunk to fit.
+
 ## How to check the main flows in the Simulator
 
 Run with `-demoData` for sample data.
