@@ -16,12 +16,21 @@ struct AdaptiveLayout<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ViewBuilder var content: (WindowInfo) -> Content
 
+    /// A Mac window has no size classes; it counts as regular width and the layout follows its size alone.
+    private static var alwaysRegular: Bool {
+        #if os(macOS)
+        true
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
         GeometryReader { geo in
             let inset = geo.safeAreaInsets
             let size = CGSize(width: geo.size.width + inset.leading + inset.trailing,
                               height: geo.size.height + inset.top + inset.bottom)
-            let shape = WindowShape.make(width: size.width, height: size.height, isRegularWidth: horizontalSizeClass == .regular)
+            let shape = WindowShape.make(width: size.width, height: size.height, isRegularWidth: Self.alwaysRegular || horizontalSizeClass == .regular)
             content(WindowInfo(shape: shape, size: size,
                                safeArea: EdgeInsets(top: inset.top, leading: inset.leading, bottom: inset.bottom, trailing: inset.trailing)))
                 .frame(width: geo.size.width, height: geo.size.height)

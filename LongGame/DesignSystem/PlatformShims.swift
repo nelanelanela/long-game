@@ -3,15 +3,20 @@ import SwiftUI
 // iPhone-only SwiftUI modifiers, given harmless Mac versions so the shared screens compile for both.
 #if os(macOS)
 extension View {
-    /// The Mac has no full-screen covers; a sheet is the nearest thing.
+    /// The Mac has no full-screen covers; a big sheet, about the size of the window, is the nearest thing. (A sheet
+    /// keeps `dismiss` working for the screens inside, the Timer included.)
     func fullScreenCover<Content: View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil,
                                         @ViewBuilder content: @escaping () -> Content) -> some View {
-        sheet(isPresented: isPresented, onDismiss: onDismiss, content: content)
+        sheet(isPresented: isPresented, onDismiss: onDismiss) { content().lgWindowSizedSheet() }
     }
 
     func fullScreenCover<Item: Identifiable, Content: View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil,
                                                             @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        sheet(item: item, onDismiss: onDismiss, content: content)
+        sheet(item: item, onDismiss: onDismiss) { content($0).lgWindowSizedSheet() }
+    }
+
+    func lgWindowSizedSheet() -> some View {
+        frame(minWidth: 820, idealWidth: 1100, maxWidth: .infinity, minHeight: 540, idealHeight: 690, maxHeight: .infinity)
     }
 
     func textInputAutocapitalization(_ style: MacAutocapitalization?) -> some View { self }

@@ -9,12 +9,20 @@ struct SidebarView: View {
     @Binding var selection: SidebarSection
 
     static let width: CGFloat = 260
+    /// On the Mac the window's traffic lights sit in the sidebar's top corner, so the craft name starts below them.
+    private static var topInset: CGFloat {
+        #if os(macOS)
+        34
+        #else
+        8
+        #endif
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(craftName).lgText(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.5))
                 .lineLimit(1).minimumScaleFactor(0.6)
-                .padding(.horizontal, 12).padding(.top, 8)
+                .padding(.horizontal, 12).padding(.top, Self.topInset)
                 .accessibilityAddTraits(.isHeader)
             Text("\(DurationFormat.grouped(totalHours)) of 10,000 h")
                 .lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote), color: LGColor.inkMuted)
