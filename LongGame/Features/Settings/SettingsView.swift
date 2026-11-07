@@ -17,6 +17,9 @@ struct SettingsView: View {
     @Query private var craftSessions: [Session]
     @Query private var craftEstimates: [YearEstimate]
 
+    #if os(macOS)
+    @AppStorage(DockVisibility.defaultsKey) private var showInDock = true
+    #endif
     @State private var csvURL: URL?
     @State private var confirmDelete = false
     @State private var pickingCSV = false
@@ -63,6 +66,8 @@ struct SettingsView: View {
                 }
                 #if os(iOS)
                 FocusSettingsCard()
+                #else
+                dockCard
                 #endif
                 practiceCard
                 dataCard
@@ -141,6 +146,21 @@ struct SettingsView: View {
             .frame(minHeight: 54)
         }
     }
+
+    #if os(macOS)
+    /// Mac only, and kept on this Mac (not synced): off leaves only the sun in the menu bar.
+    private var dockCard: some View {
+        card {
+            VStack(alignment: .leading, spacing: 2) {
+                Toggle("Show in Dock", isOn: $showInDock).lgText(.row).tint(LGColor.ink)
+                Text("Off keeps only the sun in the menu bar.")
+                    .lgText(.caption, color: LGColor.inkMuted)
+            }
+            .padding(.vertical, 10)
+        }
+        .onChange(of: showInDock) { _, show in MacDock.apply(show: show) }
+    }
+    #endif
 
     private func soundsCard(_ settings: AppSettings) -> some View {
         card {

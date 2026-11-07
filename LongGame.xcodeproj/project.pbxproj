@@ -24,6 +24,7 @@
 		07292E7099E6134874653B62 /* GrowthKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC814F32E8D8590A5877CC7 /* GrowthKey.swift */; };
 		073E0F562AF04C7BBBBF682C /* DebugOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09414C404EEAB7AE974460CD /* DebugOptions.swift */; };
 		081EBB4F22FA7C1552E14D09 /* Growth.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EC9E004501C0C951AEF83A /* Growth.swift */; };
+		090B928D03FF2AE69CF7CD72 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		092B496BD425270B1BD9FC0D /* EstimatesEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A9A0D14F2ACF4FA8075536 /* EstimatesEditorView.swift */; };
 		0946525560E687FBE3838907 /* LongGameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4128CE14B1359C65AB6CB2 /* LongGameApp.swift */; };
 		0980F9BF31EAD39EE67ECAA8 /* Basics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACABF7B3578EC4629399A351 /* Basics.swift */; };
@@ -67,6 +68,7 @@
 		1D7CBF13FB7AB8E1F78890E7 /* WindowShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0901FA08C1198659C7B2BC44 /* WindowShape.swift */; };
 		1DE918B19389EEF976BBD039 /* TodayContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25341FE4B5B313D5F885BCDD /* TodayContent.swift */; };
 		1E32A4292A3A91910B6E6FCE /* CountingTotal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4999DC1C22FCC8CF3B000F /* CountingTotal.swift */; };
+		1E43DF966B03EE35905E4968 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		1ECC4E73E38D9270576EC2D7 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DBBF9A26035DE803E852B3 /* Format.swift */; };
 		1F7EDE246BF3489C16F03547 /* TargetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A91F8986B91CB0FB84BE0 /* TargetRow.swift */; };
 		1FA5CB9EF9FA76F0AA18BBF6 /* GrowthScrub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E943F978A9549E5D64A28A8 /* GrowthScrub.swift */; };
@@ -197,6 +199,7 @@
 		5E0B49A83E66AE302AA7A679 /* GrowthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C85EBB67687276C188C0B7 /* GrowthChartView.swift */; };
 		5E8AA49079B617D4F55FEBD2 /* PolishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0DA036E644F90279B0F39B /* PolishTests.swift */; };
 		604CF60452C45CD9581F26BF /* SunWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC62C9206943FB7C8E407B4 /* SunWords.swift */; };
+		6102802029A1783DC166F560 /* MenuBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6D54237CD97D56B76C4ED3 /* MenuBarTests.swift */; };
 		61B1D36484BDC0A2BA2B7E26 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E53F81FC9E8C23ED679BC8 /* WatchViews.swift */; };
 		61EA82FD2384B3AD59C78C19 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		6271FB6FF1B267FA1392DD78 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB10F8E126C34BEC2850AFA /* HistoryView.swift */; };
@@ -209,6 +212,8 @@
 		6856D897257E00E4048673A2 /* SaveBurst.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D3B9B0FF8D4A15F09D8BFA /* SaveBurst.swift */; };
 		687968B40EDEB834BDE3A1D8 /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25C749C7D371B6DF1E10DD /* LogicTests.swift */; };
 		68D50658297C3C6A440D094C /* LongGameWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E0C7883CE69545EC403CAA3 /* LongGameWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6963A186DC034F66B7F12765 /* MenuBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6D54237CD97D56B76C4ED3 /* MenuBarTests.swift */; };
+		69E9CABFFAD48EFFE85F7994 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		6A3F2DD08FCD37E8E40B1C46 /* TipThanksSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E02118D713C199DE690AA4 /* TipThanksSheet.swift */; };
 		6A548EC5F0BD94F14EA53811 /* IPadFigures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3454BF5BCB5C6C1D2C09A56B /* IPadFigures.swift */; };
 		6AF511A9154DA70E936B1D8D /* CatchUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */; };
@@ -280,6 +285,7 @@
 		93E9640D0E8517B3C4FF2CAD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2428438CD0D1453BADF1C087 /* Localizable.xcstrings */; };
 		940014BEF220642781BC7189 /* giggle-4.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F89D9922FAC602685500D771 /* giggle-4.m4a */; };
 		942A613EA4F9ABF961A16CFB /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25C749C7D371B6DF1E10DD /* LogicTests.swift */; };
+		951ADFF42830DE274CE27330 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		9803418F907B7D9372FA44DE /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1E7DB03E309FDB1284F4F6 /* PhotoViewer.swift */; };
 		98C8FCDB1FD0D5AF96CF666B /* SunriseMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */; };
 		9A845A396A4CF0662711FBBA /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
@@ -383,6 +389,7 @@
 		D1FB017A7ABD5424AD3701B2 /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7493CAE826FC661FDE16D /* Summary.swift */; };
 		D202CA49EA316FD475B76428 /* ICloudLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D0475BCB8B474C298A86DA /* ICloudLogic.swift */; };
 		D2A377C096C9EDCCBD3D0000 /* SidebarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F3044A6A68F733B316517A /* SidebarLayout.swift */; };
+		D334634C36FDA0BA010119F6 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		D47FBE86A714D9AEBB44DFBA /* TipSunIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F0B7F7BBD12FA4292C8CE3 /* TipSunIcon.swift */; };
 		D5C5BE427D69694BE1D6879C /* HoursStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */; };
 		D61F9C258005AB339A6DBA9F /* giggle-6.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7B984BEBDD108D2E2418F47D /* giggle-6.m4a */; };
@@ -440,6 +447,7 @@
 		F50A998595779BB0E8126B45 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BAA370AE7B949987519BFA /* WelcomeView.swift */; };
 		F52E8CA919307A82F0212D7C /* HoursStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */; };
 		F5A1DD839E33AF4A3DCFBBCF /* PlatformImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A910B63B449732B697674B /* PlatformImage.swift */; };
+		F5F91B37477183A22420EFDD /* MenuBarSun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CDCD0D30283AFD1FA5AB80A /* MenuBarSun.swift */; };
 		F6D1214A09E11C848F4B45D3 /* Milestones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */; };
 		F742FC8100A6113E02FF6BAF /* WeeklyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2D6409A03756420CB015B7 /* WeeklyTarget.swift */; };
 		F77DDD462352ECBD9F0EF19B /* WidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBC944F7A3152CAA65BFB2 /* WidgetModel.swift */; };
@@ -549,6 +557,7 @@
 		0BC0EC69524DEEF95D7E386D /* OneCraftSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneCraftSheet.swift; sourceTree = "<group>"; };
 		0BDF76B9E1AFBEE132791920 /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
 		0C3555EAD70603C2FAE1FB02 /* LongGameMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LongGameMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0CDCD0D30283AFD1FA5AB80A /* MenuBarSun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSun.swift; sourceTree = "<group>"; };
 		108877712C3CCCFBF80126E2 /* StartYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartYearView.swift; sourceTree = "<group>"; };
 		115C30D5710F5DDD61037FF8 /* CraftSuggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftSuggestions.swift; sourceTree = "<group>"; };
 		117B59E0BD5EA0B22FC03820 /* GrowthScrubTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthScrubTests.swift; sourceTree = "<group>"; };
@@ -569,6 +578,7 @@
 		2AC62C9206943FB7C8E407B4 /* SunWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunWords.swift; sourceTree = "<group>"; };
 		2AF3C5DCEB543083E891D780 /* Practice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Practice.swift; sourceTree = "<group>"; };
 		2DB10F8E126C34BEC2850AFA /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		2F6D54237CD97D56B76C4ED3 /* MenuBarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarTests.swift; sourceTree = "<group>"; };
 		32A910B63B449732B697674B /* PlatformImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformImage.swift; sourceTree = "<group>"; };
 		3454BF5BCB5C6C1D2C09A56B /* IPadFigures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPadFigures.swift; sourceTree = "<group>"; };
 		35DBBF9A26035DE803E852B3 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
@@ -600,6 +610,7 @@
 		5DD43C05C68EA068141C5EF1 /* LongGameMacCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameMacCommands.swift; sourceTree = "<group>"; };
 		6022DFF5F6081A955B9C3863 /* TipStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipStore.swift; sourceTree = "<group>"; };
 		6097C66FD7340953CF696711 /* WeeklyTargetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTargetView.swift; sourceTree = "<group>"; };
+		62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarText.swift; sourceTree = "<group>"; };
 		62CB6FB50B36591BB8787572 /* WidgetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetTests.swift; sourceTree = "<group>"; };
 		6369ABA0B3545E896705EE57 /* YearCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearCardView.swift; sourceTree = "<group>"; };
 		638D5D0C78714564A3CF6877 /* ICloudTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudTests.swift; sourceTree = "<group>"; };
@@ -972,6 +983,7 @@
 				D30276116E077074A11BE563 /* IconStage.swift */,
 				3454BF5BCB5C6C1D2C09A56B /* IPadFigures.swift */,
 				CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */,
+				62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */,
 				36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */,
 				39076BB3A0DE32BAACE608B5 /* PhotoProcessing.swift */,
 				2AF3C5DCEB543083E891D780 /* Practice.swift */,
@@ -1110,6 +1122,7 @@
 				CC7D665D0523432A43B4E231 /* IconStageTests.swift */,
 				1A25C749C7D371B6DF1E10DD /* LogicTests.swift */,
 				547CC11F78BB164F419772F8 /* MacSnapshotTests.swift */,
+				2F6D54237CD97D56B76C4ED3 /* MenuBarTests.swift */,
 				8D5D9CDB88627C30CEB4CA92 /* NotePhotoTests.swift */,
 				1A0DA036E644F90279B0F39B /* PolishTests.swift */,
 				E773072D1CD5918F00B4D6F7 /* RhythmTests.swift */,
@@ -1155,6 +1168,7 @@
 				0BDF76B9E1AFBEE132791920 /* AppIconManager.swift */,
 				D7A2536744CE70D66C28008A /* LongGameMacApp.swift */,
 				5DD43C05C68EA068141C5EF1 /* LongGameMacCommands.swift */,
+				0CDCD0D30283AFD1FA5AB80A /* MenuBarSun.swift */,
 				C6051CCA93DD65B7E5DF9F8F /* PlatformStubs.swift */,
 			);
 			path = LongGameMac;
@@ -1513,6 +1527,8 @@
 				36908513E8891E2FE1863C00 /* Labels.swift in Sources */,
 				E62134053F90E3E39650839E /* LongGameMacApp.swift in Sources */,
 				C64F6BBE3E4A886B99B79E58 /* LongGameMacCommands.swift in Sources */,
+				F5F91B37477183A22420EFDD /* MenuBarSun.swift in Sources */,
+				951ADFF42830DE274CE27330 /* MenuBarText.swift in Sources */,
 				88C949E1B159752E4F5DD6E7 /* MilestoneCelebration.swift in Sources */,
 				9A845A396A4CF0662711FBBA /* Milestones.swift in Sources */,
 				F8E1F855FA68144A2A022211 /* Models.swift in Sources */,
@@ -1596,6 +1612,7 @@
 				21ECABA5B1EC1D94BBE81266 /* IconStageTests.swift in Sources */,
 				942A613EA4F9ABF961A16CFB /* LogicTests.swift in Sources */,
 				196910816AC4994ECA0CBE2F /* MacSnapshotTests.swift in Sources */,
+				6963A186DC034F66B7F12765 /* MenuBarTests.swift in Sources */,
 				66EBD16611A6BD4F641E106C /* NotePhotoTests.swift in Sources */,
 				5E8AA49079B617D4F55FEBD2 /* PolishTests.swift in Sources */,
 				B73E6E3CCDBDE4687AFD0351 /* RhythmTests.swift in Sources */,
@@ -1636,6 +1653,7 @@
 				6A548EC5F0BD94F14EA53811 /* IPadFigures.swift in Sources */,
 				3485EBAE99BE3027D2939A5A /* IconStage.swift in Sources */,
 				A5877BDC330DCD4F2365013B /* Labels.swift in Sources */,
+				D334634C36FDA0BA010119F6 /* MenuBarText.swift in Sources */,
 				426E3652743877A611C58660 /* Milestones.swift in Sources */,
 				8BF88406D4CD38580642C893 /* Motion.swift in Sources */,
 				3A2E5C6DD4FDF6EFB2915AFD /* PhotoProcessing.swift in Sources */,
@@ -1725,6 +1743,7 @@
 				F2889BAC8FDEDBB30F3B954D /* LiveActivityManager.swift in Sources */,
 				0946525560E687FBE3838907 /* LongGameApp.swift in Sources */,
 				18B44BDDA5D013B7590B9FF9 /* LongGameCommands.swift in Sources */,
+				1E43DF966B03EE35905E4968 /* MenuBarText.swift in Sources */,
 				027234BACA73E0A6465457FB /* MilestoneCelebration.swift in Sources */,
 				C9951326B05452D88021B2A3 /* Milestones.swift in Sources */,
 				CB64E23D7E1C7531BC2F3BA7 /* Models.swift in Sources */,
@@ -1811,6 +1830,7 @@
 				0229F1C651DC59BBD1024EE8 /* IconStageTests.swift in Sources */,
 				687968B40EDEB834BDE3A1D8 /* LogicTests.swift in Sources */,
 				CDE8478FFCCE281FA5E6E808 /* MacSnapshotTests.swift in Sources */,
+				6102802029A1783DC166F560 /* MenuBarTests.swift in Sources */,
 				815CBD85981F85EBA8655620 /* NotePhotoTests.swift in Sources */,
 				D9C6CF7B844085E90A93F676 /* PolishTests.swift in Sources */,
 				A3ECD47A33A03DC1984C4A37 /* RhythmTests.swift in Sources */,
@@ -1849,6 +1869,7 @@
 				F26DF7A52E9193B42FE46A01 /* IconStage.swift in Sources */,
 				5805FA289CDEA494F8087025 /* Labels.swift in Sources */,
 				B57856D06F9F0439BC97A6F6 /* LongGameWatchApp.swift in Sources */,
+				69E9CABFFAD48EFFE85F7994 /* MenuBarText.swift in Sources */,
 				F6D1214A09E11C848F4B45D3 /* Milestones.swift in Sources */,
 				4B6F13EADD49389731EADA50 /* Motion.swift in Sources */,
 				27C0BEBCD5C9A4073A7F500A /* PhotoProcessing.swift in Sources */,
@@ -1899,6 +1920,7 @@
 				267281AE5574996082B7D8FF /* IconStage.swift in Sources */,
 				5B9FC10EBF7B87078D027601 /* Labels.swift in Sources */,
 				4A529A993A5931197805C01A /* LiveActivityManager.swift in Sources */,
+				090B928D03FF2AE69CF7CD72 /* MenuBarText.swift in Sources */,
 				ABB8237CECE68FEAFCD93FE0 /* Milestones.swift in Sources */,
 				BA074A6EA7D1DD2A64F5B124 /* Motion.swift in Sources */,
 				35C97C75E4AB3F11FEB6038A /* PhotoProcessing.swift in Sources */,

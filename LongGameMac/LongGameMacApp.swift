@@ -6,6 +6,7 @@ import AppKit
 /// same SwiftData store as the iPhone.
 @main
 struct LongGameMacApp: App {
+    @NSApplicationDelegateAdaptor(MacAppDelegate.self) private var appDelegate
     @State private var store: StoreHost
     @State private var timerStore = TimerStore()
     @State private var iCloud = ICloudMonitor()
@@ -43,6 +44,23 @@ struct LongGameMacApp: App {
         .windowResizability(.contentMinSize)
         .windowStyle(.hiddenTitleBar)
         .commands { LongGameMacCommands(center: commands, timer: timerStore) }
+
+        // The sun in the menu bar: today's time, or the running clock, and a popover.
+        MenuBarExtra {
+            MenuBarPopover().menuBarEnvironment(store: store, timer: timerStore, commands: commands)
+        } label: {
+            MenuBarLabel().menuBarEnvironment(store: store, timer: timerStore, commands: commands)
+        }
+        .menuBarExtraStyle(.window)
+    }
+}
+
+private extension View {
+    func menuBarEnvironment(store: StoreHost, timer: TimerStore, commands: CommandCenter) -> some View {
+        self.modelContainer(store.container)
+            .environment(store)
+            .environment(timer)
+            .environment(commands)
     }
 }
 
