@@ -29,6 +29,7 @@ struct SettingsView: View {
     @Environment(ICloudMonitor.self) private var monitor
     @State private var confirmDeleteCopy = false
     @State private var iCloudMessage: String?
+    @State private var showOneCraft = false
 
     init(craft: Craft, closeAll: (() -> Void)? = nil) {
         self.craft = craft
@@ -40,6 +41,12 @@ struct SettingsView: View {
 
     private var settings: AppSettings? { settingsRows.first }
     private var archived: [Craft] { allCrafts.filter { !$0.isActive }.sorted { ($0.archivedAt ?? .distantPast) > ($1.archivedAt ?? .distantPast) } }
+
+    /// Whole hours played so far, shown in the One craft sheet's confirmation.
+    private var oneCraftHours: Int {
+        ProgressSummary.make(estimates: craftEstimates.map(\.rate), sessions: craftSessions.map(\.record),
+                             onboardingDate: craft.createdAt, weekStart: .localeDefault, now: Date()).wholeHours
+    }
 
     var body: some View {
         ScrollView {
@@ -82,6 +89,10 @@ struct SettingsView: View {
         .lgHidesNavigationBar()
         .onAppear { ensureSettings(); buildCSV() }
         .onChange(of: allSessions.count) { _, _ in buildCSV() }
+        .sheet(isPresented: $showOneCraft) {
+            OneCraftSheet(craft: craft, totalHours: oneCraftHours)
+                .lgSheetCard()
+        }
         .fileImporter(isPresented: $pickingCSV, allowedContentTypes: [.commaSeparatedText, .plainText]) { result in
             importCSV(result)
         }
@@ -279,6 +290,12 @@ struct SettingsView: View {
                 } label: {
                     row("Archived crafts", detail: archived.isEmpty ? "None" : "\(archived.count)")
                 }
+                Divider().overlay(LGColor.divider)
+                Button { showOneCraft = true } label: {
+                    row("Switch to a new game", detail: nil)
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(.isButton)
             }
         }
     }

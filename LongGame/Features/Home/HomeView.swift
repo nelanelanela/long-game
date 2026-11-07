@@ -2,14 +2,13 @@ import SwiftUI
 import SwiftData
 
 private enum HomeSheet: Identifiable {
-    case addHours, oneCraft, futureSelf, support
+    case addHours, futureSelf, support
     /// The target screen as a sheet: a new year of pace, or the first target for an older game.
     case target(first: Bool)
 
     var id: String {
         switch self {
         case .addHours: "add"
-        case .oneCraft: "one"
         case .futureSelf: "future"
         case .support: "support"
         case .target: "target"
@@ -209,8 +208,6 @@ struct HomeView: View {
             switch item {
             case .addHours:
                 SessionFormView(craft: craft, sessions: sessions, editing: nil)
-            case .oneCraft:
-                OneCraftSheet(craft: craft, totalHours: s.wholeHours)
             case .futureSelf:
                 FutureSelfSheet(total: s.total, forecast: s.forecast.chosen)
             case .support:
@@ -329,11 +326,9 @@ struct HomeView: View {
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
         ScrollView {
             VStack(spacing: 0) {
-                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
-                    .padding(.horizontal, 24).padding(.top, short ? 4 : 10)
-                    .id(ScrollSpot.top)
                 hero(f, metrics: short ? .short : .standard)
                     .padding(.top, short ? 2 : 8)
+                    .id(ScrollSpot.top)
                 number(f, style: short ? .inline : .stacked)
                     .padding(.top, short ? 4 : 8)
                 ZStack(alignment: .top) {
@@ -362,9 +357,15 @@ struct HomeView: View {
         }
         .scrollPosition(id: $scrollSpot)
         .lgTopBar {
-            header
-                .padding(.horizontal, 24).padding(.top, short ? 0 : 8)
-                .lgReadableColumn(560)
+            VStack(spacing: 0) {
+                header
+                    .padding(.top, short ? 0 : 8)
+                // The tabs stay pinned under the craft name; only the page below them scrolls.
+                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+                    .padding(.top, short ? 4 : 10).padding(.bottom, 4)
+            }
+            .padding(.horizontal, 24)
+            .lgReadableColumn(560)
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -601,12 +602,9 @@ struct HomeView: View {
     private func tallPage(_ f: HomeFigures) -> some View {
         ScrollView {
             VStack(spacing: 0) {
-                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
-                    .frame(maxWidth: 520)
-                    .padding(.top, 12)
-                    .id(ScrollSpot.top)
                 HStack {
                     Text(craft.name).lgText(.ipadCraftTitle)
+                        .id(ScrollSpot.top)
                         .lineLimit(1).minimumScaleFactor(0.6)
                         .accessibilityAddTraits(.isHeader)
                     Spacer()
@@ -614,7 +612,7 @@ struct HomeView: View {
                         LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
                             historyDay = Calendar.current.startOfDay(for: Date())
                         }
-                        LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
+                        LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
                     }
                     .padding(.trailing, -10)
                 }
@@ -634,6 +632,13 @@ struct HomeView: View {
             .scrollTargetLayout()
         }
         .scrollPosition(id: $scrollSpot)
+        .lgTopBar {
+            // Pinned: the tabs never scroll away.
+            LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+                .frame(maxWidth: 520)
+                .padding(.top, 12).padding(.bottom, 4)
+                .frame(maxWidth: .infinity)
+        }
         .safeAreaInset(edge: .bottom) {
             HStack(spacing: 16) {
                 Button("Add past hours") { sheet = .addHours }.buttonStyle(.lg(.secondary))
@@ -658,7 +663,6 @@ struct HomeView: View {
                 LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
                     historyDay = Calendar.current.startOfDay(for: Date())
                 }
-                LGIconButton(systemName: "plus", label: "Add a craft") { sheet = .oneCraft }
                 LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
             }
             .padding(.trailing, -10)

@@ -53,7 +53,7 @@ All sessions belong to the active craft; the timer and add-hours flows never ask
 
 ## Screens
 
-Phone screens: Welcome (and Welcome back when iCloud already holds a game), three intro pages and five setup steps (the last is Keep your game safe); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
+Phone screens: a launch screen with a short opening sunrise; Welcome (and Welcome back when iCloud already holds a game), three intro pages and five setup steps (the last is Keep your game safe); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
 
 ### 0 · Welcome (`design/Welcome.dc.html`)
 
@@ -121,7 +121,7 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 
 No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between three tabs: **Today** (4c), **This week** (4a) and **The long game** (4b). Each tab shows one sun, one big number and one quiet line, so no screen carries too many numbers. Home opens on **Today** every time the app starts; only right after onboarding does it open on **The long game**, once, so the first thing you see is the whole game. Choosing another tab is not remembered for next time.
 
-- Header: craft name; History (calendar icon), + and Settings (gear) buttons. On a phone the header stays on top as a bar while the page scrolls under it. Then the segmented control.
+- Header: craft name; History (calendar icon) and Settings (gear) buttons. There is no + button. On a phone the header stays on top as a bar while the page scrolls under it. Then the segmented control.
 
 **The sun as a gauge (This week and The long game)**
 
@@ -211,7 +211,7 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 ### 8 · One craft at a time — sheet (`design/OneCraft.dc.html`)
 
-- Opened from + on Home. Explains the one-craft rule with the smiling sun.
+- Opened from **Switch to a new game** in Settings (the practice group, under Archived crafts). There is no + on Home. Explains the one-craft rule with the smiling sun.
 - **Keep playing** closes the sheet.
 - **Switch to a new game** asks for confirmation ("Your N hours of Piano will be archived. This can't be undone."), archives the current craft and shows Welcome again, then the three setup steps. Archived crafts are listed read-only in Settings.
 
@@ -432,6 +432,45 @@ Every place where the user picks a number of hours uses a stepper, never a slide
 - **Dynamic Type:** the value and labels grow; at accessibility sizes the row wraps so the label sits above the − value + group.
 - **Liquid Glass (iOS 26+):** the round buttons use `.glass` (section on Liquid Glass); older iOS keeps the flat fills above.
 
+### 21 · Launch screen and the opening sunrise (`design/Launch.dc.html`)
+
+Every game begins at dawn. The app opens on a still night sea with the sun asleep on the horizon. The sun then rises into the day and lands in its place on Home.
+
+**1 · The launch screen (still, shown by iOS)**
+- iOS shows this the instant the icon is tapped, before the app has loaded, so it can't move.
+- Contents:
+  - navy sky #16244A with nine faint white stars (1.5–2 pt, 25–50% opacity) in the top half;
+  - the night sea: fill #22306A, a pale wave #2E3C7A and a wave line #3E4C8A. The waterline sits at 56% of the screen height;
+  - the sleeping sun (closed eyes, cheeks, no rays). Its body is about 96 pt wide, centred horizontally, with its lower part under the water.
+- No text, logo or wordmark. Launch screens aren't localised, and Apple asks that they don't look like an ad.
+- Built as `LaunchScreen.storyboard`, because a storyboard can pin the sea to the bottom and the sun to the waterline on every screen size. The sun, sea and stars are vector PDF assets with "Preserve Vector Data" on. The colours come from the asset catalogue.
+- The water rule applies as everywhere: the sea is opaque and drawn in front of the sun, with nothing gold on or in the water.
+
+**2 · The sunrise (in the app, 0–0.6 s)**
+- The app's first frame draws exactly the same night scene in SwiftUI, so the hand-over from the still image is invisible.
+- Then, together:
+  - the sky warms from navy through dusk (#2A2F6B → #6E3D74 → #F2A07A) to morning (#FFE3B0 → #FFF1DA → #FAF8F4);
+  - the stars fade out;
+  - the sun rises, and its rays unfold (scale 0 → 1) with a soft gold glow behind it;
+  - the water turns from night blue to day blue (#D3DEF4, wave line #16244A).
+
+**3 · Good morning (0.6–0.8 s)**
+- The sun opens its eyes and smiles, then glides into its spot on Today's arc (`matchedGeometryEffect`) as Home fades in under it.
+- The whole opening is never longer than about 1 second.
+
+**When it plays**
+- Only on a cold start, when the app process launches. Coming back from the background goes straight to the app as it was.
+- A tap anywhere skips to the end at once.
+- It never plays when the app is opened from a widget, the Live Activity, a notification or a link. Those go straight to where they point.
+- If a session is running, it uses the short version (below), so the user gets back to their session quickly.
+- Before onboarding (first launch), it ends on Welcome instead of Home.
+- With **Reduce Motion** on, or **VoiceOver** running: the short version, a 0.3 s cross-fade from the night frame to Home.
+- In **dark mode** the launch screen is the same night frame. The sunrise stops at dusk and cross-fades into Home in dark.
+- No sound and no haptic.
+- The opening layer is hidden from VoiceOver. Focus lands on Home's first element once it's gone.
+- **iPad and Mac:** the same scene, with the sea always spanning the full width. The Mac has no system launch screen, so its first window opens on the night frame and plays the sunrise.
+- Debug option: "Play opening sunrise" replays it without restarting the app.
+
 ## Timer (`design/Timer.dc.html`)
 
 The timer is timestamp-based, survives the app being closed, and turns each session into a small sunrise where the sun grows a ray every 5 minutes.
@@ -532,7 +571,7 @@ No account and no sign-in: the app uses the iCloud account already on the device
 - Restore: on a new or reset device with the same Apple Account, Welcome back offers to continue the game (section 0).
 - CloudKit private database mirrors all entities. Conflicts: last edit wins per session; sessions are never merged.
 - A running timer syncs its timestamps (startedAt, pausedAt, accumulated pause, device) through iCloud as one small `ActiveSession` record, so a session started on one device shows on the others (iPhone, Mac) and any of them can pause or finish it. Only one active session at a time; if two devices start at once, the earlier start wins and the other device shows it. The Watch keeps using WatchConnectivity with the iPhone.
-- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
+- Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. Its practice group has Your estimates, Archived crafts and **Switch to a new game** (opens the One craft sheet, screen 8). It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
 **Notifications** (all off by default; asked after the first saved session)
 
@@ -602,7 +641,7 @@ iPhone Duo (iOS 27) has a 5.4-inch outer display (portrait, shorter than other i
 The same universal app on iPad (iPadOS 17 or later): no separate download, the same iCloud game, and one running session shared with iPhone, Mac and Watch. The layout is chosen by window size (as for iPhone Duo), never by device.
 
 - **Wide windows** (landscape full screen, or a Stage Manager window at least 1000 pt wide): the sidebar layout shared with the Mac app. Sidebar (260 pt, #EFEBE4): craft name and "3,294 of 10,000 h", **Play** (Today, This week, The long game), **History** (Calendar, Growth, Your 2026), **Settings** at the bottom; 40 pt rows, 15 pt text. Content: a 28 pt title with capsule buttons **Add past hours** (#EFEBE4) and **Start session** (navy) on the right; the sun gauge with its scale and the big total on the left; on the right a 340 pt column of cards: chosen pace · finish line · By Nov 2027 · Rhythm; Today with today's sessions; Meet your future self.
-- **Tall full-screen windows** (portrait): Home's three tabs as a floating capsule at the top (Today · This week · The long game); "Piano" (34 pt) with round History and + buttons; a larger sun gauge (sun 220 pt); the big total (72 pt); two cards side by side (numbers, and Today with today's sessions); the Meet your future self row; **Add past hours** and **Start session** side by side at the bottom, 56 pt capsules. History, Growth and Your year open full screen as on iPhone, with wider content (max 760 pt).
+- **Tall full-screen windows** (portrait): Home's three tabs as a floating capsule at the top (Today · This week · The long game); "Piano" (34 pt) with round History and Settings buttons; a larger sun gauge (sun 220 pt); the big total (72 pt); two cards side by side (numbers, and Today with today's sessions); the Meet your future self row; **Add past hours** and **Start session** side by side at the bottom, 56 pt capsules. History, Growth and Your year open full screen as on iPhone, with wider content (max 760 pt).
 - **Narrow windows** (Slide Over, a third or half of Split View, under about 600 pt wide): exactly the iPhone layout.
 - **Timer** in wide windows: the focus sun (about 340 pt, with glow) on the left; on the right the craft, the gold total (56 pt), "of 10,000 hours · 33%", then "This session", a 104 pt clock and "Next ray in", and Pause / Finish as 180 pt capsules. Readable from a music stand or across a studio. Tall windows use the iPhone Timer, scaled up.
 - **Keyboard** (when one is attached): ⌘N start or finish a session, Space pause or resume, ⌘L Add past hours, ⌘1–⌘5 views, ⌘, Settings; all listed when holding ⌘.
