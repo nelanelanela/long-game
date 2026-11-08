@@ -288,7 +288,7 @@ struct LandView: View {
         ForEach([SceneTone.night, .dawn, .day], id: \.self) { tone in
             ZStack(alignment: .bottom) {
                 SkyView(tone: tone, horizon: 1)
-                SunView(face: .sleepy, idle: false)
+                SunView(idle: false, face: .sleepy)
                     .frame(width: 120, height: 120)
                     .offset(y: 60 - 120 * 0.38)
                 LandView(tone: tone, still: true).frame(height: 120)

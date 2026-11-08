@@ -98,11 +98,16 @@ struct OpeningSunriseView: View {
             let f = OpeningTimeline.frame(at: t, style: plan.style, hasTarget: target != nil)
             let w = geo.size.width, h = geo.size.height
             let origin = geo.frame(in: .global).origin
-            let waterY = h * 0.56
-            let sunSize: CGFloat = 170
-            let nightCentre = CGPoint(x: w / 2, y: waterY - 23)
-            let morningCentre = CGPoint(x: w / 2, y: h * 0.373)
-            // The sun's height follows the sky: night spot → morning spot.
+            // The same proportions as the launch screen storyboard: the horizon at 60% of the height, the land box
+            // 120 high in a 390-wide design (scaled with the width) with its shoreline 46 down from its top.
+            let waterY = h * 0.6
+            let k = w / 390
+            let landTop = waterY - 46 * k
+            let landHeight = 120 * k
+            let sunSize: CGFloat = 150
+            let nightCentre = CGPoint(x: w / 2, y: waterY)
+            let morningCentre = CGPoint(x: w / 2, y: waterY - h * (120.0 / 844))
+            // The sun rises with the sky: night spot → dawn spot.
             let rise = CGFloat(f.sky)
             let base = CGPoint(x: nightCentre.x + (morningCentre.x - nightCentre.x) * rise,
                                y: nightCentre.y + (morningCentre.y - nightCentre.y) * rise)
@@ -111,35 +116,40 @@ struct OpeningSunriseView: View {
             let goalSize = target?.width ?? sunSize
             let centre = CGPoint(x: base.x + (goal.x - base.x) * glide, y: base.y + (goal.y - base.y) * glide)
             let size = sunSize + (goalSize - sunSize) * glide
-            // The waves line up with the launch screen's 1440 pt strip, which is centred on the screen.
-            let phase = (w / 2).truncatingRemainder(dividingBy: 2 * WavePath.defaultArch)
+            let night = 1 - f.sky
 
             ZStack(alignment: .topLeading) {
-                Group {
-                    sky(f.sky).frame(width: w, height: h)
-                    stars(w: w, h: h).opacity(f.stars)
-                    if f.glow > 0 {
-                        Circle()
-                            .fill(RadialGradient(colors: [LGColor.sunBody.opacity(0.35 * f.glow), LGColor.sunBody.opacity(0)],
-                                                 center: .center, startRadius: 0, endRadius: sunSize * 1.7 * 0.44))
-                            .frame(width: sunSize * 1.7, height: sunSize * 1.7)
-                            .position(centre)
-                    }
+                // Sky: dawn underneath (always opaque), the night sky on top fading out. No animated parts.
+                ZStack {
+                    SkyView(tone: .dawn, horizon: 1).frame(width: w, height: waterY)
+                    SkyView(tone: .night, horizon: 1).frame(width: w, height: waterY).opacity(night)
                 }
-                .opacity(f.scenery)
+                .frame(width: w, height: waterY)
+                .frame(width: w, height: h, alignment: .top)
 
-                sun(face: f.awake ? .happy : .asleep, rays: f.rays, size: size)
+                SunView(idle: false, face: f.awake ? .happy : .asleep, raysOpacity: f.rays, raysScale: f.rays,
+                        unlitOpacity: 0, eyesOpen: f.eyesOpen ? 1 : 0)
                     .frame(width: size, height: size)
                     .position(centre)
-                    // Until the sun wakes, only the part above the water shows; the sea is drawn in front.
-                    .mask {
-                        if glide > 0 { Color.black } else { AboveWater(waterY: waterY, phase: phase).fill(Color.black) }
-                    }
                     .opacity(f.sun)
 
-                sea(f.sky, waterY: waterY, phase: phase, w: w, h: h).opacity(f.scenery)
+                // The sea is always in front of the sun and always opaque: the day land lies underneath and the
+                // night land fades on top of it, never the other way round.
+                ZStack(alignment: .topLeading) {
+                    LGColor.background.frame(width: w, height: max(0, h - (landTop + landHeight - 1)))
+                        .offset(y: landTop + landHeight - 1)
+                    LandView(tone: .day, still: true).frame(width: w, height: landHeight).offset(y: landTop)
+                    ZStack(alignment: .topLeading) {
+                        LGColor.night.frame(width: w, height: max(0, h - (landTop + landHeight - 1)))
+                            .offset(y: landTop + landHeight - 1)
+                        LandView(tone: .night, still: true).frame(width: w, height: landHeight).offset(y: landTop)
+                    }
+                    .opacity(night)
+                }
+                .frame(width: w, height: h, alignment: .topLeading)
             }
             .frame(width: w, height: h, alignment: .topLeading)
+            .opacity(f.scenery)
             .clipped()
         }
         .ignoresSafeArea()
@@ -148,55 +158,8 @@ struct OpeningSunriseView: View {
         // The whole opening is decoration: VoiceOver skips it.
         .accessibilityHidden(true)
     }
-
-    private func sun(face: SunFace, rays: Double, size: CGFloat) -> some View {
-        SunView(face: face, litRays: 12, raysOpacity: rays, raysScale: rays, unlitOpacity: 0)
-    }
-
-    private func color(_ trio: (UInt32, UInt32, UInt32), _ sky: Double) -> Color {
-        Color(hex: openingMix(trio.0, trio.1, trio.2, sky: sky))
-    }
-
-    private func sky(_ s: Double) -> some View {
-        LinearGradient(stops: [
-            .init(color: color(LGColor.openingSkyTop, s), location: 0),
-            .init(color: color(LGColor.openingSkyMiddle, s), location: 0.55),
-            .init(color: color(LGColor.openingSkyBottom, s), location: 1),
-        ], startPoint: .top, endPoint: .bottom)
-    }
-
-    private func sea(_ s: Double, waterY: CGFloat, phase: CGFloat, w: CGFloat, h: CGFloat) -> some View {
-        ZStack {
-            SeaFill(waterY: waterY, phase: phase).fill(color(LGColor.openingSeaFill, s))
-            WaveLine(y: waterY + 20, phase: phase)
-                .stroke(color(LGColor.openingSeaWave, s), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            WaveLine(y: waterY, phase: phase)
-                .stroke(color(LGColor.openingSeaLine, s), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-        }
-        .frame(width: w, height: h)
-    }
-
-    /// The nine stars of the launch screen, in the top half. Positions are fractions of the 390 × 422 design sky.
-    private static let starData: [(CGFloat, CGFloat, CGFloat, Double)] = [
-        (48, 120, 2, 0.5), (92, 210, 1.5, 0.35), (150, 90, 2, 0.45), (232, 160, 1.5, 0.3), (300, 110, 2, 0.5),
-        (340, 240, 1.5, 0.35), (70, 320, 1.5, 0.3), (270, 300, 2, 0.4), (190, 250, 1.5, 0.25),
-    ]
-
-    private func stars(w: CGFloat, h: CGFloat) -> some View {
-        // The storyboard scales the star picture to fill the top half (scaleAspectFill, centred).
-        let boxW = w, boxH = h * 0.5
-        let scale = max(boxW / 390, boxH / 422)
-        let dx = (boxW - 390 * scale) / 2, dy = (boxH - 422 * scale) / 2
-        return Canvas { ctx, _ in
-            for (l, t, s, o) in Self.starData {
-                let r = CGRect(x: dx + l * scale, y: dy + t * scale, width: s * scale, height: s * scale)
-                ctx.fill(Path(ellipseIn: r), with: .color(.white.opacity(o)))
-            }
-        }
-        .frame(width: w, height: h, alignment: .topLeading)
-    }
 }
 
 #Preview("Night frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0) }
-#Preview("Dusk frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.2) }
-#Preview("Morning frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.6) }
+#Preview("Dusk frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.25) }
+#Preview("Morning frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.55) }

@@ -55,7 +55,7 @@ struct OpeningSunriseTests {
     // MARK: Timings
 
     @Test func theLengthsMatchTheSpec() {
-        #expect(OpeningStyle.full.duration == 0.8)
+        #expect(OpeningStyle.full.duration == 1.0)
         #expect(OpeningStyle.short.duration == 0.3)
         #expect(OpeningStyle.skip.duration == 0)
     }
@@ -66,28 +66,34 @@ struct OpeningSunriseTests {
         #expect(!f.awake && f.glide == 0 && f.scenery == 1 && f.sun == 1)
     }
 
-    @Test func atSixTenthsItIsMorningAndTheSunWakes() {
-        let f = OpeningTimeline.frame(at: 0.6, style: .full)
-        #expect(f.sky == 1 && f.stars == 0 && f.rays == 1 && f.awake && f.glide == 0)
+    @Test func atHalfASecondItIsDawnAndTheSunWakesWithWideEyes() {
+        let f = OpeningTimeline.frame(at: 0.5, style: .full)
+        #expect(f.sky == 1 && f.stars == 0 && f.rays == 1 && f.awake && f.eyesOpen && f.glide == 0)
+    }
+
+    @Test func theEyesCloseToASmileBeforeTheGlide() {
+        let f = OpeningTimeline.frame(at: 0.7, style: .full)
+        #expect(f.awake && !f.eyesOpen && f.glide > 0 && f.glide < 1)
+        #expect(!OpeningTimeline.frame(at: 0.49, style: .full).awake)
     }
 
     @Test func atTheEndTheSunIsOnHomeAndTheSceneryIsGone() {
-        let f = OpeningTimeline.frame(at: 0.8, style: .full)
+        let f = OpeningTimeline.frame(at: 1.0, style: .full)
         #expect(f.glide == 1 && f.scenery == 0 && f.sun == 1)
     }
 
     @Test func withoutASunOnHomeTheSunFadesWithTheScenery() {
-        let f = OpeningTimeline.frame(at: 0.8, style: .full, hasTarget: false)
+        let f = OpeningTimeline.frame(at: 1.0, style: .full, hasTarget: false)
         #expect(f.glide == 0 && f.sun == 0)
     }
 
     @Test func darkModeNeverGoesPastDuskAndKeepsTheSunAsleep() {
-        for t in stride(from: 0.0, through: 0.8, by: 0.05) {
+        for t in stride(from: 0.0, through: 1.0, by: 0.05) {
             let f = OpeningTimeline.frame(at: t, style: .dusk)
             #expect(f.sky <= 0.5 && !f.awake && f.rays == 0)
         }
-        #expect(OpeningTimeline.frame(at: 0.6, style: .dusk).sky == 0.5)
-        #expect(OpeningTimeline.frame(at: 0.8, style: .dusk).scenery == 0)
+        #expect(OpeningTimeline.frame(at: 0.5, style: .dusk).sky == 0.5)
+        #expect(OpeningTimeline.frame(at: 1.0, style: .dusk).scenery == 0)
     }
 
     @Test func theShortFadeKeepsTheNightFrameAndFadesIt() {

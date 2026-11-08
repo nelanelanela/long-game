@@ -17,23 +17,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LGWaterline">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="477"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="511"/>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchStars" translatesAutoresizingMaskIntoConstraints="NO" id="LGStars" userLabel="Stars">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="426"/>
+                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LGShoreOffset">
+                                <rect key="frame" x="0.0" y="466" width="393" height="45"/>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchNightSky" translatesAutoresizingMaskIntoConstraints="NO" id="LGSky" userLabel="Night sky">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="511"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <bool key="isElement" value="NO"/>
                                 </accessibility>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchSun" translatesAutoresizingMaskIntoConstraints="NO" id="LGSun" userLabel="Sleeping sun">
-                                <rect key="frame" x="111.5" y="369" width="170" height="170"/>
+                                <rect key="frame" x="121.5" y="436" width="150" height="150"/>
                             </imageView>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LGSeaFill" userLabel="Sea fill">
-                                <rect key="frame" x="0.0" y="516" width="393" height="336"/>
+                                <rect key="frame" x="0.0" y="588" width="393" height="264"/>
                                 <color key="backgroundColor" name="LaunchSea"/>
                             </view>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchSea" translatesAutoresizingMaskIntoConstraints="NO" id="LGSeaWave" userLabel="Sea waves">
-                                <rect key="frame" x="-523.5" y="467" width="1440" height="50"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchNightLand" translatesAutoresizingMaskIntoConstraints="NO" id="LGLand" userLabel="Night land and sea">
+                                <rect key="frame" x="0.0" y="466" width="393" height="121"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" name="LaunchSky"/>
@@ -41,23 +44,26 @@
                             <constraint firstItem="LGWaterline" firstAttribute="top" secondItem="LGRoot" secondAttribute="top" id="c1"/>
                             <constraint firstItem="LGWaterline" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c2"/>
                             <constraint firstItem="LGWaterline" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c3"/>
-                            <constraint firstItem="LGWaterline" firstAttribute="height" secondItem="LGRoot" secondAttribute="height" multiplier="0.56" id="c4"/>
-                            <constraint firstItem="LGStars" firstAttribute="top" secondItem="LGRoot" secondAttribute="top" id="c5"/>
-                            <constraint firstItem="LGStars" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c6"/>
-                            <constraint firstItem="LGStars" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c7"/>
-                            <constraint firstItem="LGStars" firstAttribute="height" secondItem="LGRoot" secondAttribute="height" multiplier="0.5" id="c8"/>
+                            <constraint firstItem="LGWaterline" firstAttribute="height" secondItem="LGRoot" secondAttribute="height" multiplier="0.6" id="c4"/>
+                            <constraint firstItem="LGSky" firstAttribute="top" secondItem="LGRoot" secondAttribute="top" id="c5"/>
+                            <constraint firstItem="LGSky" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c6"/>
+                            <constraint firstItem="LGSky" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c7"/>
+                            <constraint firstItem="LGSky" firstAttribute="bottom" secondItem="LGWaterline" secondAttribute="bottom" id="c8"/>
                             <constraint firstItem="LGSun" firstAttribute="centerX" secondItem="LGRoot" secondAttribute="centerX" id="c9"/>
-                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" constant="-23" id="c10"/>
-                            <constraint firstAttribute="width" constant="170" id="c11" firstItem="LGSun"/>
-                            <constraint firstAttribute="height" constant="170" id="c12" firstItem="LGSun"/>
-                            <constraint firstItem="LGSeaWave" firstAttribute="centerX" secondItem="LGRoot" secondAttribute="centerX" id="c13"/>
-                            <constraint firstItem="LGSeaWave" firstAttribute="top" secondItem="LGWaterline" secondAttribute="bottom" constant="-10" id="c14"/>
-                            <constraint firstAttribute="width" constant="1440" id="c15" firstItem="LGSeaWave"/>
-                            <constraint firstAttribute="height" constant="50" id="c16" firstItem="LGSeaWave"/>
-                            <constraint firstItem="LGSeaFill" firstAttribute="top" secondItem="LGSeaWave" secondAttribute="bottom" constant="-1" id="c17"/>
-                            <constraint firstItem="LGSeaFill" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c18"/>
-                            <constraint firstItem="LGSeaFill" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c19"/>
-                            <constraint firstItem="LGSeaFill" firstAttribute="bottom" secondItem="LGRoot" secondAttribute="bottom" id="c20"/>
+                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" id="c10"/>
+                            <constraint firstAttribute="width" constant="150" id="c11" firstItem="LGSun"/>
+                            <constraint firstAttribute="height" constant="150" id="c12" firstItem="LGSun"/>
+                            <constraint firstItem="LGLand" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c13"/>
+                            <constraint firstItem="LGLand" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c14"/>
+                            <constraint firstItem="LGLand" firstAttribute="height" secondItem="LGLand" secondAttribute="width" multiplier="0.3077" id="c15"/>
+                            <constraint firstItem="LGShoreOffset" firstAttribute="bottom" secondItem="LGWaterline" secondAttribute="bottom" id="c16"/>
+                            <constraint firstItem="LGShoreOffset" firstAttribute="height" secondItem="LGLand" secondAttribute="height" multiplier="0.3833" id="c17"/>
+                            <constraint firstItem="LGShoreOffset" firstAttribute="width" secondItem="LGRoot" secondAttribute="width" id="c18"/>
+                            <constraint firstItem="LGLand" firstAttribute="top" secondItem="LGShoreOffset" secondAttribute="top" id="c19"/>
+                            <constraint firstItem="LGSeaFill" firstAttribute="top" secondItem="LGLand" secondAttribute="bottom" constant="-1" id="c20"/>
+                            <constraint firstItem="LGSeaFill" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c21"/>
+                            <constraint firstItem="LGSeaFill" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c22"/>
+                            <constraint firstItem="LGSeaFill" firstAttribute="bottom" secondItem="LGRoot" secondAttribute="bottom" id="c23"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -66,14 +72,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchStars" width="390" height="422"/>
+        <image name="LaunchNightSky" width="390" height="506"/>
         <image name="LaunchSun" width="200" height="200"/>
-        <image name="LaunchSea" width="1440" height="50"/>
+        <image name="LaunchNightLand" width="390" height="120"/>
         <namedColor name="LaunchSea">
-            <color red="0.13333333333333333" green="0.18823529411764706" blue="0.41568627450980394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.043137254901960784" green="0.062745098039215685" blue="0.16078431372549021" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="LaunchSky">
-            <color red="0.086274509803921567" green="0.14117647058823529" blue="0.29019607843137257" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.043137254901960784" green="0.062745098039215685" blue="0.16078431372549021" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

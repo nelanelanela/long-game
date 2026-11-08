@@ -12,7 +12,7 @@ enum OpeningSource: Equatable, Sendable {
 enum OpeningStyle: Equatable, Sendable {
     /// Nothing at all: straight to the app.
     case skip
-    /// The whole sunrise, about 0.8 s.
+    /// The whole sunrise, about 1 s.
     case full
     /// A 0.3 s cross-fade from the night frame to the app.
     case short
@@ -59,6 +59,8 @@ struct OpeningFrame: Equatable, Sendable {
     var glow: Double
     /// The sun has opened its eyes and smiles.
     var awake: Bool
+    /// The sun's eyes are wide open for a moment as it wakes (0.5-0.65 s).
+    var eyesOpen: Bool
     /// 0 = sun in its morning place, 1 = on Today's arc on Home.
     var glide: Double
     /// How opaque the sky and sea are (they fade out as Home fades in).
@@ -68,8 +70,11 @@ struct OpeningFrame: Equatable, Sendable {
 }
 
 enum OpeningTimeline {
-    static let sunrise = 0.6
-    static let total = 0.8
+    /// 0-0.5 s: the sky warms to dawn, the stars fade and the sun rises. 0.5-0.65 s: it opens its eyes.
+    /// 0.65-1 s: it glides and shrinks into its place on Home while Home fades in.
+    static let sunrise = 0.5
+    static let glideStart = 0.65
+    static let total = 1.0
     static let shortTotal = 0.3
 
     static func clamp(_ x: Double) -> Double { min(1, max(0, x)) }
@@ -77,10 +82,10 @@ enum OpeningTimeline {
 
     /// The frame at `t` seconds. `hasTarget` is false when there is no sun on screen to glide to (Welcome).
     static func frame(at t: Double, style: OpeningStyle, hasTarget: Bool = true) -> OpeningFrame {
-        let night = OpeningFrame(sky: 0, stars: 1, rays: 0, glow: 0, awake: false, glide: 0, scenery: 1, sun: 1)
+        let night = OpeningFrame(sky: 0, stars: 1, rays: 0, glow: 0, awake: false, eyesOpen: false, glide: 0, scenery: 1, sun: 1)
         switch style {
         case .skip:
-            return OpeningFrame(sky: 0, stars: 0, rays: 0, glow: 0, awake: false, glide: 1, scenery: 0, sun: 0)
+            return OpeningFrame(sky: 0, stars: 0, rays: 0, glow: 0, awake: false, eyesOpen: false, glide: 1, scenery: 0, sun: 0)
         case .short:
             var f = night
             f.scenery = 1 - ease(t / shortTotal)
@@ -88,7 +93,7 @@ enum OpeningTimeline {
             return f
         case .full, .dusk:
             let p = ease(t / sunrise)
-            let g = ease((t - sunrise) / (total - sunrise))
+            let g = ease((t - glideStart) / (total - glideStart))
             var f = night
             let reach = style == .dusk ? 0.5 : 1.0
             f.sky = p * reach
@@ -96,6 +101,7 @@ enum OpeningTimeline {
             f.rays = style == .dusk ? 0 : p
             f.glow = style == .dusk ? 0 : p
             f.awake = style == .full && t >= sunrise
+            f.eyesOpen = f.awake && t < glideStart
             f.scenery = 1 - g
             f.glide = style == .full && hasTarget ? g : 0
             f.sun = style == .full && hasTarget ? 1 : 1 - g
