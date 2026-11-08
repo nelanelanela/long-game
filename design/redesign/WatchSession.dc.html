@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Watch session, sunrise</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 182px; height: 222px; position: relative; overflow: hidden; background: #000000; font-family: Inter, -apple-system, system-ui, sans-serif; color: {{ink}}">
+<div style="position: absolute; inset: 0; filter: {{dim}}">
+<div style="position: absolute; inset: 0; background: #0B1029"></div>
+<div style="position: absolute; left: 0; top: 0; width: 182px; height: 120px; background: linear-gradient(180deg,#A9C1EA 0%,#D7E2F3 48%,#FFE7C2 100%); opacity: {{dayOp}}"></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{dawnOp}}"><dc-import name="Sky" w="182" h="222" tone="dawn" horizon="0.5" moon="false" hint-size="182px,222px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{nightOp}}"><dc-import name="Sky" w="182" h="222" tone="night" horizon="0.5" moon="true" hint-size="182px,222px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 120px; overflow: hidden"><div style="position: absolute; left: 50%; top: {{glowTop}}; width: 240px; height: 240px; margin-left: -120px; border-radius: 50%; background: radial-gradient(circle, rgba(255,214,140,0.55) 0%, rgba(255,200,120,0.18) 34%, rgba(255,200,120,0) 64%); opacity: {{glowOp}}"></div></div>
+<div style="position: absolute; left: 56px; top: {{sunTop}}"><dc-import name="Sun" size="70" face="{{face}}" lit="{{lit}}" halo="{{halo}}" hint-size="70px,70px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 180px; bottom: 0; background: #0B1029"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 180px; bottom: 0; background: #FAF7F1; opacity: {{landDayOp}}"></div>
+<div style="position: absolute; left: 0; top: 66px"><dc-import name="Land" w="182" h="120" tone="night" hint-size="182px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 66px; opacity: {{landDayOp}}"><dc-import name="Land" w="182" h="120" tone="day" hint-size="182px,120px"></dc-import></div>
+</div>
+<span style="position: absolute; left: 14px; top: 10px; font-size: 12px; font-weight: 600; opacity: 0.85; color: {{topInk}}">Piano</span>
+<span style="position: absolute; right: 14px; top: 10px; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{topInk}}">{{wall}}</span>
+<span style="position: absolute; left: 14px; top: 118px; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: {{gold}}; font-variant-numeric: tabular-nums">{{today}}</span>
+<span style="position: absolute; right: 14px; top: 124px; font-size: 18px; font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums">{{clock}}</span>
+<span style="position: absolute; left: 14px; top: 148px; font-size: 11px; color: {{muted}}">{{sub}}</span>
+<span aria-hidden="true" style="position: absolute; left: 14px; right: 14px; top: 166px; height: 4px; border-radius: 2px; background: {{track}}"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{beforeW}}; border-radius: 2px; background: {{beforeBg}}"></span><span style="position: absolute; left: {{beforeW}}; top: 0; bottom: 0; width: {{nowW}}; border-radius: 2px; background: linear-gradient(90deg,#FFD66B,#F0922A); box-shadow: 0 0 6px rgba(255,190,90,0.6)"></span></span>
+<div style="position: absolute; left: 14px; right: 14px; bottom: 12px; height: 32px; display: flex; gap: 8px; opacity: {{btnOp}}">
+<span style="flex: 1; border-radius: 16px; background: {{pauseBg}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Pause</span>
+<span style="flex: 1; border-radius: 16px; background: {{finBg}}; color: {{finInk}}; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">Finish</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"progress":{"editor":"range","default":-1,"min":-1,"max":1,"step":0.01},"start":{"editor":"range","default":0.37,"min":0,"max":0.95,"step":0.01},"aod":{"editor":"boolean","default":false},"$preview":{"width":182,"height":222}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    const fixed = parseFloat(this.props.progress);
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if ((!isNaN(fixed) && fixed >= 0) || reduce) return;
+    this.t0 = Date.now();
+    this.iv = setInterval(() => this.setState({ t: ((Date.now() - this.t0) / 1000) % 14 }), 60);
+  }
+  componentWillUnmount() { if (this.iv) clearInterval(this.iv); }
+  renderVals() {
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+    const mix = (a, b, k) => {
+      const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
+      const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
+      return 'rgb(' + pa.map((v, i) => Math.round(v + (pb[i] - v) * k)).join(',') + ')';
+    };
+    const stretch = 105;
+    const aod = this.props.aod === true || this.props.aod === 'true';
+    const p0raw = parseFloat(this.props.start);
+    const p0 = isNaN(p0raw) ? 0.37 : clamp(p0raw);
+    const fixed = parseFloat(this.props.progress);
+    const t = (this.state && this.state.t) || 0;
+    let p, sinceDone = 9;
+    if (!isNaN(fixed) && fixed >= 0) { p = clamp(fixed); sinceDone = p >= 1 ? 3 : 0; }
+    else { const run = 9.5; p = t < 0.8 ? p0 : Math.min(1, p0 + (1 - p0) * ((t - 0.8) / run)); sinceDone = t - 0.8 - run; }
+    const done = p >= 1;
+    const elapsedMin = Math.max(0, p - p0) * stretch;
+    const todayMin = p * stretch;
+    const fmtDur = (m) => { const h = Math.floor(m / 60), mm = Math.floor(m % 60); return h ? h + ' h ' + String(mm).padStart(2, '0') : mm + ' m'; };
+    const secs = Math.floor(elapsedMin * 60);
+    const clock = aod ? Math.floor(secs / 60) + ' m' : String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
+    const wallMin = 9 * 60 + 12 + Math.floor(elapsedMin);
+    const L = aod ? 0 : clamp((p - 0.55) / 0.3);
+    const landDay = aod ? 0 : clamp((p - 0.45) / 0.4);
+    const sunCY = 140 - 92 * p;
+    const light = L > 0.5;
+    return {
+      a11y: done ? 'Today’s stretch covered. The sun has fully risen.' : 'Session ' + clock + '. ' + fmtDur(todayMin) + ' of 1 hour 45 today.',
+      dim: aod ? 'brightness(0.45) saturate(0.7)' : 'none',
+      nightOp: aod ? 1 : clamp(1 - p / 0.5).toFixed(3),
+      dawnOp: aod ? 0 : (p < 0.5 ? clamp(p / 0.5) : clamp(1 - (p - 0.5) / 0.45)).toFixed(3),
+      dayOp: aod ? 0 : clamp((p - 0.5) / 0.45).toFixed(3),
+      glowOp: aod ? 0.2 : (0.35 + 0.65 * p).toFixed(3),
+      glowTop: (sunCY - 120).toFixed(0) + 'px',
+      sunTop: (sunCY - 35).toFixed(1) + 'px',
+      face: aod ? 'sleepy' : (done ? (sinceDone < 1.3 ? 'celebrate' : 'happy') : 'focus'),
+      lit: done ? 12 : Math.floor(elapsedMin / 5) % 12,
+      halo: aod ? 'false' : 'true',
+      landDayOp: landDay.toFixed(3),
+      ink: aod ? 'rgba(255,255,255,0.7)' : mix('#FFFFFF', '#16244A', L),
+      topInk: aod ? 'rgba(255,255,255,0.6)' : mix('#FFFFFF', '#16244A', clamp((p - 0.7) / 0.2)),
+      muted: aod ? 'rgba(255,255,255,0.5)' : (light ? '#5E6782' : 'rgba(255,255,255,0.72)'),
+      gold: aod ? 'rgba(255,214,107,0.75)' : mix('#FFD66B', '#B4561A', L),
+      wall: Math.floor(wallMin / 60) + ':' + String(wallMin % 60).padStart(2, '0'),
+      today: fmtDur(todayMin),
+      clock: clock,
+      sub: done ? 'Today’s stretch covered.' : 'of today’s 1 h 45',
+      track: light ? '#E4DFD6' : 'rgba(255,255,255,0.18)',
+      beforeW: (p0 * 100).toFixed(1) + '%',
+      beforeBg: light ? '#E8C98A' : 'rgba(255,214,107,0.5)',
+      nowW: (Math.max(0, p - p0) * 100).toFixed(1) + '%',
+      btnOp: aod ? 0 : 1,
+      pauseBg: light ? 'rgba(22,36,74,0.08)' : 'rgba(255,255,255,0.18)',
+      finBg: light ? '#16244A' : '#FFFFFF',
+      finInk: light ? '#FFFFFF' : '#16244A'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 import UIKit
 
 /// Every screen stays upright except the running session (the timer), which may rotate.
@@ -22,7 +23,17 @@ enum OrientationLock {
     }
 }
 
-final class LongGameAppDelegate: NSObject, UIApplicationDelegate {
+final class LongGameAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Tapping a notification opens the app where it points, so the opening sunrise stays out of the way.
+        UNUserNotificationCenter.current().delegate = self
+        return true
+    }
+
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        await MainActor.run { NotificationCenter.default.post(name: .openingShouldSkip, object: nil) }
+    }
+
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         MainActor.assumeIsolated { OrientationLock.isPad ? .all : OrientationLock.allowed }
     }

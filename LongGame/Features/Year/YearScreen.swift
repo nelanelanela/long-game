@@ -279,7 +279,7 @@ struct YearEntryRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            SunView(face: .happy).frame(width: 40, height: 40).accessibilityHidden(true)
+            SunView(idle: false, face: .happy).frame(width: 40, height: 40).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Your \(String(year))").lgText(.rowStrong)
                 Text("A card of your year, to keep or share").lgText(.caption, color: LGColor.inkMuted)

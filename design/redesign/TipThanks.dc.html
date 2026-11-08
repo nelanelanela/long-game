@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thank you</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #6E6A66; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div style="position: absolute; left: 0; right: 0; top: 250px; bottom: 0; border-radius: 30px 30px 0 0; background: #FAF7F1; box-shadow: 0 -12px 40px rgba(0,0,0,0.2); padding: 10px 24px 28px; display: flex; flex-direction: column; overflow: hidden">
+<span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #DDD6CA"></span>
+<div style="position: relative; height: 239px; margin: 6px -24px 0; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="200" tone="day" horizon="0.82" hint-size="390px,200px"></dc-import></div>
+<span aria-hidden="true" style="position: absolute; left: 112px; top: 40px; width: 8px; height: 8px; border-radius: 4px; background: #FFC93C"></span>
+<span aria-hidden="true" style="position: absolute; left: 270px; top: 34px; width: 7px; height: 7px; border-radius: 4px; background: #F7A1B5"></span>
+<span aria-hidden="true" style="position: absolute; left: 96px; top: 110px; width: 6px; height: 6px; border-radius: 3px; background: #F7A1B5"></span>
+<span aria-hidden="true" style="position: absolute; left: 290px; top: 100px; width: 8px; height: 8px; border-radius: 4px; background: #FFB627"></span>
+<span aria-hidden="true" style="position: absolute; left: 196px; top: 8px; width: 5px; height: 5px; border-radius: 3px; background: #FFB627"></span>
+<div style="position: absolute; left: 50%; top: 24px; margin-left: -70px"><dc-import name="Sun" size="140" face="celebrate" hint-size="140px,140px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 119px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+</div>
+<h2 style="margin: 10px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; text-align: center">Thank you!</h2>
+<p style="margin: 10px 0 0; font-size: 16px; line-height: 1.5; color: #5E6782; text-align: center">You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone.</p>
+<div style="flex: 1"></div>
+<a href="Settings.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Back to my game</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

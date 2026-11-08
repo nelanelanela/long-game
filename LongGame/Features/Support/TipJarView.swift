@@ -23,7 +23,7 @@ struct TipJarView: View {
                 TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
                     let t = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
                     let breathe = sin(t / 4 * 2 * .pi)
-                    SunView(face: .happy, raysRotation: .degrees(t.truncatingRemainder(dividingBy: 90) / 90 * 360))
+                    SunView(idle: false, face: .happy, raysRotation: .degrees(t.truncatingRemainder(dividingBy: 90) / 90 * 360))
                         .frame(width: 120, height: 120)
                         .scaleEffect(1 + 0.015 * (breathe + 1))
                         .offset(y: -1.5 * (breathe + 1))

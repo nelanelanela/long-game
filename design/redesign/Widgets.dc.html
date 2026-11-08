@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Widgets</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1000px; height: 760px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Widgets</span><span style="font-size: 14px; color: #5E6782">See the sun without opening the app. No animation; the sun sits at its current height, the land always in front.</span></div>
+<div style="display: flex; gap: 32px; flex: 1">
+<div style="flex: 1; border-radius: 28px; padding: 28px; background: linear-gradient(160deg,#C9D3EC 0%,#EAD9C6 100%); display: flex; flex-direction: column; gap: 18px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #16244A; opacity: 0.7">Home Screen</span>
+<div style="display: flex; gap: 18px">
+<div style="width: 158px; height: 158px; border-radius: 24px; overflow: hidden; position: relative; background: #FAF7F1; box-shadow: 0 10px 24px rgba(22,36,74,0.18)">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="158" h="158" tone="day" horizon="0.62" moon="false" hint-size="158px,158px"></dc-import></div>
+<div style="position: absolute; left: 44px; top: 22px"><dc-import name="Sun" idle="false" size="70" face="happy" halo="false" hint-size="70px,70px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 53px"><dc-import name="Land" still="true" w="158" h="120" tone="day" hint-size="158px,120px"></dc-import></div>
+<span style="position: absolute; left: 14px; bottom: 26px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em">6.5 h</span>
+<span style="position: absolute; left: 14px; bottom: 12px; font-size: 11px; color: #5E6782">of 12 h this week</span>
+</div>
+<div style="width: 158px; height: 158px; border-radius: 24px; overflow: hidden; position: relative; background: #FAF7F1; box-shadow: 0 10px 24px rgba(22,36,74,0.18)">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="158" h="158" tone="dawn" horizon="0.62" moon="true" hint-size="158px,158px"></dc-import></div>
+<div style="position: absolute; left: 44px; top: 42px"><dc-import name="Sun" idle="false" size="70" face="happy" halo="false" hint-size="70px,70px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 53px"><dc-import name="Land" still="true" w="158" h="120" tone="day" hint-size="158px,120px"></dc-import></div>
+<span style="position: absolute; left: 14px; bottom: 26px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em">3,294 h</span>
+<span style="position: absolute; left: 14px; bottom: 12px; font-size: 11px; color: #5E6782">of 10,000 · 33%</span>
+</div>
+</div>
+<div style="width: 334px; height: 158px; border-radius: 24px; overflow: hidden; display: flex; background: #FFFFFF; box-shadow: 0 10px 24px rgba(22,36,74,0.18)">
+<div style="width: 150px; position: relative; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="150" h="158" tone="day" horizon="0.62" moon="false" hint-size="150px,158px"></dc-import></div>
+<div style="position: absolute; left: 40px; top: 22px"><dc-import name="Sun" idle="false" size="70" face="happy" halo="false" hint-size="70px,70px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 53px"><dc-import name="Land" still="true" w="150" h="120" tone="day" hint-size="150px,120px"></dc-import></div>
+</div>
+<div style="flex: 1; padding: 16px 16px 14px 12px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 700">Piano</span>
+<span style="font-size: 12px; color: #5E6782">Today 1 h 30 m</span>
+<span style="font-size: 11px; color: #5E6782">This week 6.5 / 12 h</span>
+<span style="height: 6px; border-radius: 3px; background: #EFEBE4; position: relative"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: 54%; border-radius: 3px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span></span>
+<span style="font-size: 11px; color: #5E6782">The long game 3,294 / 10,000 h</span>
+<span style="height: 6px; border-radius: 3px; background: #EFEBE4; position: relative"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: 33%; border-radius: 3px; background: #16244A"></span></span>
+</div>
+</div>
+</div>
+<div style="width: 380px; border-radius: 28px; padding: 28px; position: relative; overflow: hidden; color: #FFFFFF; display: flex; flex-direction: column; gap: 16px; background: #0B1029">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="380" h="600" tone="night" horizon="0.92" moon="true" hint-size="380px,600px"></dc-import></div>
+<span style="position: relative; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.8">Lock Screen</span>
+<span style="position: relative; align-self: center; font-size: 72px; font-weight: 600; letter-spacing: -0.02em; line-height: 1">9:41</span>
+<div style="position: relative; display: flex; gap: 12px; justify-content: center; align-items: center">
+<span aria-label="6.5 of 12 hours this week" style="width: 62px; height: 62px; border-radius: 31px; background: conic-gradient(#FFD66B 0 54%, rgba(255,255,255,0.18) 54% 100%); display: flex; align-items: center; justify-content: center"><span style="width: 50px; height: 50px; border-radius: 25px; background: #18203F; display: flex; align-items: center; justify-content: center"><dc-import name="Sun" idle="false" size="34" face="happy" halo="false" hint-size="34px,34px"></dc-import></span></span>
+<span style="width: 170px; height: 62px; border-radius: 16px; background: rgba(255,255,255,0.14); padding: 8px 12px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; justify-content: center"><span style="font-size: 13px; font-weight: 600">6.5 of 12 h this week</span><span style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); position: relative"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: 54%; border-radius: 2px; background: #FFD66B"></span></span><span style="font-size: 11px; opacity: 0.75">3,294 h · 33% of the long game</span></span>
+</div>
+<div style="position: relative; margin-top: auto; border-radius: 20px; padding: 12px 14px; background: rgba(255,255,255,0.88); color: #16244A; display: flex; gap: 10px; align-items: center">
+<span style="width: 36px; height: 36px; border-radius: 9px; background: #16244A; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><dc-import name="Sun" idle="false" size="28" face="happy" halo="false" hint-size="28px,28px"></dc-import></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; font-weight: 700">Long Game · weekly note</span><span style="font-size: 13px">Your week in the sun: 6.5 of 8 hours.</span></span>
+</div>
+<span style="position: relative; font-size: 12px; opacity: 0.75; text-align: center">The only notification, and only if you turn it on.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1000,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

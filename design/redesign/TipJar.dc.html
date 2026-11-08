@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Support Long Game</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 20px 24px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; position: relative; overflow: hidden">
+<div style="position: absolute; left: 0; top: 0"><dc-import name="Sky" w="390" h="250" tone="day" horizon="0.86" hint-size="390px,250px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 70px; margin-left: -60px"><dc-import name="Sun" size="120" face="happy" hint-size="120px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 170px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div style="position: relative; height: 44px; display: flex; align-items: center">
+<a href="Settings.dc.html" aria-label="Back to Settings" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+</div>
+<div style="height: 220px"></div>
+<h1 style="position: relative; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; text-align: center">Keep the sun shining</h1>
+<p style="position: relative; margin: 8px 6px 0; font-size: 14px; line-height: 1.5; color: #5E6782; text-align: center">Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip. Tips don’t unlock anything: every feature is free for everyone.</p>
+<div style="position: relative; margin-top: 16px; padding: 0 14px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(22,36,74,0.06)">
+<sc-for list="{{tips}}" as="t" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: {{t.border}}">
+<dc-import name="Sun" size="40" face="happy" lit="{{t.lit}}" halo="false" hint-size="40px,40px"></dc-import>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">{{t.name}}</span><span style="font-size: 12px; color: #5E6782">{{t.line}}</span></span>
+<a href="TipThanks.dc.html" style="min-width: 64px; height: 34px; padding: 0 12px; border-radius: 17px; background: #F3F0EA; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{t.price}}</a>
+</div>
+</sc-for>
+</div>
+<p style="position: relative; margin: 12px 0 0; font-size: 12px; color: #5E6782; text-align: center">One-time payments through the App Store. Prices are shown in your currency.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = [['A ray of sunshine', 'A small thank-you', '€0.99', 1], ['A sunny morning', 'Like buying a coffee', '€2.99', 4], ['A golden hour', 'A big thank-you', '€4.99', 8], ['A whole sunrise', 'For the biggest fans', '€9.99', 12]];
+    return { tips: t.map(([n, l, p, r], i) => ({ name: n, line: l, price: p, lit: r, border: i === t.length - 1 ? '0' : '1px solid #F0ECE5' })) };
+  }
+}
+</script>
+</body>
+</html>

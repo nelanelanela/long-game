@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>History, Growth</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 24px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="HomeToday.dc.html" aria-label="Back to Home" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<span style="font-size: 17px; font-weight: 600">History</span>
+<a href="Settings.dc.html" aria-label="Settings" style="width: 44px; height: 44px; margin-right: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"></path></svg></a>
+</div>
+<div role="tablist" aria-label="History view" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 8px; padding: 3px; background: #EFE2CF; border-radius: 12px"><a href="Calendar.dc.html" role="tab" aria-selected="false" style="height: 36px; border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center">Calendar</a><span role="tab" aria-selected="true" style="height: 36px; border-radius: 10px; background: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,0.1)">Growth</span></div>
+<div style="margin-top: 18px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; color: #5E6782">At your chosen pace, you’ll finish around</span>
+<span style="font-size: 34px; font-weight: 700; letter-spacing: -0.03em">November 2035</span>
+<span style="font-size: 14px; color: #5E6782">At your actual pace: around 2039</span>
+</div>
+<a href="GrowthFull.dc.html" style="position: relative; margin-top: 14px; padding: 14px 10px 12px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(22,36,74,0.06); text-decoration: none; display: block">
+<span aria-label="Open full screen" style="position: absolute; right: 10px; top: 10px; width: 36px; height: 36px; border-radius: 18px; background: #F3F0EA; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"></path></svg></span>
+<svg role="img" aria-label="Cumulative hours: 3,294 now. The chosen pace line reaches 10,000 around November 2035; the actual pace line around 2039." width="322" height="210" viewBox="0 0 322 210" style="display: block">
+<defs><linearGradient id="grArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFC56A" stop-opacity="0.35"></stop><stop offset="100%" stop-color="#FFC56A" stop-opacity="0"></stop></linearGradient><filter id="grGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"></feGaussianBlur></filter></defs>
+<path d="M10 20H312" stroke="#E0A040" stroke-width="1" stroke-dasharray="3 4"></path>
+<text x="10" y="14" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#8A5A1E">Finish line · 10,000 h</text>
+<path d="M10 105H312M10 190H312" stroke="#F0ECE5" stroke-width="1"></path>
+<path d="M10 190L24.8 187.3L39.5 182.9L54.3 177.6L69 170.6L83.8 161.7L98.6 154.6L113.3 144L126 134L126 190Z" fill="url(#grArea)"></path>
+<path d="M126 134L305 20" stroke="#9AA1B5" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round"></path>
+<path d="M126 134L259.5 20" stroke="#F0922A" stroke-width="4" opacity="0.35" filter="url(#grGlow)"></path>
+<path d="M126 134L259.5 20" stroke="#E07A22" stroke-width="2" stroke-dasharray="6 4"></path>
+<path d="M10 190L24.8 187.3L39.5 182.9L54.3 177.6L69 170.6L83.8 161.7L98.6 154.6L113.3 144L126 134" fill="none" stroke="#16244A" stroke-width="2.2" stroke-linejoin="round"></path>
+<circle cx="126" cy="134" r="4" fill="#FFFFFF" stroke="#16244A" stroke-width="2"></circle>
+<text x="126" y="204" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#5E6782">Today</text>
+<text x="10" y="204" font-family="Inter, sans-serif" font-size="10" fill="#5E6782">2019</text>
+<text x="312" y="204" text-anchor="end" font-family="Inter, sans-serif" font-size="10" fill="#5E6782">2040</text>
+</svg>
+<div style="position: absolute; left: 256px; top: 21px"><dc-import name="Sun" size="26" face="happy" halo="false" hint-size="26px,26px"></dc-import></div>
+<div style="margin: 6px 6px 0; padding-top: 10px; border-top: 1px solid #F0ECE5; display: flex; flex-direction: column; gap: 6px; font-size: 12px">
+<span style="display: flex; align-items: center; gap: 8px"><svg aria-hidden="true" width="26" height="4"><path d="M0 2H26" stroke="#E07A22" stroke-width="2" stroke-dasharray="6 4"></path></svg><span style="font-weight: 600; color: #B4561A">Your chosen pace</span><span style="flex: 1"></span><span style="color: #5E6782">12 h a week · Nov 2035</span></span>
+<span style="display: flex; align-items: center; gap: 8px"><svg aria-hidden="true" width="26" height="4"><path d="M1 2H26" stroke="#9AA1B5" stroke-width="1.6" stroke-dasharray="1.5 4" stroke-linecap="round"></path></svg><span style="font-weight: 600; color: #5E6782">Your actual pace</span><span style="flex: 1"></span><span style="color: #5E6782">9.5 h a week · 2039</span></span>
+</div>
+</a>
+<div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px">
+<span style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 600"><span>What if I practise more?</span><span>+2 h</span></span>
+<div style="position: relative; height: 28px; display: flex; align-items: center"><span style="position: absolute; left: 0; right: 0; height: 4px; border-radius: 2px; background: #E4DFD6"></span><span style="position: absolute; left: 0; width: 20%; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="position: absolute; left: calc(20% - 14px); width: 28px; height: 28px; border-radius: 14px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #F1ECE3); box-shadow: 0 3px 10px rgba(22,36,74,0.18)"></span></div>
+<span style="font-size: 13px; color: #5E6782">About 1.4 years sooner, around May 2034.</span>
+</div>
+<div style="flex: 1"></div>
+<a href="YourYear.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid #ECE7DE; text-decoration: none"><dc-import name="Sun" size="34" face="happy" halo="false" hint-size="34px,34px"></dc-import><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Your 2026</span><span style="font-size: 13px; color: #5E6782">A card of your year, to keep or share</span></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E6782" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -468,6 +468,16 @@ Run the LongGame scheme on an iPad Pro 11-inch with `-demoData`.
 - **Pointer, drag and drop:** hover with the Mac mouse over rows; drag a picture from Photos (in Split View) onto a session row on Today, or onto the photo square in the Finish sheet.
 - **Debug aid:** a debug build also accepts `-debug.windowSize 1194x834` to lay the app out at any size, shrunk to fit.
 
+## Launch screen and opening sunrise (update 30)
+
+- **Launch screen:** `LongGame/App/LaunchScreen.storyboard` (kept out of `Resources/` because the Mac target shares that folder). Vector PDFs and two named colours are in the asset catalogue; `Tools/MakeLaunchAssets.swift` redraws the PDFs. The sea strip is 1440 pt wide, centred, with a solid fill below it, so it spans every iPhone and iPad in both orientations.
+- **Opening sunrise:** `Features/Launch/OpeningSunriseView.swift` plays over `AppRoot` on a cold start. The decision is the pure `openingStyle(...)` and the timings are `OpeningTimeline`, both in `Logic/OpeningSunrise.swift` with tests in `OpeningSunriseTests.swift`. Its first frame is the night frame, drawn before anything is decided; nothing waits for SwiftData or iCloud.
+- **Sleeping face:** `SunView` has one extra face, `.asleep`, with exactly the launch screen's lines (the existing `.sleepy` has drooping lids, which would not match the still image).
+- **Glide:** Home's `GaugeHero` reports where its sun sits on Today's arc (`OpeningCenter.sunTarget`) and the opening sun glides there by position, driven by the same timeline, instead of `matchedGeometryEffect` (which would need a shared namespace through Home).
+- **Skipped when opened from:** a link, widget or Live Activity (`onOpenURL`) and a notification tap (the app delegate now answers notification taps with no other change in behaviour).
+- **Dark mode:** the app is still forced light, so dark mode plays the sunrise up to dusk and cross-fades into the (light) Home. Home in dark does not exist yet.
+- **Known gaps:** the opening is hidden from VoiceOver and a screen-changed notification is posted when it ends, so focus restarts at Home's top, but this has not been tried with VoiceOver on a device. Not hand-checked: landscape, the Mac window, and a notification cold start. The sun is not clipped at Home's waterline for the last frame of the glide.
+
 ## How to check the main flows in the Simulator
 
 Run with `-demoData` for sample data.
@@ -496,3 +506,4 @@ Run with `-demoData` for sample data.
 - **Milestone notification:** same jump, but choose a total just under a milestone first (for example edit estimates in Settings → Your estimates so the total is near 100, 500, 1,000…), allow notifications, start a session and lock the phone.
 - **Reduce Motion:** Settings app → Accessibility → Motion → Reduce Motion, then save a session.
 - **Largest text:** Settings app → Accessibility → Display & Text Size → Larger Text.
+- **Opening sunrise (update 30):** full version: Settings off, light mode, delete nothing; stop the app in Xcode and run it again (or Settings → Debug only → Play opening sunrise). Short version: turn Reduce Motion on (Settings app → Accessibility → Motion), or start a session and relaunch. Dark version: Simulator → Features → Toggle Appearance, then run again: it stops at dusk. Tap anywhere to skip it. Launch-screen cache: delete the app, or run `xcrun simctl erase all` with the Simulator closed.

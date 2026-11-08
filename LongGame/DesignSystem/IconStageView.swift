@@ -30,7 +30,7 @@ struct IconStageView: View {
         .overlay {
             ZStack {
                 Circle().fill(ink).frame(width: halo * 2, height: halo * 2)
-                SunView(face: celebrate ? .celebrate : .happy, rayColor: gold)
+                SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: gold)
                     .frame(width: 200 * k, height: 200 * k)
             }
             .position(x: 512 + 360 * cos(angle.radians), y: 512 + 360 * sin(angle.radians))

@@ -55,7 +55,7 @@ struct WidgetScene: View {
                 Color.clear
                     .frame(width: w, height: h)
                     .overlay(alignment: .topLeading) {
-                        SunView(face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
+                        SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
                             .frame(width: sun, height: sun)
                             .offset(x: (w - sun) / 2, y: centre - sun / 2)
                     }

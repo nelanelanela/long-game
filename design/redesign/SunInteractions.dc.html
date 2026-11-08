@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sun interactions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1460px; height: 1000px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">The sun’s interactions · all kept</span><span style="font-size: 14px; line-height: 1.5; color: #5E6782; max-width: 1200px">The new look changes the sky, the dunes and the sea, not the sun’s personality. Tickle it and it still laughs like a baby; it still breathes, peeks, sleeps when paused and jumps when you save.</span></div>
+<div style="display: flex; gap: 28px; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div role="img" aria-label="Live preview: the sun is tapped and laughs" style="width: 390px; height: 420px; border-radius: 28px; overflow: hidden; position: relative; background: #FAF7F1; box-shadow: 0 14px 30px rgba(22,36,74,0.12)">
+<div style="position: absolute; left: 0; top: 0"><dc-import name="Sky" w="390" h="330" tone="dawn" horizon="0.86" moon="false" hint-size="390px,330px"></dc-import></div>
+<div style="position: absolute; left: 115px; top: 150px; width: 160px; height: 160px; transform: translateY({{ty}}px) rotate({{rot}}deg) scale({{sx}},{{sy}}); transform-origin: 50% 70%"><dc-import name="Sun" size="160" face="{{face}}" hint-size="160px,160px"></dc-import></div>
+<svg aria-hidden="true" width="390" height="330" viewBox="0 0 390 330" style="position: absolute; left: 0; top: 0; opacity: {{spark}}"><g fill="#FFB627"><path d="M108 128l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"></path><path d="M286 118l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"></path><path d="M296 214l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"></path><path d="M92 210l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"></path></g></svg>
+<div aria-hidden="true" style="position: absolute; left: 155px; top: 190px; width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(22,36,74,0.35); opacity: {{tapOp}}; transform: scale({{tapS}})"></div>
+<div style="position: absolute; left: 0; top: 262px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; right: 0; top: 382px; bottom: 0; background: #FAF7F1"></div>
+<span style="position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 13px; font-weight: 600; color: #5E6782">{{stage}}</span>
+</div>
+<span style="font-size: 13px; color: #5E6782; max-width: 390px">Live preview, looping every few seconds. The sea stays in front, so the bounces never show the sun below the waterline.</span>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; gap: 14px">
+<sc-for list="{{stills}}" as="s" hint-placeholder-count="7">
+<div style="width: 100px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<div style="width: 100px; height: 100px; border-radius: 20px; background: {{s.bg}}; display: flex; align-items: center; justify-content: center"><dc-import name="Sun" size="80" face="{{s.face}}" lit="{{s.lit}}" halo="false" hint-size="80px,80px"></dc-import></div>
+<span style="font-size: 12px; font-weight: 700; text-align: center">{{s.name}}</span>
+<span style="font-size: 11px; line-height: 1.35; color: #5E6782; text-align: center">{{s.note}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<div style="padding: 20px; border-radius: 20px; background: #FFFFFF; display: flex; flex-direction: column; gap: 9px; font-size: 13px; line-height: 1.5; color: #5E6782">
+<span style="font-size: 16px; font-weight: 700; color: #16244A">When you touch it</span>
+<span><b style="color: #16244A">Tap: the giggle.</b> Gasp, then a baby’s belly laugh: head tipped back, five little bounces, rays jiggling, four sparkles, a contented settle. Just over a second, with a real child’s laugh if the sound is on, and three soft haptic “ha-ha-ha”s.</span>
+<span><b style="color: #16244A">Where.</b> The big sun on Home (all three tabs and the empty day), the intro pages, Meet your future self and the tip jar.</span>
+<span><b style="color: #16244A">During a session.</b> On the Timer a tap only gets a soft wink, no sound and no bounce, so a session is never disturbed. Same on the Watch.</span>
+<span><b style="color: #16244A">Tap again.</b> Adds two more bounces. Five taps in two seconds: the longest laugh and one full spin of the rays, then a 3-second rest of winks.</span>
+<span><b style="color: #16244A">Sound.</b> Ambient: silent on silent mode, mixed under music, never interrupting it. “Giggle sound” switch in Settings › Sounds.</span>
+<span><b style="color: #16244A">A secret.</b> No hint, no counter, never changes a number. Not in widgets, the Live Activity or the year card. VoiceOver action: “Tickle the sun”. Reduce Motion: just the laughing face for 0.8 s.</span>
+</div>
+<div style="padding: 20px; border-radius: 20px; background: #FFFFFF; display: flex; flex-direction: column; gap: 9px; font-size: 13px; line-height: 1.5; color: #5E6782">
+<span style="font-size: 16px; font-weight: 700; color: #16244A">On its own</span>
+<span><b style="color: #16244A">Launch.</b> Wakes over the night sea, rises, opens its eyes for a moment, then glides into place on Home.</span>
+<span><b style="color: #16244A">While you play.</b> Breathes (4 s), the halo pulses with it, golden motes drift up, the rays turn slowly. Every ~9 s it peeks one eye open to check on you. A ray lights every 5 minutes; all twelve: a little hop with a big smile. It rises with today’s stretch and stays up once it’s covered.</span>
+<span><b style="color: #16244A">Each whole hour</b> of your total: a small happy bounce and a shimmer of sparkles.</span>
+<span><b style="color: #16244A">Pause.</b> Sinks a little, the rays dim, sleepy face with a small “z”, slower breath. Resume: springs back up.</span>
+<span><b style="color: #16244A">Save.</b> Jumps with a big smile, mini suns burst around it, Home’s total counts up.</span>
+<span><b style="color: #16244A">Milestones.</b> The celebrate face and a short burst; at 10,000 hours the sun fully rises.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1460,"height":1000}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    this.t0 = Date.now();
+    this.iv = setInterval(() => this.setState({ t: ((Date.now() - this.t0) / 1000) % 3.6 }), 40);
+  }
+  componentWillUnmount() { if (this.iv) clearInterval(this.iv); }
+  renderVals() {
+    const t = (this.state && this.state.t !== undefined) ? this.state.t : 1.5;
+    const T = 1.0;
+    let face = 'happy', sx = 1, sy = 1, ty = 0, rot = 0, spark = 0, stage = 'Tap the sun';
+    const u = t - T;
+    if (u >= 0 && u < 0.1) { face = 'gasp'; sx = 0.94; sy = 1.08; ty = -4; stage = 'Gasp'; }
+    else if (u >= 0.1 && u < 0.9) {
+      face = 'laugh'; stage = 'Belly laugh';
+      const k = (u - 0.1) / 0.16, i = Math.floor(k), f = k - i, damp = Math.pow(0.8, i);
+      const w = Math.sin(f * Math.PI * 2);
+      sx = 1 + (w > 0 ? 0.06 : 0.03) * w * damp; sy = 1 - (w > 0 ? 0.06 : 0.04) * w * damp;
+      ty = (w > 0 ? 3 : 5) * w * damp; rot = -5 * Math.min(1, (u - 0.1) / 0.1);
+      spark = Math.max(0, 1 - (u - 0.1) / 0.6);
+    }
+    else if (u >= 0.9 && u < 1.4) {
+      face = 'happy'; stage = 'Contented'; const v = (u - 0.9) / 0.35;
+      rot = -5 * Math.max(0, 1 - v); ty = (u > 1.02 && u < 1.1) ? -2 : 0;
+    }
+    const tapOp = u >= -0.05 && u < 0.3 ? Math.max(0, 1 - (u + 0.05) / 0.35) : 0;
+    const stills = [
+      { face: 'happy', lit: 12, name: 'Happy', note: 'Home, at rest', bg: '#FFF1DA' },
+      { face: 'gasp', lit: 12, name: 'Gasp', note: 'The moment of the tap', bg: '#FFF1DA' },
+      { face: 'laugh', lit: 12, name: 'Laugh', note: 'The giggle', bg: '#FFF1DA' },
+      { face: 'focus', lit: 7, name: 'Focus', note: 'Timer, rays lighting', bg: '#16244A' },
+      { face: 'wink', lit: 7, name: 'Wink', note: 'A tap on the Timer, and the eye peek', bg: '#16244A' },
+      { face: 'sleepy', lit: 7, name: 'Sleepy', note: 'Paused', bg: '#2A2F45' },
+      { face: 'celebrate', lit: 12, name: 'Celebrate', note: 'Save, milestones, 10,000', bg: '#FFE7C2' }
+    ];
+    return {
+      face: face, sx: sx.toFixed(3), sy: sy.toFixed(3), ty: (-ty).toFixed(1), rot: rot.toFixed(1),
+      spark: spark.toFixed(2), tapOp: tapOp.toFixed(2), tapS: (0.6 + Math.max(0, u + 0.05) * 2).toFixed(2),
+      stage: stage, stills: stills
+    };
+  }
+}
+</script>
+</body>
+</html>

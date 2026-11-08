@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Land</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes lgSwayA{0%,100%{transform:translate(-7px,0)}50%{transform:translate(7px,0.8px)}}
+@keyframes lgSwayB{0%,100%{transform:translate(6px,0.6px)}50%{transform:translate(-6px,0)}}
+.lg-w0{animation:lgSwayA 9s ease-in-out infinite}
+.lg-w1{animation:lgSwayB 7s ease-in-out infinite}
+.lg-w2{animation:lgSwayA 8s ease-in-out infinite}
+.lg-w3{animation:lgSwayB 10s ease-in-out infinite}
+.lg-w4{animation:lgSwayA 12s ease-in-out infinite}
+.lg-still .lg-w0,.lg-still .lg-w1,.lg-still .lg-w2,.lg-still .lg-w3,.lg-still .lg-w4{animation:none}
+@media (prefers-reduced-motion: reduce){.lg-w0,.lg-w1,.lg-w2,.lg-w3,.lg-w4{animation:none}}
+</style>
+</helmet>
+<div class="{{stillCls}}" style="width: {{wpx}}; height: {{hpx}}; position: relative; overflow: hidden">
+<svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 390 120" preserveAspectRatio="none" style="display: block">
+<defs>
+<linearGradient id="{{nearId}}" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="{{n1}}"></stop>
+<stop offset="55%" stop-color="{{n2}}"></stop>
+<stop offset="100%" stop-color="{{n3}}"></stop>
+</linearGradient>
+<linearGradient id="{{farId}}" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="{{f1}}"></stop>
+<stop offset="100%" stop-color="{{f2}}"></stop>
+</linearGradient>
+<radialGradient id="{{laneId}}" cx="50%" cy="0%" r="100%">
+<stop offset="0%" stop-color="#FFC56A" stop-opacity="{{laneOp}}"></stop>
+<stop offset="100%" stop-color="#FFC56A" stop-opacity="0"></stop>
+</radialGradient>
+</defs>
+<path d="M0 30C18 18 44 8 70 9C96 10 118 20 142 30C166 39 190 44 214 46L0 46Z" fill="url(#{{farId}})" opacity="0.75"></path>
+<path d="M300 46C318 40 336 36 352 36C366 36 380 38 390 41L390 46Z" fill="url(#{{farId}})" opacity="0.6"></path>
+<path d="M0 38C24 33 52 32 82 36C108 39 128 44 150 47L0 47Z" fill="{{mid}}"></path>
+<path d="M262 47C292 43 330 39 362 33C374 31 384 30 390 30L390 47Z" fill="{{mid}}"></path>
+<path d="M0 46C70 41 130 42 195 45S330 50 390 44L390 120L0 120Z" fill="url(#{{nearId}})"></path>
+<g fill="none" stroke="{{contour}}">
+<path class="lg-w1" d="M-20 55L0 55C70 51 130 52 195 54S330 58 390 53L410 53" stroke-width="0.9" opacity="0.7"></path>
+<path class="lg-w2" d="M-20 64L0 64C70 61 130 62 195 63S330 66 390 62L410 62" stroke-width="0.8" opacity="0.5"></path>
+<path class="lg-w3" d="M-20 74L0 74C70 72 130 72 195 73S330 75 390 72L410 72" stroke-width="0.7" opacity="0.32"></path>
+<path class="lg-w4" d="M-20 85L0 85C70 84 130 84 195 85S330 86 390 84L410 84" stroke-width="0.6" opacity="0.18"></path>
+</g>
+<path class="lg-w0" d="M-20 46L0 46C70 41 130 42 195 45S330 50 390 44L410 44" fill="none" stroke="{{edge}}" stroke-width="1.2" opacity="{{edgeOp}}"></path>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"w":{"editor":"int","default":390},"h":{"editor":"int","default":120},"tone":{"editor":"enum","default":"day","options":["day","night"]},"lane":{"editor":"range","default":0.5,"min":0,"max":1,"step":0.05},"still":{"editor":"boolean","default":false},"$preview":{"width":390,"height":120}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const w = parseFloat(this.props.w) || 390;
+    const h = parseFloat(this.props.h) || 120;
+    const night = this.props.tone === 'night';
+    const lane = this.props.lane === undefined ? 0.5 : parseFloat(this.props.lane);
+    const still = this.props.still === true || this.props.still === 'true';
+    return {
+      stillCls: still ? 'lg-still' : '',
+      wpx: w + 'px', hpx: h + 'px',
+      nearId: night ? 'lgNearN' : 'lgNearD', farId: night ? 'lgFarN' : 'lgFarD', laneId: night ? 'lgLaneN' : 'lgLaneD',
+      n1: night ? '#1A2148' : '#CFD8EF', n2: night ? '#111737' : '#E3E8F4', n3: night ? '#0B1029' : '#FAF7F1',
+      f1: night ? '#5A4A5E' : '#EBD6BC', f2: night ? '#2E2A45' : '#F3E6D6',
+      mid: night ? '#232442' : '#DCCDB8',
+      laneX: (lane * 390).toFixed(0), laneOp: night ? 0.45 : 0.4,
+      contour: night ? '#3D4D93' : '#9FB0E0',
+      edge: night ? '#C9A27A' : '#16244A', edgeOp: night ? 0.6 : 0.55
+    };
+  }
+}
+</script>
+</body>
+</html>

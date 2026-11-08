@@ -19,7 +19,7 @@ struct ArchivedCraftsView: View {
 
                 if crafts.isEmpty {
                     VStack(spacing: 8) {
-                        SunView(face: .sleepy).frame(width: 64, height: 64)
+                        SunView(idle: false, face: .sleepy).frame(width: 64, height: 64)
                         Text("Nothing here. Crafts you replace are kept here to look back on.")
                             .lgText(.row, color: LGColor.inkMuted).multilineTextAlignment(.center)
                     }

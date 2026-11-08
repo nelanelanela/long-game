@@ -93,7 +93,7 @@ struct CraftStepView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
         .overlay(alignment: .topTrailing) {
-            SunView(face: .happy).frame(width: 96, height: 96)
+            SunView(idle: false, face: .happy).frame(width: 96, height: 96)
                 .offset(x: 18, y: 8)
                 .allowsHitTesting(false)
         }

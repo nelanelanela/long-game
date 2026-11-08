@@ -368,6 +368,7 @@ struct SettingsView: View {
 
     #if DEBUG
     @AppStorage("debug.pretendDays") private var pretendDays = 10
+    @Environment(OpeningCenter.self) private var opening: OpeningCenter?
     @State private var confirmResetOnboarding = false
 
     private var debugCard: some View {
@@ -376,6 +377,12 @@ struct SettingsView: View {
                 Text("Debug only").lgText(.caption, color: LGColor.inkMuted).padding(.top, 12)
                 Stepper("Pretend last session was \(Labels.days(pretendDays)) ago", value: $pretendDays, in: 7...200)
                     .lgText(.row).frame(minHeight: 54)
+                Divider().overlay(LGColor.divider)
+                Button("Play opening sunrise") {
+                    (closeAll ?? { dismiss() })()
+                    Task { try? await Task.sleep(for: .seconds(0.6)); opening?.replay() }
+                }
+                .lgText(.rowStrong).frame(minHeight: 54)
                 Divider().overlay(LGColor.divider)
                 Button("Show Welcome back on Home") {
                     DebugOptions.setPretendLastSessionDaysAgo(pretendDays)

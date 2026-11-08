@@ -713,6 +713,9 @@
     "Couldn't delete the iCloud copy. Check your connection and try again." : {
 
     },
+    "covered" : {
+
+    },
     "Craft" : {
 
     },
@@ -828,6 +831,9 @@
 
     },
     "Giggle sound" : {
+
+    },
+    "Go" : {
 
     },
     "Goal" : {
@@ -969,6 +975,15 @@
 
     },
     "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip to support it. Tips don’t unlock anything: every feature is free for everyone." : {
+
+    },
+    "Long Game, %@ played today" : {
+
+    },
+    "Long Game, session paused at %@" : {
+
+    },
+    "Long Game, session running, %@" : {
 
     },
     "Long-press a photo to swap it" : {
@@ -1202,6 +1217,9 @@
     "Photos" : {
 
     },
+    "Play" : {
+
+    },
     "Play every day" : {
 
     },
@@ -1212,6 +1230,9 @@
 
     },
     "played this year" : {
+
+    },
+    "played today" : {
 
     },
     "Plus" : {
@@ -1312,6 +1333,9 @@
     "Settings" : {
 
     },
+    "Settings…" : {
+
+    },
     "Share" : {
 
     },
@@ -1339,6 +1363,9 @@
     "Start a new game" : {
 
     },
+    "Start or finish a session" : {
+
+    },
     "Start playing" : {
 
     },
@@ -1352,6 +1379,9 @@
 
     },
     "Started %@" : {
+
+    },
+    "Started on %@" : {
 
     },
     "Started playing %@." : {
@@ -1719,6 +1749,9 @@
 
     },
     "your weekly target" : {
+
+    },
+    "Your year" : {
 
     },
     "z" : {

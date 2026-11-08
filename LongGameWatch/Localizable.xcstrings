@@ -217,6 +217,9 @@
     "At your chosen pace, around %@." : {
 
     },
+    "covered" : {
+
+    },
     "Done" : {
 
     },
@@ -266,6 +269,15 @@
 
     },
     "Last synced %@" : {
+
+    },
+    "Long Game, %@ played today" : {
+
+    },
+    "Long Game, session paused at %@" : {
+
+    },
+    "Long Game, session running, %@" : {
 
     },
     "Milestone · %@" : {
@@ -341,6 +353,9 @@
     "played this year" : {
 
     },
+    "played today" : {
+
+    },
     "Ray %lld lit" : {
 
     },
@@ -382,6 +397,9 @@
 
     },
     "Start" : {
+
+    },
+    "Started on %@" : {
 
     },
     "Starts a practice session" : {

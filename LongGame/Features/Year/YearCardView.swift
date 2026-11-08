@@ -114,7 +114,7 @@ struct YearCardView: View {
             .padding(.top, 20)
             Spacer(minLength: 0)
             HStack(spacing: 6) {
-                SunView(face: .happy).frame(width: 14, height: 14)
+                SunView(idle: false, face: .happy).frame(width: 14, height: 14)
                 Text("Long Game · the longest game, played in real life")
             }
             .font(.system(size: 11)).foregroundStyle(muted)
@@ -150,7 +150,7 @@ struct YearCardView: View {
                         .lineLimit(1).minimumScaleFactor(0.5)
                 }
                 Spacer(minLength: 8)
-                SunView(face: .happy).frame(width: 58, height: 58)
+                SunView(idle: false, face: .happy).frame(width: 58, height: 58)
             }
             let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
             LazyVGrid(columns: columns, spacing: 6) {

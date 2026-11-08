@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Apple Watch</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1060px; height: 800px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Apple Watch</span><span style="font-size: 14px; color: #5E6782">The same sunrise as on the phone: during a session the sun rises with today’s stretch, from where the day left off, and stays up once it’s covered. A light tap on the wrist when a ray lights, and a longer one at sunrise.</span></div>
+<div style="display: flex; gap: 16px">
+<div style="width: 182px; height: 222px; border-radius: 44px; overflow: hidden; position: relative; background: #0B1029; color: #FFFFFF; box-shadow: 0 0 0 8px #1C1C1E, 0 16px 30px rgba(0,0,0,0.25)">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="182" h="222" tone="night" horizon="0.5" moon="true" hint-size="182px,222px"></dc-import></div>
+<div style="position: absolute; left: 61px; top: 48px"><dc-import name="Sun" size="60" face="happy" halo="false" hint-size="60px,60px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 66px"><dc-import name="Land" w="182" h="120" tone="night" hint-size="182px,120px"></dc-import></div>
+<span style="position: absolute; left: 14px; top: 124px; font-size: 26px; font-weight: 700">6.5 h</span>
+<span style="position: absolute; left: 14px; top: 156px; font-size: 11px; opacity: 0.75">of 12 h · 3 days left</span>
+<span style="position: absolute; left: 14px; right: 14px; bottom: 12px; height: 32px; border-radius: 16px; background: #FFD66B; color: #16244A; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">Start</span>
+</div>
+<div style="width: 182px; height: 222px; border-radius: 44px; overflow: hidden; position: relative; background: #0B1029; color: #FFFFFF; box-shadow: 0 0 0 8px #1C1C1E, 0 16px 30px rgba(0,0,0,0.25)">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="182" h="222" tone="night" horizon="0.5" moon="true" hint-size="182px,222px"></dc-import></div>
+<div style="position: absolute; left: 61px; top: 66px"><dc-import name="Sun" size="60" face="happy" halo="false" hint-size="60px,60px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 66px"><dc-import name="Land" w="182" h="120" tone="night" hint-size="182px,120px"></dc-import></div>
+<span style="position: absolute; left: 14px; top: 136px; font-size: 26px; font-weight: 700">3,294 h</span>
+<span style="position: absolute; left: 14px; top: 168px; font-size: 11px; opacity: 0.75">33% · finish ~2035</span>
+</div>
+<div style="width: 182px; height: 222px; border-radius: 44px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1C1C1E, 0 16px 30px rgba(0,0,0,0.25)"><dc-import name="WatchSession" progress="-1" start="0.37" hint-size="182px,222px"></dc-import></div>
+<div style="width: 182px; height: 222px; border-radius: 44px; overflow: hidden; position: relative; box-shadow: 0 0 0 8px #1C1C1E, 0 16px 30px rgba(0,0,0,0.25)"><dc-import name="WatchSession" progress="0.62" start="0.37" aod="true" hint-size="182px,222px"></dc-import></div>
+<div style="width: 182px; height: 222px; border-radius: 44px; overflow: hidden; position: relative; background: #0B1029; color: #FFFFFF; box-shadow: 0 0 0 8px #1C1C1E, 0 16px 30px rgba(0,0,0,0.25)">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="182" h="222" tone="dawn" horizon="1" moon="false" hint-size="182px,222px"></dc-import></div>
+<div style="position: absolute; left: 51px; top: 16px"><dc-import name="Sun" size="80" face="celebrate" hint-size="80px,80px"></dc-import></div>
+<span style="position: absolute; left: 0; right: 0; top: 102px; text-align: center; font-size: 30px; font-weight: 700">+42 m</span>
+<span style="position: absolute; left: 0; right: 0; top: 140px; text-align: center; font-size: 11px; opacity: 0.85">7.2 of 12 h this week</span>
+<span style="position: absolute; left: 14px; right: 14px; bottom: 12px; height: 32px; border-radius: 16px; background: #FFFFFF; color: #16244A; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">Done</span>
+</div>
+</div>
+<div style="display: flex; gap: 16px; font-size: 13px; color: #5E6782"><span style="width: 182px">This week</span><span style="width: 182px">The long game</span><span style="width: 182px">Session (animated)</span><span style="width: 182px">Session · Always On</span><span style="width: 182px">Finished</span></div>
+<span style="font-size: 12px; line-height: 1.5; color: #5E6782; max-width: 900px">On the wrist the sunrise is drawn natively in SwiftUI with a few layers, so it stays light on the battery. When the wrist drops, Always On freezes the sun at its height, dims the sky, sends the sun to sleep, hides the buttons and shows minutes only, updated once a minute. With Reduce Motion the sun moves in small steps, once a minute, instead of gliding.</span>
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">Complications</span>
+<div style="display: flex; gap: 20px; align-items: center">
+<span aria-label="6.5 of 12 hours this week" style="width: 58px; height: 58px; border-radius: 29px; background: conic-gradient(#FFD66B 0 54%, #2A2F45 54% 100%); display: flex; align-items: center; justify-content: center"><span style="width: 46px; height: 46px; border-radius: 23px; background: #000000; display: flex; align-items: center; justify-content: center"><dc-import name="Sun" idle="false" size="32" face="happy" halo="false" hint-size="32px,32px"></dc-import></span></span>
+<span style="width: 220px; height: 58px; border-radius: 14px; background: #000000; color: #FFFFFF; padding: 8px 12px; box-sizing: border-box; display: flex; align-items: center; gap: 10px"><dc-import name="Sun" idle="false" size="30" face="happy" halo="false" hint-size="30px,30px"></dc-import><span style="flex: 1; display: flex; flex-direction: column; gap: 5px"><span style="font-size: 13px; font-weight: 600">6.5 / 12 h this week</span><span style="height: 4px; border-radius: 2px; background: #2A2F45; position: relative"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: 54%; border-radius: 2px; background: #FFD66B"></span></span></span></span>
+<span style="height: 30px; padding: 0 12px; border-radius: 15px; background: #000000; color: #FFD66B; font-size: 14px; font-weight: 700; display: flex; align-items: center">6.5h</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1060,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -82,7 +82,7 @@ struct GrowthChartView: View {
                 }
             if let mastery = data.chosenDate {
                 PointMark(x: .value("Date", mastery), y: .value("Hours", Totals.goalHours))
-                    .symbol { SunView(rayColor: LGColor.sunRays).frame(width: full ? 36 : 28, height: full ? 36 : 28).scaleEffect(sunScale) }
+                    .symbol { SunView(idle: false, rayColor: LGColor.sunRays).frame(width: full ? 36 : 28, height: full ? 36 : 28).scaleEffect(sunScale) }
             }
             if full, let p = scrubPoint {
                 RuleMark(x: .value("Date", p.date))

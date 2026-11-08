@@ -10,7 +10,7 @@ struct SaveBurst: View {
         ZStack {
             ForEach(0..<8, id: \.self) { i in
                 let angle = Double(i) / 8 * 2 * .pi + 0.2
-                SunView(face: .happy, unlitOpacity: 1)
+                SunView(idle: false, face: .happy, unlitOpacity: 1)
                     .frame(width: 30, height: 30)
                     .offset(x: cos(angle) * 150 * eased, y: sin(angle) * 150 * eased)
                     .scaleEffect(0.6 + 0.6 * sin(progress * .pi))

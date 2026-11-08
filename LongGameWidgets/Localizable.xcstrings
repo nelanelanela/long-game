@@ -229,6 +229,9 @@
     "Choose the view" : {
 
     },
+    "covered" : {
+
+    },
     "Craft" : {
 
     },
@@ -284,6 +287,15 @@
 
     },
     "Long Game session" : {
+
+    },
+    "Long Game, %@ played today" : {
+
+    },
+    "Long Game, session paused at %@" : {
+
+    },
+    "Long Game, session running, %@" : {
 
     },
     "Milestone · %@" : {
@@ -377,6 +389,9 @@
     "played this year" : {
 
     },
+    "played today" : {
+
+    },
     "Ray %lld lit" : {
 
     },
@@ -427,6 +442,9 @@
 
     },
     "Start playing a craft" : {
+
+    },
+    "Started on %@" : {
 
     },
     "Started playing %@." : {

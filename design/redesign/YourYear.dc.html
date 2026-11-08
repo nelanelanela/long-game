@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your year</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="Growth.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<span style="font-size: 17px; font-weight: 600">Your 2026</span>
+<span style="width: 44px"></span>
+</div>
+<div role="tablist" aria-label="Card style" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 8px; padding: 3px; background: #EFE2CF; border-radius: 12px"><span role="tab" aria-selected="true" style="height: 34px; border-radius: 10px; background: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(22,36,74,0.1)">Sunrise</span><span role="tab" aria-selected="false" style="height: 34px; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center">Evening</span><span role="tab" aria-selected="false" style="height: 34px; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center">Photos</span></div>
+<div style="margin-top: 16px; align-self: center; width: 270px; height: 480px; border-radius: 18px; overflow: hidden; box-shadow: 0 16px 40px rgba(22,36,74,0.16)">
+<div style="transform: scale(0.75); transform-origin: 0 0; width: 360px; height: 640px"><dc-import name="YearCard" hint-size="360px,640px"></dc-import></div>
+</div>
+<div style="margin-top: 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Show hours</span><span style="font-size: 13px; color: #5E6782">Off shows days and percent instead</span></span>
+<span role="switch" aria-checked="true" aria-label="Show hours" style="width: 50px; height: 30px; border-radius: 15px; background: #16244A; position: relative; flex-shrink: 0"><span style="position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF; box-shadow: 0 2px 4px rgba(0,0,0,0.2)"></span></span>
+</div>
+<div style="flex: 1"></div>
+<button type="button" style="height: 56px; border: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-family: Inter, sans-serif; font-size: 16px; font-weight: 600; box-shadow: 0 8px 20px rgba(22,36,74,0.22); cursor: pointer">Share</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

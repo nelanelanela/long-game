@@ -67,7 +67,7 @@ struct CatchUpSheet: View {
     private var ask: some View {
         VStack(spacing: 20) {
             // Open-eyed and smiling, as in the design.
-            SunView(face: .celebrate).frame(width: 112, height: 112)
+            SunView(idle: false, face: .celebrate).frame(width: 112, height: 112)
             VStack(spacing: 10) {
                 Text("Welcome back!").lgText(.sheetTitle).accessibilityAddTraits(.isHeader)
                 Text(question)

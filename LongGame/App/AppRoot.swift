@@ -12,6 +12,8 @@ struct AppRoot: View {
     @Environment(\.modelContext) private var context
     @Environment(StoreHost.self) private var store
     @Environment(ICloudMonitor.self) private var monitor
+    @Environment(TimerStore.self) private var timer
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private enum Phase: Equatable {
         case undecided
@@ -24,6 +26,10 @@ struct AppRoot: View {
     @State private var phase = Phase.undecided
     /// After "Start a new game" the intro pages are shown, as on a first launch.
     @State private var playIntro = false
+    /// The opening sunrise (spec section 21). On a cold start the very first frame is the night frame; the decision
+    /// about which version plays is made right after, and never waits for the database or iCloud.
+    @State private var opening = OpeningCenter()
+    @State private var openingUndecided = OpeningCenter.consumeColdStart()
 
     private var active: Craft? { crafts.first(where: \.isActive) }
 
@@ -38,8 +44,41 @@ struct AppRoot: View {
             }
         }
         .syncsWidgets()
+        .environment(opening)
+        .overlay { openingOverlay }
+        .onAppear(perform: decideOpening)
+        .onOpenURL { _ in opening.finish() }
+        .onReceive(NotificationCenter.default.publisher(for: .openingShouldSkip)) { _ in opening.finish() }
+        .onChange(of: opening.finishedCount) { _, _ in OpeningAccessibility.moveFocusToContent() }
         .environment(\.giggleSoundOn, settingsRows.first?.giggleSound ?? true)
         .task { await lookInICloud() }
+    }
+
+    // MARK: Opening sunrise
+
+    @ViewBuilder
+    private var openingOverlay: some View {
+        if openingUndecided {
+            // The first frame: exactly the launch screen's night.
+            OpeningSunriseView(plan: OpeningPlan(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0)
+        } else if let run = opening.running {
+            OpeningSunriseView(plan: run.plan, start: run.start,
+                               target: run.plan.landing == .home ? opening.sunTarget : nil,
+                               onTap: { opening.finish() })
+                .task(id: run.start) {
+                    try? await Task.sleep(for: .seconds(run.plan.style.duration))
+                    if !Task.isCancelled { opening.finish() }
+                }
+        }
+    }
+
+    private func decideOpening() {
+        guard openingUndecided else { return }
+        openingUndecided = false
+        let plan = openingStyle(coldStart: true, openedFrom: .icon, sessionRunning: timer.state != nil,
+                                reduceMotion: reduceMotion, voiceOver: OpeningAccessibility.voiceOverRunning,
+                                onboarded: active != nil, dark: OpeningAccessibility.systemIsDark)
+        opening.begin(plan)
     }
 
     private func lookInICloud() async {

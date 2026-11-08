@@ -27,7 +27,7 @@ private struct ActivitySun: View {
     let state: TimerActivityAttributes.ContentState
     var hidden = true
     var body: some View {
-        SunView(face: state.pausedElapsed == nil ? .focus : .sleepy,
+        SunView(idle: false, face: state.pausedElapsed == nil ? .focus : .sleepy,
                 litRays: state.litRays,
                 rayColor: LGColor.sunRaysBright)
             .accessibilityHidden(hidden)

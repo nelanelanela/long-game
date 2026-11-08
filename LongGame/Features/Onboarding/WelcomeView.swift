@@ -16,7 +16,7 @@ struct WelcomeView: View {
                     .frame(width: 300, height: 300)
                     .position(x: geo.size.width / 2, y: sunY)
                     .accessibilityHidden(true)
-                SunView(face: .happy, rayColor: LGColor.sunRaysBright)
+                SunView(idle: false, face: .happy, rayColor: LGColor.sunRaysBright)
                     .frame(width: 240, height: 240)
                     .position(x: geo.size.width / 2, y: sunY)
 

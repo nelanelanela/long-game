@@ -28,7 +28,7 @@ struct MilestoneCelebration: View {
                     let p = reduceMotion ? 1 : (isMastery ? (t.truncatingRemainder(dividingBy: 2.6) / 1.2) : t / 1.2)
                     ZStack {
                         if !reduceMotion && p < 1 { SaveBurst(progress: p) }
-                        SunView(face: .celebrate,
+                        SunView(idle: false, face: .celebrate,
                                 rayColor: isMastery ? LGColor.sunRaysBright : LGColor.sunRays,
                                 raySpread: reduceMotion || p >= 1 ? 1 : 1 + 0.8 * sin(p * .pi))
                             .frame(width: isMastery ? 240 : 140, height: isMastery ? 240 : 140)

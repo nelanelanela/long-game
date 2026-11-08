@@ -2,6 +2,8 @@ import SwiftUI
 
 enum SunFace: Equatable, Sendable {
     case happy, focus, wink, sleepy, celebrate
+    /// Only on the opening sunrise's night frame: closed, smiling eyes and a calm mouth, exactly as the launch screen draws them.
+    case asleep
     /// Only during a giggle (spec section 18): the gasp (wide eyes, round "o"), then the baby laugh (^ ^ eyes, big open mouth).
     case surprised, laughing
 }
@@ -9,6 +11,10 @@ enum SunFace: Equatable, Sendable {
 /// The smiling sun, drawn in the spec's 200 × 200 space and scaled to fit.
 /// Rays are numbered 0...11 clockwise from the top.
 struct SunView: View {
+    /// The sun's own idle life (redesign): breathing (4 s, up 4 pt, 104.5%), rays turning (one turn per 120 s) and the
+    /// blink (every ~9 s a happy sun opens both eyes for 0.5 s). Off in widgets, the Live Activity, Watch complications,
+    /// the year card, the app icon and the launch animation, and for hosts that drive the motion themselves.
+    var idle = true
     var face: SunFace = .happy
     /// Rays 0..<litRays are lit.
     var litRays: Int = 12
@@ -22,6 +28,8 @@ struct SunView: View {
     var growFade: Bool = false
     var raysRotation: Angle = .zero
     var raysOpacity: Double = 1
+    /// Rays unfolding (the opening sunrise): 0 = folded into the sun, 1 = full length.
+    var raysScale: Double = 1
     var unlitOpacity: Double = 0.22
     var rayColor: Color = LGColor.sunRays
     /// Extra reach of all rays, used by the golden-hour burst (1 = normal).
@@ -34,13 +42,39 @@ struct SunView: View {
     /// The face that is showing: the giggle's, or the sun's own.
     private var shown: SunFace { giggle.face ?? face }
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
+        if idle && !reduceMotion {
+            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
+                let t = timeline.date.timeIntervalSinceReferenceDate
+                let breath = (1 - cos(2 * .pi * t / 4)) / 2
+                resting(at: t)
+                    .scaleEffect(1 + 0.045 * breath)
+                    .offset(y: -4 * breath)
+            }
+        } else {
+            drawn
+        }
+    }
+
+    /// This sun at rest with the idle rotation and blink for time `t` baked in.
+    private func resting(at t: Double) -> SunView {
+        var copy = self
+        copy.idle = false
+        copy.raysRotation = raysRotation + .degrees(t.truncatingRemainder(dividingBy: 120) / 120 * 360)
+        let cycle = t.truncatingRemainder(dividingBy: 9) / 9
+        if face == .happy, cycle > 0.945, cycle < 0.985 { copy.eyesOpen = 1 }
+        return copy
+    }
+
+    private var drawn: some View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height) / 200
             ZStack {
                 ZStack {
                     raysLayer
-                        .scaleEffect(giggle.raysScale)
+                        .scaleEffect(giggle.raysScale * raysScale)
                         .rotationEffect(raysRotation + .degrees(giggle.raysSpin))
                         .opacity(raysOpacity)
                     Circle().fill(LGColor.sunBody)
@@ -99,6 +133,10 @@ struct SunView: View {
             // relaxed, closed eyes
             EyeArc(x: 76, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus || shown == .wink ? 1 : 0)
             EyeArc(x: 108, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus ? 1 : 0)
+            // asleep (the launch screen's sun): same lines as the still image
+            EyeArc(x: 76, y: 100, bend: 7).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            EyeArc(x: 108, y: 100, bend: 7).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            EyeArc(x: 90, y: 116, bend: 6, width: 20).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             // winking: right eye open
             OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
             // celebrating: both eyes open
@@ -267,7 +305,7 @@ private struct BigSmile: Shape {
 #Preview("Sun faces") {
     HStack {
         ForEach([SunFace.happy, .focus, .wink, .sleepy, .celebrate, .surprised, .laughing], id: \.self) { f in
-            SunView(face: f).frame(width: 64, height: 64)
+            SunView(idle: false, face: f).frame(width: 64, height: 64)
         }
     }
     .padding()

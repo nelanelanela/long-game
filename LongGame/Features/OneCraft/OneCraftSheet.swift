@@ -12,7 +12,7 @@ struct OneCraftSheet: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            SunView(face: .happy).frame(width: 104, height: 104)
+            SunView(idle: false, face: .happy).frame(width: 104, height: 104)
             VStack(spacing: 10) {
                 Text("One player, one game").lgText(.sheetTitle)
                     .accessibilityAddTraits(.isHeader)

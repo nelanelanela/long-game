@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Year card, story</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 360px; height: 640px; position: relative; overflow: hidden; background: {{bg}}; color: {{ink}}; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div style="position: absolute; left: 0; top: 0"><dc-import name="Sky" w="360" h="360" tone="{{sky}}" horizon="0.8" moon="true" hint-size="360px,360px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 180px; margin-left: -55px"><dc-import name="Sun" idle="false" size="110" face="happy" halo="{{halo}}" hint-size="110px,110px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 243px"><dc-import name="Land" still="true" w="360" h="120" tone="{{land}}" hint-size="360px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; right: 0; top: 34px; display: flex; flex-direction: column; align-items: center; gap: 6px; color: #FFFFFF">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: 0.16em; color: #FFE08A">MY 2026 IN THE LONG GAME</span>
+<span style="font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Piano</span>
+</div>
+<div style="position: absolute; left: 20px; right: 20px; top: 352px; bottom: 18px; display: flex; flex-direction: column; align-items: center">
+<span style="font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: {{big}}">{{bigNum}}</span>
+<span style="margin-top: 4px; font-size: 14px; color: {{muted}}">{{bigSub}}</span>
+<div aria-hidden="true" style="margin-top: 16px; display: flex; gap: 1px">
+<sc-for list="{{weeks}}" as="wk" hint-placeholder-count="53">
+<div style="display: flex; flex-direction: column; gap: 1px"><sc-for list="{{wk}}" as="c" hint-placeholder-count="7"><span style="width: 5px; height: 5px; border-radius: 1.5px; background: {{c}}"></span></sc-for></div>
+</sc-for>
+</div>
+<div style="align-self: stretch; display: flex; justify-content: space-between; margin-top: 4px; font-size: 9px; color: {{muted}}"><span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span></div>
+<div style="align-self: stretch; margin-top: 16px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 11px; color: {{muted}}">Rhythm</span><span style="font-size: 15px; font-weight: 700">5 days/wk</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 11px; color: {{muted}}">Most played</span><span style="font-size: 15px; font-weight: 700">March</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 2px"><span style="font-size: 11px; color: {{muted}}">{{totLabel}}</span><span style="font-size: 15px; font-weight: 700">{{tot}}</span></span>
+</div>
+<div style="flex: 1"></div>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: {{muted}}"><dc-import name="Sun" idle="false" size="18" face="happy" halo="false" hint-size="18px,18px"></dc-import>Long Game · the longest game, played in real life</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"look":{"editor":"enum","default":"sunrise","options":["sunrise","evening"]},"hours":{"editor":"boolean","default":true},"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const eve = this.props.look === 'evening';
+    const hours = !(this.props.hours === false || this.props.hours === 'false');
+    const cols = [eve ? '#2A3566' : '#DCE3F3', '#FFE48C', '#FFC53D', '#FF9A3C', '#E8561E'];
+    const weeks = [];
+    for (let c = 0; c < 53; c++) {
+      const wk = [];
+      for (let r = 0; r < 7; r++) {
+        if (c > 44 && !(c === 45 && r < 5)) { wk.push('transparent'); continue; }
+        let lv = ((c * 7 + r) * 29 + c * 5) % 9;
+        lv = lv < 2 ? 0 : lv < 4 ? 1 : lv < 6 ? 2 : lv < 8 ? 3 : 4;
+        wk.push(cols[lv]);
+      }
+      weeks.push(wk);
+    }
+    return {
+      weeks: weeks,
+      a11y: 'Your 2026 in the long game: ' + (hours ? '624 hours played' : '241 days of practice') + ', practised 5 days a week, most in March, ' + (hours ? '3,294 of 10,000 hours' : '33 percent of the way'),
+      bg: eve ? '#0B1029' : '#FAF7F1',
+      ink: eve ? '#FFFFFF' : '#16244A',
+      muted: eve ? 'rgba(255,255,255,0.68)' : '#5E6782',
+      big: eve ? '#FFD66B' : '#16244A',
+      sky: eve ? 'night' : 'dawn',
+      land: eve ? 'night' : 'day',
+      halo: 'true',
+      bigNum: hours ? '+624 h' : '241 days',
+      bigSub: hours ? 'played this year' : 'of practice this year',
+      totLabel: hours ? 'of 10,000' : 'of the way',
+      tot: hours ? '3,294 h' : '33%'
+    };
+  }
+}
+</script>
+</body>
+</html>

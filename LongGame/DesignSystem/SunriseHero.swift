@@ -178,7 +178,7 @@ struct SunriseCanvas: View {
     }
 
     private func sunView(_ pose: GigglePose) -> SunView {
-        SunView(face: layout.face, litRays: layout.litRays, raysRotation: .degrees(frame.rotation),
+        SunView(idle: false, face: layout.face, litRays: layout.litRays, raysRotation: .degrees(frame.rotation),
                 rayColor: LGColor.sunRays, eyesOpen: pose.face == nil ? frame.eyesOpen : 0, giggle: pose)
     }
 

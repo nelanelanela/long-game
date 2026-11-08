@@ -63,7 +63,7 @@ struct FinishSheet: View {
                 }
                 .buttonStyle(.lg(.primary))
             } else {
-                SunView(face: .sleepy).frame(width: 80, height: 80)
+                SunView(idle: false, face: .sleepy).frame(width: 80, height: 80)
                 Text("Sessions under a minute can't be saved.")
                     .lgText(.body, color: LGColor.inkMuted)
                     .multilineTextAlignment(.center)

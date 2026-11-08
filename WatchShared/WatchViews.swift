@@ -46,7 +46,7 @@ struct WatchScene: View {
                 Color.clear
                     .frame(width: w, height: geo.size.height)
                     .overlay(alignment: .topLeading) {
-                        SunView(face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
+                        SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
                             .frame(width: sun, height: sun)
                             .offset(x: WatchDesign.sunCentreX * s - sun / 2, y: centre - sun / 2)
                     }
@@ -163,7 +163,7 @@ struct WatchTimerView: View {
         let sun = SunHour(elapsed: elapsed)
         VStack(spacing: 0) {
             Text(verbatim: craftName).lgText(WatchDesign.title, color: Color.white.opacity(0.7)).lineLimit(1)
-            SunView(face: paused ? .sleepy : .focus, litRays: sun.litRays,
+            SunView(idle: false, face: paused ? .sleepy : .focus, litRays: sun.litRays,
                     glowingRay: paused || sun.litRays >= 12 ? nil : sun.litRays,
                     raysOpacity: paused ? 0.4 : 1, rayColor: LGColor.sunRaysBright)
                 .frame(width: 76, height: 76)
@@ -197,7 +197,7 @@ struct WatchFinishedView: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("Session saved").lgText(WatchDesign.button, color: .white).padding(.top, 2)
-            SunView(face: .happy, rayColor: LGColor.sunRaysBright)
+            SunView(idle: false, face: .happy, rayColor: LGColor.sunRaysBright)
                 .frame(width: 80, height: 80)
                 .padding(.top, 4)
                 .accessibilityHidden(true)
@@ -220,7 +220,7 @@ struct WatchFinishedView: View {
 struct WatchSetupView: View {
     var body: some View {
         VStack(spacing: 8) {
-            SunView(face: .sleepy, rayColor: LGColor.sunRaysBright)
+            SunView(idle: false, face: .sleepy, rayColor: LGColor.sunRaysBright)
                 .frame(width: 64, height: 64)
                 .accessibilityHidden(true)
             Text("Set up Long Game on your iPhone first.")

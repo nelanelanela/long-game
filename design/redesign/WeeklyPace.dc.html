@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your weekly pace</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 22px; background: linear-gradient(180deg,#FFF1DA 0%,#FAF7F1 38%); color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between; position: relative">
+<a href="YearlyHours.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<div aria-label="Step 4 of 5" style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px"><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: #E4DFD6"></span></div>
+<span style="width: 44px"></span>
+</div>
+<h1 style="margin: 18px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Your weekly pace</h1>
+<p style="margin: 8px 0 0; font-size: 16px; line-height: 1.45; color: #5E6782">For the next 12 months, the only distance to cover.</p>
+<div style="margin-top: 44px; display: flex; align-items: center; justify-content: space-between">
+<button type="button" aria-label="Less" style="width: 56px; height: 56px; flex-shrink: 0; border: 0; border-radius: 28px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #F1ECE3); box-shadow: 0 6px 16px rgba(22,36,74,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></button>
+<span style="display: flex; flex-direction: column; align-items: center"><span style="font-size: 68px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">12</span><span style="margin-top: 6px; font-size: 15px; color: #5E6782">hours a week</span></span>
+<button type="button" aria-label="More" style="width: 56px; height: 56px; flex-shrink: 0; border: 0; border-radius: 28px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #F1ECE3); box-shadow: 0 6px 16px rgba(22,36,74,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></button>
+</div>
+<p style="margin: 28px 0 0; text-align: center; font-size: 14px; color: #5E6782">About 1 h 43 m a day · until Nov 2027</p>
+<div style="position: relative; height: 180px; margin: 28px -24px 0; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="170" tone="day" horizon="0.62" glowX="0.2" hint-size="390px,170px"></dc-import></div>
+<svg aria-hidden="true" width="390" height="170" viewBox="0 0 390 170" style="position: absolute; left: 0; top: 0"><path d="M60 100C110 10 280 10 336 72" fill="none" stroke="#C9BFAE" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round"></path><path d="M336 50a12 12 0 1 0 6 20a10 10 0 0 1-6-20z" fill="#C9D3EC"></path></svg>
+<div style="position: absolute; left: 30px; top: 74px"><dc-import name="Sun" size="60" face="happy" hint-size="60px,60px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 60px"><dc-import name="Land" w="390" h="120" tone="day" lane="0.15" hint-size="390px,120px"></dc-import></div>
+</div>
+<p style="margin: 2px 0 0; text-align: center; font-size: 13px; color: #5E6782">Each day, a stretch from the sea to the moon.</p>
+<div style="flex: 1"></div>
+<a href="ICloud.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Continue</a>
+<span style="margin-top: 12px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #5E6782">by We Have Sun</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

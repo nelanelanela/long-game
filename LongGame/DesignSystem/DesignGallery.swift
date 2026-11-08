@@ -13,14 +13,14 @@ struct DesignGallery: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     LGSectionLabel("Sun")
-                    SunView(face: face).frame(height: 180).frame(maxWidth: .infinity)
+                    SunView(idle: false, face: face).frame(height: 180).frame(maxWidth: .infinity)
                     HStack(spacing: 8) {
                         ForEach(faces, id: \.0) { name, f in
                             LGPill(title: name, selected: face == f) { face = f }
                         }
                     }
                     .scrollableRow()
-                    SunView(face: .focus, litRays: 8, glowingRay: 8, unlitOpacity: 0.22, rayColor: LGColor.sunRaysBright)
+                    SunView(idle: false, face: .focus, litRays: 8, glowingRay: 8, unlitOpacity: 0.22, rayColor: LGColor.sunRaysBright)
                         .frame(height: 120).frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(LGColor.ink, in: RoundedRectangle(cornerRadius: 20))

@@ -23,6 +23,8 @@ struct GaugeHero: View, Animatable {
     var final: Place?
     /// This week only: one line per day, read when VoiceOver users swipe up or down on the sun.
     var dayReadings: [String] = []
+    /// The opening sunrise glides its sun to where Home's sun sits on Today's arc; Home tells it where that is.
+    @Environment(OpeningCenter.self) private var opening: OpeningCenter?
 
     struct Place: Equatable {
         var fraction: Double
@@ -62,6 +64,13 @@ struct GaugeHero: View, Animatable {
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
+                // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
+                Color.clear.frame(width: arc.sunSize, height: arc.sunSize)
+                    .position(onArc)
+                    .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { rect in
+                        if mix == 1 { opening?.sunTarget = rect }
+                    }
+                    .allowsHitTesting(false)
                 if gauge.tab.hasScale {
                     GaugeScale(ticks: gauge.ticks, metrics: metrics)
                         .id(gauge.tab)

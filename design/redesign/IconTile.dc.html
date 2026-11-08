@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App icon tile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="{{label}}" style="width: 180px; height: 180px; position: relative; overflow: hidden; background: radial-gradient(ellipse 120% 60% at 50% 115%, rgba(240,160,80,0.45) 0%, rgba(240,160,80,0) 60%), linear-gradient(180deg,#0B1433 0%,#16244A 62%,#2B2A4A 100%)">
+<svg aria-hidden="true" width="180" height="180" viewBox="0 0 180 180" style="position: absolute; inset: 0">
+<defs>
+<linearGradient id="itArc" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE08A"></stop><stop offset="100%" stop-color="#F0922A"></stop></linearGradient>
+<filter id="itGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
+</defs>
+<path d="M30 30a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M150 24a0.7 0.7 0 1 0 1.4 0a0.7 0.7 0 1 0-1.4 0M22 120a0.6 0.6 0 1 0 1.2 0a0.6 0.6 0 1 0-1.2 0M160 132a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M112 14a0.6 0.6 0 1 0 1.2 0a0.6 0.6 0 1 0-1.2 0" fill="#FFF4D6" opacity="0.7"></path>
+<circle cx="90" cy="90" r="63" fill="none" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="9.8"></circle>
+<path d="{{arc}}" fill="none" stroke="#FFB547" stroke-width="12" stroke-linecap="round" opacity="0.5" filter="url(#itGlow)"></path>
+<path d="{{arc}}" fill="none" stroke="url(#itArc)" stroke-width="9.8" stroke-linecap="round"></path>
+<circle cx="{{tx}}" cy="{{ty}}" r="{{haloR}}" fill="#16244A"></circle>
+<text x="90" y="101" text-anchor="middle" font-family="Inter, -apple-system, sans-serif" font-weight="700" font-size="30" letter-spacing="-1" fill="#FFFFFF">{{num}}</text>
+</svg>
+<div style="position: absolute; left: {{sx}}; top: {{sy}}"><dc-import name="Sun" idle="false" size="{{ss}}" face="{{face}}" halo="{{halo}}" hint-size="40px,40px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"stage":{"editor":"int","default":3,"min":0,"max":10},"$preview":{"width":180,"height":180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const k = Math.max(0, Math.min(10, parseInt(this.props.stage, 10) || 0));
+    const cx = 90, cy = 90, r = 63, f = k / 10;
+    const pt = (q) => { const a = 2 * Math.PI * q; return [cx + r * Math.sin(a), cy - r * Math.cos(a)]; };
+    let arc = '';
+    if (f >= 1) arc = 'M90 27A63 63 0 1 1 90 153A63 63 0 1 1 90 27';
+    else if (f > 0) { const [ax, ay] = pt(f); arc = 'M90 27A63 63 0 ' + (f > 0.5 ? 1 : 0) + ' 1 ' + ax.toFixed(2) + ' ' + ay.toFixed(2); }
+    const [x, y] = k === 0 || k === 10 ? [90, 27] : pt(f);
+    const ss = k === 10 ? 50 : 40;
+    return {
+      label: 'Long Game icon, ' + (k * 1000).toLocaleString('en-GB') + ' hours',
+      arc: arc, tx: x.toFixed(2), ty: y.toFixed(2), haloR: k === 10 ? 23 : 19.7,
+      num: k === 0 || k === 10 ? '10,000' : k + ',000',
+      sx: (x - ss / 2).toFixed(1) + 'px', sy: (y - ss / 2).toFixed(1) + 'px',
+      ss: ss, face: k === 10 ? 'celebrate' : 'happy', halo: k === 10 ? 'true' : 'false'
+    };
+  }
+}
+</script>
+</body>
+</html>

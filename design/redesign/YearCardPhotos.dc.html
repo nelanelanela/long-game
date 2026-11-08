@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Year card, photos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 360px; height: 360px; box-sizing: border-box; padding: 18px; position: relative; overflow: hidden; background: linear-gradient(180deg,#FFF1DA 0%,#FAF7F1 46%); color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.16em; color: #A0712E">MY 2026 · PIANO</span><span style="font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1">{{bigNum}}</span></span>
+<dc-import name="Sun" idle="false" size="46" face="happy" halo="true" hint-size="46px,46px"></dc-import>
+</div>
+<div style="flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 6px">
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(160deg,#D6B48A,#A9805A)"><span style="position: absolute; left: 18%; top: 14%; width: 64%; height: 72%; border-radius: 2px; background: repeating-linear-gradient(180deg,#F7F1E4 0px,#F7F1E4 5px,#B9AE9C 5px,#B9AE9C 5.8px); transform: rotate(-6deg); box-shadow: 0 2px 5px rgba(0,0,0,0.25)"></span></span>
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: #1E1A1C"><span style="position: absolute; left: -10%; right: -10%; top: 46%; height: 40%; background: repeating-linear-gradient(90deg,#F4EFE6 0px,#F4EFE6 13px,#C9C0B2 13px,#C9C0B2 14px); transform: rotate(-12deg)"></span><span style="position: absolute; left: -10%; right: -10%; top: 46%; height: 22%; background: repeating-linear-gradient(90deg,transparent 0px,transparent 9px,#141012 9px,#141012 17px,transparent 17px,transparent 28px); transform: rotate(-12deg)"></span><span style="position: absolute; inset: 0; background: radial-gradient(circle at 80% 10%,rgba(255,200,120,0.45),rgba(255,200,120,0) 60%)"></span></span>
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(180deg,#F6D69A,#E9A85A)"><span style="position: absolute; left: 30%; top: 30%; width: 40%; height: 40%; border-radius: 50%; background: radial-gradient(circle at 40% 35%,#FFF4D6,#F0922A)"></span><span style="position: absolute; left: 0; right: 0; bottom: 0; height: 32%; background: #8A5A34"></span></span>
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(180deg,#C9D3EC,#EAD9C6)"><span style="position: absolute; left: 22%; top: 18%; width: 56%; height: 64%; background: #FFFFFF; box-shadow: 0 2px 6px rgba(22,36,74,0.18)"></span><span style="position: absolute; left: 30%; top: 30%; width: 40%; height: 3px; background: #16244A; opacity: 0.6"></span><span style="position: absolute; left: 30%; top: 40%; width: 32%; height: 3px; background: #16244A; opacity: 0.4"></span><span style="position: absolute; left: 30%; top: 50%; width: 36%; height: 3px; background: #16244A; opacity: 0.4"></span></span>
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(200deg,#6A4A3A,#2E2420)"><span style="position: absolute; right: -10%; top: -10%; width: 70%; height: 80%; background: linear-gradient(200deg,rgba(255,224,160,0.55),rgba(255,224,160,0)); transform: skewX(-14deg)"></span><span style="position: absolute; left: 24%; bottom: 18%; width: 34%; height: 30%; border-radius: 0 0 10px 10px; background: #E9DFCF"></span></span>
+<span style="border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(180deg,#FFE7C2,#F3B86A)"><span style="position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: #CFD8EF"></span><span style="position: absolute; left: 0; right: 0; bottom: 28%; height: 1px; background: #FFFFFF; opacity: 0.8"></span><span style="position: absolute; left: 0; right: 0; bottom: 16%; height: 1px; background: #FFFFFF; opacity: 0.8"></span></span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #5E6782"><span>{{foot}}</span><span style="display: flex; align-items: center; gap: 5px"><dc-import name="Sun" idle="false" size="14" face="happy" halo="false" hint-size="14px,14px"></dc-import>Long Game</span></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"hours":{"editor":"boolean","default":true},"$preview":{"width":360,"height":360}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const hours = !(this.props.hours === false || this.props.hours === 'false');
+    return {
+      bigNum: hours ? '+624 h' : '241 days',
+      foot: hours ? '241 days of practice · 3,294 of 10,000 h' : '241 days of practice · 33% of the way',
+      a11y: 'Your 2026 in the long game, piano: six photos from the year’s sessions. ' + (hours ? '624 hours played, 3,294 of 10,000.' : '241 days of practice, 33 percent of the way.')
+    };
+  }
+}
+</script>
+</body>
+</html>

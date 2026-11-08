@@ -72,7 +72,7 @@ struct MenuBarLabel: View {
         let figures = data.figures(now: now)
         let saved = figures?.plan.doneSaved ?? 0
         HStack(spacing: 4) {
-            SunView(face: timer.isActive ? .focus : .happy)
+            SunView(idle: false, face: timer.isActive ? .focus : .happy)
                 .frame(width: 16, height: 16)
             if figures != nil {
                 clock(saved: saved, now: now).monospacedDigit()
@@ -182,7 +182,7 @@ struct MenuBarPopover: View {
     /// The navy card: the focus sun, "This session", the clock and the next ray.
     private func sessionCard(_ state: TimerState, now: Date) -> some View {
         HStack(spacing: 14) {
-            SunView(face: .focus).frame(width: 64, height: 64).accessibilityHidden(true)
+            SunView(idle: false, face: .focus).frame(width: 64, height: 64).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(timer.startedOn.map { ActiveSessionText.startedOn($0) } ?? String(localized: "This session"))
                     .lgText(.caption, color: .white.opacity(0.7))
@@ -212,7 +212,7 @@ struct MenuBarPopover: View {
             let g = ArcGeometry(centreX: 144, baseY: 62, radiusX: 118, radiusY: 52, sunSize: 30)
             ZStack(alignment: .topLeading) {
                 StretchArcLayer(geometry: g, fraction: stretch.fraction)
-                SunView(face: stretch.isCovered ? .happy : .focus)
+                SunView(idle: false, face: stretch.isCovered ? .happy : .focus)
                     .frame(width: g.sunSize, height: g.sunSize)
                     .offset(x: g.point(stretch.fraction).x - g.sunSize / 2, y: g.point(stretch.fraction).y - g.sunSize / 2)
                 Rectangle().fill(LGColor.seaFill).frame(width: 288, height: 14).offset(y: 62)

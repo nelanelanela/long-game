@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add past hours</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 28px; background: linear-gradient(180deg,#FFF1DA 0%,#FAF7F1 34%); color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="HomeToday.dc.html" style="height: 44px; font-size: 16px; font-weight: 500; text-decoration: none; display: flex; align-items: center">Cancel</a>
+<span style="font-size: 16px; font-weight: 600">Add past hours</span>
+<span style="width: 52px"></span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; margin-top: 24px">
+<span style="font-size: 76px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; font-variant-numeric: tabular-nums">1:30</span>
+<span style="margin-top: 6px; font-size: 14px; color: #5E6782">Thursday 5 November</span>
+</div>
+<div style="margin-top: 26px; background: #FFFFFF; border-radius: 20px; padding: 2px 16px; box-shadow: 0 10px 30px rgba(22,36,74,0.06)">
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 1px solid #F0ECE5"><span style="font-size: 16px">Day</span><span style="padding: 6px 12px; border-radius: 10px; background: #F3F0EA; font-size: 15px; font-weight: 600">5 Nov 2026</span></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 1px solid #F0ECE5"><span style="font-size: 16px">Hours</span><span style="display: flex; align-items: center; gap: 10px"><button type="button" aria-label="Fewer hours" style="width: 36px; height: 36px; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></button><span style="min-width: 40px; text-align: center; font-size: 17px; font-weight: 600">1</span><button type="button" aria-label="More hours" style="width: 36px; height: 36px; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></button></span></div>
+<div style="display: flex; align-items: center; justify-content: space-between; height: 52px"><span style="font-size: 16px">Minutes</span><span style="display: flex; align-items: center; gap: 10px"><button type="button" aria-label="Fewer minutes" style="width: 36px; height: 36px; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></button><span style="min-width: 40px; text-align: center; font-size: 17px; font-weight: 600">30</span><button type="button" aria-label="More minutes" style="width: 36px; height: 36px; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></button></span></div>
+</div>
+<label style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13px; font-weight: 600; color: #5E6782">Note (optional)</span><textarea placeholder="What you made, what needs work" style="height: 84px; resize: none; border: 0; border-radius: 16px; background: #FFFFFF; padding: 12px 14px; font-family: Inter, sans-serif; font-size: 15px; color: #16244A; box-shadow: 0 6px 18px rgba(22,36,74,0.05)"></textarea></label>
+<div style="flex: 1"></div>
+<a href="HomeToday.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Add 1.5 hours</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

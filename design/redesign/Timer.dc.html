@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timer, sunrise with today's stretch</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit}
+</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B1029; font-family: Inter, -apple-system, system-ui, sans-serif; color: {{ink}}">
+<div style="position: absolute; inset: 0; filter: {{skyFilter}}">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 470px; background: linear-gradient(180deg,#A9C1EA 0%,#D7E2F3 48%,#FFE7C2 100%); opacity: {{dayOp}}"></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{dawnOp}}"><dc-import name="Sky" w="390" h="844" tone="dawn" horizon="0.557" moon="false" hint-size="390px,844px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{nightOp}}"><dc-import name="Sky" w="390" h="844" tone="night" horizon="0.557" moon="true" hint-size="390px,844px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 470px; overflow: hidden"><div style="position: absolute; left: 50%; top: {{glowTop}}; width: 520px; height: 520px; margin-left: -260px; border-radius: 50%; background: radial-gradient(circle, rgba(255,214,140,0.55) 0%, rgba(255,200,120,0.18) 34%, rgba(255,200,120,0) 64%); opacity: {{glowOp}}"></div></div>
+</div>
+<div style="position: absolute; left: 95px; top: {{sunTop}}; opacity: {{sunOp}}; transition: top 0.12s linear"><dc-import name="Sun" size="200" face="{{face}}" lit="{{lit}}" halo="{{halo}}" hint-size="200px,200px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 540px; bottom: 0; background: #0B1029"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 540px; bottom: 0; background: #FAF7F1; opacity: {{landDayOp}}"></div>
+<div style="position: absolute; left: 0; top: 425px"><dc-import name="Land" w="390" h="120" tone="night" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 425px; opacity: {{landDayOp}}"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 16px; right: 24px; top: 16px; height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="HomeToday.dc.html" aria-label="Minimise" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></a>
+<span style="font-size: 15px; font-weight: 600; opacity: 0.85">{{title}}</span>
+<span style="height: 30px; padding: 0 10px; border-radius: 15px; background: {{chipBg}}; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="#F0A93A"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"></path></svg>Focus on</span>
+</div>
+<div style="position: absolute; left: 24px; right: 24px; top: 500px; bottom: 28px; display: flex; flex-direction: column; align-items: center">
+<span style="font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: {{gold}}; font-variant-numeric: tabular-nums">{{today}}</span>
+<span style="margin-top: 6px; font-size: 14px; color: {{muted}}">of today’s 1 h 45</span>
+<div aria-hidden="true" style="position: relative; margin-top: 14px; width: 260px; height: 6px; border-radius: 3px; background: {{track}}">
+<span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{beforeW}}; border-radius: 3px; background: {{beforeBg}}"></span>
+<span style="position: absolute; left: {{beforeW}}; top: 0; bottom: 0; width: {{nowW}}; border-radius: 3px; background: linear-gradient(90deg,#FFD66B,#F0922A); box-shadow: 0 0 10px rgba(255,190,90,0.6)"></span>
+</div>
+<span style="margin-top: 22px; font-size: 13px; color: {{muted}}">This session</span>
+<span style="font-size: 60px; font-weight: 300; letter-spacing: -0.02em; line-height: 1.05; opacity: {{clockOp}}; font-variant-numeric: tabular-nums">{{clock}}</span>
+<span style="margin-top: 4px; font-size: 13px; color: {{noteColor}}; font-weight: {{noteWeight}}">{{note}}</span>
+<div style="flex: 1"></div>
+<div style="align-self: stretch; display: flex; gap: 12px">
+<a href="{{pauseHref}}" style="flex: 1; height: 56px; border-radius: 16px; background: {{pauseBg}}; color: {{pauseInk}}; box-shadow: inset 0 0 0 1px {{pauseLine}}; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{pauseLabel}}</a>
+<a href="Finish.dc.html" style="flex: 1; height: 56px; border-radius: 16px; background: {{finBg}}; color: {{finInk}}; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: {{finShadow}}">Finish</a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"progress":{"editor":"range","default":-1,"min":-1,"max":1,"step":0.01},"start":{"editor":"range","default":0.37,"min":0,"max":0.95,"step":0.01},"paused":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    const fixed = parseFloat(this.props.progress);
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if ((!isNaN(fixed) && fixed >= 0) || reduce) return;
+    this.t0 = Date.now();
+    this.iv = setInterval(() => this.setState({ t: ((Date.now() - this.t0) / 1000) % 14 }), 60);
+  }
+  componentWillUnmount() { if (this.iv) clearInterval(this.iv); }
+  renderVals() {
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+    const mix = (a, b, k) => {
+      const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
+      const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
+      return 'rgb(' + pa.map((v, i) => Math.round(v + (pb[i] - v) * k)).join(',') + ')';
+    };
+    const stretch = 105;
+    const paused = this.props.paused === true || this.props.paused === 'true';
+    const p0raw = parseFloat(this.props.start);
+    const p0 = isNaN(p0raw) ? 0.37 : clamp(p0raw);
+    const fixed = parseFloat(this.props.progress);
+    const t = (this.state && this.state.t) || 0;
+    let p, sinceDone = 9;
+    if (!isNaN(fixed) && fixed >= 0) { p = clamp(fixed); sinceDone = p >= 1 ? 3 : 0; }
+    else {
+      const run = 9.5;
+      p = t < 0.8 ? p0 : Math.min(1, p0 + (1 - p0) * ((t - 0.8) / run));
+      sinceDone = t - 0.8 - run;
+    }
+    const done = p >= 1;
+    const elapsedMin = Math.max(0, p - p0) * stretch;
+    const todayMin = p * stretch;
+    const fmtDur = (m) => { const h = Math.floor(m / 60), mm = Math.floor(m % 60); return h ? h + ' h ' + String(mm).padStart(2, '0') : mm + ' m'; };
+    const secs = Math.floor(elapsedMin * 60);
+    const clock = String(Math.floor(secs / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
+    const toRay = 300 - (secs % 300);
+    const L = clamp((p - 0.55) / 0.3);
+    const landDay = clamp((p - 0.45) / 0.4);
+    const sunCY = 470 - 245 * p + (paused ? 24 : 0);
+    const light = L > 0.5;
+    let note = done ? 'Today’s stretch covered.' : 'Next ray in ' + Math.floor(toRay / 60) + ':' + String(toRay % 60).padStart(2, '0');
+    if (paused) note = 'Paused. The sun is resting.';
+    return {
+      a11y: paused ? 'Paused. ' + fmtDur(todayMin) + ' of 1 hour 45 today.' : (done ? 'Today’s stretch covered. The sun has fully risen and stays there.' : 'The sun is ' + Math.round(p * 100) + ' percent of the way to today’s sunrise. ' + fmtDur(todayMin) + ' of 1 hour 45 today.'),
+      skyFilter: paused ? 'saturate(0.55) brightness(0.88)' : 'none',
+      title: paused ? 'Piano · Paused' : 'Piano',
+      nightOp: clamp(1 - p / 0.5).toFixed(3),
+      dawnOp: (p < 0.5 ? clamp(p / 0.5) : clamp(1 - (p - 0.5) / 0.45)).toFixed(3),
+      dayOp: clamp((p - 0.5) / 0.45).toFixed(3),
+      glowOp: ((0.35 + 0.65 * p) * (paused ? 0.4 : 1)).toFixed(3),
+      glowTop: (sunCY - 260).toFixed(0) + 'px',
+      sunTop: (sunCY - 100).toFixed(1) + 'px',
+      sunOp: paused ? 0.85 : 1,
+      halo: paused ? 'false' : 'true',
+      face: paused ? 'sleepy' : (done ? (sinceDone < 1.3 ? 'celebrate' : 'happy') : 'focus'),
+      lit: done ? 12 : Math.floor(elapsedMin / 5) % 12,
+      landDayOp: landDay.toFixed(3),
+      landNightOp: (1 - landDay).toFixed(3),
+      ink: mix('#FFFFFF', '#16244A', L),
+      muted: light ? '#5E6782' : 'rgba(255,255,255,0.72)',
+      gold: mix('#FFD66B', '#B4561A', L),
+      chipBg: light ? 'rgba(22,36,74,0.08)' : 'rgba(255,255,255,0.14)',
+      track: light ? '#E4DFD6' : 'rgba(255,255,255,0.18)',
+      beforeW: (p0 * 100).toFixed(1) + '%',
+      beforeBg: light ? '#E8C98A' : 'rgba(255,214,107,0.5)',
+      nowW: (Math.max(0, p - p0) * 100).toFixed(1) + '%',
+      today: fmtDur(todayMin),
+      clock: clock,
+      clockOp: paused ? 0.6 : 1,
+      note: note,
+      noteColor: done && !paused ? mix('#FFE08A', '#B4561A', L) : (light ? '#5E6782' : 'rgba(255,255,255,0.72)'),
+      noteWeight: done && !paused ? 600 : 400,
+      pauseHref: paused ? 'Timer.dc.html' : 'TimerPaused.dc.html',
+      pauseLabel: paused ? 'Resume' : 'Pause',
+      pauseBg: paused ? 'linear-gradient(180deg,#FFE7A0,#FFC94A)' : (light ? 'rgba(22,36,74,0.06)' : 'rgba(255,255,255,0.14)'),
+      pauseInk: paused ? '#16244A' : 'inherit',
+      pauseLine: paused ? 'transparent' : (light ? 'rgba(22,36,74,0.14)' : 'rgba(255,255,255,0.18)'),
+      finBg: paused ? (light ? 'rgba(22,36,74,0.06)' : 'rgba(255,255,255,0.14)') : (light ? '#16244A' : '#FFFFFF'),
+      finInk: paused ? 'inherit' : (light ? '#FFFFFF' : '#16244A'),
+      finShadow: paused ? 'inset 0 0 0 1px rgba(255,255,255,0.18)' : '0 0 30px rgba(255,214,107,0.3)'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How the game works, page 3</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 22px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="Intro2.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<a href="Craft.dc.html" style="height: 44px; font-size: 15px; font-weight: 600; color: #5E6782; text-decoration: none; display: flex; align-items: center">Skip</a>
+</div>
+<div style="position: relative; height: 354px; margin: 8px -24px 0; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="340" tone="day" horizon="0.82" hint-size="390px,340px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 116px; margin-left: -80px"><dc-import name="Sun" size="160" face="open" hint-size="160px,160px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 234px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<span style="position: absolute; left: 50%; transform: translateX(-50%); top: 62px; padding: 8px 14px; border-radius: 14px; background: #16244A; color: #FFFFFF; font-size: 13px; font-weight: 600; white-space: nowrap; box-shadow: 0 6px 18px rgba(22,36,74,0.25)">+1 h today</span>
+</div>
+<h1 style="margin: 18px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12">Play every day</h1>
+<p style="margin: 8px 0 0; font-size: 16px; line-height: 1.45; color: #5E6782">Start the timer, or add your hours later. Each hour is a step. What matters most is to keep walking.</p>
+<div style="display: flex; gap: 6px; justify-content: center; margin-top: 20px"><span style="width: 6px; height: 6px; border-radius: 3px; background: #D9D2C4"></span><span style="width: 6px; height: 6px; border-radius: 3px; background: #D9D2C4"></span><span style="width: 18px; height: 6px; border-radius: 3px; background: #16244A"></span></div>
+<div style="flex: 1"></div>
+<a href="Craft.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Choose your game</a>
+<span style="margin-top: 12px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #5E6782">by We Have Sun</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

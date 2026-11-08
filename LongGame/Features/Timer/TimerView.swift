@@ -232,7 +232,7 @@ private struct RunningScene: View {
                         .position(centre)
                 }
 
-                SunView(face: face,
+                SunView(idle: false, face: face,
                         litRays: golden != nil ? 12 : sun.litRays,
                         glowingRay: golden != nil || paused ? nil : sun.litRays,
                         glowOpacity: glow,
@@ -533,7 +533,7 @@ private struct SavedScene: View {
                 SaveBurst(progress: p)
                     .opacity(motion)
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
-                SunView(face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * motion * sin(p * .pi))
+                SunView(idle: false, face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * motion * sin(p * .pi))
                     .frame(width: 220, height: 220)
                     .offset(y: -sin(p * .pi) * 36 * motion)
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.29)

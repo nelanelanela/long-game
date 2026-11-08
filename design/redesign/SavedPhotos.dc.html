@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your photos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div style="position: absolute; inset: 0; box-sizing: border-box; padding: 16px 20px 24px; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between">
+<a href="Settings.dc.html" aria-label="Back to Settings" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<span style="font-size: 17px; font-weight: 600">Your photos</span>
+<span style="width: 44px"></span>
+</div>
+<div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">486 MB</span>
+<span style="font-size: 14px; line-height: 1.45; color: #5E6782">214 photos you added to your sessions. The default pictures drawn by the app aren’t here; they take no space.</span>
+</div>
+<sc-for list="{{years}}" as="y" hint-placeholder-count="3">
+<div style="margin-top: 16px; padding: 14px; border-radius: 18px; background: #FFFFFF; box-shadow: 0 8px 24px rgba(22,36,74,0.06); display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between"><span style="font-size: 17px; font-weight: 700">{{y.year}}</span><span style="font-size: 13px; color: #5E6782">{{y.count}} photos · {{y.size}}</span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px">
+<sc-for list="{{y.tiles}}" as="t" hint-placeholder-count="5">
+<span style="aspect-ratio: 1; border-radius: 8px; overflow: hidden; position: relative; background: {{t.bg}}"><span style="position: absolute; left: 22%; top: 18%; width: 56%; height: 64%; border-radius: 1px; background: {{t.obj}}; transform: rotate({{t.rot}}); opacity: {{t.objOp}}"></span><span style="position: absolute; inset: 0; background: rgba(22,36,74,0.55); color: #FFFFFF; font-size: 13px; font-weight: 600; display: {{t.more}}; align-items: center; justify-content: center">{{t.label}}</span></span>
+</sc-for>
+</div>
+<a href="{{y.href}}" style="height: 40px; border-radius: 12px; background: #FDF0EC; color: #C0392B; font-size: 14px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Delete all photos from {{y.year}}…</a>
+</div>
+</sc-for>
+<div style="flex: 1"></div>
+<span style="font-size: 12px; line-height: 1.45; color: #5E6782; text-align: center">Deleting photos keeps your sessions, hours and notes. Tap a photo in History to delete just one.</span>
+</div>
+<div style="position: absolute; inset: 0; background: rgba(11,16,41,0.42); display: {{dimShow}}"></div>
+<div role="alertdialog" aria-label="{{confirmTitle}}" style="position: absolute; left: 8px; right: 8px; bottom: 20px; display: {{dimShow}}; flex-direction: column; gap: 8px">
+<div style="border-radius: 16px; overflow: hidden; background: rgba(250,247,241,0.97)">
+<div style="padding: 16px 18px 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center">
+<span style="font-size: 14px; font-weight: 600">{{confirmTitle}}</span>
+<span style="font-size: 13px; line-height: 1.45; color: #5E6782">{{confirmBody}}</span>
+</div>
+<a href="SavedPhotos.dc.html" style="height: 56px; border-top: 1px solid #E4DFD6; color: #C0392B; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{confirmBtn}}</a>
+</div>
+<a href="SavedPhotos.dc.html" style="height: 56px; border-radius: 16px; background: #FFFFFF; color: #16244A; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Cancel</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"confirm":{"editor":"enum","default":"none","options":["none","2026","2025","2024"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const bgs = ['linear-gradient(160deg,#D6B48A,#A9805A)', '#1E1A1C', 'linear-gradient(180deg,#F6D69A,#E9A85A)', 'linear-gradient(180deg,#C9D3EC,#EAD9C6)', 'linear-gradient(200deg,#6A4A3A,#2E2420)', 'linear-gradient(180deg,#FFE7C2,#F3B86A)', 'linear-gradient(160deg,#B9C7A4,#7F9468)'];
+    const objs = ['repeating-linear-gradient(180deg,#F7F1E4 0px,#F7F1E4 4px,#B9AE9C 4px,#B9AE9C 4.6px)', 'repeating-linear-gradient(90deg,#F4EFE6 0px,#F4EFE6 6px,#141012 6px,#141012 9px)', 'radial-gradient(circle,#FFF4D6,#F0922A 70%,transparent 72%)', '#FFFFFF', '#E9DFCF', 'linear-gradient(180deg,transparent 55%,#CFD8EF 55%)', '#EDE6D6'];
+    const data = [['2026', 86, '198 MB'], ['2025', 112, '254 MB'], ['2024', 16, '34 MB']];
+    const years = data.map(([year, count, size], yi) => ({
+      year: year, count: count, size: size,
+      href: 'SavedPhotosConfirm.dc.html',
+      tiles: [0, 1, 2, 3, 4].map((i) => {
+        const k = (i * 3 + yi * 2) % 7;
+        const last = i === 4;
+        return { bg: bgs[k], obj: objs[(k + i) % 7], rot: ((i * 7 + yi * 5) % 13 - 6) + 'deg', objOp: 0.9, more: last ? 'flex' : 'none', label: '+' + (count - 4) };
+      })
+    }));
+    const c = data.find((d) => d[0] === this.props.confirm);
+    return {
+      years: years,
+      dimShow: c ? 'flex' : 'none',
+      confirmTitle: c ? 'Delete all ' + c[1] + ' photos from ' + c[0] + '?' : '',
+      confirmBody: c ? 'This frees ' + c[2] + '. Your ' + c[0] + ' sessions, hours and notes stay. The photos are removed from this iPhone and from iCloud, and can’t be brought back.' : '',
+      confirmBtn: c ? 'Delete ' + c[1] + ' photos from ' + c[0] : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

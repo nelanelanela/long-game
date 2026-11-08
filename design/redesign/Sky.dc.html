@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sky</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: {{wpx}}; height: {{hpx}}; position: relative; overflow: hidden; background: {{bg}}">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: {{gy}}; overflow: hidden"><div style="position: absolute; left: {{gx}}; top: {{gy}}; width: {{gs}}; height: {{gs}}; transform: translate(-50%,-50%); border-radius: 50%; background: {{glow}}"></div></div>
+<svg aria-hidden="true" width="100%" height="100%" viewBox="{{vb}}" style="display: block; position: absolute; inset: 0">
+<path d="{{stars}}" fill="#FFFFFF" opacity="{{starOp}}"></path>
+<path d="{{starsBig}}" fill="#FFF4D6" opacity="{{starOp}}"></path>
+<path d="{{moon}}" fill="#F4E9D2" opacity="{{moonOp}}"></path>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"w":{"editor":"int","default":390},"h":{"editor":"int","default":500},"tone":{"editor":"enum","default":"night","options":["night","dawn","day"]},"moon":{"editor":"boolean","default":true},"horizon":{"editor":"range","default":0.85,"min":0.3,"max":1,"step":0.01},"glowX":{"editor":"range","default":0.5,"min":0,"max":1,"step":0.01},"$preview":{"width":390,"height":500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const w = parseFloat(this.props.w) || 390;
+    const h = parseFloat(this.props.h) || 500;
+    const tone = this.props.tone || 'night';
+    const hz = this.props.horizon === undefined ? 0.85 : parseFloat(this.props.horizon);
+    const gx = this.props.glowX === undefined ? 0.5 : parseFloat(this.props.glowX);
+    const moonOn = !(this.props.moon === false || this.props.moon === 'false');
+    const p = Math.round(hz * 100);
+    const bgs = {
+      night: 'linear-gradient(180deg,#060A1E 0%,#0F1A3D ' + Math.round(p * 0.55) + '%,#22305C ' + Math.round(p * 0.85) + '%,#6B5A5E ' + (p - 3) + '%,#C8915A ' + p + '%,#0B1029 ' + p + '%)',
+      dawn: 'linear-gradient(180deg,#1B2552 0%,#3A4A7E ' + Math.round(p * 0.5) + '%,#9A8AA0 ' + Math.round(p * 0.8) + '%,#F2C38E ' + (p - 2) + '%,#FFE2B0 ' + p + '%,#FAF7F1 ' + p + '%)',
+      day: 'transparent'
+    };
+    const glows = {
+      night: 'radial-gradient(circle, rgba(255,214,150,0.55) 0%, rgba(255,190,110,0.22) 30%, rgba(255,190,110,0) 62%)',
+      dawn: 'radial-gradient(circle, rgba(255,240,205,0.85) 0%, rgba(255,205,140,0.35) 32%, rgba(255,205,140,0) 64%)',
+      day: 'radial-gradient(circle, rgba(255,226,170,0.7) 0%, rgba(255,214,150,0.25) 34%, rgba(255,214,150,0) 64%)'
+    };
+    let s = '', sb = '';
+    for (let i = 0; i < 34; i++) {
+      const x = ((i * 61 + 13) % 100) / 100 * w;
+      const y = ((i * 37 + 7) % 100) / 100 * h * hz * 0.82;
+      const r = i % 7 === 0 ? 1.2 : 0.7;
+      const d = 'M' + (x - r).toFixed(1) + ' ' + y.toFixed(1) + 'a' + r + ' ' + r + ' 0 1 0 ' + (2 * r) + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0';
+      if (r > 1) sb += d; else s += d;
+    }
+    const mx = w * 0.74, my = h * 0.12, mr = 14;
+    const moon = 'M' + (mx + mr * 0.6).toFixed(1) + ' ' + (my - mr * 0.8).toFixed(1) + 'A' + mr + ' ' + mr + ' 0 1 1 ' + (mx - mr).toFixed(1) + ' ' + (my + mr * 0.2).toFixed(1) + 'A' + (mr * 0.95).toFixed(1) + ' ' + (mr * 0.95).toFixed(1) + ' 0 0 0 ' + (mx + mr * 0.6).toFixed(1) + ' ' + (my - mr * 0.8).toFixed(1) + 'Z';
+    const gs = Math.max(w, h) * (tone === 'night' ? 1.1 : 1.3);
+    return {
+      wpx: w + 'px', hpx: h + 'px', vb: '0 0 ' + w + ' ' + h,
+      bg: bgs[tone] || bgs.night, glow: glows[tone] || glows.night,
+      gx: (gx * w).toFixed(0) + 'px', gy: (hz * h).toFixed(0) + 'px', gs: gs.toFixed(0) + 'px',
+      stars: s, starsBig: sb,
+      starOp: tone === 'night' ? 0.75 : (tone === 'dawn' ? 0.35 : 0),
+      moon: moon, moonOp: moonOn && tone !== 'day' ? 0.9 : 0
+    };
+  }
+}
+</script>
+</body>
+</html>

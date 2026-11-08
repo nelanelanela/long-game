@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Launch, a small sunrise</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes lnNight{0%,20%{opacity:1}50%{opacity:0}92%{opacity:0}100%{opacity:1}}
+@keyframes lnDawn{0%,20%{opacity:0}50%{opacity:1}62%{opacity:1}72%{opacity:0}100%{opacity:0}}
+@keyframes lnHome{0%,62%{opacity:0}72%,92%{opacity:1}100%{opacity:0}}
+@keyframes lnSun{0%,20%{transform:translate(0,0) scale(1)}50%{transform:translate(0,-120px) scale(1)}58%{transform:translate(0,-120px) scale(1)}72%,92%{transform:translate(55px,-307px) scale(0.733)}100%{transform:translate(0,0) scale(1)}}
+@keyframes lnSleepy{0%,35%{opacity:1}45%{opacity:0}92%{opacity:0}100%{opacity:1}}
+@keyframes lnHappy{0%,35%{opacity:0}45%,50%{opacity:1}52%,56%{opacity:0}58%,92%{opacity:1}100%{opacity:0}}
+@keyframes lnOpen{0%,50%{opacity:0}52%,56%{opacity:1}58%,100%{opacity:0}}
+@keyframes lnStars{0%,20%{opacity:1}40%{opacity:0}92%{opacity:0}100%{opacity:1}}
+.ln-night{animation:lnNight 7s ease-in-out infinite}
+.ln-dawn{animation:lnDawn 7s ease-in-out infinite}
+.ln-home{animation:lnHome 7s ease-in-out infinite}
+.ln-sun{transform-origin:75px 75px;animation:lnSun 7s cubic-bezier(.45,0,.25,1) infinite}
+.ln-sleepy{animation:lnSleepy 7s ease-in-out infinite}
+.ln-happy{animation:lnHappy 7s ease-in-out infinite}
+.ln-open{animation:lnOpen 7s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.ln-night,.ln-dawn,.ln-sun,.ln-sleepy,.ln-happy,.ln-open{animation:none;opacity:0}.ln-home{animation:none;opacity:1}}
+</style>
+</helmet>
+<div role="img" aria-label="Launch: the sun wakes on the horizon, rises into a morning sky and settles into its place on Home" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B1029; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div class="ln-dawn" style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="844" tone="dawn" horizon="0.6" moon="true" hint-size="390px,844px"></dc-import></div>
+<div class="ln-night" style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="844" tone="night" horizon="0.6" moon="true" hint-size="390px,844px"></dc-import></div>
+<div class="ln-sun" style="position: absolute; left: 120px; top: 432px; width: 150px; height: 150px">
+<div class="ln-sleepy" style="position: absolute; inset: 0"><dc-import name="Sun" idle="false" size="150" face="sleepy" lit="0" hint-size="150px,150px"></dc-import></div>
+<div class="ln-happy" style="position: absolute; inset: 0"><dc-import name="Sun" idle="false" size="150" face="happy" hint-size="150px,150px"></dc-import></div>
+<div class="ln-open" style="position: absolute; inset: 0"><dc-import name="Sun" idle="false" size="150" face="open" hint-size="150px,150px"></dc-import></div>
+</div>
+<div style="position: absolute; left: 0; top: 461px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 580px; bottom: 0; background: #FAF7F1"></div>
+<div class="ln-night" style="position: absolute; left: 0; top: 461px"><dc-import name="Land" w="390" h="120" tone="night" hint-size="390px,120px"></dc-import></div>
+<div class="ln-night" aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 580px; bottom: 0; background: #0B1029"></div>
+<div class="ln-home" style="position: absolute; inset: 0"><dc-import name="HomeToday" hint-size="390px,844px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App icon, the 10,000 ring</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1320px; height: 760px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">App icon · the 10,000 ring</span><span style="font-size: 14px; color: #5E6782; max-width: 980px">The original icon in the new look: a night sky with a few stars and a warm glow on the horizon, the ring filling in glowing amber, and the sun riding at its tip. A new icon every 1,000 hours.</span></div>
+<div style="display: flex; gap: 24px">
+<sc-for list="{{stages}}" as="s" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 10px; width: 180px">
+<div style="width: 180px; height: 180px; border-radius: 41px; overflow: hidden; position: relative; background: radial-gradient(ellipse 120% 60% at 50% 115%, rgba(240,160,80,0.45) 0%, rgba(240,160,80,0) 60%), linear-gradient(180deg,#0B1433 0%,#16244A 62%,#2B2A4A 100%); box-shadow: 0 14px 30px rgba(22,36,74,0.25)">
+<svg aria-hidden="true" width="180" height="180" viewBox="0 0 180 180" style="position: absolute; inset: 0">
+<defs>
+<linearGradient id="icArc" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE08A"></stop><stop offset="100%" stop-color="#F0922A"></stop></linearGradient>
+<filter id="icGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter>
+</defs>
+<path d="M30 30a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M150 24a0.7 0.7 0 1 0 1.4 0a0.7 0.7 0 1 0-1.4 0M22 120a0.6 0.6 0 1 0 1.2 0a0.6 0.6 0 1 0-1.2 0M160 132a0.8 0.8 0 1 0 1.6 0a0.8 0.8 0 1 0-1.6 0M112 14a0.6 0.6 0 1 0 1.2 0a0.6 0.6 0 1 0-1.2 0" fill="#FFF4D6" opacity="0.7"></path>
+<circle cx="90" cy="90" r="63" fill="none" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="9.8"></circle>
+<path d="{{s.arc}}" fill="none" stroke="#FFB547" stroke-width="12" stroke-linecap="round" opacity="0.5" filter="url(#icGlow)"></path>
+<path d="{{s.arc}}" fill="none" stroke="url(#icArc)" stroke-width="9.8" stroke-linecap="round"></path>
+<circle cx="{{s.tx}}" cy="{{s.ty}}" r="{{s.haloR}}" fill="#16244A"></circle>
+<text x="90" y="101" text-anchor="middle" font-family="Inter, -apple-system, sans-serif" font-weight="700" font-size="30" letter-spacing="-1" fill="#FFFFFF">{{s.num}}</text>
+</svg>
+<div style="position: absolute; left: {{s.sx}}; top: {{s.sy}}"><dc-import name="Sun" idle="false" size="{{s.ss}}" face="{{s.face}}" halo="{{s.halo}}" hint-size="40px,40px"></dc-import></div>
+</div>
+<span style="font-size: 14px; font-weight: 700">{{s.label}}</span>
+<span style="font-size: 12px; line-height: 1.45; color: #5E6782">{{s.note}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 48px; align-items: flex-start; margin-top: 6px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">On the Home Screen</span>
+<div style="width: 360px; padding: 18px; border-radius: 26px; background: linear-gradient(160deg,#C9D3EC 0%,#EAD9C6 100%); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 10px">
+<span style="display: flex; flex-direction: column; align-items: center; gap: 5px"><span style="width: 60px; height: 60px; border-radius: 14px; background: rgba(255,255,255,0.55)"></span><span style="font-size: 10px">Notes</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 5px"><span style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; position: relative; box-shadow: 0 4px 10px rgba(22,36,74,0.25)"><span style="position: absolute; left: 0; top: 0; width: 180px; height: 180px; transform: scale(0.3333); transform-origin: 0 0"><dc-import name="IconTile" stage="3" hint-size="180px,180px"></dc-import></span></span><span style="font-size: 10px">Long Game</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 5px"><span style="width: 60px; height: 60px; border-radius: 14px; background: rgba(255,255,255,0.55)"></span><span style="font-size: 10px">Camera</span></span>
+<span style="display: flex; flex-direction: column; align-items: center; gap: 5px"><span style="width: 60px; height: 60px; border-radius: 14px; background: rgba(255,255,255,0.55)"></span><span style="font-size: 10px">Music</span></span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">Default · Dark · Tinted</span>
+<div style="display: flex; gap: 18px">
+<sc-for list="{{looks}}" as="k" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+<div style="width: 120px; height: 120px; border-radius: 27px; overflow: hidden; filter: {{k.filter}}; box-shadow: 0 10px 22px rgba(22,36,74,0.18)"><div style="width: 180px; height: 180px; transform: scale(0.6667); transform-origin: 0 0"><dc-import name="IconTile" stage="3" hint-size="180px,180px"></dc-import></div></div>
+<span style="font-size: 12px; color: #5E6782">{{k.label}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.5; color: #5E6782">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">What changed from the original</span>
+<span>Flat ink background → night sky with five faint stars and a warm glow rising from the bottom edge.</span>
+<span>Flat yellow arc → amber gradient with a soft glow. Sun → the current character, unchanged.</span>
+<span>Same geometry, number, eleven stages and change rules. Dark uses the same artwork; Tinted is the system’s monochrome version.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1320,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const cx = 90, cy = 90, r = 63;
+    const pt = (f) => { const a = 2 * Math.PI * f; return [cx + r * Math.sin(a), cy - r * Math.cos(a)]; };
+    const arcD = (f) => {
+      if (f <= 0) return '';
+      if (f >= 1) return 'M90 27A63 63 0 1 1 90 153A63 63 0 1 1 90 27';
+      const [x, y] = pt(f);
+      return 'M90 27A63 63 0 ' + (f > 0.5 ? 1 : 0) + ' 1 ' + x.toFixed(2) + ' ' + y.toFixed(2);
+    };
+    const defs = [
+      [0, 'Start', 'The track only, the sun at twelve o’clock.'],
+      [1, '1,000 h', 'A tenth of the ring lights up.'],
+      [3, '3,000 h', 'The sun rides the tip of the arc.'],
+      [5, '5,000 h', 'Halfway round.'],
+      [7, '7,000 h', 'Most of the ring glowing.'],
+      [10, '10,000 h', 'The full ring. The sun opens its eyes, a little larger.']
+    ];
+    const stages = defs.map(([k, label, note]) => {
+      const f = k / 10;
+      const [x, y] = k === 0 || k === 10 ? [90, 27] : pt(f);
+      const ss = k === 10 ? 50 : 40;
+      return {
+        label: label, note: note,
+        arc: arcD(f),
+        tx: x.toFixed(2), ty: y.toFixed(2),
+        haloR: k === 10 ? 23 : 19.7,
+        num: k === 0 || k === 10 ? '10,000' : k + ',000',
+        sx: (x - ss / 2).toFixed(1) + 'px', sy: (y - ss / 2).toFixed(1) + 'px',
+        ss: ss, face: k === 10 ? 'celebrate' : 'happy', halo: k === 10 ? 'true' : 'false'
+      };
+    });
+    const looks = [
+      { label: 'Default', filter: 'none' },
+      { label: 'Dark', filter: 'none' },
+      { label: 'Tinted', filter: 'grayscale(1) contrast(1.2)' }
+    ];
+    return { stages: stages, looks: looks };
+  }
+}
+</script>
+</body>
+</html>

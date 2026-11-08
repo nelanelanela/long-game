@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timer, the day's sunrise</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1240px; height: 760px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">One sunrise a day</span><span style="font-size: 14px; color: #5E6782; max-width: 900px">During a session the sun’s height follows today’s stretch, not the session. It starts in the dark at the day’s first session, picks up where the day left off on later ones, and reaches full sunrise when the stretch is covered. After that it stays up.</span></div>
+<div style="display: flex; gap: 32px">
+<sc-for list="{{frames}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 12px; width: 258px">
+<div style="width: 258px; height: 558px; border-radius: 30px; overflow: hidden; box-shadow: 0 12px 30px rgba(22,36,74,0.16)"><div style="width: 390px; height: 844px; transform: scale(0.6615); transform-origin: 0 0"><dc-import name="Timer" progress="{{f.p}}" start="{{f.s}}" hint-size="390px,844px"></dc-import></div></div>
+<span style="font-size: 15px; font-weight: 700">{{f.title}}</span>
+<span style="font-size: 13px; line-height: 1.5; color: #5E6782">{{f.text}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      frames: [
+        { p: '0.02', s: '0', title: '1 · First session of the day', text: 'Night sky, stars and moon. The sun sleeps half under the sea.' },
+        { p: '0.37', s: '0.37', title: '2 · Second session, after the morning', text: 'The morning’s 40 m already lifted the sun to dawn, so this session starts there.' },
+        { p: '0.75', s: '0.37', title: '3 · On the way', text: 'The sky warms, the dunes light up, the text turns to navy as day breaks.' },
+        { p: '1', s: '0.37', title: '4 · Stretch covered', text: 'Full sunrise. The sun opens its eyes with a big smile, then stays up for the rest of the day.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

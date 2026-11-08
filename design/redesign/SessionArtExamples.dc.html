@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Session sunrise, examples</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1320px; height: 900px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Session sunrise · a picture for sessions without a photo</span><span style="font-size: 14px; line-height: 1.5; color: #5E6782; max-width: 1040px">Every session without a photo gets its own small abstract landscape, drawn on the phone from the session itself. No image is stored: the session keeps only one extra number (where today’s sunrise stood when it ended), so the picture can be redrawn identically any time, even years later in History. Thumbnails are cached for smooth scrolling; Settings › iCloud &amp; storage › Default pictures › Clear frees that space, and pictures are simply redrawn when shown. Your own photos are never touched.</span></div>
+<div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{ex}}" as="e" hint-placeholder-count="8">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="width: 140px; height: 140px; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 24px rgba(22,36,74,0.14)"><dc-import name="SessionArt" size="140" start="{{e.start}}" minutes="{{e.min}}" progress="{{e.p}}" seed="{{e.seed}}" hint-size="140px,140px"></dc-import></div>
+<span style="font-size: 13px; font-weight: 700">{{e.cap}}</span>
+<span style="font-size: 11px; line-height: 1.4; color: #5E6782">{{e.note}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 40px; align-items: flex-start">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.55; color: #5E6782">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">How a picture is made</span>
+<span><b style="color: #16244A">Time of day sets the light.</b> Before dawn and late at night: a dark sky, stars and glowing amber threads. Morning: pale cream and gold. Midday: bright yellow. Afternoon: orange. Evening: ember and plum.</span>
+<span><b style="color: #16244A">Time spent sets the sun and the lines.</b> The longer the session, the bigger the sun and the more fine lines flow across the dunes: one for every five minutes, up to an hour and a half.</span>
+<span><b style="color: #16244A">Today’s progress sets the height.</b> The sun sits where it was in the timer when the session ended: on the horizon for the first session, fully risen once the day’s stretch is covered.</span>
+<span><b style="color: #16244A">Every one is different.</b> The dune shapes and the sun’s position come from the session’s own start time and length, so no two sessions look the same, and the same session always looks the same today.</span>
+<span>A photo always wins: add one in the Finish sheet and it replaces the picture. VoiceOver reads “Session picture, morning, 40 minutes.”</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">In today’s sessions</span>
+<div style="width: 342px; padding: 16px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(22,36,74,0.06); display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 16px; font-weight: 600">Today</span><span style="font-size: 16px; font-weight: 700">2 h 05</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex: none"><dc-import name="SessionArt" size="56" start="7.67" minutes="40" progress="0" seed="3" hint-size="56px,56px"></dc-import></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Morning · 40 m</span><span style="font-size: 13px; color: #8A93AB">No note</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex: none"><dc-import name="SessionArt" size="56" start="13" minutes="30" progress="0.4" seed="5" hint-size="56px,56px"></dc-import></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Midday · 30 m</span><span style="font-size: 13px; color: #5E6782">Scales, slow</span></span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 56px; height: 56px; border-radius: 12px; overflow: hidden; flex: none"><dc-import name="SessionArt" size="56" start="19.25" minutes="55" progress="1" seed="8" hint-size="56px,56px"></dc-import></span><span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">Evening · 55 m</span><span style="font-size: 13px; color: #5E6782">Nocturne, left hand</span></span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">Same session, redrawn</span>
+<div style="display: flex; gap: 10px">
+<sc-for list="{{same}}" as="s" hint-placeholder-count="3">
+<span style="width: 96px; height: 96px; border-radius: 14px; overflow: hidden"><dc-import name="SessionArt" size="96" start="18.75" minutes="65" progress="0.8" seed="{{s}}" hint-size="96px,96px"></dc-import></span>
+</sc-for>
+</div>
+<span style="font-size: 11px; line-height: 1.45; color: #5E6782; max-width: 310px">Three different sessions at 18:45 for 1 h 05: the same light and sun, but different dunes and a different place for the sun.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1320,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ex = [
+      { start: 4.9, min: 25, p: 0, seed: 11, cap: '04:55 · 25 m', note: 'Before dawn, first of the day. The sun on the horizon.' },
+      { start: 6.83, min: 15, p: 0.1, seed: 2, cap: '06:50 · 15 m', note: 'A short morning start. Small sun, three lines.' },
+      { start: 9.25, min: 50, p: 0.35, seed: 4, cap: '09:15 · 50 m', note: 'Morning, a third of the day done.' },
+      { start: 12.5, min: 80, p: 0.6, seed: 6, cap: '12:30 · 1 h 20', note: 'Midday, a long one. Big sun, many lines.' },
+      { start: 15.17, min: 40, p: 0.7, seed: 9, cap: '15:10 · 40 m', note: 'Afternoon, the sun climbing.' },
+      { start: 18.75, min: 65, p: 0.9, seed: 1, cap: '18:45 · 1 h 05', note: 'Evening, almost there.' },
+      { start: 21.5, min: 25, p: 1, seed: 13, cap: '21:30 · 25 m', note: 'Night, the stretch covered. The sun stays up.' },
+      { start: 23.17, min: 120, p: 1, seed: 7, cap: '23:10 · 2 h', note: 'A long night session. The fullest picture.' }
+    ];
+    return { ex: ex, same: [21, 34, 55] };
+  }
+}
+</script>
+</body>
+</html>

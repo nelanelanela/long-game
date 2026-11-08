@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Catch up, by week</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #6E6A66; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div style="position: absolute; left: 0; right: 0; top: 70px; bottom: 0; border-radius: 30px 30px 0 0; background: linear-gradient(180deg,#FFF1DA 0%,#FAF7F1 30%); box-shadow: 0 -12px 40px rgba(0,0,0,0.2); padding: 10px 24px 28px; display: flex; flex-direction: column">
+<span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #DDD6CA"></span>
+<div style="height: 44px; margin-top: 4px; display: flex; align-items: center; justify-content: space-between">
+<a href="CatchUpAsk.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<span style="font-size: 17px; font-weight: 600">Catch up</span>
+<span style="width: 44px"></span>
+</div>
+<h2 style="margin: 12px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15">How much did you play each week?</h2>
+<p style="margin: 8px 0 0; font-size: 15px; color: #5E6782">A rough guess is fine. The hours are spread across the days.</p>
+<div style="margin-top: 18px; padding: 2px 16px; background: #FFFFFF; border-radius: 22px; box-shadow: 0 10px 30px rgba(22,36,74,0.06)">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: {{row.border}}">
+<span style="flex: 1; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">{{row.range}}</span><span style="font-size: 13px; color: #5E6782">{{row.sub}}</span></span>
+<button type="button" aria-label="Less" style="width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"></path></svg></button>
+<span style="min-width: 52px; text-align: center; font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums">{{row.hours}}</span>
+<button type="button" aria-label="More" style="width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 18px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #EFEAE1); box-shadow: 0 3px 8px rgba(22,36,74,0.08); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"></path></svg></button>
+</div>
+</sc-for>
+</div>
+<div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; color: #5E6782">Adding</span><span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">26 h</span></div>
+<div style="flex: 1"></div>
+<a href="HomeToday.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Add 26 hours</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const data = [['3 – 10 Oct', '8 days · about 1 h 08 m a day', 9], ['11 – 17 Oct', '7 days · about 1 h 09 m a day', 8], ['18 – 24 Oct', '7 days · about 1 h 17 m a day', 9]];
+    return { rows: data.map(([r, s, h], i) => ({ range: r, sub: s, hours: h + ' h', border: i === data.length - 1 ? '0' : '1px solid #F0ECE5' })) };
+  }
+}
+</script>
+</body>
+</html>

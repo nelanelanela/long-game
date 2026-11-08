@@ -14,7 +14,7 @@ struct TipThanksSheet: View {
                 let hop = t.truncatingRemainder(dividingBy: 1.2) / 1.2
                 ZStack {
                     if !reduceMotion { motes(t) }
-                    SunView(face: .celebrate)
+                    SunView(idle: false, face: .celebrate)
                         .frame(width: 140, height: 140)
                         .offset(y: reduceMotion ? 0 : -14 * sin(min(hop / 0.6, 1) * .pi))
                 }

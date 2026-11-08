@@ -12,7 +12,7 @@ extension Color {
 
 /// Design tokens from the Visual system section of the spec.
 enum LGColor {
-    static let background = Color(hex: 0xFAF8F4)
+    static let background = Color(hex: 0xFAF7F1)
     static let surface = Color.white
     static let ink = Color(hex: 0x16244A)
     static let inkMuted = Color(hex: 0x5E6782)
@@ -22,7 +22,29 @@ enum LGColor {
     static let chipFill = Color(hex: 0xF3EFE8)
     /// The small clock tile for a session without a photo.
     static let clockTile = Color(hex: 0xF1EDE6)
-    static let segmentTrack = Color(hex: 0xEFEBE4)
+    static let segmentTrack = Color(hex: 0xEFE2CF)
+
+    // We Have Sun redesign (update prompt 32, part 1)
+    /// The wash behind Home's top titles; setup steps use `peachWashSetup`.
+    static let peachWash = Color(hex: 0xFFF0D6)
+    static let peachWashSetup = Color(hex: 0xFFF1DA)
+    static let tabTrack = Color(hex: 0xEFE2CF)
+    static let amber = Color(hex: 0xF0922A)
+    static let ember = Color(hex: 0xB4561A)
+    static let night = Color(hex: 0x0B1029)
+    /// Sea gradient, day: `sea` at the top through `seaDeep` to the background at the bottom.
+    static let sea = Color(hex: 0xCFD8EF)
+    static let seaDeep = Color(hex: 0xE3E8F4)
+    /// Sea gradient, night.
+    static let seaNight: [Color] = [Color(hex: 0x1A2148), Color(hex: 0x111737), Color(hex: 0x0B1029)]
+    static let dune = Color(hex: 0xDCCDB8)
+    static let duneFar = Color(hex: 0xEBD6BC)
+    static let duneNight = Color(hex: 0x232442)
+    static let duneFarNight = Color(hex: 0x5A4A5E)
+    static let contour = Color(hex: 0x9FB0E0)
+    static let contourNight = Color(hex: 0x3D4D93)
+    /// The Timer sun's big number at the start of the day, before it turns ember.
+    static let timerGold = Color(hex: 0xFFD66B)
     /// The iPad/Mac sidebar and its quiet capsule button (#EFEBE4), and the chosen row's wash.
     static let sidebar = Color(hex: 0xEFEBE4)
     static let sidebarSelection = Color(hex: 0x16244A).opacity(0.10)
@@ -90,4 +112,13 @@ enum LGColor {
         .init(color: Color(hex: 0xE98FA3), location: 0.76),
         .init(color: Color(hex: 0xF7B46A), location: 1),
     ])
+
+    // Opening sunrise (spec section 21). Each trio is night → dusk → morning; the sky goes top, middle, bottom.
+    static let openingNight = 0x16244A as UInt32
+    static let openingSkyTop: (UInt32, UInt32, UInt32) = (0x16244A, 0x2A2F6B, 0xFFE3B0)
+    static let openingSkyMiddle: (UInt32, UInt32, UInt32) = (0x16244A, 0x6E3D74, 0xFFF1DA)
+    static let openingSkyBottom: (UInt32, UInt32, UInt32) = (0x16244A, 0xF2A07A, 0xFAF8F4)
+    static let openingSeaFill: (UInt32, UInt32, UInt32) = (0x22306A, 0x2B3A73, 0xD3DEF4)
+    static let openingSeaWave: (UInt32, UInt32, UInt32) = (0x2E3C7A, 0x4A5A96, 0xBCC9E9)
+    static let openingSeaLine: (UInt32, UInt32, UInt32) = (0x3E4C8A, 0x9FB0E0, 0x16244A)
 }
