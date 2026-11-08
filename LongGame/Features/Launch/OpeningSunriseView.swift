@@ -136,12 +136,12 @@ struct OpeningSunriseView: View {
                 // The sea is always in front of the sun and always opaque: the day land lies underneath and the
                 // night land fades on top of it, never the other way round.
                 ZStack(alignment: .topLeading) {
-                    LGColor.background.frame(width: w, height: max(0, h - (landTop + landHeight - 1)))
-                        .offset(y: landTop + landHeight - 1)
+                    LGColor.background.frame(width: w, height: max(0, h - (landTop + landHeight)))
+                        .offset(y: landTop + landHeight)
                     LandView(tone: .day, still: true).frame(width: w, height: landHeight).offset(y: landTop)
                     ZStack(alignment: .topLeading) {
-                        LGColor.night.frame(width: w, height: max(0, h - (landTop + landHeight - 1)))
-                            .offset(y: landTop + landHeight - 1)
+                        LGColor.night.frame(width: w, height: max(0, h - (landTop + landHeight)))
+                            .offset(y: landTop + landHeight)
                         LandView(tone: .night, still: true).frame(width: w, height: landHeight).offset(y: landTop)
                     }
                     .opacity(night)

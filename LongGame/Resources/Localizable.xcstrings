@@ -1,6 +1,15 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Paused. The sun is resting." : {
+
+    },
+    "Next ray in %@" : {
+
+    },
+    "Paused" : {
+
+    },
     "The sun is up." : {
 
     },

@@ -114,6 +114,7 @@
 		2DF58D03D1F7801730DE2E8F /* TimerMoments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FADE04FC791931D0B34E177 /* TimerMoments.swift */; };
 		2E257B512E1E5F17B6EB4483 /* SunWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF88E6907D99B65C071F188D /* SunWidgets.swift */; };
 		2EC8A2C3FEB58FD1553113C7 /* SidebarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F3044A6A68F733B316517A /* SidebarLayout.swift */; };
+		2F5DC2C6511ED3B104C629F9 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		2FA82FDD8FDB8D7F10D2A6E3 /* CatchUpSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6786F3B6D0CB2CD09F547A54 /* CatchUpSheet.swift */; };
 		304E0444A8EF6068C6ADBA55 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		30560DBF0C15CE6B2A83AEC1 /* FinishSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36B0373131290A5FF6B14A /* FinishSheet.swift */; };
@@ -321,6 +322,7 @@
 		8EF01EAE1A6AA420B3D8A6B8 /* ICloudLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D0475BCB8B474C298A86DA /* ICloudLogic.swift */; };
 		912DEF1D12FB79404E87B620 /* CraftSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115C30D5710F5DDD61037FF8 /* CraftSuggestions.swift */; };
 		923BE5020BBDBD778952A2E2 /* WindowShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0901FA08C1198659C7B2BC44 /* WindowShape.swift */; };
+		92B37697BFF2CD4E46FFCDD5 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		9314D3E0616AE3CE9FE3527B /* PhotoThumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2E0DC9E6C628C5EA981719 /* PhotoThumb.swift */; };
 		93258007F4D1D570B775345B /* Water.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43824C0EB89F2251259C11A0 /* Water.swift */; };
 		9340CAEBAD0FC6AAECBE93E8 /* ICloudLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D0475BCB8B474C298A86DA /* ICloudLogic.swift */; };
@@ -345,6 +347,7 @@
 		9E9CFA08BC847C10109636B4 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480213F17CA1F530062D7B2E /* IntroView.swift */; };
 		9F21453DD1555DE194072FB7 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F8D4894833A78A620446EC2B /* Localizable.xcstrings */; };
 		9F3DC2175DFF5A2F352DC30E /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB309A444D8CD7FFD6139114 /* CloudSync.swift */; };
+		9F5797629D276D98CEC67AE1 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		A076BDED917DF71FBF0392BD /* SunWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC62C9206943FB7C8E407B4 /* SunWords.swift */; };
 		A1870E06C0AB78D62DCF2FCC /* HoursStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */; };
 		A20EF96157E594B468756BFA /* SunriseMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */; };
@@ -361,9 +364,11 @@
 		A6D744E65ABE980A0E4A38D9 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		A7CBB1F391CEB0E2C7F8CB55 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22695377BBCF2B894F838BF6 /* WidgetBridge.swift */; };
 		A7F1A8D78477D6DE26D47783 /* WeeklyTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00D5764DAEC9966CA01FB8A /* WeeklyTargetTests.swift */; };
+		A8327A107ACF8921EE6CEE6D /* TimerSunriseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9B1CB2CC13815622006555 /* TimerSunriseTests.swift */; };
 		A8A8513B5E81CB2561BBB1E3 /* StartYearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108877712C3CCCFBF80126E2 /* StartYearView.swift */; };
 		A92B40E5C27759FD2E460D79 /* CountingTotal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4999DC1C22FCC8CF3B000F /* CountingTotal.swift */; };
 		A9700D7ADB1D154758950EA9 /* TipJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4AB42F4E930FADDC3C987F /* TipJarView.swift */; };
+		A9ABF2293736C62F0DC60E49 /* TimerSunriseLayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B3A0A4B1E9A1976B3BA41 /* TimerSunriseLayers.swift */; };
 		AA2EBAF50A611D976529618C /* WatchConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D320347EF98367153628E0BC /* WatchConnection.swift */; };
 		AAD4619BF3456B17C0B66B45 /* HomeGaugeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AE8A7A8A39B243A44E46F /* HomeGaugeTests.swift */; };
 		AB0F36B28A3EDC5E253C6837 /* GlassPreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */; };
@@ -404,7 +409,9 @@
 		BC7FC829624BD2AE08DECA98 /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7493CAE826FC661FDE16D /* Summary.swift */; };
 		BD82F9D8C20CEC38D8D099C0 /* OpeningSunriseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D708E08EA241D47815A97B /* OpeningSunriseView.swift */; };
 		BE4E18E19EB382B011E497FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DB48346358AD922DA94D16D /* Assets.xcassets */; };
+		BE521E0837AD57D725691D63 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		BEC11BE7E1D09ED2D7B9A69D /* CalendarLevelMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB07343877285852A456E0 /* CalendarLevelMark.swift */; };
+		BEFEC48888D4E2204E9B2FAF /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		BFA72A5DC4256AC2F6F55F16 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22695377BBCF2B894F838BF6 /* WidgetBridge.swift */; };
 		BFDC9F91652C5220709FF05B /* TimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5773F1E7DF81F13522180A4F /* TimerTests.swift */; };
 		C0AE1728D50B1A2D80408148 /* ICloudStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8429316F295D4BF7263F4C /* ICloudStepView.swift */; };
@@ -415,6 +422,7 @@
 		C28C96C488B70A512FCAA5F5 /* SunGiggleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D9D3BC538EA9CADD45AF4F /* SunGiggleTests.swift */; };
 		C29F420F7F83E699CA82D2E3 /* TipJarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA4AB42F4E930FADDC3C987F /* TipJarView.swift */; };
 		C3496301EC7DA4F9A48AA096 /* HomeGaugeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AE8A7A8A39B243A44E46F /* HomeGaugeTests.swift */; };
+		C354A496D90480E836ABE67B /* TimerSunriseLayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B3A0A4B1E9A1976B3BA41 /* TimerSunriseLayers.swift */; };
 		C359AC90C1A63449514E7917 /* Practice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AF3C5DCEB543083E891D780 /* Practice.swift */; };
 		C3B8BC4B9D15EF1F25A1956F /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */; };
 		C4A02E39428DE87684CA9AC7 /* HomeGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC7B97C2565533549273A31 /* HomeGauge.swift */; };
@@ -486,6 +494,7 @@
 		E9138575D1159E4552864EBE /* TodayStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFFB6B3391DA3CC30262F77 /* TodayStretch.swift */; };
 		E9325B3757EF1507BF86D8EB /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		E936B3AFE2F07149D8375DA5 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
+		E94CC4B0DB1CDA6482BADA75 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		EA29E38E5E97DFB8660CFFF5 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		EAAEBD7B64BA4790F35B96B9 /* YearSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89B469CCBC753428C70BB58 /* YearSummary.swift */; };
 		EBA0B19C0775823AB8937F77 /* GiggleSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63D8B9012C3CB29E0CB321D /* GiggleSoundPlayer.swift */; };
@@ -527,6 +536,7 @@
 		F99A88A335129B4FFBF98EC7 /* StretchArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BDE149BC4487BFB450B912 /* StretchArt.swift */; };
 		F9AC4482280F3347387A2F9D /* TipRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95668AEA33090AE8C1ED90AF /* TipRules.swift */; };
 		F9F4C90A5D7457C5CCD40397 /* ICloudTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638D5D0C78714564A3CF6877 /* ICloudTests.swift */; };
+		FB02F8B4F90B8102E975C625 /* TimerSunriseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9B1CB2CC13815622006555 /* TimerSunriseTests.swift */; };
 		FBBCCDFF41E5CEA5D3751EE8 /* SummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C69AC77D52205982CB5DD6 /* SummaryTests.swift */; };
 		FC710B6C9AD9C4D58C818FBA /* ActiveSessionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6821D9F46CA004E80AC4ED28 /* ActiveSessionLogic.swift */; };
 		FD295334EB7E690A910F9810 /* TimerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C9DE464C0FF4C3D233638F /* TimerLogic.swift */; };
@@ -617,6 +627,7 @@
 /* Begin PBXFileReference section */
 		034BFFFAA734EDD10E76FAC6 /* FutureSelfSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FutureSelfSheet.swift; sourceTree = "<group>"; };
 		036B723725632FAFC7EE97A3 /* Adaptive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adaptive.swift; sourceTree = "<group>"; };
+		049B3A0A4B1E9A1976B3BA41 /* TimerSunriseLayers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSunriseLayers.swift; sourceTree = "<group>"; };
 		074BF7987401BB1D633526AA /* StoreKitTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKitTest.framework; path = System/Library/Frameworks/StoreKitTest.framework; sourceTree = SDKROOT; };
 		07B20747D1E863291600448E /* LongGameCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameCommands.swift; sourceTree = "<group>"; };
 		0901FA08C1198659C7B2BC44 /* WindowShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowShape.swift; sourceTree = "<group>"; };
@@ -625,6 +636,7 @@
 		0BC0EC69524DEEF95D7E386D /* OneCraftSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneCraftSheet.swift; sourceTree = "<group>"; };
 		0BDF76B9E1AFBEE132791920 /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
 		0C3555EAD70603C2FAE1FB02 /* LongGameMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LongGameMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C9B1CB2CC13815622006555 /* TimerSunriseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSunriseTests.swift; sourceTree = "<group>"; };
 		0CDCD0D30283AFD1FA5AB80A /* MenuBarSun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarSun.swift; sourceTree = "<group>"; };
 		108877712C3CCCFBF80126E2 /* StartYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartYearView.swift; sourceTree = "<group>"; };
 		115C30D5710F5DDD61037FF8 /* CraftSuggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftSuggestions.swift; sourceTree = "<group>"; };
@@ -783,6 +795,7 @@
 		D4B3AACCD339311BF73029C6 /* HoursStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursStepper.swift; sourceTree = "<group>"; };
 		D590BA78DBAFEC94CE665416 /* LongGameWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LongGameWatch.entitlements; sourceTree = "<group>"; };
 		D60AFCD659933634C28283F3 /* giggle-7.m4a */ = {isa = PBXFileReference; path = "giggle-7.m4a"; sourceTree = "<group>"; };
+		D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSunrise.swift; sourceTree = "<group>"; };
 		D7A2536744CE70D66C28008A /* LongGameMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameMacApp.swift; sourceTree = "<group>"; };
 		D8DE1E2C41179019E71470B1 /* TodaySessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySessionsView.swift; sourceTree = "<group>"; };
 		D98BB75880B3BE798BB21487 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -847,6 +860,7 @@
 				AC36B0373131290A5FF6B14A /* FinishSheet.swift */,
 				D2D3B9B0FF8D4A15F09D8BFA /* SaveBurst.swift */,
 				8F7E3F49B3D4B88874771B1F /* TimerSky.swift */,
+				049B3A0A4B1E9A1976B3BA41 /* TimerSunriseLayers.swift */,
 				FD160555B15B20735D686997 /* TimerView.swift */,
 			);
 			path = Timer;
@@ -1091,6 +1105,7 @@
 				2AC62C9206943FB7C8E407B4 /* SunWords.swift */,
 				B4C9DE464C0FF4C3D233638F /* TimerLogic.swift */,
 				4FADE04FC791931D0B34E177 /* TimerMoments.swift */,
+				D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */,
 				95668AEA33090AE8C1ED90AF /* TipRules.swift */,
 				699FC58C2C9D4C16626A3161 /* TodaySessions.swift */,
 				ACFFB6B3391DA3CC30262F77 /* TodayStretch.swift */,
@@ -1241,6 +1256,7 @@
 				83D9D3BC538EA9CADD45AF4F /* SunGiggleTests.swift */,
 				9A9BC38483A67A9DF4536A26 /* SunriseTests.swift */,
 				FB02EF3242425989B20F03EB /* SunWordsTests.swift */,
+				0C9B1CB2CC13815622006555 /* TimerSunriseTests.swift */,
 				5773F1E7DF81F13522180A4F /* TimerTests.swift */,
 				B8F3E10C8F5F08639D282458 /* TipTests.swift */,
 				C77F4DD3099C67D39537C888 /* TodaySessionsTests.swift */,
@@ -1707,6 +1723,8 @@
 				54E5EE1A69DB6EA2B3847B97 /* TimerPersistence.swift in Sources */,
 				563D21FEFE68E2074E7D3CB9 /* TimerSky.swift in Sources */,
 				FE1E025A3FCC0B9547EB605F /* TimerStore.swift in Sources */,
+				BEFEC48888D4E2204E9B2FAF /* TimerSunrise.swift in Sources */,
+				C354A496D90480E836ABE67B /* TimerSunriseLayers.swift in Sources */,
 				58460A1A6DE34A6E302E08B6 /* TimerView.swift in Sources */,
 				A9700D7ADB1D154758950EA9 /* TipJarView.swift in Sources */,
 				12D3CE21CF3DED9603220E31 /* TipRules.swift in Sources */,
@@ -1763,6 +1781,7 @@
 				E63E053BCB2743B893CFC695 /* SunGiggleTests.swift in Sources */,
 				238EC2412D801882E7E67708 /* SunWordsTests.swift in Sources */,
 				2BE78BD3D0C8A9BDF88A3D9D /* SunriseTests.swift in Sources */,
+				FB02F8B4F90B8102E975C625 /* TimerSunriseTests.swift in Sources */,
 				B93348C0D8FA4DC560F63C87 /* TimerTests.swift in Sources */,
 				D697FD375AF7807ACFD57D86 /* TipTests.swift in Sources */,
 				D9B0F9D12B80412045715595 /* TodaySessionsTests.swift in Sources */,
@@ -1809,6 +1828,7 @@
 				1FAC132D7039093E3C71FE40 /* SunriseMotion.swift in Sources */,
 				40BA7A3522C2BAF3E06148D4 /* TimerLogic.swift in Sources */,
 				05554E05364DBB5D23151B9C /* TimerMoments.swift in Sources */,
+				92B37697BFF2CD4E46FFCDD5 /* TimerSunrise.swift in Sources */,
 				299310F06A515E5B5E71EF87 /* TipRules.swift in Sources */,
 				DC76620A86F6E1D6FEB87B5E /* TodaySessions.swift in Sources */,
 				416BA4B1C0779915939CD67A /* TodayStretch.swift in Sources */,
@@ -1934,6 +1954,8 @@
 				4F123446EF990A347B6A4C39 /* TimerPersistence.swift in Sources */,
 				C7BB0B04E761345A10D0C3B3 /* TimerSky.swift in Sources */,
 				054ECBE5A8F5C74F3001A7E8 /* TimerStore.swift in Sources */,
+				BE521E0837AD57D725691D63 /* TimerSunrise.swift in Sources */,
+				A9ABF2293736C62F0DC60E49 /* TimerSunriseLayers.swift in Sources */,
 				464E18101EEDBB2C501AD56B /* TimerView.swift in Sources */,
 				C29F420F7F83E699CA82D2E3 /* TipJarView.swift in Sources */,
 				76342EADF5DA9A2E9F92CE84 /* TipRules.swift in Sources */,
@@ -1991,6 +2013,7 @@
 				C28C96C488B70A512FCAA5F5 /* SunGiggleTests.swift in Sources */,
 				CB13B4200F25C1E8442FD01F /* SunWordsTests.swift in Sources */,
 				3C934555B8D1C10B9CAF7277 /* SunriseTests.swift in Sources */,
+				A8327A107ACF8921EE6CEE6D /* TimerSunriseTests.swift in Sources */,
 				BFDC9F91652C5220709FF05B /* TimerTests.swift in Sources */,
 				0047872AEB7D1256CA389610 /* TodaySessionsTests.swift in Sources */,
 				FDFD80CAD082B9A30DE5D924 /* TodayStretchTests.swift in Sources */,
@@ -2036,6 +2059,7 @@
 				98C8FCDB1FD0D5AF96CF666B /* SunriseMotion.swift in Sources */,
 				64764DC89253F6EC32FDF177 /* TimerLogic.swift in Sources */,
 				266BA052AA591D2B25B749EF /* TimerMoments.swift in Sources */,
+				2F5DC2C6511ED3B104C629F9 /* TimerSunrise.swift in Sources */,
 				F8D60C59D236677213025095 /* TipRules.swift in Sources */,
 				CB5CD226F36FB0D8F8D96D5C /* TodaySessions.swift in Sources */,
 				34C4736A18854143D0C0B89F /* TodayStretch.swift in Sources */,
@@ -2095,6 +2119,7 @@
 				FD295334EB7E690A910F9810 /* TimerLogic.swift in Sources */,
 				8ECC63481F4273D624A4A6F2 /* TimerMoments.swift in Sources */,
 				8E716DDE5E6F6FD328600858 /* TimerPersistence.swift in Sources */,
+				E94CC4B0DB1CDA6482BADA75 /* TimerSunrise.swift in Sources */,
 				F9AC4482280F3347387A2F9D /* TipRules.swift in Sources */,
 				3E0D84BDF4B6B95008A6504A /* TodaySessions.swift in Sources */,
 				E123ADFD1703884BF22C907B /* TodayStretch.swift in Sources */,
@@ -2145,6 +2170,7 @@
 				5D6CAF50B36DE0893E8A20CA /* SunriseMotion.swift in Sources */,
 				5246DA9F71FCB42A11CE5863 /* TimerLogic.swift in Sources */,
 				2DF58D03D1F7801730DE2E8F /* TimerMoments.swift in Sources */,
+				9F5797629D276D98CEC67AE1 /* TimerSunrise.swift in Sources */,
 				CDFE0F25C95FF366C9E9DA7A /* TipRules.swift in Sources */,
 				1DCFDBA1C86178508D70CA69 /* TodaySessions.swift in Sources */,
 				E9138575D1159E4552864EBE /* TodayStretch.swift in Sources */,
