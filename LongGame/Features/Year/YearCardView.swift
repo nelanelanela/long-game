@@ -33,8 +33,7 @@ struct YearCardView: View {
 
     private var evening: Bool { style == .evening }
     private var ink: Color { evening ? .white : LGColor.ink }
-    private var muted: Color { evening ? .white.opacity(0.7) : LGColor.inkMuted }
-    private var label: Color { evening ? LGColor.mote : LGColor.finishLabel }
+    private var muted: Color { evening ? .white.opacity(0.68) : LGColor.inkMuted }
 
     var body: some View {
         Group {
@@ -46,56 +45,55 @@ struct YearCardView: View {
 
     // MARK: Story (Sunrise and Evening), 9:16
 
+    /// The scene (dawn sky and day land, or night sky and night land), the title in white above the sun, and the
+    /// numbers below the sea. Nothing on the card moves: the sun stands still and the water is drawn still.
     private var storyCard: some View {
-        ZStack(alignment: .top) {
-            background
-            VStack(spacing: 0) {
+        ZStack(alignment: .topLeading) {
+            (evening ? LGColor.night : LGColor.background)
+            SkyView(tone: evening ? .night : .dawn, horizon: 0.8, moon: true)
+                .frame(width: 360, height: 360)
+            SunView(idle: false, face: .happy)
+                .frame(width: 110, height: 110)
+                .position(x: 180, y: 180 + 55)
+            LandView(tone: evening ? .night : .day, still: true)
+                .frame(width: 360, height: 120)
+                .offset(y: 243)
+
+            VStack(spacing: 6) {
                 Text("My \(String(summary.year)) in the long game")
                     .textCase(.uppercase)
-                    .font(.system(size: 12, weight: .semibold)).tracking(1.68)
-                    .foregroundStyle(label)
-                    .padding(.top, 34)
+                    .font(.system(size: 11, weight: .semibold)).tracking(1.76)
+                    .foregroundStyle(LGColor.mote)
                 Text(craftName)
                     .font(.system(size: 30, weight: .bold)).tracking(-0.6)
-                    .foregroundStyle(ink)
+                    .foregroundStyle(.white)
                     .lineLimit(1).minimumScaleFactor(0.5)
                     .padding(.horizontal, 24)
-                    .padding(.top, 6)
-                SunriseCanvas(layout: .yearCard(sea: evening ? .evening : .day, glowStrength: evening ? 0.35 : 0.3),
-                              frame: .still)
-                    .frame(width: 360, height: 222)
-                    .padding(.top, 8)
-                bottom
             }
-        }
-    }
+            .frame(width: 360)
+            .padding(.top, 34)
 
-    private var background: some View {
-        Group {
-            if evening {
-                LinearGradient(stops: [.init(color: Color(hex: 0x16244A), location: 0), .init(color: Color(hex: 0x24306A), location: 0.55),
-                                       .init(color: Color(hex: 0x3A2F6B), location: 1)], startPoint: .top, endPoint: .bottom)
-            } else {
-                LinearGradient(stops: [.init(color: Color(hex: 0xFFF6E6), location: 0), .init(color: Color(hex: 0xFFE9C7), location: 0.62),
-                                       .init(color: LGColor.background, location: 0.62), .init(color: LGColor.background, location: 1)],
-                               startPoint: .top, endPoint: .bottom)
-            }
+            bottom
+                .frame(width: 360, height: 640 - 352, alignment: .top)
+                .offset(y: 352)
         }
+        .frame(width: 360, height: 640, alignment: .topLeading)
+        .clipped()
     }
 
     private var bottom: some View {
         VStack(spacing: 0) {
             Text(YearCardText.big(summary, showHours: showHours))
-                .font(.system(size: 54, weight: .bold)).tracking(-2.2)
-                .foregroundStyle(evening ? LGColor.mote : ink)
+                .font(.system(size: 52, weight: .bold)).tracking(-2.1)
+                .foregroundStyle(evening ? Color(hex: 0xFFD66B) : ink)
                 .lineLimit(1).minimumScaleFactor(0.5)
             Text(YearCardText.caption(summary, showHours: showHours))
                 .font(.system(size: 14))
                 .foregroundStyle(muted)
-                .padding(.top, 6)
+                .padding(.top, 4)
             YearStrip(summary: summary, now: now, weekStart: weekStart, evening: evening)
-                .frame(width: 300, height: 40)
-                .padding(.top, 22)
+                .frame(width: 317, height: 41)
+                .padding(.top, 16)
             HStack {
                 ForEach(Array(YearCardText.monthLabels().enumerated()), id: \.offset) { i, name in
                     if i > 0 { Spacer(minLength: 0) }
@@ -103,32 +101,31 @@ struct YearCardView: View {
                 }
             }
             .font(.system(size: 9)).foregroundStyle(muted)
-            .frame(width: 300)
+            .frame(width: 317)
             .padding(.top, 4)
             HStack(alignment: .top, spacing: 0) {
                 stat(summary.rhythm > 0 ? Labels.daysPerWeek(summary.rhythm) : "–", String(localized: "Rhythm"))
                 stat(summary.mostPlayedMonth.map { YearCardText.monthName($0) } ?? "–", String(localized: "Most played"))
                 stat(YearCardText.totalValue(summary, showHours: showHours), YearCardText.totalCaption(showHours: showHours))
             }
-            .frame(width: 300)
-            .padding(.top, 20)
+            .frame(width: 320)
+            .padding(.top, 16)
             Spacer(minLength: 0)
             HStack(spacing: 6) {
-                SunView(idle: false, face: .happy).frame(width: 14, height: 14)
+                SunView(idle: false, face: .happy).frame(width: 18, height: 18)
                 Text("Long Game · the longest game, played in real life")
             }
             .font(.system(size: 11)).foregroundStyle(muted)
-            .padding(.bottom, 20)
+            .padding(.bottom, 18)
         }
-        .padding(.top, 6).padding(.horizontal, 28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(evening ? Color(hex: 0x2B3A73) : LGColor.background)
+        .padding(.horizontal, 20)
     }
 
+    /// The caption sits above the value, as on the board.
     private func stat(_ value: String, _ caption: String) -> some View {
         VStack(spacing: 2) {
+            Text(caption).font(.system(size: 11)).foregroundStyle(muted).lineLimit(1)
             Text(value).font(.system(size: 15, weight: .bold)).foregroundStyle(ink).lineLimit(1).minimumScaleFactor(0.6)
-            Text(caption).font(.system(size: 10)).foregroundStyle(muted).lineLimit(1)
         }
         .frame(maxWidth: .infinity)
     }
@@ -137,49 +134,60 @@ struct YearCardView: View {
 
     private var photosCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text("My \(String(summary.year)) · \(craftName)")
                         .textCase(.uppercase)
-                        .font(.system(size: 10, weight: .semibold)).tracking(1.4)
-                        .foregroundStyle(label)
+                        .font(.system(size: 11, weight: .semibold)).tracking(1.76)
+                        .foregroundStyle(LGColor.finishLabel)
                         .lineLimit(1)
                     Text(YearCardText.big(summary, showHours: showHours))
                         .font(.system(size: 30, weight: .bold)).tracking(-0.9)
-                        .foregroundStyle(ink)
+                        .foregroundStyle(LGColor.ink)
                         .lineLimit(1).minimumScaleFactor(0.5)
                 }
                 Spacer(minLength: 8)
-                SunView(idle: false, face: .happy).frame(width: 58, height: 58)
+                SunView(idle: false, face: .happy).frame(width: 46, height: 46)
             }
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
-            LazyVGrid(columns: columns, spacing: 6) {
-                ForEach(0..<6, id: \.self) { i in tile(i) }
+            VStack(spacing: 6) {
+                ForEach(0..<2, id: \.self) { row in
+                    HStack(spacing: 6) {
+                        ForEach(0..<3, id: \.self) { column in tile(row * 3 + column) }
+                    }
+                }
             }
+            .frame(maxHeight: .infinity)
             HStack {
                 Text(YearCardText.photoFooter(summary, showHours: showHours)).lineLimit(1).minimumScaleFactor(0.7)
                 Spacer(minLength: 8)
-                Text("Long Game")
+                HStack(spacing: 5) {
+                    SunView(idle: false, face: .happy).frame(width: 14, height: 14)
+                    Text("Long Game")
+                }
             }
-            .font(.system(size: 11)).foregroundStyle(muted)
+            .font(.system(size: 11)).foregroundStyle(LGColor.inkMuted)
         }
-        .padding(22)
-        .background(LGColor.background)
+        .padding(18)
+        .frame(width: 360, height: 360)
+        .background(LinearGradient(stops: [.init(color: LGColor.peachWashSetup, location: 0),
+                                           .init(color: LGColor.background, location: 0.46),
+                                           .init(color: LGColor.background, location: 1)],
+                                   startPoint: .top, endPoint: .bottom))
     }
 
     private func tile(_ index: Int) -> some View {
-        let side = (360 - 44 - 12) / 3.0
-        return Group {
-            if photos.indices.contains(index) {
-                Image(platformImage: photos[index]).resizable().scaledToFill().accessibilityIgnoresInvertColors()
-            } else {
-                LGColor.chipFill
+        Color.clear
+            .overlay {
+                if photos.indices.contains(index) {
+                    Image(platformImage: photos[index]).resizable().scaledToFill().accessibilityIgnoresInvertColors()
+                } else {
+                    LGColor.chipFill
+                }
             }
-        }
-        .frame(width: side, height: side)
-        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-        .contentShape(Rectangle())
-        .onLongPressGesture { onSwapTile?(index) }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .contentShape(Rectangle())
+            .onLongPressGesture { onSwapTile?(index) }
     }
 }
 
@@ -193,7 +201,7 @@ struct YearStrip: View {
 
     var body: some View {
         let grid = YearSummary.grid(year: summary.year, levels: summary.levels, now: now, weekStart: weekStart)
-        let rest = evening ? Color(hex: 0x6677B5) : LGColor.rest
+        let rest = evening ? Color(hex: 0x2A3566) : Color(hex: 0xDCE3F3)
         Canvas { context, size in
             guard !grid.isEmpty else { return }
             let pitch = min(size.width / CGFloat(grid.count), size.height / 7)
@@ -203,7 +211,8 @@ struct YearStrip: View {
                 for (r, level) in column.enumerated() {
                     guard let level else { continue }
                     let rect = CGRect(x: left + CGFloat(c) * pitch, y: CGFloat(r) * pitch, width: cell, height: cell)
-                    context.fill(CalendarLevelShape(level: level).path(in: rect), with: .color(level == .rest ? rest : LGColor.calendar(level)))
+                    context.fill(Path(roundedRect: rect, cornerRadius: cell * 0.3, style: .continuous),
+                                 with: .color(level == .rest ? rest : LGColor.calendar(level)))
                 }
             }
         }

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 /// "Your year": a calm keepsake of the year, to keep or share. Three looks, a Show hours switch and Share.
 struct YearScreen: View {
@@ -8,6 +9,8 @@ struct YearScreen: View {
     let weekStart: WeekStart
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    @Query private var settingsRows: [AppSettings]
     @Environment(\.lgEmbedded) private var embedded
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var year: Int
@@ -70,7 +73,10 @@ struct YearScreen: View {
             PhotoSwapSheet(sessions: sessions.filter { $0.hasPhoto && Calendar.current.component(.year, from: $0.start) == year }
                                 .sorted { $0.start > $1.start },
                            current: chosen) { id in
-                if chosen.indices.contains(swap.index) { chosen[swap.index] = id }
+                if chosen.indices.contains(swap.index) {
+                    chosen[swap.index] = id
+                    pinChosen()
+                }
                 swapping = nil
             }
             .lgSheetCard()
@@ -172,9 +178,22 @@ struct YearScreen: View {
 
     // MARK: Photos and sharing
 
+    /// The year's six: the photos pinned by swapping stay; the rest are the most viewed (newer first on ties).
     private func resetPhotos() {
-        chosen = Array(summary.photos.prefix(6).map(\.id))
+        let candidates = sessions.filter { $0.hasPhoto && Calendar.current.component(.year, from: $0.start) == year }
+            .map { YearPhotoCandidate(id: $0.id, start: $0.start, viewCount: $0.viewCount) }
+        let pins = YearCardPins.decode(settingsRows.first?.yearCardPinsRaw ?? "")[year] ?? []
+        chosen = YearPhotoChoice.choose(candidates: candidates, pinned: pins)
         if style == .photos && !summary.offersPhotosCard { style = .sunrise }
+    }
+
+    /// A photo swapped in stays on this year's card.
+    private func pinChosen() {
+        guard let settings = settingsRows.first else { return }
+        var pins = YearCardPins.decode(settings.yearCardPinsRaw)
+        pins[year] = chosen
+        settings.yearCardPinsRaw = YearCardPins.encode(pins)
+        try? context.save()
     }
 
     private func loadImages() async {

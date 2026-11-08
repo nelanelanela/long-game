@@ -68,6 +68,10 @@ final class Session {
     /// session picture needs besides the session itself. Optional so existing stores migrate on their own; sessions
     /// without it are filled in from the day's order of sessions (`SessionPictures.fillMissing`).
     var sunriseProgressAtEnd: Double?
+    /// How often the photo was opened (it counts after a second on screen, at most once an hour). Only used to pick
+    /// the Photos year card's six photos; never shown. Goes with the photo.
+    var viewCount: Int = 0
+    var lastCountedAt: Date?
 
     init(craftId: UUID, start: Date, durationSec: Double, source: SessionSource, note: String? = nil, photo: Data? = nil) {
         self.craftId = craftId
@@ -84,6 +88,14 @@ final class Session {
     func setPhoto(_ data: Data?) {
         photo = data
         hasPhoto = data != nil
+        if data == nil { viewCount = 0; lastCountedAt = nil }
+    }
+
+    /// One more open of the photo, unless it was already counted in the last hour.
+    func countPhotoView(now: Date = Date()) {
+        guard hasPhoto, PhotoViews.shouldCount(lastCountedAt: lastCountedAt, now: now) else { return }
+        viewCount += 1
+        lastCountedAt = now
     }
 
     var source: SessionSource {
@@ -129,6 +141,8 @@ final class AppSettings {
     var lastHomeTabRaw: String = HomeTab.today.rawValue
     /// Settings → App icon grows with you. On unless turned off.
     var iconGrows: Bool = true
+    /// The photos pinned on the Photos year card for each year (see `YearCardPins`).
+    var yearCardPinsRaw: String = ""
     /// The `IconStage` the home-screen icon was last set to.
     var appliedIconStageRaw: String = IconStage.start.stored
 

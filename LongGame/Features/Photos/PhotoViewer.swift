@@ -95,6 +95,14 @@ struct PhotoViewer: View {
         .onChange(of: sessions.count) { _, _ in
             if index == nil { dismiss() }
         }
+        // An open counts once the photo has been on screen for a second (and at most once an hour, see `PhotoViews`).
+        // Moving to another photo cancels this, so a quick swipe past counts nothing.
+        .task(id: currentID) {
+            try? await Task.sleep(for: .seconds(PhotoViews.dwell))
+            guard !Task.isCancelled, let session = current else { return }
+            session.countPhotoView()
+            try? context.save()
+        }
     }
 
     // MARK: Pieces
