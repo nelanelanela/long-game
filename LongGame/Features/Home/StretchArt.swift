@@ -26,9 +26,9 @@ struct ArcGeometry: Equatable {
         let margin = max(40, metrics.scaleX - 3)
         sunSize = metrics.sunSize >= 170 ? 120 : metrics.sunSize
         centreX = width / 2
-        baseY = metrics.waterY
+        baseY = metrics.arcBaseY ?? metrics.waterY
         radiusX = max(60, (width - 2 * margin) / 2)
-        radiusY = max(40, metrics.waterY - (sunSize / 2 + 8))
+        radiusY = metrics.arcRadiusY ?? max(40, metrics.waterY - (sunSize / 2 + 8))
     }
 
     func point(_ fraction: Double) -> CGPoint {

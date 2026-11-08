@@ -44,6 +44,30 @@ struct GaugeMetrics: Equatable, Sendable {
     var pillX: CGFloat
     var dashStartX: CGFloat
     var scaleOvershoot: CGFloat = GaugeGeometry.scaleOvershoot
+    /// Today's arc, when it does not simply start on the waterline: where it starts and how tall it stands.
+    var arcBaseY: CGFloat?
+    var arcRadiusY: CGFloat?
+
+    // The phone's hero on each tab (the redesign boards): Today 305, This week 272, The long game 285. The land is
+    // always 74 pt below the shoreline, so the sea is never clipped.
+    static let phoneToday = GaugeMetrics(
+        height: 305, waterY: 231, zeroY: 223, topY: 84, sunSize: 110, sunOffsetX: 0, scaleX: 48, pillX: 58, dashStartX: 52,
+        arcBaseY: 205, arcRadiusY: 135)
+    static let phoneWeek = GaugeMetrics(
+        height: 272, waterY: 197, zeroY: 196, topY: 40, sunSize: 110, sunOffsetX: 20, scaleX: 44, pillX: 30, dashStartX: 96,
+        scaleOvershoot: 0)
+    static let phoneLong = GaugeMetrics(
+        height: 285, waterY: 211, zeroY: 210, topY: 36, sunSize: 140, sunOffsetX: 35, scaleX: 44, pillX: 22, dashStartX: 100,
+        scaleOvershoot: 0)
+
+    /// The phone's metrics for the tab on show.
+    static func phone(for tab: HomeTab) -> GaugeMetrics {
+        switch tab {
+        case .today: phoneToday
+        case .week: phoneWeek
+        case .longGame: phoneLong
+        }
+    }
 
     static let standard = GaugeMetrics(
         height: GaugeGeometry.height, waterY: GaugeGeometry.waterY, zeroY: GaugeGeometry.zeroY, topY: GaugeGeometry.topY,

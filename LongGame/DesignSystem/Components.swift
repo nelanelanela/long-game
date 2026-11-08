@@ -109,14 +109,24 @@ extension ButtonStyle where Self == LGButtonStyle {
 }
 
 /// Round icon buttons: back, close, calendar, plus (44 pt touch target).
+/// True where a screen's title area sits on the dark dawn sky (The long game): its text and icons turn white.
+private struct LGOnDarkKey: EnvironmentKey { static let defaultValue = false }
+extension EnvironmentValues {
+    var lgOnDark: Bool {
+        get { self[LGOnDarkKey.self] }
+        set { self[LGOnDarkKey.self] = newValue }
+    }
+}
+
 struct LGIconButton: View {
     let systemName: String
     let label: String
-    var tint: Color = LGColor.ink
+    var tint: Color?
     var size: CGFloat = 18
     var weight: Font.Weight = .medium
     let action: () -> Void
     @Environment(\.lgFlat) private var flat
+    @Environment(\.lgOnDark) private var onDark
 
     var body: some View {
         Button(action: action) {
@@ -128,7 +138,7 @@ struct LGIconButton: View {
     private var image: some View {
         Image(systemName: systemName)
             .font(.system(size: size, weight: weight))
-            .foregroundStyle(tint)
+            .foregroundStyle(tint ?? (onDark ? .white : LGColor.ink))
             .frame(width: 44, height: 44)
     }
 
@@ -204,6 +214,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
     let onSelect: (Item) -> Void
 
     @Environment(\.lgFlat) private var flat
+    @Environment(\.lgOnDark) private var onDark
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Namespace private var lens
 
@@ -221,9 +232,16 @@ struct LGSegmentedControl<Item: Hashable>: View {
         .accessibilityAddTraits(.isTabBar)
     }
 
+    /// The flat tabs (before iOS 26) have a white chosen pill, so its title stays navy even on the dark sky.
+    private var isFlat: Bool {
+        if #available(iOS 26, macOS 26, *) { return flat }
+        return true
+    }
+
     private func segmentTitle(_ item: Item, selected: Bool) -> some View {
         Text(title(item))
-            .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline))
+            .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
+                    color: onDark && !(selected && isFlat) ? .white : LGColor.ink)
             .lineLimit(1)
             .minimumScaleFactor(0.8)
             // Like the system's own tab bars, the three tab names stop growing at the largest accessibility sizes so
@@ -252,7 +270,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
             }
         }
         .padding(3)
-        .background(LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(onDark ? Color.white.opacity(0.16) : LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     @available(iOS 26, macOS 26, *)

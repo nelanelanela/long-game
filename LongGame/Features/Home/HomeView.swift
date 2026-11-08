@@ -43,6 +43,8 @@ struct HomeView: View {
     /// While set, Home shows this instead of the real total (the count-up after a save).
     @State private var countingTotal: Double?
     @State private var catchUpGap: CatchUp.Gap?
+    /// "1.5 h added." for a moment after hours are saved (the timer, Add past hours or a catch-up).
+    @State private var toast: String?
     @State private var totalBeforeCatchUp = 0.0
     /// Today, This week or The long game. Home opens on Today; right after onboarding it opens on The long game once
     /// (`AppSettings.lastHomeTab` holds the one to open on). Tapping another tab is not remembered for next time.
@@ -179,7 +181,10 @@ struct HomeView: View {
             CatchUpSheet(craft: craft, gap: gap, pace: totalPace, onFinish: catchUpFinished)
                 .lgSheetCard()
         }
-        .onChange(of: s.total) { _, total in checkMilestones(total: total) }
+        .onChange(of: s.total) { old, total in
+            checkMilestones(total: total)
+            if total > old, showTimer || sheet != nil || catchUpGap != nil { showToast(addedHours: total - old) }
+        }
         .onChange(of: sessions.count) { old, new in
             refreshNotifications()
             if old == 0, new == 1, !UserDefaults.standard.bool(forKey: "notifications.asked") { askAboutReminders = true }
@@ -193,6 +198,7 @@ struct HomeView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: celebrating)
+        .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.25), value: toast)
         .alert("Want a gentle nudge?", isPresented: $askAboutReminders) {
             Button("Yes, remind me") { enableDailyReminder() }
             Button("Not now", role: .cancel) { UserDefaults.standard.set(true, forKey: "notifications.asked") }
@@ -288,7 +294,22 @@ struct HomeView: View {
         }, onDropImage: { id, data in attachDropped(data, to: today.first { $0.id == id }) })
     }
 
-    private func hero(_ f: HomeFigures, metrics: GaugeMetrics) -> some View {
+    private func showToast(addedHours: Double) {
+        let minutes = Int((addedHours * 60).rounded())
+        guard minutes > 0 else { return }
+        let amount = addedHours < 0.95 ? "\(minutes) m" : DurationFormat.hours(addedHours)
+        let text = String(localized: "\(amount) added.")
+        toast = text
+        AccessibilityNotification.Announcement(text).post()
+        Task {
+            try? await Task.sleep(for: .seconds(2.6))
+            if toast == text { toast = nil }
+        }
+    }
+
+    private func hero(_ f: HomeFigures, metrics given: GaugeMetrics, extendsSky: Bool = false) -> some View {
+        // The phone's column has a hero of its own height on each tab; other windows keep theirs.
+        let metrics = given == .standard ? GaugeMetrics.phone(for: f.shown) : given
         let scale = scaleGauge(f)
         let onToday = f.shown == .today
         let g = onToday ? HomeGauge.today(f.stretch) : scale
@@ -297,9 +318,23 @@ struct HomeView: View {
                                     : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
-                         metrics: metrics, final: place, dayReadings: dayReadings(f.now))
+                         extendsSky: extendsSky, metrics: metrics, final: place, dayReadings: dayReadings(f.now))
             // The sun and sea change tabs with a clean cut: no glide, no cross-fade, so the water never shows through.
             .transaction { $0.animation = nil }
+    }
+
+    /// The small navy note at the hero's top right.
+    @ViewBuilder private var toastView: some View {
+        if let toast {
+            Text(toast)
+                .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .subheadline), color: .white)
+                .padding(.horizontal, 12).padding(.vertical, 8)
+                .background(LGColor.ink, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+                .padding(.top, 12).padding(.trailing, 20)
+                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+                .accessibilityAddTraits(.updatesFrequently)
+        }
     }
 
     /// The big number; each tab's replaces the other's with a cross-fade, stacked so the page doesn't jump.
@@ -307,8 +342,12 @@ struct HomeView: View {
         ZStack(alignment: style.isLeading ? .topLeading : .top) {
             switch f.shown {
             case .today:
-                TodayNumber(state: f.stretch, style: style)
-                    .transition(.opacity)
+                if isEmptyDay(f.stretch) {
+                    EmptyDayHeading().transition(.opacity)
+                } else {
+                    TodayNumber(state: f.stretch, style: style)
+                        .transition(.opacity)
+                }
             case .week:
                 CountingWeek(hours: f.week, target: f.weekTarget, style: style)
                     .transition(.opacity)
@@ -326,7 +365,8 @@ struct HomeView: View {
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
         ScrollView {
             VStack(spacing: 0) {
-                hero(f, metrics: short ? .short : .standard)
+                hero(f, metrics: short ? .short : .standard, extendsSky: true)
+                    .overlay(alignment: .topTrailing) { toastView }
                     .padding(.top, short ? 2 : 8)
                     .id(ScrollSpot.top)
                 number(f, style: short ? .inline : .stacked)
@@ -335,7 +375,7 @@ struct HomeView: View {
                     switch f.shown {
                     case .today:
                         VStack(spacing: short ? 12 : 18) {
-                            TodayQuietLine(state: f.stretch)
+                            if !isEmptyDay(f.stretch) { TodayQuietLine(state: f.stretch) }
                             todaySessions(f)
                         }
                         .padding(.top, short ? 6 : 14)
@@ -356,9 +396,9 @@ struct HomeView: View {
             .scrollTargetLayout()
         }
         .scrollPosition(id: $scrollSpot)
-        .lgTopBar {
+        .lgTopBar(transparent: f.shown == .longGame) {
             VStack(spacing: 0) {
-                header
+                header(dark: f.shown == .longGame)
                     .padding(.top, short ? 0 : 8)
                 // The tabs stay pinned under the craft name; only the page below them scrolls.
                 LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
@@ -366,6 +406,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 24)
             .lgReadableColumn(560)
+            .environment(\.lgOnDark, f.shown == .longGame)
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -380,7 +421,7 @@ struct HomeView: View {
                                          leadingInset: inset.leading)
         return HStack(spacing: 0) {
             VStack(spacing: 0) {
-                header.padding(.leading, inset.leading + 24).padding(.trailing, 12)
+                header().padding(.leading, inset.leading + 24).padding(.trailing, 12)
                 LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
                     .padding(.leading, inset.leading + 24).padding(.trailing, 12).padding(.top, 8)
                 Spacer(minLength: 0)
@@ -653,9 +694,9 @@ struct HomeView: View {
 
     // MARK: Pieces
 
-    private var header: some View {
+    private func header(dark: Bool = false) -> some View {
         HStack {
-            Text(craft.name).lgText(.screenTitle)
+            Text(craft.name).lgText(.screenTitle, color: dark ? .white : LGColor.ink)
                 .lineLimit(1).minimumScaleFactor(0.6)
                 .accessibilityAddTraits(.isHeader)
             Spacer()
@@ -992,8 +1033,17 @@ struct HomeView: View {
         }
     }
 
+    /// Nothing played today yet: Today says so in words instead of showing "0 m".
+    private func isEmptyDay(_ stretch: StretchState) -> Bool {
+        if case .inProgress(_, let done) = stretch { return done < 1 }
+        return false
+    }
+
     private func startTitle(at now: Date) -> String {
-        guard let state = timer.state, state.craftId == craft.id else { return "Start session" }
+        guard let state = timer.state, state.craftId == craft.id else {
+            let played = tab == .today && !TodaySessions.startedToday(sessions, start: \.start, now: now).isEmpty
+            return tab == .today && !played ? "Begin" : "Start session"
+        }
         // A running timer isn't waiting to be resumed: the button takes you back to it.
         let verb = state.isPaused(at: now) ? "Resume" : "Back to session"
         return verb + " · " + DurationFormat.clock(seconds: state.elapsed(at: now))

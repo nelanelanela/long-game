@@ -31,6 +31,20 @@ struct TodayNumber: View {
     }
 }
 
+/// Today before anything has been played: a short welcome instead of "0 m".
+struct EmptyDayHeading: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("The sun is up.").lgText(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1))
+                .multilineTextAlignment(.center)
+            Text("What will you practise today?").lgText(.bodyLarge, color: LGColor.inkMuted)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 10)
+    }
+}
+
 /// The one quiet line under the number (14 pt, muted).
 struct TodayQuietLine: View {
     var state: StretchState

@@ -40,6 +40,10 @@ struct SunriseLayout {
     var fade: Color = LGColor.background
     var fadeHeight: CGFloat = 34
     var sea: SeaPalette = .day
+    /// The We Have Sun look: sky, sun and then the dunes and sea (LandView) in front. Nil keeps the older wave sea.
+    var scene: SceneTone?
+    /// With a scene: the canvas draws the sky too. The caller turns this off when it draws a taller sky of its own.
+    var drawsSky = true
 
     static let homeSeaHeight: CGFloat = 64
 
@@ -56,12 +60,12 @@ struct SunriseLayout {
     /// The sun anywhere in the hero: `centre` is where the middle of the sun is, measured from the hero's top left.
     /// Home uses it while the sun glides between its place on the scale and its place on Today's arc.
     static func placed(centre: CGPoint, width: CGFloat, sunSize: CGFloat, face: SunFace = .happy,
-                       metrics: GaugeMetrics = .standard) -> SunriseLayout {
+                       metrics: GaugeMetrics = .standard, scene: SceneTone? = nil, drawsSky: Bool = true) -> SunriseLayout {
         SunriseLayout(
             height: metrics.height, waterY: metrics.waterY, sunSize: sunSize,
             sunTop: centre.y - sunSize / 2,
-            glowSize: 260 * sunSize / GaugeGeometry.sunSize, glowStrength: 0.28, glowDy: 0,
-            sunOffsetX: centre.x - width / 2, peeks: face != .celebrate, face: face)
+            glowSize: scene == nil ? 260 * sunSize / GaugeGeometry.sunSize : 0, glowStrength: 0.28, glowDy: 0,
+            sunOffsetX: centre.x - width / 2, peeks: face != .celebrate, face: face, scene: scene, drawsSky: drawsSky)
     }
 
     /// Pages 0, 1, 2 of "How the game works": the sun high, just rising, and with 8 of 12 rays lit.
@@ -94,7 +98,10 @@ struct SunriseFrame {
     /// How far below its place on the horizon the sun still is (the future-self sheet).
     var rise: CGFloat = 0
 
-    static let still = SunriseFrame()
+    static let still: SunriseFrame = { var f = SunriseFrame(); f.isStill = true; return f }()
+
+    /// True for the Reduce Motion frame and for frozen previews: the land does not sway.
+    var isStill = false
 
     static func at(_ t: TimeInterval, peeks: Bool, rise: CGFloat = 0) -> SunriseFrame {
         SunriseFrame(
@@ -115,6 +122,7 @@ struct SunriseFrame {
         f.rotation = Double(phase) * 3
         f.eyesOpen = eyesOpen
         f.rise = rise
+        f.isStill = true
         return f
     }
 }
@@ -128,6 +136,44 @@ struct SunriseCanvas: View {
     var gigglePose: GigglePose = .rest
 
     var body: some View {
+        if let tone = layout.scene {
+            sceneBody(tone)
+        } else {
+            waveBody
+        }
+    }
+
+    /// Sky behind, the sun, then the land and sea in front. The shoreline sits at `waterY` and the land ends at the
+    /// bottom of the hero, so the sea is always in front of the sun and always opaque.
+    private func sceneBody(_ tone: SceneTone) -> some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = layout.height
+            let size = layout.sunSize
+            // The land box is 120 tall with its shoreline 46 down (46/120 = 0.3833); stretch it to end at the bottom.
+            let landHeight = (h - layout.waterY) / (1 - 46.0 / 120)
+            let landTop = layout.waterY - landHeight * 46.0 / 120
+            ZStack(alignment: .topLeading) {
+                if layout.drawsSky {
+                    SkyView(tone: tone, horizon: layout.waterY / h, moon: tone != .day,
+                            glowX: min(max((w / 2 + layout.sunOffsetX) / w, 0), 1))
+                        .frame(width: w, height: h)
+                }
+                sun(size: size)
+                    .frame(width: size, height: size)
+                    .scaleEffect(1 + 0.03 * frame.breathe)
+                    .offset(x: w / 2 - size / 2 + layout.sunOffsetX, y: layout.sunTop + frame.rise - 3 * frame.breathe)
+                LandView(tone: tone == .night ? .night : .day, still: frame.isStill)
+                    .frame(width: w, height: landHeight)
+                    .offset(y: landTop)
+            }
+            .frame(width: w, height: h, alignment: .topLeading)
+            .clipped()
+        }
+        .frame(height: layout.height)
+    }
+
+    private var waveBody: some View {
         GeometryReader { geo in
             let w = geo.size.width
             let h = layout.height

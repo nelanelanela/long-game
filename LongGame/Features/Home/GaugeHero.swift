@@ -17,6 +17,8 @@ struct GaugeHero: View, Animatable {
     var isRunning = true
     /// False with Reduce Motion: the sun jumps to its new place and only the labels cross-fade.
     var glides = true
+    /// True in the phone's single column: the long game's sky runs up behind the title and tabs, which turn white.
+    var extendsSky = false
     /// The hero's size: the phone's by default, smaller or wider for other windows.
     var metrics: GaugeMetrics = .standard
     /// The final values, for Reduce Motion (they are used instead of the interpolated ones).
@@ -41,6 +43,12 @@ struct GaugeHero: View, Animatable {
         }
     }
 
+    /// How far the long game's sky reaches above the hero, to sit behind the status bar, title and tabs.
+    static let skyExtension: CGFloat = 340
+
+    /// The long game is the dark one: dawn sky, white scale and a white pill.
+    private var onDark: Bool { gauge.tab == .longGame }
+
     private var shown: Place {
         if !glides, let final { return final }
         return Place(fraction: fraction, arcFraction: arcFraction, arcMix: arcMix)
@@ -58,10 +66,19 @@ struct GaugeHero: View, Animatable {
             let size = metrics.sunSize + (arc.sunSize - metrics.sunSize) * mix
 
             ZStack(alignment: .topLeading) {
+                // The long game's dawn sky runs on up behind the title and tabs (the page draws no background there).
+                if onDark && extendsSky {
+                    let ext = Self.skyExtension
+                    SkyView(tone: .dawn, horizon: (ext + metrics.waterY) / (ext + metrics.height),
+                            glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
+                        .frame(width: width, height: ext + metrics.height)
+                        .offset(y: -ext)
+                }
                 // Today's arc and moon sit behind the sea and the sun, and fade with the tab.
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
-                SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics),
+                SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
+                                            scene: onDark ? .dawn : .day, drawsSky: !(onDark && extendsSky)),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
@@ -72,10 +89,11 @@ struct GaugeHero: View, Animatable {
                     }
                     .allowsHitTesting(false)
                 if gauge.tab.hasScale {
-                    GaugeScale(ticks: gauge.ticks, metrics: metrics)
+                    GaugeScale(ticks: gauge.ticks, metrics: metrics, onDark: onDark,
+                               pillY: metrics.centreY(fraction: place.fraction))
                         .id(gauge.tab)
                         .transition(.opacity)
-                    GaugeMarker(pill: gauge.pill, tab: gauge.tab, fraction: place.fraction, metrics: metrics)
+                    GaugeMarker(pill: gauge.pill, tab: gauge.tab, fraction: place.fraction, metrics: metrics, onDark: onDark)
                         .transition(.opacity)
                 }
             }
@@ -88,6 +106,12 @@ struct GaugeHero: View, Animatable {
 struct GaugeScale: View {
     let ticks: [GaugeTick]
     var metrics: GaugeMetrics = .standard
+    var onDark = false
+    /// Where the pill sits: a label it would cover is left out.
+    var pillY: CGFloat?
+
+    private var lineColour: Color { onDark ? .white.opacity(0.55) : LGColor.ink.opacity(0.5) }
+    private var labelColour: Color { onDark ? .white.opacity(0.85) : LGColor.inkMuted }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -95,26 +119,29 @@ struct GaugeScale: View {
                 p.move(to: CGPoint(x: metrics.scaleX, y: metrics.topY - metrics.scaleOvershoot))
                 p.addLine(to: CGPoint(x: metrics.scaleX, y: metrics.zeroY))
             }
-            .stroke(LGColor.gaugeLine, lineWidth: 1.5)
+            .stroke(lineColour, lineWidth: 1.2)
 
             ForEach(ticks, id: \.fraction) { tick in
                 let y = metrics.centreY(fraction: tick.fraction)
+                let covered = pillY.map { abs($0 - y) < 16 } ?? false
                 Path { p in
                     p.move(to: CGPoint(x: metrics.scaleX - 4, y: y))
                     p.addLine(to: CGPoint(x: metrics.scaleX + 4, y: y))
                 }
-                .stroke(LGColor.gaugeLine, lineWidth: 1.5)
+                .stroke(lineColour, lineWidth: 1.2)
 
                 // A zero-height strip at the tick's height, so the label is centred on it at any text size.
-                Color.clear.frame(width: 36, height: 0)
-                    .overlay(alignment: .trailing) {
+                // The labels sit to the right of the line, as on the boards.
+                Color.clear.frame(width: 44, height: 0)
+                    .overlay(alignment: .leading) {
                         Text(tick.label)
-                            .lgText(.tiny, color: LGColor.gaugeLabel)
+                            .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2), color: labelColour)
                             .monospacedDigit()
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
+                            .opacity(covered ? 0 : 1)
                     }
-                    .offset(x: 4, y: y)
+                    .offset(x: metrics.scaleX + 10, y: y - 1)
             }
         }
         .accessibilityHidden(true)
@@ -127,6 +154,7 @@ struct GaugeMarker: View {
     let tab: HomeTab
     let fraction: Double
     var metrics: GaugeMetrics = .standard
+    var onDark = false
 
     var body: some View {
         let y = metrics.centreY(fraction: fraction)
@@ -137,19 +165,20 @@ struct GaugeMarker: View {
                     p.move(to: CGPoint(x: metrics.dashStartX, y: y))
                     p.addLine(to: CGPoint(x: sunX - metrics.sunSize * 0.365, y: y))
                 }
-                .stroke(LGColor.finishDash, style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                .stroke(onDark ? Color(hex: 0xFFC56A) : LGColor.finishDash, style: StrokeStyle(lineWidth: 1.5, dash: [3, 4]))
 
                 Color.clear.frame(width: 1, height: 0)
                     .overlay(alignment: .leading) {
                         Text(pill)
                             .id(tab)
                             .transition(.opacity)
-                            .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: .white)
+                            .lgText(LGTextStyle(size: 13, weight: .bold, relativeTo: .caption), color: onDark ? LGColor.ink : .white)
                             .monospacedDigit()
                             .lineLimit(1)
                             .fixedSize()
-                            .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(LGColor.ink, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .padding(.horizontal, 9).padding(.vertical, 4)
+                            .background(onDark ? Color.white : LGColor.ink, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .shadow(color: Color(hex: onDark ? 0x0B1029 : 0x16244A, opacity: onDark ? 0.3 : 0.25), radius: 6, y: 4)
                     }
                     .offset(x: metrics.pillX, y: y)
             }
