@@ -35,13 +35,32 @@ enum YearPhotoChoice {
         }.map(\.id)
     }
 
-    /// The six photos for a year: the ones pinned by swapping (those that still exist) stay, and the rest are filled
-    /// from the most viewed (newer first on ties, so a year nobody opened shows its most recent photos).
-    static func choose(candidates: [YearPhotoCandidate], pinned: [UUID]) -> [UUID] {
+    /// A stable "random" order for photos nobody opened: it looks shuffled, but it is worked out from the year and each
+    /// photo's id, so the card shows the same photos every time it is drawn until something changes.
+    static func shuffled(_ candidates: [YearPhotoCandidate], year: Int) -> [UUID] {
+        func key(_ id: UUID) -> UInt32 {
+            var h: UInt32 = 2_166_136_261
+            func mix(_ byte: UInt8) { h = (h ^ UInt32(byte)) &* 16_777_619 }
+            withUnsafeBytes(of: id.uuid) { $0.forEach(mix) }
+            withUnsafeBytes(of: Int32(truncatingIfNeeded: year).littleEndian) { $0.forEach(mix) }
+            // One more round so neighbouring ids do not end up next to each other.
+            h ^= h >> 16; h = h &* 0x45D9F3B; h ^= h >> 16
+            return h
+        }
+        return candidates.sorted { (key($0.id), $0.id.uuidString) < (key($1.id), $1.id.uuidString) }.map(\.id)
+    }
+
+    /// The six photos for a year: the ones pinned by swapping (those that still exist) stay, then the photos that
+    /// were opened (most viewed first, newer on ties), and a year nobody opened gets a random selection (see
+    /// `shuffled`) for whatever is left.
+    static func choose(candidates: [YearPhotoCandidate], pinned: [UUID], year: Int = 0) -> [UUID] {
         let known = Set(candidates.map(\.id))
         var result: [UUID] = []
         for id in pinned where known.contains(id) && !result.contains(id) && result.count < slots { result.append(id) }
-        for id in ranked(candidates) where result.count < slots && !result.contains(id) { result.append(id) }
+        for id in ranked(candidates.filter { $0.viewCount > 0 }) where result.count < slots && !result.contains(id) { result.append(id) }
+        for id in shuffled(candidates.filter { $0.viewCount == 0 }, year: year) where result.count < slots && !result.contains(id) {
+            result.append(id)
+        }
         return result
     }
 }

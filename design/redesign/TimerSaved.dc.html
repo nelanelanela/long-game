@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timer, saved</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B1029; font-family: Inter, -apple-system, system-ui, sans-serif; color: {{ink}}">
+<div style="position: absolute; left: 0; top: 0; width: 390px; height: 470px; background: linear-gradient(180deg,#A9C1EA 0%,#D7E2F3 48%,#FFE7C2 100%); opacity: {{dayOp}}"></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{dawnOp}}"><dc-import name="Sky" w="390" h="844" tone="dawn" horizon="0.557" moon="false" hint-size="390px,844px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 0; opacity: {{nightOp}}"><dc-import name="Sky" w="390" h="844" tone="night" horizon="0.557" moon="true" hint-size="390px,844px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 470px; overflow: hidden"><div style="position: absolute; left: 50%; top: {{glowTop}}; width: 520px; height: 520px; margin-left: -260px; border-radius: 50%; background: radial-gradient(circle, rgba(255,214,140,0.6) 0%, rgba(255,200,120,0.2) 34%, rgba(255,200,120,0) 64%); opacity: {{glowOp}}; transform: scale({{glowS}})"></div></div>
+<svg aria-hidden="true" width="390" height="470" viewBox="0 0 390 470" style="position: absolute; left: 0; top: 0; opacity: {{burstOp}}">
+<sc-for list="{{petals}}" as="b" hint-placeholder-count="12"><rect x="-4" y="-8" width="8" height="16" rx="4" fill="{{b.c}}" transform="translate({{b.x}} {{b.y}}) rotate({{b.r}})"></rect></sc-for>
+</svg>
+<sc-for list="{{minis}}" as="m" hint-placeholder-count="8"><div style="position: absolute; left: {{m.x}}; top: {{m.y}}; opacity: {{burstOp}}; transform: scale({{m.s}})"><dc-import name="Sun" size="30" face="happy" idle="false" halo="false" hint-size="30px,30px"></dc-import></div></sc-for>
+<div style="position: absolute; left: 95px; top: {{sunTop}}"><dc-import name="Sun" size="200" face="celebrate" idle="false" hint-size="200px,200px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 540px; bottom: 0; background: #0B1029"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 540px; bottom: 0; background: #FAF7F1; opacity: {{landDayOp}}"></div>
+<div style="position: absolute; left: 0; top: 425px"><dc-import name="Land" w="390" h="120" tone="night" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 425px; opacity: {{landDayOp}}"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 24px; right: 24px; top: 560px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: {{textOp}}">
+<span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Saved</span>
+<span style="font-size: 15px; color: {{muted}}">{{added}}</span>
+<span style="font-size: 15px; font-weight: 600; color: {{gold}}">{{line}}</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"p":{"editor":"range","default":0.62,"min":0,"max":1,"step":0.01},"added":{"editor":"int","default":40},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    this.t0 = Date.now();
+    this.iv = setInterval(() => this.setState({ t: ((Date.now() - this.t0) / 1000) % 3 }), 40);
+  }
+  componentWillUnmount() { if (this.iv) clearInterval(this.iv); }
+  renderVals() {
+    const clamp = (v) => Math.max(0, Math.min(1, v));
+    const mix = (a, b, k) => {
+      const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
+      const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
+      return 'rgb(' + pa.map((v, i) => Math.round(v + (pb[i] - v) * k)).join(',') + ')';
+    };
+    const p = clamp(parseFloat(this.props.p));
+    const add = parseInt(this.props.added, 10) || 40;
+    const t = (this.state && this.state.t !== undefined) ? this.state.t : 1.3;
+    const q = clamp(t / 1.2);
+    const eased = 1 - Math.pow(1 - q, 3);
+    const jump = Math.sin(q * Math.PI) * 36;
+    const cy = 470 - 245 * p;
+    const L = clamp((p - 0.55) / 0.3);
+    const minis = [], petals = [];
+    for (let i = 0; i < 8; i++) {
+      const a = i / 8 * 2 * Math.PI + 0.2;
+      minis.push({ x: (195 + Math.cos(a) * 150 * eased - 15).toFixed(1) + 'px', y: (cy - jump + Math.sin(a) * 150 * eased - 15).toFixed(1) + 'px', s: (0.6 + 0.6 * Math.sin(q * Math.PI)).toFixed(2) });
+    }
+    for (let i = 0; i < 12; i++) {
+      const a = i / 12 * 2 * Math.PI;
+      petals.push({ x: (195 + Math.cos(a) * 112 * eased).toFixed(1), y: (cy - jump + Math.sin(a) * 112 * eased).toFixed(1), r: (a * 180 / Math.PI + 90).toFixed(0), c: i % 2 ? '#FFB627' : '#F7A1B5' });
+    }
+    const todayMin = Math.round(p * 105);
+    const fmt = (m) => { const h = Math.floor(m / 60), mm = m % 60; return h ? h + ' h ' + String(mm).padStart(2, '0') : mm + ' m'; };
+    const covered = p >= 1;
+    return {
+      a11y: 'Session saved. ' + add + ' minutes added.' + (covered ? ' Today’s stretch covered.' : ''),
+      nightOp: clamp(1 - p / 0.5).toFixed(3),
+      dawnOp: (p < 0.5 ? clamp(p / 0.5) : clamp(1 - (p - 0.5) / 0.45)).toFixed(3),
+      dayOp: clamp((p - 0.5) / 0.45).toFixed(3),
+      landDayOp: clamp((p - 0.45) / 0.4).toFixed(3),
+      glowTop: (cy - jump - 260).toFixed(0) + 'px', glowOp: (0.5 + 0.5 * p).toFixed(2), glowS: (1 + 0.25 * Math.sin(q * Math.PI)).toFixed(2),
+      sunTop: (cy - 100 - jump).toFixed(1) + 'px',
+      burstOp: q >= 1 ? 0 : (1 - q * q).toFixed(2),
+      minis: minis, petals: petals,
+      textOp: clamp((t - 0.3) / 0.5).toFixed(2),
+      ink: mix('#FFFFFF', '#16244A', L),
+      muted: L > 0.5 ? '#5E6782' : 'rgba(255,255,255,0.75)',
+      gold: mix('#FFD66B', '#B4561A', L),
+      added: '+' + fmt(add) + ' · today ' + fmt(todayMin),
+      line: covered ? 'Today’s stretch covered.' : fmt(105 - todayMin) + ' left of today’s stretch'
+    };
+  }
+}
+</script>
+</body>
+</html>

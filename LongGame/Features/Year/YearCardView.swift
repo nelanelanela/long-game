@@ -50,7 +50,8 @@ struct YearCardView: View {
     private var storyCard: some View {
         ZStack(alignment: .topLeading) {
             (evening ? LGColor.night : LGColor.background)
-            SkyView(tone: evening ? .night : .dawn, horizon: 0.8, moon: true)
+            // The moon sits right of the sun and below the title, so the two never overlap.
+            SkyView(tone: evening ? .night : .dawn, horizon: 0.8, moon: true, moonAt: CGPoint(x: 0.84, y: 0.30))
                 .frame(width: 360, height: 360)
             SunView(idle: false, face: .happy)
                 .frame(width: 110, height: 110)

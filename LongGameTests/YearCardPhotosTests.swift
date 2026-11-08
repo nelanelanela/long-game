@@ -43,11 +43,29 @@ struct YearCardPhotosTests {
         #expect(chosen == Array(ranked.prefix(6)))
     }
 
-    @Test func aYearNobodyOpenedShowsItsMostRecentPhotos() {
-        let all = (1...8).map { photo($0, views: 0) }
-        let chosen = YearPhotoChoice.choose(candidates: all, pinned: [])
-        let newest = all.sorted { $0.start > $1.start }.prefix(6).map(\.id)
-        #expect(chosen == Array(newest))
+    @Test func aYearNobodyOpenedShowsARandomSelectionThatStaysTheSame() {
+        let all = (1...12).map { photo($0, views: 0) }
+        let first = YearPhotoChoice.choose(candidates: all, pinned: [], year: 2026)
+        let again = YearPhotoChoice.choose(candidates: all, pinned: [], year: 2026)
+        #expect(first.count == 6 && Set(first).count == 6)
+        #expect(first == again)                       // random-looking, but stable between draws
+        let newest = Array(all.sorted { $0.start > $1.start }.prefix(6).map(\.id))
+        #expect(first != newest)                      // not simply the latest six
+    }
+
+    @Test func theSelectionIsNotTheSameInEveryYear() {
+        let all = (1...20).map { photo($0, views: 0) }
+        let a = YearPhotoChoice.choose(candidates: all, pinned: [], year: 2025)
+        let b = YearPhotoChoice.choose(candidates: all, pinned: [], year: 2026)
+        #expect(a != b)
+    }
+
+    @Test func openedPhotosAlwaysComeBeforeTheRandomOnes() {
+        let opened = photo(1, views: 3)
+        let others = (2...10).map { photo($0, views: 0) }
+        let chosen = YearPhotoChoice.choose(candidates: [opened] + others, pinned: [], year: 2026)
+        #expect(chosen.first == opened.id)
+        #expect(chosen.count == 6)
     }
 
     @Test func fewerThanSixPhotosGiveWhatThereIs() {

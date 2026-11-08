@@ -183,7 +183,7 @@ struct YearScreen: View {
         let candidates = sessions.filter { $0.hasPhoto && Calendar.current.component(.year, from: $0.start) == year }
             .map { YearPhotoCandidate(id: $0.id, start: $0.start, viewCount: $0.viewCount) }
         let pins = YearCardPins.decode(settingsRows.first?.yearCardPinsRaw ?? "")[year] ?? []
-        chosen = YearPhotoChoice.choose(candidates: candidates, pinned: pins)
+        chosen = YearPhotoChoice.choose(candidates: candidates, pinned: pins, year: year)
         if style == .photos && !summary.offersPhotosCard { style = .sunrise }
     }
 

@@ -17,6 +17,8 @@ struct SkyView: View {
     /// Where the horizon sits, as a fraction of the height (0.3...1).
     var horizon: CGFloat = 0.85
     var moon = true
+    /// Where the moon sits, as fractions of the width and height (default: three quarters across, near the top).
+    var moonAt = CGPoint(x: 0.74, y: 0.12)
     /// Where the glow is centred across the width (0...1).
     var glowX: CGFloat = 0.5
 
@@ -108,7 +110,7 @@ struct SkyView: View {
 
     private func drawMoon(_ ctx: inout GraphicsContext, size: CGSize) {
         let mr: CGFloat = 14
-        let c = CGPoint(x: size.width * 0.74 - 0.2 * mr - 0.18 * mr, y: size.height * 0.12 - 0.3 * mr - 0.28 * mr)
+        let c = CGPoint(x: size.width * moonAt.x - 0.2 * mr - 0.18 * mr, y: size.height * moonAt.y - 0.3 * mr - 0.28 * mr)
         let outer = Path(ellipseIn: CGRect(x: c.x - mr, y: c.y - mr, width: 2 * mr, height: 2 * mr))
         let ic = CGPoint(x: c.x + 0.45 * mr, y: c.y + 0.5 * mr)
         let inner = Path(ellipseIn: CGRect(x: ic.x - 0.95 * mr, y: ic.y - 0.95 * mr, width: 1.9 * mr, height: 1.9 * mr))

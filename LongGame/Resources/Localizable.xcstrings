@@ -1,70 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Rest is part of the craft." : {
-
-    },
-    "Session picture, %@, %@" : {
-
-    },
-    "Who you’re becoming." : {
-
-    },
-    "Every hour you play shapes the person you’ll be at 10,000." : {
-
-    },
-    "How Long Game helps." : {
-
-    },
-    "It keeps that person in view, counts every step and shows how close you are." : {
-
-    },
-    "Why steady matters." : {
-
-    },
-    "A little, most days, beats a lot once in a while. That’s how hours turn into mastery." : {
-
-    },
-    "Nature does not hurry, yet everything is accomplished." : {
-
-    },
-    "Your app icon has grown a little too." : {
-
-    },
-    "%@ · milestone" : {
-
-    },
-    "Long Game · by We Have Sun" : {
-
-    },
-    "Version %@" : {
-
-    },
-    "Paused. The sun is resting." : {
-
-    },
-    "Next ray in %@" : {
-
-    },
-    "Paused" : {
-
-    },
-    "The sun is up." : {
-
-    },
-    "What will you practise today?" : {
-
-    },
-    "Begin" : {
-
-    },
-    "%@ added." : {
-
-    },
-    "by We Have Sun" : {
-
-    },
     "" : {
+
+    },
+    " " : {
 
     },
     " · %@ h" : {
@@ -82,6 +22,9 @@
     "%@" : {
 
     },
+    "%@ · milestone" : {
+
+    },
     "%@ · the long game" : {
 
     },
@@ -97,6 +40,9 @@
           }
         }
       }
+    },
+    "%@ added." : {
+
     },
     "%@ h" : {
 
@@ -570,6 +516,9 @@
     "A little laugh when you tap the sun. It stays quiet when your iPhone is on silent." : {
 
     },
+    "A little, most days, beats a lot once in a while. That’s how hours turn into mastery." : {
+
+    },
     "A new year of pace" : {
 
     },
@@ -719,7 +668,13 @@
     "Back to my game" : {
 
     },
+    "Begin" : {
+
+    },
     "By %@" : {
+
+    },
+    "by We Have Sun" : {
 
     },
     "Calendar" : {
@@ -851,6 +806,9 @@
     "Evening" : {
 
     },
+    "Every hour you play shapes the person you’ll be at 10,000." : {
+
+    },
     "Expand chart" : {
 
     },
@@ -861,9 +819,6 @@
 
     },
     "Finish line" : {
-
-    },
-    "Finish line · 10,000 h" : {
 
     },
     "Finish line · 10,000 h" : {
@@ -974,6 +929,9 @@
     "Hours this week" : {
 
     },
+    "How Long Game helps." : {
+
+    },
     "iCloud" : {
 
     },
@@ -981,6 +939,9 @@
 
     },
     "In the Shortcuts app, make two shortcuts with the “Set Focus” action: one turning Practising on, one turning it off. Use the names above." : {
+
+    },
+    "It keeps that person in view, counts every step and shows how close you are." : {
 
     },
     "Its hours will be removed from your total." : {
@@ -1025,6 +986,9 @@
     "Long Game" : {
 
     },
+    "Long Game · by We Have Sun" : {
+
+    },
     "Long Game · the longest game, played in real life" : {
 
     },
@@ -1064,6 +1028,9 @@
     "Milestone reached · estimate" : {
 
     },
+    "Minimise" : {
+
+    },
     "Minimum" : {
 
     },
@@ -1094,7 +1061,13 @@
     "My %@ in the long game" : {
 
     },
+    "Nature does not hurry, yet everything is accomplished." : {
+
+    },
     "Next" : {
+
+    },
+    "Next ray in %@" : {
 
     },
     "Night" : {
@@ -1259,6 +1232,12 @@
     "Pause or resume" : {
 
     },
+    "Paused" : {
+
+    },
+    "Paused. The sun is resting." : {
+
+    },
     "Photo" : {
 
     },
@@ -1322,6 +1301,9 @@
     "rest day" : {
 
     },
+    "Rest is part of the craft." : {
+
+    },
     "Resume" : {
 
     },
@@ -1358,6 +1340,9 @@
           }
         }
       }
+    },
+    "Session picture, %@, %@" : {
+
     },
     "Session saved" : {
 
@@ -1554,6 +1539,9 @@
     "The sun is on the horizon." : {
 
     },
+    "The sun is up." : {
+
+    },
     "The sun just rising out of the sea, above a badge showing your starting score" : {
 
     },
@@ -1638,9 +1626,6 @@
     "Today's sessions" : {
 
     },
-    "Today's stretch covered" : {
-
-    },
     "Today's stretch covered: %@ of %@. Anything more is a bonus." : {
 
     },
@@ -1675,6 +1660,9 @@
         }
       }
     },
+    "Version %@" : {
+
+    },
     "Waiting for approval" : {
 
     },
@@ -1696,6 +1684,9 @@
     "What if I practise more?" : {
 
     },
+    "What will you practise today?" : {
+
+    },
     "What you made, what needs work" : {
 
     },
@@ -1712,6 +1703,12 @@
 
     },
     "White dot: a day with a photo" : {
+
+    },
+    "Who you’re becoming." : {
+
+    },
+    "Why steady matters." : {
 
     },
     "Year" : {
@@ -1773,6 +1770,9 @@
       }
     },
     "Your actual pace" : {
+
+    },
+    "Your app icon has grown a little too." : {
 
     },
     "Your chosen pace" : {
