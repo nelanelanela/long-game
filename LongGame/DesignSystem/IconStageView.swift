@@ -41,7 +41,11 @@ struct IconStageView: View {
                 .tracking(-6)
                 .foregroundStyle(.white)
         }
-        .background(ink)
+        .background {
+            if tinted { ink } else {
+                LinearGradient(colors: [Color(hex: 0x0B1433), Color(hex: 0x16244A), Color(hex: 0x2B2A4A)], startPoint: .top, endPoint: .bottom)
+            }
+        }
         .clipped()
         .accessibilityHidden(true)
     }

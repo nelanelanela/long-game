@@ -1,4 +1,4 @@
-// Draws the eleven "10,000 ring" app icons (see docs/SPEC.md, "App icon") from the same sun geometry as SunView
+// Draws the eleven app icons (the ring, restyled as a night sky: update prompt 32, part 13) (see docs/SPEC.md, "App icon") from the same sun geometry as SunView
 // (200 × 200 space), and writes the asset sets with their Dark and Tinted versions.
 // Run from the project folder:
 //   swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets
@@ -42,9 +42,23 @@ func drawIcon(hours: Int, look: Look = .normal) -> CGImage {
     let cheeks = tinted ? color(0xCCCCCC) : color(0xF7A1B5)
     let track = color(0xFFFFFF, tinted ? 0.20 : 0.14)
 
-    // Background: a flat square. iOS adds the rounded mask.
-    ctx.setFillColor(ink)
-    ctx.fill(CGRect(x: 0, y: 0, width: size, height: size))
+    // Background: the night gradient (#0B1433 > #16244A > #2B2A4A), five faint stars and a warm glow from the bottom
+    // edge. iOS adds the rounded mask. Tinted icons stay flat black.
+    if tinted {
+        ctx.setFillColor(ink)
+        ctx.fill(CGRect(x: 0, y: 0, width: size, height: size))
+    } else {
+        let night = CGGradient(colorsSpace: space, colors: [color(0x0B1433), color(0x16244A), color(0x2B2A4A)] as CFArray,
+                               locations: [0, 0.55, 1])!
+        ctx.drawLinearGradient(night, start: CGPoint(x: 0, y: 0), end: CGPoint(x: 0, y: CGFloat(size)), options: [])
+        let glow = CGGradient(colorsSpace: space, colors: [color(0xFFB45A, 0.38), color(0xFFB45A, 0)] as CFArray, locations: [0, 1])!
+        ctx.drawRadialGradient(glow, startCenter: CGPoint(x: 512, y: 1100), startRadius: 0,
+                               endCenter: CGPoint(x: 512, y: 1100), endRadius: 620, options: [])
+        ctx.setFillColor(color(0xFFFFFF, 0.5))
+        for (x, y, r) in [(150.0, 170.0, 5.0), (860, 140, 4), (260, 860, 3.5), (905, 600, 4), (95, 520, 3)] {
+            ctx.fillEllipse(in: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
+        }
+    }
 
     // Track
     let c = CGPoint(x: 512, y: 512), radius: CGFloat = 360, stroke: CGFloat = 56
@@ -57,13 +71,33 @@ func drawIcon(hours: Int, look: Look = .normal) -> CGImage {
     let startAngle = -CGFloat.pi / 2
     let endAngle = startAngle + 2 * .pi * fill
     if fill > 0 {
-        ctx.setStrokeColor(gold)
         ctx.setLineCap(.round)
+        ctx.setLineWidth(stroke)
+        let arc = CGMutablePath()
         if fill >= 1 {
-            ctx.strokeEllipse(in: CGRect(x: c.x - radius, y: c.y - radius, width: radius * 2, height: radius * 2))
+            arc.addEllipse(in: CGRect(x: c.x - radius, y: c.y - radius, width: radius * 2, height: radius * 2))
         } else {
-            ctx.addArc(center: c, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
+            arc.addArc(center: c, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
+        }
+        if tinted {
+            ctx.setStrokeColor(gold)
+            ctx.addPath(arc)
             ctx.strokePath()
+        } else {
+            // A soft glow, then the amber gradient (#FFE08A to #F0922A) clipped to the stroke.
+            ctx.saveGState()
+            ctx.setShadow(offset: .zero, blur: 40, color: color(0xF0922A, 0.55))
+            ctx.setStrokeColor(color(0xF0922A))
+            ctx.addPath(arc)
+            ctx.strokePath()
+            ctx.restoreGState()
+            ctx.saveGState()
+            ctx.addPath(arc)
+            ctx.replacePathWithStrokedPath()
+            ctx.clip()
+            let amber = CGGradient(colorsSpace: space, colors: [color(0xFFE08A), color(0xF0922A)] as CFArray, locations: [0, 1])!
+            ctx.drawLinearGradient(amber, start: CGPoint(x: 512, y: 150), end: CGPoint(x: 512, y: 880), options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
+            ctx.restoreGState()
         }
     }
 

@@ -771,3 +771,17 @@ On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–
 **Open questions**
 
 - [ ] Final check that the name Long Game is available on the App Store.
+
+## We Have Sun redesign (update 32)
+
+The sky, land and colour system replaced the old flat scene everywhere. Boards are in `design/redesign/`.
+
+- **Scene:** `SceneTone` (night, dawn, day), `SkyView`, `LandView` (390 × 120 box, shoreline 46 down, dunes run behind an opaque sea). The sea is always opaque and always in front of the sun. All three Home heroes are 305 tall with the water at 231, so the water sits at the same height on Today, This week and The long game.
+- **Opening sunrise:** a pure timeline (`Logic/OpeningSunrise.swift`), styles skip, full and short. The sun glides to its Home position. Dark mode plays the full sunrise too.
+- **Timer:** the sun's height is today's progress p = (saved today + running) ÷ today's stretch. Night fades out by p 0.5, dawn peaks at 0.5, day is in by 0.95; text goes white to navy between 0.55 and 0.85. Once covered the sun stays up for the day. Timer state is still timestamps.
+- **Session pictures:** drawn from a stable seed (FNV-1a of id, start minute and length) with palettes by part of the day, a sun sized by length and raised by `sunriseProgressAtEnd`, and one line per 5 minutes (2 to 18). Cached as PNGs in Caches. A session can hide its picture (`hidesDefaultPicture`) or replace it with a photo.
+- **Photos:** a photo counts as viewed after 1 s on screen, once an hour. Year cards choose pinned, then most viewed, then a stable shuffle of the unopened. Settings → iCloud & storage shows sizes, "Your photos" with delete-by-year, and clears only the default-picture cache.
+- **Apple Watch:** the session screen is the same sunrise, with the clock, today's total line (`WatchModel.todayLine`), a progress bar, Pause and Finish. Always On keeps the sun's height with the sleepy face, dims the sky, hides the buttons, shows minutes only and updates once a minute. Reduce Motion and Always On move the sun in whole minutes (`WatchSunrise`). A longer haptic plays when the sun is fully up.
+- **Widgets, Live Activity, iPad, Mac:** same scene and colours, still pictures. The Mac sidebar icons are unchanged.
+- **App icon:** navy gradient (#0B1433, #16244A, #2B2A4A), five faint stars, a warm glow from the bottom, track white 14%, amber arc (#FFE08A to #F0922A) with a soft glow, the sun on the tip on a navy halo, the number in white. Same 11 stages; Dark and Tinted included.
+

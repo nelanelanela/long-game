@@ -67,7 +67,13 @@ struct TimerLiveActivity: Widget {
             }
             .foregroundStyle(.white)
             .padding(16)
-            .activityBackgroundTint(LGColor.ink)
+            // The night land along the bottom edge, still: Live Activities can't animate.
+            .background(alignment: .bottom) {
+                LandView(tone: .night, still: true)
+                    .frame(height: 70)
+                    .accessibilityHidden(true)
+            }
+            .activityBackgroundTint(LGColor.night)
             .activitySystemActionForegroundColor(.white)
         } dynamicIsland: { context in
             DynamicIsland {
