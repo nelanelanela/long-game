@@ -16,7 +16,21 @@ struct MilestoneTests {
 
     @Test func messages() {
         #expect(Milestones.message(hours: 10_000, craft: "Piano") == "10,000 hours. The sun has fully risen.")
-        #expect(Milestones.message(hours: 500, craft: "Piano").hasSuffix("of piano. Sunrise is coming."))
+        #expect(Milestones.message(hours: 100, craft: "Piano") == "A hundred hours.")
+        #expect(Milestones.message(hours: 500, craft: "Piano") == "Five hundred hours.")
+        #expect(Milestones.message(hours: 1_000, craft: "Piano") == "A thousand hours.")
+        #expect(Milestones.message(hours: 2_500, craft: "Piano") == "Two and a half thousand hours.")
+        #expect(Milestones.message(hours: 5_000, craft: "Piano") == "Five thousand hours.")
+        #expect(Milestones.message(hours: 7_500, craft: "Piano") == "Seven and a half thousand hours.")
+    }
+
+    @Test func everyMilestoneHasALineOfItsOwn() {
+        let lines = Milestones.all.map { Milestones.message(hours: $0, craft: "Piano") }
+        #expect(Set(lines).count == Milestones.all.count)
+    }
+
+    @Test func onlyTheThousandsSayTheIconHasGrown() {
+        #expect(Milestones.all.filter(Milestones.iconGrows(at:)) == [1_000, 5_000, 10_000])
     }
 }
 

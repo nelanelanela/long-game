@@ -1,6 +1,39 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Who you’re becoming." : {
+
+    },
+    "Every hour you play shapes the person you’ll be at 10,000." : {
+
+    },
+    "How Long Game helps." : {
+
+    },
+    "It keeps that person in view, counts every step and shows how close you are." : {
+
+    },
+    "Why steady matters." : {
+
+    },
+    "A little, most days, beats a lot once in a while. That’s how hours turn into mastery." : {
+
+    },
+    "Nature does not hurry, yet everything is accomplished." : {
+
+    },
+    "Your app icon has grown a little too." : {
+
+    },
+    "%@ · milestone" : {
+
+    },
+    "Long Game · by We Have Sun" : {
+
+    },
+    "Version %@" : {
+
+    },
     "Paused. The sun is resting." : {
 
     },
@@ -794,9 +827,6 @@
     "Drag along the line" : {
 
     },
-    "Dreaming of turning your passion into a career? 10,000 hours is where that starts to become realistic, whenever you begin. In a well-known study of musicians, what set the professionals apart wasn’t talent but the hours they had put in. And you’re not starting from zero: every hour you’ve already practised counts." : {
-
-    },
     "Each week's hours are spread evenly across its days in your calendar." : {
 
     },
@@ -926,9 +956,6 @@
     "Hours a week, each year" : {
 
     },
-    "Hours aren't a guarantee, but they're the part you control." : {
-
-    },
     "hours per week" : {
 
     },
@@ -993,9 +1020,6 @@
 
     },
     "Long Game · the longest game, played in real life" : {
-
-    },
-    "Long Game is a projection of you into the future. Every hour you add brings that person a little closer." : {
 
     },
     "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip to support it. Tips don’t unlock anything: every feature is free for everyone." : {

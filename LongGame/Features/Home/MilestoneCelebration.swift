@@ -6,6 +6,8 @@ struct MilestoneCelebration: View {
     let hours: Int
     let craftName: String
     var offerSupport = false
+    /// The app icon follows the total: only then does a milestone say it has grown.
+    var iconGrows = true
     var onSupport: () -> Void = {}
     let onDone: () -> Void
 
@@ -15,6 +17,70 @@ struct MilestoneCelebration: View {
     private var isMastery: Bool { hours >= 10_000 }
 
     var body: some View {
+        if isMastery { masteryBody } else { milestoneBody }
+    }
+
+    /// A thousand hours and the others: the dawn scene, the number in white above it and a short line below.
+    private var milestoneBody: some View {
+        GeometryReader { geo in
+            let k = min(1, max(0.6, (geo.size.height - 250) / 560))
+            ZStack(alignment: .top) {
+                LGColor.background.ignoresSafeArea()
+                VStack(spacing: 0) {
+                    ZStack(alignment: .top) {
+                        SceneHero(tone: .dawn, height: 560 * k, skyHeight: 560 * k, horizon: 0.8, landTop: 403 * k,
+                                  sunSize: 140 * k, sunTop: 240 * k, face: .celebrate, giggles: false, hidden: true)
+                        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
+                            let p = min(1, timeline.date.timeIntervalSince(startedAt) / 1.2)
+                            if !reduceMotion && p < 1 {
+                                SaveBurst(progress: p)
+                                    .position(x: geo.size.width / 2, y: (240 + 70) * k)
+                            }
+                        }
+                        .frame(height: 560 * k)
+                        VStack(spacing: 6) {
+                            Text("\(craftName) · milestone")
+                                .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption, tracking: 1.7), color: .white.opacity(0.85))
+                                .textCase(.uppercase)
+                            Text("\(DurationFormat.grouped(hours)) hours")
+                                .lgNumber(LGTextStyle(size: 44, weight: .bold, relativeTo: .largeTitle, tracking: -1.3), color: .white)
+                        }
+                        .padding(.top, 70 * k + 8)
+                        .accessibilityElement(children: .combine)
+                    }
+                    .ignoresSafeArea(edges: .top)
+                    .frame(height: 560 * k)
+
+                    VStack(spacing: 14) {
+                        Text(Milestones.message(hours: hours, craft: craftName))
+                            .lgText(LGTextStyle(size: 20, weight: .semibold, relativeTo: .title3))
+                            .multilineTextAlignment(.center)
+                        if iconGrows && Milestones.iconGrows(at: hours) {
+                            Text("Your app icon has grown a little too.")
+                                .lgText(.note, color: LGColor.inkMuted)
+                                .multilineTextAlignment(.center)
+                        }
+                        Spacer(minLength: 12)
+                        Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
+                        if offerSupport {
+                            Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 18)
+                    .padding(.bottom, 12)
+                }
+            }
+        }
+        .sensoryFeedback(.success, trigger: startedAt)
+        .onAppear {
+            let spoken = String(localized: "\(DurationFormat.grouped(hours)) hours") + ". " + Milestones.message(hours: hours, craft: craftName)
+            AccessibilityNotification.Announcement(spoken).post()
+        }
+        .accessibilityAddTraits(.isModal)
+    }
+
+    private var masteryBody: some View {
         ZStack {
             if isMastery {
                 LinearGradient(gradient: LGColor.welcomeSky, startPoint: .top, endPoint: .bottom).ignoresSafeArea()

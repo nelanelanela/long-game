@@ -192,6 +192,7 @@ struct HomeView: View {
         .overlay {
             if let hours = celebrating {
                 MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
+                                     iconGrows: settingsRows.first?.iconGrows ?? true,
                                      onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
                                      onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)

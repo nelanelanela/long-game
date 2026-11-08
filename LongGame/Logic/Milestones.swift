@@ -20,11 +20,22 @@ enum Milestones {
         return (next, now.addingTimeInterval(seconds))
     }
 
+    /// The line under the big number: short, in words. 10,000 keeps its own, longer line.
     static func message(hours: Int, craft: String) -> String {
-        if hours >= 10_000 { return "10,000 hours. The sun has fully risen." }
-        let formatted = DurationFormat.grouped(hours)
-        return "\(formatted) hours of \(craft.lowercased()). Sunrise is coming."
+        switch hours {
+        case 100: return "A hundred hours."
+        case 500: return "Five hundred hours."
+        case 1_000: return "A thousand hours."
+        case 2_500: return "Two and a half thousand hours."
+        case 5_000: return "Five thousand hours."
+        case 7_500: return "Seven and a half thousand hours."
+        case 10_000...: return "10,000 hours. The sun has fully risen."
+        default: return "\(DurationFormat.grouped(hours)) hours."
+        }
     }
+
+    /// Only the thousands change the app icon, so only they say it has grown.
+    static func iconGrows(at hours: Int) -> Bool { [1_000, 5_000, 10_000].contains(hours) }
 }
 
 enum ReminderPlanner {

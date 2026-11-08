@@ -81,6 +81,7 @@ struct SettingsView: View {
                 #if DEBUG
                 debugCard
                 #endif
+                footer
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
@@ -116,6 +117,25 @@ struct SettingsView: View {
         } message: {
             Text("Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone.")
         }
+    }
+
+    /// "Long Game · by We Have Sun" and the version, at the very end.
+    private var footer: some View {
+        VStack(spacing: 4) {
+            Text("Long Game · by We Have Sun")
+                .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2, tracking: 1.76), color: LGColor.inkMuted)
+                .textCase(.uppercase)
+                .multilineTextAlignment(.center)
+            Text("Version \(Self.version)")
+                .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 14)
+        .accessibilityElement(children: .combine)
+    }
+
+    private static var version: String {
+        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.0"
     }
 
     // MARK: Cards

@@ -10,57 +10,61 @@ struct FutureSelfSheet: View {
     var now = Date()
 
     @Environment(\.dismiss) private var dismiss
-    @State private var openedAt = Date()
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The sun rises into place when the sheet opens (at once with Reduce Motion).
+    @State private var risen = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                SunriseHero(layout: .futureSelf, label: String(localized: "The sun fully risen above the sea"),
-                            riseStart: openedAt)
-                    .background(LinearGradient(gradient: LGColor.futureSky, startPoint: .top, endPoint: .bottom))
-                    .padding(.top, 25)
+        VStack(spacing: 0) {
+            SceneHero(tone: .dawn, height: 264, skyHeight: 230, horizon: 0.82, landTop: 144, sunSize: 130,
+                      sunTop: risen ? 40 : 150, eyesOpen: 1, giggles: true,
+                      label: "The sun fully risen above the sea")
+                .padding(.top, 0)
 
-                VStack(spacing: 10) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("Meet your future self")
-                        .lgText(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.52))
-                        .multilineTextAlignment(.center)
+                        .lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
                         .accessibilityAddTraits(.isHeader)
-                    paragraph("Long Game is a projection of you into the future. Every hour you add brings that person a little closer.")
-                    paragraph("Dreaming of turning your passion into a career? 10,000 hours is where that starts to become realistic, whenever you begin. In a well-known study of musicians, what set the professionals apart wasn’t talent but the hours they had put in. And you’re not starting from zero: every hour you’ve already practised counts.")
+                        .padding(.top, 6)
+                    VStack(alignment: .leading, spacing: 10) {
+                        point("Who you’re becoming.", "Every hour you play shapes the person you’ll be at 10,000.")
+                        point("How Long Game helps.", "It keeps that person in view, counts every step and shows how close you are.")
+                        point("Why steady matters.", "A little, most days, beats a lot once in a while. That’s how hours turn into mastery.")
+                    }
+                    .padding(.top, 12)
+
+                    track.padding(.top, 18)
                 }
-                .padding(.top, 18)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 12)
+            }
+            .scrollBounceBehavior(.basedOnSize)
 
-                track.padding(.top, 20)
-
-                Text("Hours aren't a guarantee, but they're the part you control.")
+            VStack(spacing: 12) {
+                Text("Nature does not hurry, yet everything is accomplished.")
                     .lgText(.caption, color: LGColor.inkMuted)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
+                Button("Keep playing") { dismiss() }
+                    .buttonStyle(.lg(.primary))
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 16)
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24).padding(.top, 8).padding(.bottom, 12)
         }
-        .scrollBounceBehavior(.basedOnSize)
-        .safeAreaInset(edge: .bottom) {
-            Button("Keep playing") { dismiss() }
-                .buttonStyle(.lg(.primary))
-                .padding(.horizontal, 24).padding(.top, 8).padding(.bottom, 12)
-                .background(Color.white)
-        }
-        .background(Color.white)
+        .background(LGColor.background)
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(32)
-        .onAppear { openedAt = Date() }
+        .presentationCornerRadius(30)
+        .onAppear {
+            if reduceMotion { risen = true } else { withAnimation(.easeOut(duration: 1.4)) { risen = true } }
+        }
     }
 
-    private func paragraph(_ key: LocalizedStringKey) -> some View {
-        Text(key)
-            .lgText(.row, color: LGColor.inkMuted)
-            .lineSpacing(4)
-            .multilineTextAlignment(.center)
+    /// A short paragraph with a bold navy lead-in.
+    private func point(_ lead: LocalizedStringKey, _ rest: LocalizedStringKey) -> some View {
+        (Text(lead).fontWeight(.semibold).foregroundColor(LGColor.ink) + Text(" ") + Text(rest))
+            .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
+            .lineSpacing(3)
             .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -75,17 +79,20 @@ struct FutureSelfSheet: View {
                 let w = geo.size.width
                 let x = w * Totals.progress(total: total)
                 ZStack(alignment: .leading) {
-                    Capsule().fill(LGColor.track).frame(height: 6)
-                    Capsule().fill(LGColor.ink).frame(width: x, height: 6)
-                    Circle().fill(.white).frame(width: 14, height: 14)
-                        .overlay(Circle().stroke(LGColor.ink, lineWidth: 3))
-                        .position(x: x, y: 3)
-                    Circle().fill(LGColor.sunBody).frame(width: 16, height: 16)
-                        .position(x: w - 6, y: 3)
+                    Capsule().fill(Color(hex: 0xE4DFD6)).frame(height: 4)
+                    Capsule()
+                        .fill(LinearGradient(colors: [LGColor.sunBody, LGColor.amber], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: x, height: 4)
+                    Circle().fill(LGColor.ink).frame(width: 16, height: 16)
+                        .overlay(Circle().stroke(LGColor.background, lineWidth: 3).padding(-1.5))
+                        .position(x: x, y: 2)
+                    SunView(idle: false, face: .happy)
+                        .frame(width: 36, height: 36)
+                        .position(x: w - 14, y: 2)
                 }
-                .frame(height: 6)
+                .frame(height: 4)
             }
-            .frame(height: 16)
+            .frame(height: 36)
 
             ViewThatFits(in: .horizontal) {
                 HStack { todayLabel; Spacer(minLength: 8); finishLabel }
