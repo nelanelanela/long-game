@@ -88,8 +88,8 @@ enum LGColor {
     /// Scale labels and day letters (#8A93AB in the design, darkened to 4.5:1 contrast on the background).
     static let gaugeLabel = Color(hex: 0x68718C)
     /// "Finish line · 10,000 hours" on the first intro page (#A0712E in the design, darkened to 4.5:1 contrast).
-    static let finishLabel = Color(hex: 0x8A5E1E)
-    static let finishDash = Color(hex: 0xE0B04A)
+    static let finishLabel = Color(hex: 0x8A5A1E)
+    static let finishDash = Color(hex: 0xE0A040)
     static let track = Color(hex: 0xEFEAE1)
     /// Today's arc: the dotted road, the moon at its end (#D9D2C4 and #C9D3EC), and the Timer strip's pale moon.
     static let arcDots = Color(hex: 0xD9D2C4)

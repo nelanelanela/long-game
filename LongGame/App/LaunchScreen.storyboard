@@ -50,7 +50,7 @@
                             <constraint firstItem="LGSky" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c7"/>
                             <constraint firstItem="LGSky" firstAttribute="bottom" secondItem="LGWaterline" secondAttribute="bottom" id="c8"/>
                             <constraint firstItem="LGSun" firstAttribute="centerX" secondItem="LGRoot" secondAttribute="centerX" id="c9"/>
-                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" id="c10"/>
+                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" constant="6" id="c10"/>
                             <constraint firstAttribute="width" constant="150" id="c11" firstItem="LGSun"/>
                             <constraint firstAttribute="height" constant="150" id="c12" firstItem="LGSun"/>
                             <constraint firstItem="LGLand" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c13"/>

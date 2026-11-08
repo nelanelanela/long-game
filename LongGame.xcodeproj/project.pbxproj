@@ -439,6 +439,7 @@
 		CD6E98E5100AADA09888E8BC /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		CDE8478FFCCE281FA5E6E808 /* MacSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CC11F78BB164F419772F8 /* MacSnapshotTests.swift */; };
 		CDFE0F25C95FF366C9E9DA7A /* TipRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95668AEA33090AE8C1ED90AF /* TipRules.swift */; };
+		CE07E3DFFCCD7F2FC5FFF460 /* SceneHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7784401E883886FAB35FCE /* SceneHero.swift */; };
 		CE754F3E4BACAC99F3F1A3AA /* GrowthTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F02415FFF373AF9A128FD79 /* GrowthTab.swift */; };
 		CED5F09E6D92293718694D4E /* GrowthScrub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E943F978A9549E5D64A28A8 /* GrowthScrub.swift */; };
 		CF70A34652882F758B993EC8 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C6B8F89138DDBD022A383C /* WidgetSnapshot.swift */; };
@@ -509,6 +510,7 @@
 		F2CB6F786E67D3BC4B8BE70A /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC77651FD0C1022D8DFF364 /* Glass.swift */; };
 		F37E52DB07875F9CB146CE9C /* Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */; };
 		F48BD4C2BA99DB007A5F79F3 /* OpeningSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FC0D6A9C7A9C9D549832A /* OpeningSunrise.swift */; };
+		F4C4A99F3834E69A3CB359E6 /* SceneHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7784401E883886FAB35FCE /* SceneHero.swift */; };
 		F50A998595779BB0E8126B45 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BAA370AE7B949987519BFA /* WelcomeView.swift */; };
 		F52E8CA919307A82F0212D7C /* HoursStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */; };
 		F5A1DD839E33AF4A3DCFBBCF /* PlatformImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A910B63B449732B697674B /* PlatformImage.swift */; };
@@ -653,6 +655,7 @@
 		38D3125885B8A2AC3B3EB399 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		39076BB3A0DE32BAACE608B5 /* PhotoProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoProcessing.swift; sourceTree = "<group>"; };
 		39470712B69AB3ADB8204511 /* giggle-5.m4a */ = {isa = PBXFileReference; path = "giggle-5.m4a"; sourceTree = "<group>"; };
+		3B7784401E883886FAB35FCE /* SceneHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneHero.swift; sourceTree = "<group>"; };
 		3E3068FB7FCD1326469E3EDF /* giggle-2.m4a */ = {isa = PBXFileReference; path = "giggle-2.m4a"; sourceTree = "<group>"; };
 		3EE9F568BE6C8C49CA7159FC /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		3FC7B97C2565533549273A31 /* HomeGauge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeGauge.swift; sourceTree = "<group>"; };
@@ -975,6 +978,7 @@
 				32A910B63B449732B697674B /* PlatformImage.swift */,
 				09E9895D9A62DA2CEBEAB750 /* PlatformShims.swift */,
 				5AF7442BDCB81EAEA77F3018 /* Scene.swift */,
+				3B7784401E883886FAB35FCE /* SceneHero.swift */,
 				88A0DE0DA2A02C84B3CC42F6 /* SunGiggleView.swift */,
 				D37BC0B3AD47BA40D09F0EE7 /* SunriseHero.swift */,
 				C376529B80B4C903039F615E /* SunView.swift */,
@@ -1681,6 +1685,7 @@
 				EBB8FFD7BABDF47217125582 /* Practice.swift in Sources */,
 				70EFF33F554A798404370F86 /* SaveBurst.swift in Sources */,
 				B8C9B10D237D5BAFC5D408E2 /* Scene.swift in Sources */,
+				F4C4A99F3834E69A3CB359E6 /* SceneHero.swift in Sources */,
 				ED2727FEBC2E3A7B5B8BF1FF /* SessionFormView.swift in Sources */,
 				3D18CCDFA08C4088362138B5 /* SettingsView.swift in Sources */,
 				D2A377C096C9EDCCBD3D0000 /* SidebarLayout.swift in Sources */,
@@ -1906,6 +1911,7 @@
 				A469DA0532693CBE4A0CDA75 /* Practice.swift in Sources */,
 				6856D897257E00E4048673A2 /* SaveBurst.swift in Sources */,
 				6FA0054A508B4ED817394573 /* Scene.swift in Sources */,
+				CE07E3DFFCCD7F2FC5FFF460 /* SceneHero.swift in Sources */,
 				B4E457A4E844BA194EE3DBA1 /* SessionFormView.swift in Sources */,
 				C96786528BF4F0C8F03975E1 /* SettingsView.swift in Sources */,
 				2EC8A2C3FEB58FD1553113C7 /* SidebarLayout.swift in Sources */,

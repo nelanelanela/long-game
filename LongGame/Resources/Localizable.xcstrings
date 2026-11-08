@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "by We Have Sun" : {
+
+    },
     "" : {
 
     },
@@ -806,7 +809,7 @@
     "Finish line · 10,000 h" : {
 
     },
-    "Finish line · 10,000 hours" : {
+    "Finish line · 10,000 h" : {
 
     },
     "Finish session" : {
@@ -1375,7 +1378,7 @@
     "Start session" : {
 
     },
-    "Start the timer when you practise. Every hour lifts your sun." : {
+    "Start the timer, or add your hours later. Each hour is a step. What matters most is to keep walking." : {
 
     },
     "Started %@" : {
@@ -1444,7 +1447,7 @@
     "The first thousand." : {
 
     },
-    "The hours you’ve already practised are your starting score." : {
+    "The hours you’ve already practised are your starting score. Not sure how many? We’ll work it out together, one year at a time." : {
 
     },
     "The long game" : {

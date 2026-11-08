@@ -105,7 +105,7 @@ struct OpeningSunriseView: View {
             let landTop = waterY - 46 * k
             let landHeight = 120 * k
             let sunSize: CGFloat = 150
-            let nightCentre = CGPoint(x: w / 2, y: waterY)
+            let nightCentre = CGPoint(x: w / 2, y: waterY + 6)
             let morningCentre = CGPoint(x: w / 2, y: waterY - h * (120.0 / 844))
             // The sun rises with the sky: night spot → dawn spot.
             let rise = CGFloat(f.sky)

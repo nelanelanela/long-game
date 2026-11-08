@@ -24,11 +24,11 @@ struct IntroView: View {
              button: "Next",
              illustration: "The sun high above the sea, under a dashed line marking the finish line at 10,000 hours"),
         Copy(title: "You don’t start at zero",
-             text: "The hours you’ve already practised are your starting score.",
+             text: "The hours you’ve already practised are your starting score. Not sure how many? We’ll work it out together, one year at a time.",
              button: "Next",
              illustration: "The sun just rising out of the sea, above a badge showing your starting score"),
         Copy(title: "Play every day",
-             text: "Start the timer when you practise. Every hour lifts your sun.",
+             text: "Start the timer, or add your hours later. Each hour is a step. What matters most is to keep walking.",
              button: "Choose your game",
              illustration: "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today"),
     ]
@@ -78,11 +78,8 @@ struct IntroView: View {
         let copy = Self.pages[index]
         return ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                IntroIllustration(page: index, startingScore: startingScore)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(copy.illustration)
-                    .accessibilityAddTraits(.isImage)
-                    .padding(.top, 12)
+                IntroIllustration(page: index, startingScore: startingScore, label: copy.illustration)
+                    .padding(.top, 8)
                 VStack(alignment: .leading, spacing: 12) {
                     Text(copy.title)
                         .lgText(LGTextStyle(size: 30, weight: .bold, relativeTo: .title, tracking: -0.6))
@@ -92,7 +89,7 @@ struct IntroView: View {
                         .lineSpacing(4)
                 }
                 .padding(.horizontal, 24)
-                .padding(.top, 28)
+                .padding(.top, 18)
                 .padding(.bottom, 16)
             }
         }
@@ -128,57 +125,77 @@ struct IntroView: View {
     }
 }
 
-/// The illustration of one intro page: the shared sunrise hero plus the page's badge.
+private struct HorizontalLine: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: rect.minX, y: rect.midY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        return p
+    }
+}
+
+/// The illustration of one intro page: the shared scene plus the page's badge (positions are the board's, 390 wide).
 private struct IntroIllustration: View {
     let page: Int
     let startingScore: Int?
+    let label: LocalizedStringKey
 
     private static let exampleScore = 3_208
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            SunriseHero(layout: .intro(page: page), label: "")
-                .accessibilityHidden(true)
-            GeometryReader { geo in
-                overlay(width: geo.size.width)
+        ZStack(alignment: .top) {
+            switch page {
+            case 0:
+                SceneHero(tone: .day, height: 354, skyHeight: 340, horizon: 0.82, landTop: 234,
+                          sunSize: 150, sunTop: 66, giggles: true, label: label)
+            case 1:
+                SceneHero(tone: .dawn, height: 354, skyHeight: 340, horizon: 0.82, landTop: 234,
+                          sunSize: 150, sunTop: 204, giggles: true, label: label)
+            default:
+                SceneHero(tone: .day, height: 354, skyHeight: 340, horizon: 0.82, landTop: 234,
+                          sunSize: 160, sunTop: 116, eyesOpen: 1, giggles: true, label: label)
             }
+            badge.allowsHitTesting(false).accessibilityHidden(true)
         }
-        .frame(height: 300)
+        .frame(height: 354)
     }
 
     @ViewBuilder
-    private func overlay(width: CGFloat) -> some View {
+    private var badge: some View {
         switch page {
         case 0:
             ZStack(alignment: .topLeading) {
-                Rectangle()
-                    .strokeBorder(LGColor.finishDash, style: StrokeStyle(lineWidth: 2, dash: [5, 4]))
-                    .frame(height: 0)
-                    .padding(.horizontal, 32)
-                    .offset(y: 46)
-                Text("Finish line · 10,000 hours")
-                    .lgText(.label, color: LGColor.finishLabel)
-                    .padding(.leading, 32)
-                    .offset(y: 18)
+                HorizontalLine()
+                    .stroke(LGColor.finishDash, style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .frame(height: 2)
+                    .padding(.horizontal, 30)
+                    .offset(y: 35)
+                Text("Finish line · 10,000 h")
+                    .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: LGColor.finishLabel)
+                    .padding(.leading, 30)
+                    .offset(y: 14)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         case 1:
             chip(Text("Your starting score · \(DurationFormat.grouped(startingScore ?? Self.exampleScore)) h"),
                  background: .white, foreground: LGColor.ink)
-                .frame(maxWidth: .infinity)
-                .offset(y: 86)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 120)
         default:
             chip(Text("+1 h today"), background: LGColor.ink, foreground: .white)
-                .offset(x: (width - 390) / 2 + 262, y: 58)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(.top, 62)
         }
     }
 
     private func chip(_ text: Text, background: Color, foreground: Color) -> some View {
         text
-            .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: foreground)
+            .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .subheadline), color: foreground)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
             .padding(.horizontal, 14).padding(.vertical, 8)
-            .background(background, in: Capsule())
+            .background(background, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: Color(hex: 0x0B1029, opacity: 0.25), radius: 9, y: 6)
     }
 }
 

@@ -40,13 +40,31 @@ func linear(_ c: CGContext, _ stops: [(CGFloat, UInt32)], from: CGPoint, to: CGP
 makePDF("\(dir("LaunchNightSky"))/LaunchNightSky.pdf", width: skyW, height: skyH) { c in
     linear(c, [(0, 0x060A1E), (0.55, 0x0F1A3D), (0.85, 0x22305C), (0.97, 0x6B5A5E), (1, 0xC8915A)],
            from: .zero, to: CGPoint(x: 0, y: skyH))
-    // The warm glow rising from the horizon.
+    // The warm glow rising from the horizon. PDF gradients lose their transparency, so it is stacked translucent
+    // circles instead: each ring's opacity is chosen so the total at that radius matches the design's profile
+    // (0.55 at the centre, 0.22 at 30% of the way out, 0 at the edge; the CSS gradient ends at 0.62 of the farthest corner).
     let glowSize = max(skyW, skyH) * 1.1
-    let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
-                          colors: [rgb(0xFFD696, 0.55), rgb(0xFFBE6E, 0.22), rgb(0xFFBE6E, 0)] as CFArray,
-                          locations: [0, 0.30 / 0.62, 1])!
-    c.drawRadialGradient(glow, startCenter: CGPoint(x: skyW / 2, y: skyH), startRadius: 0,
-                         endCenter: CGPoint(x: skyW / 2, y: skyH), endRadius: glowSize / 2, options: [])
+    let glowRadius = 0.62 * glowSize / 2 * 2.0.squareRoot()
+    func glowAlpha(_ f: CGFloat) -> CGFloat {      // f = distance from the centre, 0...1 of the glow radius
+        let stop = 0.30 / 0.62
+        return f < stop ? 0.55 + (0.22 - 0.55) * (f / stop) : 0.22 * (1 - (f - stop) / (1 - stop))
+    }
+    func glowColour(_ f: CGFloat) -> (CGFloat, CGFloat, CGFloat) {
+        let t = min(f / (0.30 / 0.62), 1)
+        return (1, (214 + (190 - 214) * t) / 255, (150 + (110 - 150) * t) / 255)
+    }
+    let rings = 160
+    var previous: CGFloat = 0
+    for i in 0..<rings {
+        let f = 1 - CGFloat(i) / CGFloat(rings)          // outside → inside
+        let target = glowAlpha(f - 0.5 / CGFloat(rings))
+        let layer = min(max(1 - (1 - target) / (1 - previous), 0), 1)
+        previous = target
+        let col = glowColour(f)
+        c.setFillColor(CGColor(colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!, components: [col.0, col.1, col.2, layer])!)
+        let r = glowRadius * f
+        c.fillEllipse(in: CGRect(x: skyW / 2 - r, y: skyH - r, width: 2 * r, height: 2 * r))
+    }
     // Stars: the same 34 as SkyView.
     for i in 0..<34 {
         let x = CGFloat((i * 61 + 13) % 100) / 100 * skyW

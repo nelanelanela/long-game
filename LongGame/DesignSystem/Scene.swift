@@ -27,7 +27,7 @@ struct SkyView: View {
             ZStack(alignment: .topLeading) {
                 backgroundGradient
                 // The glow, cut off at the horizon.
-                RadialGradient(gradient: glow, center: .center, startRadius: 0, endRadius: glowSize(w, h) / 2)
+                RadialGradient(gradient: glow, center: .center, startRadius: 0, endRadius: glowSize(w, h) * 0.62 / 2 * 2.0.squareRoot())
                     .frame(width: glowSize(w, h), height: glowSize(w, h))
                     .position(x: glowX * w, y: hy)
                     .frame(width: w, height: hy, alignment: .topLeading)
