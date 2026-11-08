@@ -108,6 +108,13 @@ struct WatchHomeState: Equatable, Sendable {
 }
 
 enum WatchModel {
+    /// "1 h 20 of 1 h 45 today", or "Today's stretch is covered".
+    static func todayLine(doneToday: TimeInterval, stretch: TimeInterval?) -> String {
+        guard let stretch else { return "\(DurationFormat.short(seconds: doneToday)) today" }
+        if doneToday >= stretch { return "Today's stretch is covered" }
+        return "\(DurationFormat.short(seconds: doneToday)) of \(DurationFormat.short(seconds: stretch)) today"
+    }
+
     /// The snapshot with the pending sessions added (those it doesn't already hold).
     static func merged(_ snapshot: WidgetSnapshot, pending: [FinishedSession]) -> WidgetSnapshot {
         var copy = snapshot

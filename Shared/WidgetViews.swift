@@ -47,24 +47,22 @@ struct WidgetScene: View {
             let h = spec.height * scale
             let sun = spec.sunSize * scale
             // The design's wave is 390 wide squeezed into the scene's width; its height is not squeezed.
-            let arch = WavePath.defaultArch * w / 390
-            let bow = WavePath.defaultBow * scale
             let waterY = spec.waterY * scale
             let centre = (spec.zeroY - CGFloat(GaugeGeometry.clamped(fraction)) * (spec.zeroY - spec.topY)) * scale
+            // The land box is stretched so its shoreline (46 of 120 down) lands on the water line and it fills the rest.
+            let landHeight = (h - waterY) / (1 - 46.0 / 120)
+            let landTop = waterY - landHeight * 46 / 120
+            let tone: SceneTone = fraction >= 0.5 ? .day : .dawn
             ZStack(alignment: .topLeading) {
-                Color.clear
+                SkyView(tone: tone, horizon: waterY / h, moon: false)
                     .frame(width: w, height: h)
-                    .overlay(alignment: .topLeading) {
-                        SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
-                            .frame(width: sun, height: sun)
-                            .offset(x: (w - sun) / 2, y: centre - sun / 2)
-                    }
-                    .mask { AboveWater(waterY: waterY, phase: 0, arch: arch, bow: bow).fill(Color.black) }
-                SeaFill(waterY: waterY, phase: 0, arch: arch, bow: bow).fill(LGColor.seaFill)
-                WaveLine(y: waterY + 14 * scale, phase: 10 * w / 390, arch: arch, bow: bow)
-                    .stroke(LGColor.seaWave, style: StrokeStyle(lineWidth: 2.2 * scale, lineCap: .round))
-                WaveLine(y: waterY, phase: 0, arch: arch, bow: bow)
-                    .stroke(LGColor.ink, style: StrokeStyle(lineWidth: 2.2 * scale, lineCap: .round))
+                SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
+                    .frame(width: sun, height: sun)
+                    .offset(x: (w - sun) / 2, y: centre - sun / 2)
+                // The sea comes after the sun and is opaque, so nothing of the sun shows below the shoreline.
+                LandView(tone: .day, still: true)
+                    .frame(width: w, height: landHeight)
+                    .offset(y: landTop)
             }
             .frame(width: w, height: h, alignment: .topLeading)
             .clipped()

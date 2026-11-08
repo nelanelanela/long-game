@@ -237,8 +237,10 @@ struct WatchPictureTests {
             ("week", AnyView(WatchHomePage(tab: .week, state: state, onStart: {}))),
             ("longgame", AnyView(WatchHomePage(tab: .longGame, state: state))),
             ("timer", AnyView(WatchTimerView(craftName: "Piano", elapsed: 42 * 60 + 18, paused: false, baseTotal: 3_294,
+                                             doneToday: 30 * 60, stretch: 105 * 60,
                                              onPauseOrResume: {}, onFinish: {}))),
             ("timer-paused", AnyView(WatchTimerView(craftName: "Piano", elapsed: 42 * 60 + 18, paused: true, baseTotal: 3_294,
+                                                    doneToday: 30 * 60, stretch: 105 * 60,
                                                     onPauseOrResume: {}, onFinish: {}))),
             ("finished", AnyView(WatchFinishedView(added: WatchModel.addedText(last), caption: WatchModel.finishedCaption(state), onDone: {}))),
             ("setup", AnyView(WatchSetupView())),
@@ -263,5 +265,43 @@ struct WatchPictureTests {
             top.scale = 3
             try? top.uiImage?.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("watch-top.png"))
         }
+    }
+
+    // MARK: Sunrise on the wrist
+
+    @Test func theSunClimbsWithTodaysProgress() {
+        let low = WatchSunrise.centreFraction(p: 0, paused: false)
+        let high = WatchSunrise.centreFraction(p: 1, paused: false)
+        #expect(low > high)
+        #expect(abs(low - WatchSunrise.waterFraction) < 1e-9)
+        #expect(abs(high - WatchSunrise.topFraction) < 1e-9)
+        #expect(WatchSunrise.centreFraction(p: 0.5, paused: true) > WatchSunrise.centreFraction(p: 0.5, paused: false))
+    }
+
+    @Test func aLaterSessionStartsWhereTheDayLeftOffAndStaysUpOnceCovered() {
+        let p1 = WatchSunrise.progress(doneToday: 0, elapsed: 0, stretch: 3600, stepped: false)
+        let p2 = WatchSunrise.progress(doneToday: 1800, elapsed: 0, stretch: 3600, stepped: false)
+        let p3 = WatchSunrise.progress(doneToday: 7200, elapsed: 600, stretch: 3600, stepped: false)
+        #expect(p1 == 0)
+        #expect(abs(p2 - 0.5) < 1e-9)
+        #expect(p3 == 1)
+    }
+
+    @Test func withReduceMotionOrAlwaysOnTheSunMovesOnceAMinute() {
+        let a = WatchSunrise.progress(doneToday: 0, elapsed: 61, stretch: 3600, stepped: true)
+        let b = WatchSunrise.progress(doneToday: 0, elapsed: 119, stretch: 3600, stepped: true)
+        let c = WatchSunrise.progress(doneToday: 0, elapsed: 120, stretch: 3600, stepped: true)
+        #expect(a == b)
+        #expect(c > b)
+    }
+
+    @Test func theSkyDimsWhenTheWristIsDown() {
+        #expect(WatchSunrise.dimming(alwaysOn: true) < WatchSunrise.dimming(alwaysOn: false))
+    }
+
+    @Test func theTodayLineSaysHowFarTheDayIs() {
+        #expect(WatchModel.todayLine(doneToday: 1800, stretch: 6300) == "30 m of 1 h 45 m today")
+        #expect(WatchModel.todayLine(doneToday: 6300, stretch: 6300) == "Today's stretch is covered")
+        #expect(WatchModel.todayLine(doneToday: 1800, stretch: nil) == "30 m today")
     }
 }

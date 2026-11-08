@@ -65,6 +65,7 @@ targets:
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
+      - LongGame/DesignSystem/Scene.swift
       # The numbers are worked out with the app's own Logic code (it is plain Swift, no database).
       - LongGame/Logic
     info:
@@ -97,6 +98,8 @@ targets:
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
+      - LongGame/DesignSystem/Scene.swift
+      - LongGame/Features/Timer/TimerSunriseLayers.swift
       - LongGame/Logic
     dependencies:
       - target: LongGameWatchWidgets
@@ -134,6 +137,8 @@ targets:
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
+      - LongGame/DesignSystem/Scene.swift
+      - LongGame/Features/Timer/TimerSunriseLayers.swift
       - LongGame/Logic
       - WatchShared/WatchSync.swift
     info:
@@ -220,6 +225,7 @@ targets:
       - LongGame/DesignSystem/Colors.swift
       - LongGame/DesignSystem/Typography.swift
       - LongGame/DesignSystem/Water.swift
+      - LongGame/DesignSystem/Scene.swift
       - LongGame/Logic
     info:
       path: LongGameMacWidgets/Info.plist

@@ -40,20 +40,19 @@ struct WatchScene: View {
             let sun = WatchDesign.sunSize * s
             let waterY = WatchDesign.waterY * s
             let centre = (WatchDesign.waterY - CGFloat(GaugeGeometry.clamped(fraction)) * (WatchDesign.waterY - WatchDesign.topY)) * s
-            let arch = WavePath.defaultArch * w / 390
-            let bow = WavePath.defaultBow * s
+            let h = geo.size.height
+            let landHeight = (h - waterY) / (1 - 46.0 / 120)
+            let landTop = waterY - landHeight * 46 / 120
             ZStack(alignment: .topLeading) {
-                Color.clear
-                    .frame(width: w, height: geo.size.height)
-                    .overlay(alignment: .topLeading) {
-                        SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
-                            .frame(width: sun, height: sun)
-                            .offset(x: WatchDesign.sunCentreX * s - sun / 2, y: centre - sun / 2)
-                    }
-                    .mask { AboveWater(waterY: waterY, phase: 0, arch: arch, bow: bow).fill(Color.black) }
-                SeaFill(waterY: waterY, phase: 0, arch: arch, bow: bow).fill(LGColor.watchSea)
-                WaveLine(y: waterY, phase: 0, arch: arch, bow: bow)
-                    .stroke(LGColor.watchWave, style: StrokeStyle(lineWidth: 2.4 * s, lineCap: .round))
+                SkyView(tone: .night, horizon: waterY / h, moon: false)
+                    .frame(width: w, height: h)
+                SunView(idle: false, face: celebrate ? .celebrate : .happy, rayColor: LGColor.sunRays)
+                    .frame(width: sun, height: sun)
+                    .offset(x: WatchDesign.sunCentreX * s - sun / 2, y: centre - sun / 2)
+                // The night sea in front of the sun, opaque.
+                LandView(tone: .night, still: true)
+                    .frame(width: w, height: landHeight)
+                    .offset(y: landTop)
                 // The scale: a thin line from the top tick to the water, and a gold tick at the sun's height.
                 Path { p in
                     p.move(to: CGPoint(x: WatchDesign.scaleX * s, y: 32 * s))
@@ -149,42 +148,106 @@ struct WatchHomePage: View {
     }
 }
 
-/// The running timer: the focus sun with this hour's lit rays, the clock, the overall total and the next ray.
+/// The Watch's sunrise: today's progress `p` moves the sun from the sea up through night, dawn and day. Pure numbers,
+/// so the tests can check them.
+enum WatchSunrise {
+    /// The sun's centre as a fraction of the scene's height: on the water at 0, a third down at 1.
+    static let waterFraction: CGFloat = 0.74
+    static let topFraction: CGFloat = 0.28
+
+    /// Reduce Motion (and Always On): the sun only moves once a minute, so use whole minutes of the session.
+    static func steppedElapsed(_ elapsed: TimeInterval) -> TimeInterval { (elapsed / 60).rounded(.down) * 60 }
+
+    static func progress(doneToday: TimeInterval, elapsed: TimeInterval, stretch: TimeInterval?, stepped: Bool) -> Double {
+        TimerSunrise.progress(doneSaved: doneToday, running: stepped ? steppedElapsed(elapsed) : elapsed, target: stretch)
+    }
+
+    static func centreFraction(p: Double, paused: Bool) -> CGFloat {
+        let base = waterFraction - (waterFraction - topFraction) * CGFloat(TimerSunrise.clamp(p))
+        return base + (paused ? 0.05 : 0)
+    }
+
+    /// The sky dims when the wrist is down.
+    static func dimming(alwaysOn: Bool) -> Double { alwaysOn ? 0.45 : 1 }
+}
+
+/// The running timer: the same sunrise as the phone's Timer, small. The sky and land fill the screen, today's total
+/// and the clock sit on it, then a progress bar, Pause and Finish.
 struct WatchTimerView: View {
     let craftName: String
     let elapsed: TimeInterval
     let paused: Bool
     /// The overall total before this session.
     let baseTotal: Double
+    /// Time saved today before this session, and today's stretch (nil when no pace is chosen).
+    var doneToday: TimeInterval = 0
+    var stretch: TimeInterval?
     let onPauseOrResume: () -> Void
     let onFinish: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var alwaysOn
+
     var body: some View {
-        let sun = SunHour(elapsed: elapsed)
-        VStack(spacing: 0) {
-            Text(verbatim: craftName).lgText(WatchDesign.title, color: Color.white.opacity(0.7)).lineLimit(1)
-            SunView(idle: false, face: paused ? .sleepy : .focus, litRays: sun.litRays,
-                    glowingRay: paused || sun.litRays >= 12 ? nil : sun.litRays,
-                    raysOpacity: paused ? 0.4 : 1, rayColor: LGColor.sunRaysBright)
-                .frame(width: 76, height: 76)
-                .padding(.top, 2)
-                .accessibilityHidden(true)
+        let stepped = reduceMotion || alwaysOn
+        let p = WatchSunrise.progress(doneToday: doneToday, elapsed: elapsed, stretch: stretch, stepped: stepped)
+        let covered = p >= 1
+        let palette = TimerPalette(p: p)
+        ZStack {
+            GeometryReader { geo in
+                let w = geo.size.width, h = geo.size.height
+                let waterY = h * 0.62
+                let centre = WatchSunrise.centreFraction(p: p, paused: paused || alwaysOn) * waterY / WatchSunrise.waterFraction
+                let sun: CGFloat = 70
+                ZStack(alignment: .topLeading) {
+                    TimerSunriseSky(p: p, paused: paused, horizonY: waterY, sunCentre: CGPoint(x: w / 2, y: centre))
+                    SunView(idle: false, face: alwaysOn || paused ? .sleepy : (covered ? .happy : .focus),
+                            litRays: 12, raysOpacity: paused ? 0.4 : 1, rayColor: LGColor.sunRaysBright)
+                        .frame(width: sun, height: sun)
+                        .position(x: w / 2, y: centre)
+                    TimerSunriseLand(p: p, horizonY: waterY)
+                }
+                .frame(width: w, height: h)
+                .opacity(WatchSunrise.dimming(alwaysOn: alwaysOn))
+            }
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
+
             VStack(spacing: 0) {
-                Text(verbatim: DurationFormat.clock(seconds: elapsed)).lgNumber(WatchDesign.clock, color: .white)
-                Text(verbatim: WatchModel.timerLine(baseTotal: baseTotal, elapsed: elapsed))
-                    .lgText(WatchDesign.captionStrong, color: LGColor.mote)
-                    .lineLimit(1).minimumScaleFactor(0.7)
+                HStack {
+                    Text(verbatim: craftName).lgText(WatchDesign.title, color: palette.muted).lineLimit(1)
+                    Spacer(minLength: 4)
+                    Text(Date.now, format: .dateTime.hour().minute())
+                        .lgText(WatchDesign.caption, color: palette.muted)
+                }
+                Spacer(minLength: 0)
+                VStack(spacing: 0) {
+                    Text(verbatim: alwaysOn ? DurationFormat.hoursMinutes(seconds: elapsed) : DurationFormat.clock(seconds: elapsed))
+                        .lgNumber(WatchDesign.clock, color: palette.ink)
+                    Text(verbatim: WatchModel.todayLine(doneToday: doneToday + elapsed, stretch: stretch))
+                        .lgText(WatchDesign.captionStrong, color: covered ? palette.covered : palette.gold)
+                        .lineLimit(1).minimumScaleFactor(0.7)
+                    Capsule().fill(palette.track).frame(height: 4)
+                        .overlay(alignment: .leading) {
+                            GeometryReader { g in
+                                Capsule().fill(palette.gold).frame(width: max(4, g.size.width * p))
+                            }
+                        }
+                        .padding(.horizontal, 20).padding(.top, 4)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text("\(Labels.spoken(seconds: Int(elapsed), includeSeconds: !alwaysOn)) this session. \(WatchModel.todayLine(doneToday: doneToday + elapsed, stretch: stretch))."))
+                if !alwaysOn {
+                    HStack(spacing: 8) {
+                        WatchPill(title: paused ? "Resume" : "Pause", kind: .glass, action: onPauseOrResume)
+                        WatchPill(title: "Finish", kind: .white, action: onFinish)
+                    }
+                    .padding(.top, 6)
+                }
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("\(Labels.spoken(seconds: Int(elapsed), includeSeconds: true)) this session. \(sun.rayAnnouncement)."))
-            Spacer(minLength: 4)
-            HStack(spacing: 8) {
-                WatchPill(title: paused ? "Resume" : "Pause", kind: .glass, action: onPauseOrResume)
-                WatchPill(title: "Finish", kind: .white, action: onFinish)
-            }
+            .padding(.horizontal, 8)
+            .padding(.bottom, 4)
         }
-        .padding(.horizontal, 8)
-        .padding(.bottom, 4)
     }
 }
 
