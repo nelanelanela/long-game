@@ -71,6 +71,9 @@ final class Session {
     /// How often the photo was opened (it counts after a second on screen, at most once an hour). Only used to pick
     /// the Photos year card's six photos; never shown. Goes with the photo.
     var viewCount: Int = 0
+    /// The person removed the default picture (the drawn sunrise) for this session; lists then show no picture for it.
+    /// Adding a photo of their own works as before.
+    var hidesDefaultPicture: Bool = false
     var lastCountedAt: Date?
 
     init(craftId: UUID, start: Date, durationSec: Double, source: SessionSource, note: String? = nil, photo: Data? = nil) {

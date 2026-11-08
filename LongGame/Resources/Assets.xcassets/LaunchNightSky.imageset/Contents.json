@@ -1,5 +1,7 @@
 {
-  "images" : [ { "filename" : "LaunchNightSky.pdf", "idiom" : "universal" } ],
-  "info" : { "author" : "xcode", "version" : 1 },
-  "properties" : { "preserves-vector-representation" : true }
+  "images" : [
+    { "filename" : "LaunchNightSky@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "LaunchNightSky@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
 }

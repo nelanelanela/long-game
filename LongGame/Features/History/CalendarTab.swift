@@ -237,7 +237,7 @@ struct CalendarTab: View {
                 .padding(.vertical, 8)
                 .accessibilityLabel(SessionPhotos.spokenLabel(start: session.start))
                 .accessibilityHint("Opens the photo")
-            } else {
+            } else if !session.hidesDefaultPicture {
                 SessionPictureThumb(id: session.id, start: session.start, durationSec: session.durationSec,
                                     progress: session.sunriseProgressAtEnd ?? 0, side: 56, radius: 12)
                     .padding(.vertical, 8)

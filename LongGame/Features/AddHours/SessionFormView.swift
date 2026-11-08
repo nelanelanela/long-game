@@ -15,6 +15,7 @@ struct SessionFormView: View {
     @State private var minutes: Int
     @State private var note: String
     @State private var photo: Data?
+    @State private var hidesDefault = false
     @State private var confirmDelete = false
 
     init(craft: Craft, sessions: [Session], editing: Session?) {
@@ -28,6 +29,7 @@ struct SessionFormView: View {
             _minutes = State(initialValue: (total % 60) / 5 * 5)
             _note = State(initialValue: editing.note ?? "")
             _photo = State(initialValue: editing.photo)
+            _hidesDefault = State(initialValue: editing.hidesDefaultPicture)
         } else {
             _day = State(initialValue: Date())
             _hours = State(initialValue: 1)
@@ -99,7 +101,12 @@ struct SessionFormView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
-                NotePhotoRow(photo: $photo, note: $note, photoID: editing?.id ?? UUID())
+                NotePhotoRow(photo: $photo, note: $note, photoID: editing?.id ?? UUID(),
+                             defaultPicture: editing.map {
+                                 DefaultPictureInfo(id: $0.id, start: $0.start, durationSec: $0.durationSec,
+                                                    progress: $0.sunriseProgressAtEnd ?? 0)
+                             },
+                             hidesDefaultPicture: $hidesDefault)
 
                 if editing != nil {
                     Button("Delete session") { confirmDelete = true }
@@ -164,6 +171,7 @@ struct SessionFormView: View {
             editing.end = editing.start.addingTimeInterval(seconds)
             editing.note = saved
             if editing.hasPhoto != (photo != nil) || (photo != nil && photo != editing.photo) { editing.setPhoto(photo) }
+            if editing.hidesDefaultPicture != hidesDefault { editing.hidesDefaultPicture = hidesDefault }
             editing.editedAt = Date()
         } else {
             context.insert(Session(craftId: craft.id, start: SessionRules.manualStart(on: day),

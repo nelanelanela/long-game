@@ -16,14 +16,12 @@ enum OpeningStyle: Equatable, Sendable {
     case full
     /// A 0.3 s cross-fade from the night frame to the app.
     case short
-    /// Dark mode: the sunrise stops at dusk and cross-fades into the app.
-    case dusk
 
     /// How long it runs, in seconds.
     var duration: Double {
         switch self {
         case .skip: 0
-        case .full, .dusk: OpeningTimeline.total
+        case .full: OpeningTimeline.total
         case .short: OpeningTimeline.shortTotal
         }
     }
@@ -40,13 +38,14 @@ struct OpeningPlan: Equatable, Sendable {
 }
 
 /// Decides which opening plays. Only a cold start from the icon plays one at all; a running session, Reduce Motion
-/// and VoiceOver get the short fade; dark mode stops the sunrise at dusk. Before onboarding it ends on Welcome.
+/// and VoiceOver get the short fade; everyone else sees the whole sunrise, dark mode included (the scene is night to
+/// dawn whatever the phone's look). Before onboarding it ends on Welcome.
 func openingStyle(coldStart: Bool, openedFrom: OpeningSource, sessionRunning: Bool, reduceMotion: Bool,
-                  voiceOver: Bool, onboarded: Bool, dark: Bool) -> OpeningPlan {
+                  voiceOver: Bool, onboarded: Bool) -> OpeningPlan {
     let landing: OpeningLanding = onboarded ? .home : .welcome
     guard coldStart, openedFrom == .icon else { return OpeningPlan(style: .skip, landing: landing) }
     if sessionRunning || reduceMotion || voiceOver { return OpeningPlan(style: .short, landing: landing) }
-    return OpeningPlan(style: dark ? .dusk : .full, landing: landing)
+    return OpeningPlan(style: .full, landing: landing)
 }
 
 /// One moment of the opening. Everything is a number from 0 to 1 that the view turns into colours and positions.
@@ -91,20 +90,19 @@ enum OpeningTimeline {
             f.scenery = 1 - ease(t / shortTotal)
             f.sun = f.scenery
             return f
-        case .full, .dusk:
+        case .full:
             let p = ease(t / sunrise)
             let g = ease((t - glideStart) / (total - glideStart))
             var f = night
-            let reach = style == .dusk ? 0.5 : 1.0
-            f.sky = p * reach
-            f.stars = 1 - f.sky * (style == .dusk ? 1.2 : 1)
-            f.rays = style == .dusk ? 0 : p
-            f.glow = style == .dusk ? 0 : p
-            f.awake = style == .full && t >= sunrise
+            f.sky = p
+            f.stars = 1 - f.sky
+            f.rays = p
+            f.glow = p
+            f.awake = t >= sunrise
             f.eyesOpen = f.awake && t < glideStart
             f.scenery = 1 - g
-            f.glide = style == .full && hasTarget ? g : 0
-            f.sun = style == .full && hasTarget ? 1 : 1 - g
+            f.glide = hasTarget ? g : 0
+            f.sun = hasTarget ? 1 : 1 - g
             f.stars = clamp(f.stars)
             return f
         }

@@ -77,7 +77,7 @@ struct AppRoot: View {
         openingUndecided = false
         let plan = openingStyle(coldStart: true, openedFrom: .icon, sessionRunning: timer.state != nil,
                                 reduceMotion: reduceMotion, voiceOver: OpeningAccessibility.voiceOverRunning,
-                                onboarded: active != nil, dark: OpeningAccessibility.systemIsDark)
+                                onboarded: active != nil)
         opening.begin(plan)
     }
 

@@ -289,7 +289,8 @@ struct HomeView: View {
         let today = TodaySessions.startedToday(sessions, start: \.start, now: f.now)
         let rows = today.map { TodaySession(id: $0.id, start: $0.start, end: $0.end, durationSec: $0.durationSec,
                                             note: $0.note, photo: $0.hasPhoto ? $0.photo : nil,
-                                            sunriseProgress: $0.sunriseProgressAtEnd ?? 0) }
+                                            sunriseProgress: $0.sunriseProgressAtEnd ?? 0,
+                                            hidesDefaultPicture: $0.hidesDefaultPicture) }
         let running = timer.state.flatMap { state -> TimeInterval? in
             state.craftId == craft.id && StretchSource.startedToday(state, now: f.now) ? state.elapsed(at: f.now) : nil
         }

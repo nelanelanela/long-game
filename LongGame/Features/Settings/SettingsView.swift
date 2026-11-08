@@ -30,6 +30,8 @@ struct SettingsView: View {
     @State private var confirmDeleteCopy = false
     @State private var iCloudMessage: String?
     @State private var showOneCraft = false
+    @State private var photoStats: [PhotoStat]?
+    @State private var pictureCacheBytes: Int?
 
     init(craft: Craft, closeAll: (() -> Void)? = nil) {
         self.craft = craft
@@ -64,13 +66,13 @@ struct SettingsView: View {
                     .accessibilityAddTraits(.isHeader)
 
                 supportCard
-                iCloudCard
                 if let settings {
                     weekCard(settings)
                     reminderCard(settings)
                     iconCard(settings)
                     soundsCard(settings)
                 }
+                storageCard
                 #if os(iOS)
                 FocusSettingsCard()
                 #else
@@ -194,15 +196,25 @@ struct SettingsView: View {
     #endif
 
     private func soundsCard(_ settings: AppSettings) -> some View {
-        card {
-            VStack(alignment: .leading, spacing: 2) {
-                Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
-                    .lgText(.row).tint(LGColor.ink)
-                Text("A little laugh when you tap the sun. It stays quiet when your iPhone is on silent.")
-                    .lgText(.caption, color: LGColor.inkMuted)
+        VStack(alignment: .leading, spacing: 6) {
+            groupLabel("Sounds")
+            card {
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
+                        .lgText(.row).tint(LGColor.ink)
+                    Text("When you tickle the sun. Silent in silent mode")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                }
+                .padding(.vertical, 10)
             }
-            .padding(.vertical, 10)
         }
+    }
+
+    private func groupLabel(_ title: LocalizedStringKey) -> some View {
+        Text(title)
+            .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: LGColor.inkMuted)
+            .padding(.horizontal, 4)
+            .accessibilityAddTraits(.isHeader)
     }
 
     /// Turning it off sets the plain icon; turning it on sets the stage for the current total.
@@ -347,31 +359,102 @@ struct SettingsView: View {
         }
     }
 
-    /// Save to iCloud, how the sync is going, and Delete iCloud copy (which leaves this iPhone's data alone).
-    private var iCloudCard: some View {
+    /// iCloud & storage: Save to iCloud and how it is going, your photos and what they take up, the default pictures'
+    /// cache with Clear, and Delete iCloud copy (which leaves this iPhone's data alone).
+    private var storageCard: some View {
         let switchState = ICloudSwitchState.make(availability: monitor.availability, wantsOn: store.iCloudOn)
         let status = monitor.status(enabled: store.iCloudOn)
-        return card {
-            VStack(alignment: .leading, spacing: 0) {
-                Toggle("Save to iCloud", isOn: Binding(get: { switchState.isOn }, set: setICloud))
-                    .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
-                    .disabled(!switchState.isEnabled)
-                Text(status.text(now: Date()))
-                    .lgText(.caption, color: LGColor.inkMuted)
-                    .padding(.bottom, 12)
-                Divider().overlay(LGColor.divider)
-                Button { confirmDeleteCopy = true } label: {
-                    HStack {
-                        Text("Delete iCloud copy").lgText(.row, color: LGColor.danger)
-                        Spacer()
+        return VStack(alignment: .leading, spacing: 6) {
+            groupLabel("iCloud & storage")
+            card {
+                VStack(alignment: .leading, spacing: 0) {
+                    Toggle("Save to iCloud", isOn: Binding(get: { switchState.isOn }, set: setICloud))
+                        .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                        .disabled(!switchState.isEnabled)
+                    Text(status.text(now: Date()))
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                    Divider().overlay(LGColor.divider)
+                    NavigationLink { YourPhotosView() } label: { yourPhotosRow }
+                        .buttonStyle(.plain)
+                    Divider().overlay(LGColor.divider)
+                    defaultPicturesRow
+                    Divider().overlay(LGColor.divider)
+                    Button { confirmDeleteCopy = true } label: {
+                        HStack {
+                            Text("Delete iCloud copy").lgText(.row, color: LGColor.danger)
+                            Spacer()
+                        }
+                        .frame(minHeight: 54)
+                        .contentShape(Rectangle())
                     }
-                    .frame(minHeight: 54)
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .disabled(!CloudSync.isAvailable || monitor.availability != .available)
                 }
-                .buttonStyle(.plain)
-                .disabled(!CloudSync.isAvailable || monitor.availability != .available)
             }
         }
+        .task { await refreshStorage() }
+        .onChange(of: allSessions.filter(\.hasPhoto).count) { _, _ in Task { await refreshStorage() } }
+    }
+
+    private var yourPhotosRow: some View {
+        HStack(spacing: 12) {
+            Group {
+                if let first = allSessions.filter(\.hasPhoto).max(by: { $0.start < $1.start }), let data = first.photo {
+                    PhotoThumb(id: first.id, data: data, side: 32, radius: 8)
+                } else {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous).fill(LGColor.chipFill).frame(width: 32, height: 32)
+                        .overlay { Image(systemName: "photo").lgIcon(14, weight: .regular).foregroundStyle(LGColor.inkMuted) }
+                }
+            }
+            .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Your photos").lgText(.row)
+                Text(photoStats.map { "\($0.count) photos · \(ByteText.size(PhotoStorage.totalBytes($0)))" } ?? " ")
+                    .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
+        }
+        .frame(minHeight: 54)
+        .contentShape(Rectangle())
+    }
+
+    private var defaultPicturesRow: some View {
+        HStack(spacing: 12) {
+            // A sample of the pictures the app draws (an evening session).
+            SessionPictureCanvas(layout: SessionPictureLayout.make(seed: 1, startMinute: 18 * 60 + 45, minutes: 65, progress: 0.8))
+                .frame(width: 32, height: 32)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Default pictures").lgText(.row)
+                Text("\(ByteText.size(pictureCacheBytes ?? 0)) cache · never your photos")
+                    .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+            }
+            Spacer(minLength: 8)
+            Button {
+                Task {
+                    _ = await Task.detached(priority: .utility) { SessionPictureCache.clear() }.value
+                    await refreshStorage()
+                }
+            } label: {
+                Text("Clear")
+                    .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: LGColor.ember)
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 44)
+                    .background(LGColor.peachWashSetup, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Clear the default pictures cache. Your photos are not affected.")
+        }
+        .frame(minHeight: 54)
+    }
+
+    /// Both numbers are worked out in the background; the rows say nothing until they arrive.
+    private func refreshStorage() async {
+        pictureCacheBytes = await Task.detached(priority: .utility) { SessionPictureCache.sizeOnDisk() }.value
+        photoStats = await PhotoLibrary.loadStats(container: store.container)
     }
 
     private func setICloud(_ on: Bool) {

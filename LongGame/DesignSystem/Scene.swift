@@ -185,7 +185,7 @@ struct LandView: View {
         let mid = night ? LGColor.duneNight : LGColor.dune
         let farGradient = { (rect: CGRect) in
             GraphicsContext.Shading.linearGradient(Gradient(colors: [farTop, farBottom]),
-                                                   startPoint: CGPoint(x: 0, y: rect.minY), endPoint: CGPoint(x: 0, y: rect.maxY))
+                                                   startPoint: CGPoint(x: 0, y: rect.minY), endPoint: CGPoint(x: 0, y: 46 * sy))
         }
 
         // Far dunes: a tall one on the left, a lower one on the right.
@@ -194,31 +194,29 @@ struct LandView: View {
         far1.addCurve(to: CGPoint(x: 70, y: 9), control1: CGPoint(x: 18, y: 18), control2: CGPoint(x: 44, y: 8))
         far1.addCurve(to: CGPoint(x: 142, y: 30), control1: CGPoint(x: 96, y: 10), control2: CGPoint(x: 118, y: 20))
         far1.addCurve(to: CGPoint(x: 214, y: 46), control1: CGPoint(x: 166, y: 39), control2: CGPoint(x: 190, y: 44))
-        far1.addLine(to: CGPoint(x: 0, y: 46)); far1.closeSubpath()
+        // The dunes run on down, well behind the sea, so no sliver of sky can show between a dune and the water.
+        far1.addLine(to: CGPoint(x: 214, y: 75)); far1.addLine(to: CGPoint(x: 0, y: 75)); far1.closeSubpath()
         var far2 = Path()
         far2.move(to: CGPoint(x: 300, y: 46))
         far2.addCurve(to: CGPoint(x: 352, y: 36), control1: CGPoint(x: 318, y: 40), control2: CGPoint(x: 336, y: 36))
         far2.addCurve(to: CGPoint(x: 390, y: 41), control1: CGPoint(x: 366, y: 36), control2: CGPoint(x: 380, y: 38))
-        far2.addLine(to: CGPoint(x: 390, y: 46)); far2.closeSubpath()
+        far2.addLine(to: CGPoint(x: 390, y: 75)); far2.addLine(to: CGPoint(x: 300, y: 75)); far2.closeSubpath()
         let far1S = scaled(far1), far2S = scaled(far2)
-        ctx.drawLayer { l in
-            l.opacity = 0.75; l.fill(far1S, with: farGradient(far1S.boundingRect))
-        }
-        ctx.drawLayer { l in
-            l.opacity = 0.6; l.fill(far2S, with: farGradient(far2S.boundingRect))
-        }
+        // The far dunes are solid, so the sun behind them is hidden cleanly instead of showing through.
+        ctx.fill(far1S, with: farGradient(far1S.boundingRect))
+        ctx.fill(far2S, with: farGradient(far2S.boundingRect))
 
         // Mid dunes in front.
         var mid1 = Path()
         mid1.move(to: CGPoint(x: 0, y: 38))
         mid1.addCurve(to: CGPoint(x: 82, y: 36), control1: CGPoint(x: 24, y: 33), control2: CGPoint(x: 52, y: 32))
         mid1.addCurve(to: CGPoint(x: 150, y: 47), control1: CGPoint(x: 108, y: 39), control2: CGPoint(x: 128, y: 44))
-        mid1.addLine(to: CGPoint(x: 0, y: 47)); mid1.closeSubpath()
+        mid1.addLine(to: CGPoint(x: 150, y: 75)); mid1.addLine(to: CGPoint(x: 0, y: 75)); mid1.closeSubpath()
         var mid2 = Path()
         mid2.move(to: CGPoint(x: 262, y: 47))
         mid2.addCurve(to: CGPoint(x: 362, y: 33), control1: CGPoint(x: 292, y: 43), control2: CGPoint(x: 330, y: 39))
         mid2.addCurve(to: CGPoint(x: 390, y: 30), control1: CGPoint(x: 374, y: 31), control2: CGPoint(x: 384, y: 30))
-        mid2.addLine(to: CGPoint(x: 390, y: 47)); mid2.closeSubpath()
+        mid2.addLine(to: CGPoint(x: 390, y: 75)); mid2.addLine(to: CGPoint(x: 262, y: 75)); mid2.closeSubpath()
         ctx.fill(scaled(mid1), with: .color(mid))
         ctx.fill(scaled(mid2), with: .color(mid))
 

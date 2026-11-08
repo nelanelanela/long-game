@@ -1,6 +1,72 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Picture of this session, double-tap to open it" : {
+
+    },
+    "Remove picture" : {
+
+    },
+    "Remove this picture?" : {
+
+    },
+    "Replace with a photo" : {
+
+    },
+    "Drawn from this session. Replace it with a photo, or remove it." : {
+
+    },
+    "Sounds" : {
+
+    },
+    "iCloud & storage" : {
+
+    },
+    "Your photos" : {
+
+    },
+    "Default pictures" : {
+
+    },
+    "Clear the default pictures cache. Your photos are not affected." : {
+
+    },
+    "Back to Settings" : {
+
+    },
+    "When you tickle the sun. Silent in silent mode" : {
+
+    },
+    "%lld photos · %@" : {
+
+    },
+    "%@ cache · never your photos" : {
+
+    },
+    "%lld photos you added to your sessions. The default pictures drawn by the app aren’t here; they take no space." : {
+
+    },
+    "Delete all photos from %@…" : {
+
+    },
+    "Delete all %lld photos from %@?" : {
+
+    },
+    "Delete %lld photos from %@" : {
+
+    },
+    "This frees %@. Your %@ sessions, hours and notes stay. The photos are removed from this iPhone and from iCloud, and can’t be brought back." : {
+
+    },
+    "Deleting photos keeps your sessions, hours and notes. Tap a photo in History to delete just one." : {
+
+    },
+    "Asks first. Your sessions, hours and notes stay." : {
+
+    },
+    "Photos from %@ deleted" : {
+
+    },
     "" : {
 
     },

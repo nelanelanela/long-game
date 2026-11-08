@@ -24,6 +24,9 @@ struct TimerView: View {
     @State private var showFinish = false
     @Environment(CommandCenter.self) private var commands: CommandCenter?
     @State private var savedAt: Date?
+    /// The last state the timer had. Discarding clears the timer a moment before the screen has slid away, and
+    /// without this the screen would show plain black until it is gone.
+    @State private var lastState: TimerState?
 
     init(craft: Craft, baseTotal: Double) {
         self.craft = craft
@@ -42,7 +45,7 @@ struct TimerView: View {
         TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 30)) { timeline in
             if let savedAt {
                 SavedScene(now: timeline.date, since: savedAt, reduceMotion: reduceMotion)
-            } else if let state = store.state {
+            } else if let state = store.state ?? lastState {
                 RunningScene(
                     now: timeline.date, state: state, craftName: craft.name + (store.startedOn.map { " · " + ActiveSessionText.startedOn($0) } ?? ""), baseTotal: baseTotal, reduceMotion: reduceMotion,
                     stretchPlan: plan,
@@ -53,9 +56,10 @@ struct TimerView: View {
                         showFinish = true
                     })
             } else {
-                Color.black.ignoresSafeArea()
+                LGColor.night.ignoresSafeArea()
             }
         }
+        .onChange(of: store.state, initial: true) { _, new in if let new { lastState = new } }
         .preferredColorScheme(.dark)
         .sensoryFeedback(.success, trigger: savedAt)
         .onChange(of: savedAt) { _, new in

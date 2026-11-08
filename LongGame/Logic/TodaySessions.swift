@@ -12,6 +12,8 @@ struct TodaySession: Equatable, Identifiable, Sendable {
     var photo: Data?
     /// Where today's sunrise stood when the session ended (for its picture, when it has no photo).
     var sunriseProgress: Double = 0
+    /// The default picture was removed for this session: the row shows the quiet clock tile instead.
+    var hidesDefaultPicture = false
 
     var hasPhoto: Bool { photo != nil }
 }

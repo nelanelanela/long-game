@@ -2,6 +2,7 @@
 // Run from the project folder:  swift Tools/MakeLaunchAssets.swift
 // Shapes and colours come from design/redesign/Sky.dc.html, Land.dc.html and Launch.dc.html (same numbers as SkyView and LandView). Y runs downward here, like the design.
 import CoreGraphics
+import ImageIO
 import Foundation
 
 let outDir = "LongGame/Resources/Assets.xcassets"
@@ -31,40 +32,41 @@ func dir(_ name: String) -> String {
 }
 
 // The night sky: 390 x 506, everything above the horizon (the horizon is the bottom edge, 60% of an 844 pt screen).
+// It is a bitmap at 2x and 3x, not a PDF: the glow is a transparent gradient, and a PDF would flatten or band it
+// (stacked translucent circles came out olive green on the phone). One real gradient in one pass stays warm.
 let skyW: CGFloat = 390, skyH: CGFloat = 506
 func linear(_ c: CGContext, _ stops: [(CGFloat, UInt32)], from: CGPoint, to: CGPoint) {
     let g = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!, colors: stops.map { rgb($0.1) } as CFArray,
                        locations: stops.map { $0.0 })!
     c.drawLinearGradient(g, start: from, end: to, options: [])
 }
-makePDF("\(dir("LaunchNightSky"))/LaunchNightSky.pdf", width: skyW, height: skyH) { c in
+
+func makePNG(_ path: String, width: CGFloat, height: CGFloat, scale: CGFloat, draw: (CGContext) -> Void) {
+    let space = CGColorSpace(name: CGColorSpace.sRGB)!
+    let w = Int(width * scale), h = Int(height * scale)
+    guard let c = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { fatalError("Cannot draw \(path)") }
+    c.translateBy(x: 0, y: CGFloat(h))
+    c.scaleBy(x: scale, y: -scale)
+    draw(c)
+    guard let image = c.makeImage(),
+          let dest = CGImageDestinationCreateWithURL(URL(fileURLWithPath: path) as CFURL, "public.png" as CFString, 1, nil) else { fatalError("Cannot write \(path)") }
+    CGImageDestinationAddImage(dest, image, nil)
+    CGImageDestinationFinalize(dest)
+    print("wrote", path)
+}
+
+func drawNightSky(_ c: CGContext) {
     linear(c, [(0, 0x060A1E), (0.55, 0x0F1A3D), (0.85, 0x22305C), (0.97, 0x6B5A5E), (1, 0xC8915A)],
            from: .zero, to: CGPoint(x: 0, y: skyH))
-    // The warm glow rising from the horizon. PDF gradients lose their transparency, so it is stacked translucent
-    // circles instead: each ring's opacity is chosen so the total at that radius matches the design's profile
-    // (0.55 at the centre, 0.22 at 30% of the way out, 0 at the edge; the CSS gradient ends at 0.62 of the farthest corner).
+    // The warm glow rising from the horizon (the CSS gradient ends at 0.62 of the farthest corner).
     let glowSize = max(skyW, skyH) * 1.1
     let glowRadius = 0.62 * glowSize / 2 * 2.0.squareRoot()
-    func glowAlpha(_ f: CGFloat) -> CGFloat {      // f = distance from the centre, 0...1 of the glow radius
-        let stop = 0.30 / 0.62
-        return f < stop ? 0.55 + (0.22 - 0.55) * (f / stop) : 0.22 * (1 - (f - stop) / (1 - stop))
-    }
-    func glowColour(_ f: CGFloat) -> (CGFloat, CGFloat, CGFloat) {
-        let t = min(f / (0.30 / 0.62), 1)
-        return (1, (214 + (190 - 214) * t) / 255, (150 + (110 - 150) * t) / 255)
-    }
-    let rings = 160
-    var previous: CGFloat = 0
-    for i in 0..<rings {
-        let f = 1 - CGFloat(i) / CGFloat(rings)          // outside → inside
-        let target = glowAlpha(f - 0.5 / CGFloat(rings))
-        let layer = min(max(1 - (1 - target) / (1 - previous), 0), 1)
-        previous = target
-        let col = glowColour(f)
-        c.setFillColor(CGColor(colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!, components: [col.0, col.1, col.2, layer])!)
-        let r = glowRadius * f
-        c.fillEllipse(in: CGRect(x: skyW / 2 - r, y: skyH - r, width: 2 * r, height: 2 * r))
-    }
+    let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
+                          colors: [rgb(0xFFD696, 0.55), rgb(0xFFBE6E, 0.22), rgb(0xFFBE6E, 0)] as CFArray,
+                          locations: [0, 0.30 / 0.62, 1])!
+    c.drawRadialGradient(glow, startCenter: CGPoint(x: skyW / 2, y: skyH), startRadius: 0,
+                         endCenter: CGPoint(x: skyW / 2, y: skyH), endRadius: glowRadius, options: [])
     // Stars: the same 34 as SkyView.
     for i in 0..<34 {
         let x = CGFloat((i * 61 + 13) % 100) / 100 * skyW
@@ -73,7 +75,7 @@ makePDF("\(dir("LaunchNightSky"))/LaunchNightSky.pdf", width: skyW, height: skyH
         c.setFillColor(i % 7 == 0 ? rgb(0xFFF4D6, 0.75) : rgb(0xFFFFFF, 0.75))
         c.fillEllipse(in: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r))
     }
-    // The crescent moon: a circle with a smaller one taken out.
+    // The crescent moon: where SkyView puts it (moonAt 0.74, 0.12), a circle with a smaller one taken out.
     let mr: CGFloat = 14
     let mc = CGPoint(x: skyW * 0.74 - 0.38 * mr, y: skyH * 0.12 - 0.58 * mr)
     let ic = CGPoint(x: mc.x + 0.45 * mr, y: mc.y + 0.5 * mr)
@@ -86,6 +88,20 @@ makePDF("\(dir("LaunchNightSky"))/LaunchNightSky.pdf", width: skyW, height: skyH
     c.fillPath(using: .evenOdd)
     c.restoreGState()
 }
+
+let skyDir = dir("LaunchNightSky")
+try? FileManager.default.removeItem(atPath: "\(skyDir)/LaunchNightSky.pdf")
+makePNG("\(skyDir)/LaunchNightSky@2x.png", width: skyW, height: skyH, scale: 2, draw: drawNightSky)
+makePNG("\(skyDir)/LaunchNightSky@3x.png", width: skyW, height: skyH, scale: 3, draw: drawNightSky)
+try? """
+{
+  "images" : [
+    { "filename" : "LaunchNightSky@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "LaunchNightSky@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}
+""".write(toFile: "\(skyDir)/Contents.json", atomically: true, encoding: .utf8)
 
 // The sleeping sun: 200 x 200 box, body radius 56, closed eyes and mouth, cheeks, no rays.
 makePDF("\(dir("LaunchSun"))/LaunchSun.pdf", width: 200, height: 200) { c in
@@ -116,7 +132,7 @@ makePDF("\(dir("LaunchNightLand"))/LaunchNightLand.pdf", width: 390, height: 120
         c.saveGState(); build(); c.closePath(); c.clip()
         let box = c.boundingBoxOfClipPath
         c.setAlpha(opacity)
-        linear(c, [(0, 0x5A4A5E), (1, 0x2E2A45)], from: CGPoint(x: 0, y: box.minY), to: CGPoint(x: 0, y: box.maxY))
+        linear(c, [(0, 0x5A4A5E), (1, 0x2E2A45)], from: CGPoint(x: 0, y: box.minY), to: CGPoint(x: 0, y: 46))
         c.restoreGState()
     }
     farDune({
@@ -124,23 +140,23 @@ makePDF("\(dir("LaunchNightLand"))/LaunchNightLand.pdf", width: 390, height: 120
         c.addCurve(to: CGPoint(x: 70, y: 9), control1: CGPoint(x: 18, y: 18), control2: CGPoint(x: 44, y: 8))
         c.addCurve(to: CGPoint(x: 142, y: 30), control1: CGPoint(x: 96, y: 10), control2: CGPoint(x: 118, y: 20))
         c.addCurve(to: CGPoint(x: 214, y: 46), control1: CGPoint(x: 166, y: 39), control2: CGPoint(x: 190, y: 44))
-        c.addLine(to: CGPoint(x: 0, y: 46))
-    }, 0.75, 0, 0)
+        c.addLine(to: CGPoint(x: 214, y: 75)); c.addLine(to: CGPoint(x: 0, y: 75))
+    }, 1, 0, 0)
     farDune({
         c.move(to: CGPoint(x: 300, y: 46))
         c.addCurve(to: CGPoint(x: 352, y: 36), control1: CGPoint(x: 318, y: 40), control2: CGPoint(x: 336, y: 36))
         c.addCurve(to: CGPoint(x: 390, y: 41), control1: CGPoint(x: 366, y: 36), control2: CGPoint(x: 380, y: 38))
-        c.addLine(to: CGPoint(x: 390, y: 46))
-    }, 0.6, 0, 0)
+        c.addLine(to: CGPoint(x: 390, y: 75)); c.addLine(to: CGPoint(x: 300, y: 75))
+    }, 1, 0, 0)
     c.setFillColor(rgb(0x232442))
     c.move(to: CGPoint(x: 0, y: 38))
     c.addCurve(to: CGPoint(x: 82, y: 36), control1: CGPoint(x: 24, y: 33), control2: CGPoint(x: 52, y: 32))
     c.addCurve(to: CGPoint(x: 150, y: 47), control1: CGPoint(x: 108, y: 39), control2: CGPoint(x: 128, y: 44))
-    c.addLine(to: CGPoint(x: 0, y: 47)); c.closePath(); c.fillPath()
+    c.addLine(to: CGPoint(x: 150, y: 75)); c.addLine(to: CGPoint(x: 0, y: 75)); c.closePath(); c.fillPath()
     c.move(to: CGPoint(x: 262, y: 47))
     c.addCurve(to: CGPoint(x: 362, y: 33), control1: CGPoint(x: 292, y: 43), control2: CGPoint(x: 330, y: 39))
     c.addCurve(to: CGPoint(x: 390, y: 30), control1: CGPoint(x: 374, y: 31), control2: CGPoint(x: 384, y: 30))
-    c.addLine(to: CGPoint(x: 390, y: 47)); c.closePath(); c.fillPath()
+    c.addLine(to: CGPoint(x: 390, y: 75)); c.addLine(to: CGPoint(x: 262, y: 75)); c.closePath(); c.fillPath()
     // The sea: opaque night gradient.
     c.saveGState()
     c.move(to: CGPoint(x: 0, y: 46))

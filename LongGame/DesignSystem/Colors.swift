@@ -44,6 +44,9 @@ enum LGColor {
     static let contour = Color(hex: 0x9FB0E0)
     static let contourNight = Color(hex: 0x3D4D93)
     /// The Timer sun's big number at the start of the day, before it turns ember.
+    /// "Delete all photos from …": the soft red wash and its text.
+    static let deleteWash = Color(hex: 0xFDF0EC)
+    static let deleteInk = Color(hex: 0xC0392B)
     static let timerGold = Color(hex: 0xFFD66B)
     /// The iPad/Mac sidebar and its quiet capsule button (#EFEBE4), and the chosen row's wash.
     static let sidebar = Color(hex: 0xEFEBE4)

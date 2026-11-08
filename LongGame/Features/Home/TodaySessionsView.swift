@@ -85,8 +85,15 @@ private struct SessionRow: View {
         if let photo = row.photo {
             PhotoThumb(id: row.id, data: photo, side: 40, radius: 10)
         } else {
-            SessionPictureThumb(id: row.id, start: row.start, durationSec: row.durationSec, progress: row.sunriseProgress,
-                                side: 40, radius: 10)
+            if row.hidesDefaultPicture {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(LGColor.clockTile)
+                    .frame(width: 40, height: 40)
+                    .overlay { Image(systemName: "clock").lgIcon(16, weight: .medium).foregroundStyle(LGColor.inkMuted) }
+            } else {
+                SessionPictureThumb(id: row.id, start: row.start, durationSec: row.durationSec, progress: row.sunriseProgress,
+                                    side: 40, radius: 10)
+            }
         }
     }
 }

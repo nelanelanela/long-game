@@ -3,9 +3,9 @@ import Testing
 
 struct OpeningSunriseTests {
     func plan(cold: Bool = true, from: OpeningSource = .icon, session: Bool = false, reduceMotion: Bool = false,
-              voiceOver: Bool = false, onboarded: Bool = true, dark: Bool = false) -> OpeningPlan {
+              voiceOver: Bool = false, onboarded: Bool = true) -> OpeningPlan {
         openingStyle(coldStart: cold, openedFrom: from, sessionRunning: session, reduceMotion: reduceMotion,
-                     voiceOver: voiceOver, onboarded: onboarded, dark: dark)
+                     voiceOver: voiceOver, onboarded: onboarded)
     }
 
     @Test func aColdStartFromTheIconPlaysTheWholeSunrise() {
@@ -38,17 +38,18 @@ struct OpeningSunriseTests {
         #expect(plan(reduceMotion: true, onboarded: false) == OpeningPlan(style: .short, landing: .welcome))
     }
 
-    @Test func darkModeStopsAtDusk() {
-        #expect(plan(dark: true).style == .dusk)
+    @Test func darkModePlaysTheWholeSunriseToo() {
+        // The opening is night to dawn whatever the phone's look, so dark mode no longer stops it at dusk.
+        #expect(plan() == OpeningPlan(style: .full, landing: .home))
     }
 
-    @Test func theShortFadeBeatsDarkMode() {
-        #expect(plan(reduceMotion: true, dark: true).style == .short)
-        #expect(plan(session: true, dark: true).style == .short)
+    @Test func theShortFadeStillBeatsTheFullSunrise() {
+        #expect(plan(reduceMotion: true).style == .short)
+        #expect(plan(session: true).style == .short)
     }
 
     @Test func aWarmStartOrLinkStaysSilentEvenInDarkModeOrWithReduceMotion() {
-        #expect(plan(cold: false, reduceMotion: true, dark: true).style == .skip)
+        #expect(plan(cold: false, reduceMotion: true).style == .skip)
         #expect(plan(from: .url, voiceOver: true).style == .skip)
     }
 
@@ -87,13 +88,15 @@ struct OpeningSunriseTests {
         #expect(f.glide == 0 && f.sun == 0)
     }
 
-    @Test func darkModeNeverGoesPastDuskAndKeepsTheSunAsleep() {
-        for t in stride(from: 0.0, through: 1.0, by: 0.05) {
-            let f = OpeningTimeline.frame(at: t, style: .dusk)
-            #expect(f.sky <= 0.5 && !f.awake && f.rays == 0)
+    @Test func theSunGlidesOntoHomeAndStaysThereUntilTheSceneryIsGone() {
+        // The sun rises with the sky, wakes at half a second, then glides to Home's sun and is not faded on the way.
+        for t in stride(from: 0.65, through: 1.0, by: 0.05) {
+            let f = OpeningTimeline.frame(at: t, style: .full)
+            #expect(f.sun == 1)
+            #expect(f.glide >= 0 && f.glide <= 1)
         }
-        #expect(OpeningTimeline.frame(at: 0.5, style: .dusk).sky == 0.5)
-        #expect(OpeningTimeline.frame(at: 1.0, style: .dusk).scenery == 0)
+        #expect(OpeningTimeline.frame(at: 0.65, style: .full).glide == 0)
+        #expect(OpeningTimeline.frame(at: 1.0, style: .full).glide == 1)
     }
 
     @Test func theShortFadeKeepsTheNightFrameAndFadesIt() {

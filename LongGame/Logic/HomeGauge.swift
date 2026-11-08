@@ -48,16 +48,17 @@ struct GaugeMetrics: Equatable, Sendable {
     var arcBaseY: CGFloat?
     var arcRadiusY: CGFloat?
 
-    // The phone's hero on each tab (the redesign boards): Today 305, This week 272, The long game 285. The land is
-    // always 74 pt below the shoreline, so the sea is never clipped.
+    // The phone's hero on each tab. All three are 305 tall with the shoreline at 231, so the water is at exactly the same
+    // height on Today, This week and The long game; only the scale and the sun change. The land is always 74 pt below
+    // the shoreline, so the sea is never clipped.
     static let phoneToday = GaugeMetrics(
         height: 305, waterY: 231, zeroY: 223, topY: 84, sunSize: 110, sunOffsetX: 0, scaleX: 48, pillX: 58, dashStartX: 52,
         arcBaseY: 205, arcRadiusY: 135)
     static let phoneWeek = GaugeMetrics(
-        height: 272, waterY: 197, zeroY: 196, topY: 40, sunSize: 110, sunOffsetX: 20, scaleX: 44, pillX: 30, dashStartX: 96,
+        height: 305, waterY: 231, zeroY: 229, topY: 73, sunSize: 110, sunOffsetX: 20, scaleX: 44, pillX: 30, dashStartX: 96,
         scaleOvershoot: 0)
     static let phoneLong = GaugeMetrics(
-        height: 285, waterY: 211, zeroY: 210, topY: 36, sunSize: 140, sunOffsetX: 35, scaleX: 44, pillX: 22, dashStartX: 100,
+        height: 305, waterY: 231, zeroY: 230, topY: 56, sunSize: 140, sunOffsetX: 35, scaleX: 44, pillX: 22, dashStartX: 100,
         scaleOvershoot: 0)
 
     /// The phone's metrics for the tab on show.
