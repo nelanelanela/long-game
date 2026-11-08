@@ -119,8 +119,14 @@ struct TimerView: View {
 
     private func save(duration: TimeInterval, note: String?, photo: Data?) {
         guard let state = store.state else { return }
-        context.insert(Session(craftId: state.craftId, start: state.startedAt, durationSec: duration, source: .timer,
-                               note: note, photo: photo))
+        let session = Session(craftId: state.craftId, start: state.startedAt, durationSec: duration, source: .timer,
+                              note: note, photo: photo)
+        // Where today's sunrise stands as this session ends: what the day had before it, plus its own length.
+        if StretchSource.startedToday(state) {
+            session.sunriseProgressAtEnd = TimerSunrise.progress(doneSaved: stretchPlan.doneSaved, running: duration,
+                                                                 target: stretchPlan.target)
+        }
+        context.insert(session)
         try? context.save()
         store.savedSession = true
         showFinish = false

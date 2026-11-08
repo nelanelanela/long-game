@@ -10,6 +10,8 @@ struct TodaySession: Equatable, Identifiable, Sendable {
     var durationSec: Double
     var note: String?
     var photo: Data?
+    /// Where today's sunrise stood when the session ended (for its picture, when it has no photo).
+    var sunriseProgress: Double = 0
 
     var hasPhoto: Bool { photo != nil }
 }

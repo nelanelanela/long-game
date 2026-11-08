@@ -64,6 +64,10 @@ final class Session {
     var hasPhoto: Bool = false
     var createdAt: Date = Date()
     var editedAt: Date?
+    /// Where today's sunrise stood when this session ended (0 = on the horizon, 1 = fully up): the one number the
+    /// session picture needs besides the session itself. Optional so existing stores migrate on their own; sessions
+    /// without it are filled in from the day's order of sessions (`SessionPictures.fillMissing`).
+    var sunriseProgressAtEnd: Double?
 
     init(craftId: UUID, start: Date, durationSec: Double, source: SessionSource, note: String? = nil, photo: Data? = nil) {
         self.craftId = craftId

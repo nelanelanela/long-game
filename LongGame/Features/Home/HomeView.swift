@@ -159,6 +159,7 @@ struct HomeView: View {
         .onAppear {
             onScreen = true
             chooseOpeningTab()
+            fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
             if timer.finishRequested { openTimer(total: s.total) }
             showFutureSelfOnce()
@@ -186,6 +187,7 @@ struct HomeView: View {
             if total > old, showTimer || sheet != nil || catchUpGap != nil { showToast(addedHours: total - old) }
         }
         .onChange(of: sessions.count) { old, new in
+            fillSessionPictures()
             refreshNotifications()
             if old == 0, new == 1, !UserDefaults.standard.bool(forKey: "notifications.asked") { askAboutReminders = true }
         }
@@ -286,13 +288,19 @@ struct HomeView: View {
     private func todaySessions(_ f: HomeFigures) -> some View {
         let today = TodaySessions.startedToday(sessions, start: \.start, now: f.now)
         let rows = today.map { TodaySession(id: $0.id, start: $0.start, end: $0.end, durationSec: $0.durationSec,
-                                            note: $0.note, photo: $0.hasPhoto ? $0.photo : nil) }
+                                            note: $0.note, photo: $0.hasPhoto ? $0.photo : nil,
+                                            sunriseProgress: $0.sunriseProgressAtEnd ?? 0) }
         let running = timer.state.flatMap { state -> TimeInterval? in
             state.craftId == craft.id && StretchSource.startedToday(state, now: f.now) ? state.elapsed(at: f.now) : nil
         }
         return TodaySessionsList(rows: rows, running: running, onSelect: { id in
             editingSession = today.first { $0.id == id }
         }, onDropImage: { id, data in attachDropped(data, to: today.first { $0.id == id }) })
+    }
+
+    /// Gives every session its sunrise number (existing ones once, new manual and catch-up ones as they come).
+    private func fillSessionPictures() {
+        SessionPictures.fillMissing(sessions: sessions, settings: settingsRows.first, periods: targetPeriods, context: context)
     }
 
     private func showToast(addedHours: Double) {
