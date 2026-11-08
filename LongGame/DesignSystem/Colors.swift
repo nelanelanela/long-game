@@ -65,7 +65,7 @@ enum LGColor {
 
     // Calendar and forecast
     static let rest = Color(hex: 0xC5D0EC)
-    static let practice: [Color] = [Color(hex: 0xFFE48C), Color(hex: 0xFFC53D), Color(hex: 0xFF9A3C), Color(hex: 0xEE6420)]
+    static let practice: [Color] = [Color(hex: 0xFFE48C), Color(hex: 0xFFC53D), Color(hex: 0xFF9A3C), Color(hex: 0xE8561E)]
     static let forecast = Color(hex: 0xEE6420)
     /// The forecast orange darkened to 4.5:1 for words (the lines and band keep the brighter orange).
     static let forecastText = Color(hex: 0xB8470E)

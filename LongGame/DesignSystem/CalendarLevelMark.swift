@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// The calendar's levels as shapes as well as colours (spec section 20), drawn in a 14 pt cell and scaled to fit:
-/// rest = small dot, under 1 h = thin bar, 1–2 h = taller bar, 2–3 h = rounded square, 3 h+ = full circle.
+/// The calendar's levels as shapes as well as colours (the redesign), drawn in a 14 pt cell and scaled to fit. Every
+/// level is the same 12 pt size and the corners tighten as the hours grow: rest = a 4 pt dot, under 1 h = a circle,
+/// 1–2 h = a square with 4 pt corners, 2–3 h = 2 pt corners, 3 h and more = a sharp square.
 struct CalendarLevelShape: Shape {
     var level: CalendarLevel
 
@@ -13,11 +14,11 @@ struct CalendarLevelShape: Shape {
             CGRect(x: origin.x + x * k, y: origin.y + y * k, width: w * k, height: h * k)
         }
         switch level {
-        case .rest: return Path(ellipseIn: box(7 - 2.1, 7 - 2.1, 4.2, 4.2))
-        case .under1: return Path(roundedRect: box(1, 5, 12, 4), cornerRadius: 2 * k, style: .continuous)
-        case .from1to2: return Path(roundedRect: box(1, 3, 12, 8), cornerRadius: 2.5 * k, style: .continuous)
-        case .from2to3: return Path(roundedRect: box(1, 1, 12, 12), cornerRadius: 3.5 * k, style: .continuous)
-        case .over3: return Path(ellipseIn: box(0.5, 0.5, 13, 13))
+        case .rest: return Path(ellipseIn: box(7 - 2, 7 - 2, 4, 4))
+        case .under1: return Path(roundedRect: box(1, 1, 12, 12), cornerRadius: 6 * k, style: .continuous)
+        case .from1to2: return Path(roundedRect: box(1, 1, 12, 12), cornerRadius: 4 * k, style: .continuous)
+        case .from2to3: return Path(roundedRect: box(1, 1, 12, 12), cornerRadius: 2 * k, style: .continuous)
+        case .over3: return Path(box(1, 1, 12, 12))
         }
     }
 }
@@ -49,9 +50,10 @@ struct CalendarLevelMark: View {
             if contrast == .increased || forceIncreasedContrast, let outline = LGColor.calendarOutline(level) {
                 CalendarLevelShape(level: level).stroke(outline, lineWidth: 1)
             }
-            // A tiny white dot in the middle: this day has a photo (3 pt on the thin bar, 4 pt elsewhere).
+            // A white dot in the middle: this day has a photo (4 pt; the palest level gets a hairline around it).
             if hasPhoto && level != .rest {
-                Circle().fill(.white).frame(width: level == .under1 ? 3 : 4, height: level == .under1 ? 3 : 4)
+                Circle().fill(.white).frame(width: 4 * size / 14, height: 4 * size / 14)
+                    .overlay { if level == .under1 { Circle().stroke(LGColor.ink.opacity(0.28), lineWidth: 0.5) } }
             }
         }
         .frame(width: size, height: size)

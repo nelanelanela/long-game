@@ -99,7 +99,7 @@ struct CalendarTab: View {
                 ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
                 : AnyLayout(HStackLayout())
             legend {
-                legendSwatch(.rest, "Rest")
+                legendSwatch(.rest, "Rest is part of the craft.")
                 if !isAccessibilitySize { Spacer() }
                 HStack(spacing: 4) {
                     Text("Less").lgText(.tiny, color: LGColor.inkMuted).padding(.trailing, 4)
@@ -112,7 +112,7 @@ struct CalendarTab: View {
             // Only once there is a photo: what the white dot means.
             if !photoDays.isEmpty {
                 HStack(spacing: 6) {
-                    CalendarLevelMark(level: .from1to2, size: 14, hasPhoto: true)
+                    CalendarLevelMark(level: .from2to3, size: 14, hasPhoto: true)
                     Text("White dot: a day with a photo").lgText(.tiny, color: LGColor.inkMuted)
                 }
                 .accessibilityHidden(true)
