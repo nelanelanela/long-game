@@ -82,11 +82,13 @@ struct GaugeHero: View, Animatable {
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
+                // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
+                // whole hero as the sun's place.
                 Color.clear.frame(width: arc.sunSize, height: arc.sunSize)
-                    .position(onArc)
                     .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { rect in
                         if mix == 1 { opening?.sunTarget = rect }
                     }
+                    .position(onArc)
                     .allowsHitTesting(false)
                 if gauge.tab.hasScale {
                     GaugeScale(ticks: gauge.ticks, metrics: metrics, onDark: onDark,
