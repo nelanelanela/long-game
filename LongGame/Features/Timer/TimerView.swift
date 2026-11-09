@@ -24,6 +24,8 @@ struct TimerView: View {
     @State private var showFinish = false
     @Environment(CommandCenter.self) private var commands: CommandCenter?
     @State private var savedAt: Date?
+    /// What the Saved moment shows, worked out when the session is saved.
+    @State private var saved: SavedMoment?
     /// The last state the timer had. Discarding clears the timer a moment before the screen has slid away, and
     /// without this the screen would show plain black until it is gone.
     @State private var lastState: TimerState?
@@ -42,9 +44,9 @@ struct TimerView: View {
 
     var body: some View {
         let plan = stretchPlan
-        TimelineView(.animation(minimumInterval: reduceMotion ? 1 : 1.0 / 30)) { timeline in
-            if let savedAt {
-                SavedScene(now: timeline.date, since: savedAt, reduceMotion: reduceMotion)
+        TimelineView(.animation(minimumInterval: reduceMotion && savedAt == nil ? 1 : 1.0 / 30)) { timeline in
+            if let savedAt, let saved {
+                SavedScene(now: timeline.date, since: savedAt, moment: saved, reduceMotion: reduceMotion)
             } else if let state = store.state ?? lastState {
                 RunningScene(
                     now: timeline.date, state: state, craftName: craft.name + (store.startedOn.map { " · " + ActiveSessionText.startedOn($0) } ?? ""), baseTotal: baseTotal, reduceMotion: reduceMotion,
@@ -126,6 +128,7 @@ struct TimerView: View {
         let session = Session(craftId: state.craftId, start: state.startedAt, durationSec: duration, source: .timer,
                               note: note, photo: photo)
         // Where today's sunrise stands as this session ends: what the day had before it, plus its own length.
+        saved = SavedMoment.make(plan: stretchPlan, duration: duration, startedToday: StretchSource.startedToday(state))
         if StretchSource.startedToday(state) {
             session.sunriseProgressAtEnd = TimerSunrise.progress(doneSaved: stretchPlan.doneSaved, running: duration,
                                                                  target: stretchPlan.target)
@@ -606,34 +609,74 @@ private struct SparkleRing: View {
 
 // MARK: - Saved
 
+/// The Saved moment: the Timer's own sky, sun and sea at today's progress with this session counted, the sun jumping
+/// once with a burst, and "Saved" fading in under the sea. The sea is drawn after the sun and the burst.
 private struct SavedScene: View {
     let now: Date
     let since: Date
+    let moment: SavedMoment
     let reduceMotion: Bool
 
     var body: some View {
-        let p = min(1, max(0, now.timeIntervalSince(since) / 1.2))
-        // Reduce Motion: no burst and no jump, the sun just smiles and "Saved" fades in.
+        let t = now.timeIntervalSince(since)
+        let q = min(1, max(0, t / 1.2))
+        // Reduce Motion: no jump and no burst; the scene and the text appear with a 0.3 s fade.
         let motion = reduceMotion ? 0.0 : 1.0
+        let jump = sin(q * .pi)
+        let textOpacity = reduceMotion ? min(1, t / 0.3) : min(1, max(0, (t - 0.3) / 0.5))
+        let p = moment.p
+        let palette = TimerPalette(p: p)
         GeometryReader { geo in
-            ZStack {
-                TimerSky(warmth: 1, paused: false)
-                SaveBurst(progress: p)
+            let w = geo.size.width, h = geo.size.height
+            let horizonY = h * TimerSunrise.horizonFraction
+            let rise = h * TimerSunrise.riseFraction
+            let rest = TimerSunrise.sunCentreY(p: p, horizonY: horizonY, rise: rise)
+            let centre = CGPoint(x: w / 2, y: rest - 36 * jump * motion)
+            ZStack(alignment: .topLeading) {
+                TimerSunriseSky(p: p, paused: false, horizonY: horizonY, sunCentre: centre)
+                    .scaleEffect(1 + 0.25 * jump * motion, anchor: UnitPoint(x: centre.x / w, y: centre.y / h))
+                    .clipped()
+                SaveBurst(progress: q)
                     .opacity(motion)
-                    .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
-                SunView(idle: false, face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * motion * sin(p * .pi))
-                    .frame(width: 220, height: 220)
-                    .offset(y: -sin(p * .pi) * 36 * motion)
-                    .position(x: geo.size.width / 2, y: geo.size.height * 0.29)
-                VStack {
-                    Spacer()
-                    Text("Saved").lgText(.sheetTitle, color: .white).accessibilityAddTraits(.isHeader)
-                        .padding(.bottom, 140)
-                        .opacity(p)
+                    .position(centre)
+                SunView(idle: false, face: .celebrate, rayColor: LGColor.sunRaysBright, raySpread: 1 + 0.8 * motion * jump)
+                    .frame(width: 200, height: 200)
+                    .position(centre)
+                TimerSunriseLand(p: p, horizonY: horizonY)
+                    .frame(width: w, height: h)
+                VStack(spacing: 8) {
+                    Text("Saved").lgText(.sheetTitle, color: palette.ink).accessibilityAddTraits(.isHeader)
+                    Text(verbatim: moment.addedLine).lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: palette.muted)
+                    if let line = moment.accentLine {
+                        Text(verbatim: line).lgText(LGTextStyle(size: 15, weight: .semibold, relativeTo: .subheadline), color: palette.gold)
+                    }
                 }
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+                .frame(width: w)
+                .offset(y: h * 560 / 844)
+                .opacity(textOpacity)
             }
+            .frame(width: w, height: h, alignment: .topLeading)
         }
+        .ignoresSafeArea()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Session saved")
+        .accessibilityLabel(moment.spoken)
+    }
+}
+
+#Preview("Saved · p 0.2") { SavedPreview(p: 0.2) }
+#Preview("Saved · p 0.62") { SavedPreview(p: 0.62) }
+#Preview("Saved · covered") { SavedPreview(p: 1) }
+#Preview("Saved · Reduce Motion") { SavedPreview(p: 0.62, reduceMotion: true) }
+
+private struct SavedPreview: View {
+    let p: Double
+    var reduceMotion = false
+    var body: some View {
+        let target: TimeInterval = 105 * 60
+        let plan = StretchPlan(target: target, doneSaved: max(0, p * target - 40 * 60))
+        SavedScene(now: Date(), since: Date().addingTimeInterval(-1.0),
+                   moment: SavedMoment.make(plan: plan, duration: 40 * 60, startedToday: true), reduceMotion: reduceMotion)
     }
 }

@@ -51,6 +51,19 @@ enum GrowthSeries {
         return points
     }
 
+    /// Years of daily sessions give thousands of points, which the chart would redraw on every frame of the draw-in
+    /// (and the full-screen chart looked frozen while it opened). A line this long needs only a couple of hundred:
+    /// keep the first and last and an even spread between them.
+    static let maxChartPoints = 180
+
+    static func thinned(_ points: [CumulativePoint], limit: Int = maxChartPoints) -> [CumulativePoint] {
+        guard points.count > limit, limit > 2, let last = points.last else { return points }
+        let step = Double(points.count - 1) / Double(limit - 1)
+        var result = (0..<(limit - 1)).map { points[Int((Double($0) * step).rounded())] }
+        result.append(last)
+        return result
+    }
+
     static func chartData(forecast: Forecast, past: [CumulativePoint], now: Date, calendar: Calendar = .current) -> GrowthChartData {
         func dated(_ r: ScenarioResult) -> [CumulativePoint] {
             r.points.map { CumulativePoint(date: ForecastEngine.date(afterMonths: $0.monthsFromNow, from: now), hours: $0.hours) }
@@ -60,7 +73,7 @@ enum GrowthSeries {
         let actualMonths = forecast.actual.monthsToGoal ?? Double(ForecastEngine.horizonMonths)
         let lastMonths = max(chosenMonths, actualMonths, 12)
         let endMonths = lastMonths + 6
-        return GrowthChartData(past: past,
+        return GrowthChartData(past: thinned(past),
                                chosen: dated(forecast.chosen),
                                actual: dated(forecast.actual),
                                chosenDate: forecast.chosen.monthsToGoal.map { ForecastEngine.date(afterMonths: $0, from: now) },

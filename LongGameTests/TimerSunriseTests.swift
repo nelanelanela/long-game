@@ -135,4 +135,38 @@ struct TimerSunriseTests {
         let over = TimerSunrise.bar(doneSaved: 40 * 60, running: 500 * 60, target: stretch)
         #expect(abs(over.before + over.now - 1) < 1e-9)
     }
+
+    // MARK: Saved moment
+
+    @Test func theSavedProgressCountsTheSessionJustSaved() {
+        let plan = StretchPlan(target: 6300, doneSaved: 1800)
+        let m = SavedMoment.make(plan: plan, duration: 2400, startedToday: true)
+        #expect(abs(m.p - 4200.0 / 6300) < 1e-9)
+        #expect(m.todayTotal == 4200)
+        #expect(m.added == 2400)
+    }
+
+    @Test func theCoveredLineOnlyAppearsWhenTheSaveReachesTheStretch() {
+        let plan = StretchPlan(target: 6300, doneSaved: 1800)
+        let short = SavedMoment.make(plan: plan, duration: 2400, startedToday: true)
+        #expect(!short.covered)
+        #expect(short.accentLine == "35 m left of today's stretch")
+        let reaches = SavedMoment.make(plan: plan, duration: 4500, startedToday: true)
+        #expect(reaches.covered && reaches.p == 1)
+        #expect(reaches.accentLine == "Today's stretch covered.")
+        #expect(reaches.spoken.hasSuffix("Today's stretch covered."))
+        #expect(!short.spoken.contains("covered"))
+    }
+
+    @Test func aSessionFromYesterdayLeavesTodayAsItWas() {
+        let m = SavedMoment.make(plan: StretchPlan(target: 6300, doneSaved: 1800), duration: 2400, startedToday: false)
+        #expect(m.todayTotal == 1800)
+        #expect(abs(m.p - 1800.0 / 6300) < 1e-9)
+    }
+
+    @Test func withoutAStretchThereIsNoAccentLine() {
+        let m = SavedMoment.make(plan: StretchPlan(target: nil, doneSaved: 0), duration: 600, startedToday: true)
+        #expect(m.accentLine == nil && !m.covered)
+    }
 }
+

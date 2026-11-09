@@ -522,3 +522,14 @@ All 13 parts are built on branch `redesign`. Built and tested on the iPhone, Wat
 - **App icon:** same 11 stages in the new night-sky style, plus Dark and Tinted. Regenerate with `swift Tools/MakeIcon.swift LongGame/Resources/Assets.xcassets`. The icon set has to go up with the next build in App Store Connect (needs your Apple account; nothing was uploaded).
 - **Not verified by hand yet:** Dynamic Type at the smallest and largest sizes on every changed screen, iPad and wide layouts, real photos on the year card, the Watch screens on a Simulator.
 
+## Saved moment on the new sunrise (update 33)
+
+- **See it:** run the LongGame scheme with `-demoData`, Begin a session, let it run for more than a minute (shorter ones can't be saved), Finish, Save. The sky, sea and text colours are what the Timer would show with the session counted, the sun jumps once with the burst, and "Saved", "+N m · today …" and the accent line fade in under the sea. Before the stretch is covered it says "N m left of today's stretch"; to see "Today's stretch covered." save a session that takes today past its stretch (Add past hours first so that today is nearly covered, then run a short timer or run a long one). Reduce Motion (Settings app → Accessibility → Motion) gives a plain fade.
+- **Previews:** `TimerView.swift` has Saved previews at p 0.2, 0.62 and 1 and with Reduce Motion.
+- **Removed:** `TimerSky.swift`. The old violet colours (0x3A2F6B, 0x5E3A72, 0x7B4378, 0x5A3B72, 0x2C3466, 0x6E3D74) are still in `Colors.swift` (`welcomeSky` 0x2C3466 and the dusk trio of `opening*` colours, 0x2A2F6B / 0x6E3D74) and in the `GlassPreviews.swift` preview background (0x3A2F6B). Nothing outside the Timer was changed; they may be dead code after the redesign, so say if you want them removed.
+- **Not verified by hand:** the Saved moment was built, unit-tested (progress and the covered line) and read through, but not watched in the Simulator, which was too slow to wait out a 1-minute session reliably.
+
+## Full-screen Growth chart was slow (found while doing update 33)
+
+Years of daily sessions gave thousands of chart points (2,900 for 8 years), drawn as thousands of separate marks and redrawn on every frame of the draw-in, so opening it looked frozen. The chart now gets at most 180 points (`GrowthSeries.thinned`, first and last kept); the forecast and milestone logic still use the full history. Not timed on a device.
+

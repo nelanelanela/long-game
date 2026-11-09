@@ -108,4 +108,16 @@ struct GrowthKeyTests {
         #expect(said.hasPrefix("Your chosen pace, 12 hours a week, finishes around "))
         #expect(said.contains("Your actual pace, 9.5 hours a week, finishes around 20"))
     }
+
+    @Test func aLongHistoryIsThinnedForTheChartButKeepsItsEnds() {
+        let start = Date(timeIntervalSince1970: 1_500_000_000)
+        let points = (0..<3_000).map { CumulativePoint(date: start.addingTimeInterval(Double($0) * 86_400), hours: Double($0)) }
+        let thin = GrowthSeries.thinned(points)
+        #expect(thin.count == GrowthSeries.maxChartPoints)
+        #expect(thin.first == points.first && thin.last == points.last)
+        #expect(zip(thin, thin.dropFirst()).allSatisfy { $0.date < $1.date })
+        let short = Array(points.prefix(50))
+        #expect(GrowthSeries.thinned(short) == short)
+    }
 }
+

@@ -99,3 +99,47 @@ enum TimerSunrise {
         return (before, max(0, total - before))
     }
 }
+
+/// The Saved moment's numbers (update prompt 33): where today's sunrise stands once the session just finished is
+/// counted. A session counts towards the day it started, so one that began yesterday leaves today as it was.
+struct SavedMoment: Equatable {
+    /// Today's progress after saving, 0...1.
+    var p: Double
+    /// The session's length.
+    var added: TimeInterval
+    /// Today's total after saving.
+    var todayTotal: TimeInterval
+    /// Today's stretch is covered (nil target: never).
+    var covered: Bool
+    /// What is left of today's stretch, nil without a target or once covered.
+    var left: TimeInterval?
+
+    static func make(plan: StretchPlan, duration: TimeInterval, startedToday: Bool) -> SavedMoment {
+        let counted = startedToday ? max(0, duration) : 0
+        let total = plan.doneSaved + counted
+        let p = TimerSunrise.progress(doneSaved: plan.doneSaved + counted, running: 0, target: plan.target)
+        let covered = plan.target.map { total >= $0 } ?? false
+        return SavedMoment(p: p, added: max(0, duration), todayTotal: total, covered: covered,
+                           left: plan.target.flatMap { covered ? nil : $0 - total })
+    }
+
+    /// "+40 m · today 1 h 05"
+    var addedLine: String {
+        "+\(StretchText.clockUp(seconds: added)) · " + String(localized: "today \(StretchText.clock(seconds: todayTotal))")
+    }
+
+    /// "40 m left of today's stretch", or "Today's stretch covered."; nil when there is no stretch.
+    var accentLine: String? {
+        if covered { return String(localized: "Today's stretch covered.") }
+        guard let left else { return nil }
+        return String(localized: "\(StretchText.clockUp(seconds: left)) left of today's stretch")
+    }
+
+    var spoken: String {
+        let minutes = max(1, Int((added / 60).rounded()))
+        var text = String(localized: "Session saved. \(minutes) minutes added.")
+        if covered { text += " " + String(localized: "Today's stretch covered.") }
+        return text
+    }
+}
+

@@ -1,6 +1,15 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "today %@" : {
+
+    },
+    "%@ left of today's stretch" : {
+
+    },
+    "Session saved. %lld minutes added." : {
+
+    },
     "Picture of this session, double-tap to open it" : {
 
     },
