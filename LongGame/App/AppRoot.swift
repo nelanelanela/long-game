@@ -66,7 +66,7 @@ struct AppRoot: View {
                                target: run.plan.landing == .home ? opening.sunTarget : nil,
                                onTap: { opening.finish() })
                 .task(id: run.start) {
-                    try? await Task.sleep(for: .seconds(run.plan.style.duration))
+                    try? await Task.sleep(for: .seconds(run.plan.style.duration + OpeningCenter.lead))
                     if !Task.isCancelled { opening.finish() }
                 }
         }

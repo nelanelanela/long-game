@@ -10,6 +10,9 @@
     "%@ left" : {
 
     },
+    "%@ left of today's stretch" : {
+
+    },
     "%@ of %@ %@, %@ to go, %@." : {
       "localizations" : {
         "en" : {
@@ -387,6 +390,9 @@
     "Session saved. %@ added. %@." : {
 
     },
+    "Session saved. %lld minutes added." : {
+
+    },
     "Set up Long Game on your iPhone first." : {
 
     },
@@ -466,6 +472,9 @@
     "Three quarters of the way." : {
 
     },
+    "today %@" : {
+
+    },
     "today's %@ · covered" : {
 
     },
@@ -478,6 +487,9 @@
           }
         }
       }
+    },
+    "Today's stretch covered." : {
+
     },
     "Today's stretch is covered. The sun has reached the moon." : {
 

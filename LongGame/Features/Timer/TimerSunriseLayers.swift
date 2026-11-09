@@ -67,9 +67,11 @@ struct TimerSunriseSky: View {
                     .frame(width: w, height: h)
                     .opacity(TimerSunrise.nightOpacity(p: p))
                 // The glow is cut off at the horizon, so nothing gold ever shows below it.
-                RadialGradient(stops: [.init(color: Color(.sRGB, red: 1, green: 214 / 255, blue: 140 / 255, opacity: 0.55), location: 0),
-                                       .init(color: Color(.sRGB, red: 1, green: 200 / 255, blue: 120 / 255, opacity: 0.18), location: 0.34 / 0.64),
-                                       .init(color: Color(.sRGB, red: 1, green: 200 / 255, blue: 120 / 255, opacity: 0), location: 1)],
+                // Peach at night, warming to gold by day: translucent gold over navy goes olive green on a phone.
+                let glowHex = mixHex(0xF2A07A, 0xFFD68C, TimerSunrise.lightness(p: p))
+                RadialGradient(stops: [.init(color: Color(hex: glowHex, opacity: 0.55), location: 0),
+                                       .init(color: Color(hex: glowHex, opacity: 0.18), location: 0.34 / 0.64),
+                                       .init(color: Color(hex: glowHex, opacity: 0), location: 1)],
                                center: .center, startRadius: 0, endRadius: 520 * 0.64 / 2 * 2.0.squareRoot())
                     .frame(width: 520, height: 520)
                     .position(x: sunCentre.x, y: sunCentre.y)

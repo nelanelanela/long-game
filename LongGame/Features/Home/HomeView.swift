@@ -328,7 +328,8 @@ struct HomeView: View {
                                     : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
-                         extendsSky: extendsSky, metrics: metrics, final: place, dayReadings: dayReadings(f.now))
+                         extendsSky: extendsSky, dawnSky: onToday && isEmptyDay(f.stretch), metrics: metrics, final: place,
+                         dayReadings: dayReadings(f.now))
             // The sun and sea change tabs with a clean cut: no glide, no cross-fade, so the water never shows through.
             .transaction { $0.animation = nil }
     }

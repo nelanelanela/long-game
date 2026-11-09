@@ -1,81 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "today %@" : {
-
-    },
-    "%@ left of today's stretch" : {
-
-    },
-    "Session saved. %lld minutes added." : {
-
-    },
-    "Picture of this session, double-tap to open it" : {
-
-    },
-    "Remove picture" : {
-
-    },
-    "Remove this picture?" : {
-
-    },
-    "Replace with a photo" : {
-
-    },
-    "Drawn from this session. Replace it with a photo, or remove it." : {
-
-    },
-    "Sounds" : {
-
-    },
-    "iCloud & storage" : {
-
-    },
-    "Your photos" : {
-
-    },
-    "Default pictures" : {
-
-    },
-    "Clear the default pictures cache. Your photos are not affected." : {
-
-    },
-    "Back to Settings" : {
-
-    },
-    "When you tickle the sun. Silent in silent mode" : {
-
-    },
-    "%lld photos · %@" : {
-
-    },
-    "%@ cache · never your photos" : {
-
-    },
-    "%lld photos you added to your sessions. The default pictures drawn by the app aren’t here; they take no space." : {
-
-    },
-    "Delete all photos from %@…" : {
-
-    },
-    "Delete all %lld photos from %@?" : {
-
-    },
-    "Delete %lld photos from %@" : {
-
-    },
-    "This frees %@. Your %@ sessions, hours and notes stay. The photos are removed from this iPhone and from iCloud, and can’t be brought back." : {
-
-    },
-    "Deleting photos keeps your sessions, hours and notes. Tap a photo in History to delete just one." : {
-
-    },
-    "Asks first. Your sessions, hours and notes stay." : {
-
-    },
-    "Photos from %@ deleted" : {
-
-    },
     "" : {
 
     },
@@ -119,6 +44,9 @@
     "%@ added." : {
 
     },
+    "%@ cache · never your photos" : {
+
+    },
     "%@ h" : {
 
     },
@@ -139,6 +67,9 @@
 
     },
     "%@ left" : {
+
+    },
+    "%@ left of today's stretch" : {
 
     },
     "%@ of %@ %@, %@ to go, %@." : {
@@ -420,6 +351,12 @@
         }
       }
     },
+    "%lld photos · %@" : {
+
+    },
+    "%lld photos you added to your sessions. The default pictures drawn by the app aren’t here; they take no space." : {
+
+    },
     "%lld seconds" : {
       "localizations" : {
         "en" : {
@@ -555,6 +492,9 @@
     "%lld%% of the way" : {
 
     },
+    "+%lld" : {
+
+    },
     "+%lld h/wk" : {
 
     },
@@ -586,9 +526,6 @@
 
     },
     "a little" : {
-
-    },
-    "A little laugh when you tap the sun. It stays quiet when your iPhone is on silent." : {
 
     },
     "A little, most days, beats a lot once in a while. That’s how hours turn into mastery." : {
@@ -710,6 +647,9 @@
     "Archived crafts" : {
 
     },
+    "Asks first. Your sessions, hours and notes stay." : {
+
+    },
     "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
 
     },
@@ -741,6 +681,9 @@
 
     },
     "Back to my game" : {
+
+    },
+    "Back to Settings" : {
 
     },
     "Begin" : {
@@ -788,6 +731,9 @@
     "Clear" : {
 
     },
+    "Clear the default pictures cache. Your photos are not affected." : {
+
+    },
     "Close" : {
 
     },
@@ -821,13 +767,25 @@
     "Day" : {
 
     },
+    "Default pictures" : {
+
+    },
     "Delete" : {
+
+    },
+    "Delete %lld photos from %@" : {
+
+    },
+    "Delete all %lld photos from %@?" : {
 
     },
     "Delete all data" : {
 
     },
     "Delete all data?" : {
+
+    },
+    "Delete all photos from %@…" : {
 
     },
     "Delete everything" : {
@@ -843,6 +801,9 @@
 
     },
     "Delete this session?" : {
+
+    },
+    "Deleting photos keeps your sessions, hours and notes. Tap a photo in History to delete just one." : {
 
     },
     "Design system" : {
@@ -861,6 +822,9 @@
 
     },
     "Drag along the line" : {
+
+    },
+    "Drawn from this session. Replace it with a photo, or remove it." : {
 
     },
     "Each week's hours are spread evenly across its days in your calendar." : {
@@ -1008,6 +972,9 @@
 
     },
     "iCloud" : {
+
+    },
+    "iCloud & storage" : {
 
     },
     "Import sessions" : {
@@ -1325,6 +1292,12 @@
     "Photos" : {
 
     },
+    "Photos from %@ deleted" : {
+
+    },
+    "Picture of this session, double-tap to open it" : {
+
+    },
     "Play" : {
 
     },
@@ -1364,13 +1337,22 @@
     "Remove photo" : {
 
     },
+    "Remove picture" : {
+
+    },
     "Remove this photo?" : {
+
+    },
+    "Remove this picture?" : {
 
     },
     "Replace %@?" : {
 
     },
     "Replace my craft" : {
+
+    },
+    "Replace with a photo" : {
 
     },
     "rest day" : {
@@ -1432,6 +1414,9 @@
         }
       }
     },
+    "Session saved. %lld minutes added." : {
+
+    },
     "Sessions under a minute can't be saved." : {
 
     },
@@ -1469,6 +1454,9 @@
 
     },
     "some" : {
+
+    },
+    "Sounds" : {
 
     },
     "Start" : {
@@ -1629,6 +1617,9 @@
     "there" : {
 
     },
+    "This frees %@. Your %@ sessions, hours and notes stay. The photos are removed from this iPhone and from iCloud, and can’t be brought back." : {
+
+    },
     "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
 
     },
@@ -1680,6 +1671,9 @@
 
     },
     "Today" : {
+
+    },
+    "today %@" : {
 
     },
     "Today %@" : {
@@ -1774,6 +1768,9 @@
     "When you start a session, Long Game runs a Shortcut of yours that turns on your Practising Focus, and another when you finish. iOS only lets Shortcuts switch a Focus on." : {
 
     },
+    "When you tickle the sun. Silent in silent mode" : {
+
+    },
     "Where 10,000 hours can take you" : {
 
     },
@@ -1863,6 +1860,9 @@
 
     },
     "Your pace for the year" : {
+
+    },
+    "Your photos" : {
 
     },
     "Your starting score" : {

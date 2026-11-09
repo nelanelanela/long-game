@@ -63,7 +63,7 @@ func drawNightSky(_ c: CGContext) {
     let glowSize = max(skyW, skyH) * 1.1
     let glowRadius = 0.62 * glowSize / 2 * 2.0.squareRoot()
     let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
-                          colors: [rgb(0xFFD696, 0.55), rgb(0xFFBE6E, 0.22), rgb(0xFFBE6E, 0)] as CFArray,
+                          colors: [rgb(0xF2A07A, 0.55), rgb(0xF2A07A, 0.22), rgb(0xF2A07A, 0)] as CFArray,
                           locations: [0, 0.30 / 0.62, 1])!
     c.drawRadialGradient(glow, startCenter: CGPoint(x: skyW / 2, y: skyH), startRadius: 0,
                          endCenter: CGPoint(x: skyW / 2, y: skyH), endRadius: glowRadius, options: [])

@@ -10,6 +10,9 @@
     "%@ left" : {
 
     },
+    "%@ left of today's stretch" : {
+
+    },
     "%@ of %@ %@, %@ to go, %@." : {
       "localizations" : {
         "en" : {
@@ -420,6 +423,9 @@
         }
       }
     },
+    "Session saved. %lld minutes added." : {
+
+    },
     "Session timer" : {
 
     },
@@ -535,6 +541,9 @@
     "Three quarters of the way." : {
 
     },
+    "today %@" : {
+
+    },
     "Today %@" : {
 
     },
@@ -550,6 +559,9 @@
           }
         }
       }
+    },
+    "Today's stretch covered." : {
+
     },
     "Today's stretch is covered. The sun has reached the moon." : {
 

@@ -15,9 +15,14 @@ final class OpeningCenter {
     private(set) var finishedCount = 0
 
     /// Call once at the first frame. `coldStart` is true only the first time in this process.
+    /// The system fades its launch picture out as the app's first frame arrives. The clock starts a moment later, so
+    /// that hand-over happens on the still night frame (the same sun in the same place) and never on a sun that has
+    /// already begun to rise.
+    static let lead: TimeInterval = 0.4
+
     func begin(_ plan: OpeningPlan) {
         guard plan.style != .skip else { return }
-        running = (plan, Date())
+        running = (plan, Date().addingTimeInterval(Self.lead))
     }
 
     private static var coldStartUsed = false
@@ -30,7 +35,7 @@ final class OpeningCenter {
 
     /// Debug: plays the full opening again without restarting.
     func replay(landing: OpeningLanding = .home) {
-        running = (OpeningPlan(style: .full, landing: landing), Date())
+        running = (OpeningPlan(style: .full, landing: landing), Date().addingTimeInterval(Self.lead))
     }
 
     func finish() {

@@ -44,6 +44,8 @@ struct SunriseLayout {
     var scene: SceneTone?
     /// With a scene: the canvas draws the sky too. The caller turns this off when it draws a taller sky of its own.
     var drawsSky = true
+    /// With a scene: whether the sky draws its own moon (Today draws the moon at the end of its arc instead).
+    var skyMoon = true
 
     static let homeSeaHeight: CGFloat = 64
 
@@ -60,12 +62,12 @@ struct SunriseLayout {
     /// The sun anywhere in the hero: `centre` is where the middle of the sun is, measured from the hero's top left.
     /// Home uses it while the sun glides between its place on the scale and its place on Today's arc.
     static func placed(centre: CGPoint, width: CGFloat, sunSize: CGFloat, face: SunFace = .happy,
-                       metrics: GaugeMetrics = .standard, scene: SceneTone? = nil, drawsSky: Bool = true) -> SunriseLayout {
+                       metrics: GaugeMetrics = .standard, scene: SceneTone? = nil, drawsSky: Bool = true, skyMoon: Bool = true) -> SunriseLayout {
         SunriseLayout(
             height: metrics.height, waterY: metrics.waterY, sunSize: sunSize,
             sunTop: centre.y - sunSize / 2,
             glowSize: scene == nil ? 260 * sunSize / GaugeGeometry.sunSize : 0, glowStrength: 0.28, glowDy: 0,
-            sunOffsetX: centre.x - width / 2, peeks: face != .celebrate, face: face, scene: scene, drawsSky: drawsSky)
+            sunOffsetX: centre.x - width / 2, peeks: face != .celebrate, face: face, scene: scene, drawsSky: drawsSky, skyMoon: skyMoon)
     }
 
     /// Pages 0, 1, 2 of "How the game works": the sun high, just rising, and with 8 of 12 rays lit.
@@ -155,7 +157,7 @@ struct SunriseCanvas: View {
             let landTop = layout.waterY - landHeight * 46.0 / 120
             ZStack(alignment: .topLeading) {
                 if layout.drawsSky {
-                    SkyView(tone: tone, horizon: layout.waterY / h, moon: tone != .day,
+                    SkyView(tone: tone, horizon: layout.waterY / h, moon: layout.skyMoon && tone != .day,
                             glowX: min(max((w / 2 + layout.sunOffsetX) / w, 0), 1))
                         .frame(width: w, height: h)
                 }

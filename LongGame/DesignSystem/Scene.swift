@@ -78,9 +78,10 @@ struct SkyView: View {
     private var glow: Gradient {
         switch tone {
         case .night:
-            Gradient(stops: [.init(color: Color(.sRGB, red: 1, green: 214 / 255, blue: 150 / 255, opacity: 0.55), location: 0),
-                             .init(color: Color(.sRGB, red: 1, green: 190 / 255, blue: 110 / 255, opacity: 0.22), location: 0.30 / 0.62),
-                             .init(color: Color(.sRGB, red: 1, green: 190 / 255, blue: 110 / 255, opacity: 0), location: 1)])
+            // Peach, not gold: translucent gold over navy goes olive green on a phone. Peach over navy goes to mauve.
+            Gradient(stops: [.init(color: Color(.sRGB, red: 242 / 255, green: 160 / 255, blue: 122 / 255, opacity: 0.55), location: 0),
+                             .init(color: Color(.sRGB, red: 242 / 255, green: 160 / 255, blue: 122 / 255, opacity: 0.22), location: 0.30 / 0.62),
+                             .init(color: Color(.sRGB, red: 242 / 255, green: 160 / 255, blue: 122 / 255, opacity: 0), location: 1)])
         case .dawn:
             Gradient(stops: [.init(color: Color(.sRGB, red: 1, green: 240 / 255, blue: 205 / 255, opacity: 0.85), location: 0),
                              .init(color: Color(.sRGB, red: 1, green: 205 / 255, blue: 140 / 255, opacity: 0.35), location: 0.32 / 0.64),
@@ -180,9 +181,12 @@ struct LandView: View {
         let scale = CGAffineTransform(scaleX: sx, y: sy)
         func scaled(_ p: Path) -> Path { p.applying(scale) }
 
-        let farTop = night ? Color(hex: 0x5A4A5E) : Color(hex: 0xEBD6BC)
-        let farBottom = night ? Color(hex: 0x2E2A45) : Color(hex: 0xF3E6D6)
-        let mid = night ? LGColor.duneNight : LGColor.dune
+        // By day the dunes are see-through, so the sun and the sky glow show a little through them. At night they
+        // are solid: the sleeping sun must be hidden cleanly behind them.
+        let alpha: Double = night ? 1 : 0.6
+        let farTop = night ? Color(hex: 0x5A4A5E) : Color(hex: 0xEBD6BC).opacity(alpha)
+        let farBottom = night ? Color(hex: 0x2E2A45) : Color(hex: 0xF3E6D6).opacity(alpha)
+        let mid = night ? LGColor.duneNight : LGColor.dune.opacity(alpha)
         let farGradient = { (rect: CGRect) in
             GraphicsContext.Shading.linearGradient(Gradient(colors: [farTop, farBottom]),
                                                    startPoint: CGPoint(x: 0, y: rect.minY), endPoint: CGPoint(x: 0, y: 46 * sy))
@@ -202,7 +206,6 @@ struct LandView: View {
         far2.addCurve(to: CGPoint(x: 390, y: 41), control1: CGPoint(x: 366, y: 36), control2: CGPoint(x: 380, y: 38))
         far2.addLine(to: CGPoint(x: 390, y: 75)); far2.addLine(to: CGPoint(x: 300, y: 75)); far2.closeSubpath()
         let far1S = scaled(far1), far2S = scaled(far2)
-        // The far dunes are solid, so the sun behind them is hidden cleanly instead of showing through.
         ctx.fill(far1S, with: farGradient(far1S.boundingRect))
         ctx.fill(far2S, with: farGradient(far2S.boundingRect))
 

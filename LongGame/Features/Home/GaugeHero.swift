@@ -19,6 +19,8 @@ struct GaugeHero: View, Animatable {
     var glides = true
     /// True in the phone's single column: the long game's sky runs up behind the title and tabs, which turn white.
     var extendsSky = false
+    /// Today with nothing played yet: the dark, starry dawn sky of the empty-day board (a day sky once the sun climbs).
+    var dawnSky = false
     /// The hero's size: the phone's by default, smaller or wider for other windows.
     var metrics: GaugeMetrics = .standard
     /// The final values, for Reduce Motion (they are used instead of the interpolated ones).
@@ -74,11 +76,19 @@ struct GaugeHero: View, Animatable {
                         .frame(width: width, height: ext + metrics.height)
                         .offset(y: -ext)
                 }
+                // The empty day's dark dawn sky is drawn here, under the arc, so the dotted arc and the moon show on it.
+                if dawnSky && !onDark {
+                    SkyView(tone: .dawn, horizon: metrics.waterY / metrics.height, moon: false,
+                            glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
+                        .frame(width: width, height: metrics.height)
+                        .opacity(Double(mix))
+                }
                 // Today's arc and moon sit behind the sea and the sun, and fade with the tab.
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
-                                            scene: onDark ? .dawn : .day, drawsSky: !(onDark && extendsSky)),
+                                            scene: onDark || dawnSky ? .dawn : .day, drawsSky: !(onDark && extendsSky) && !(dawnSky && !onDark),
+                                            skyMoon: onDark),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.

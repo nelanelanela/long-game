@@ -60,14 +60,15 @@ struct ArcShape: Shape {
     }
 }
 
-/// A small crescent moon, drawn in a 24 × 24 grid.
+/// The crescent from the boards (a 40 × 40 grid; path M21 8a12 12 0 1 0 8 19a10 10 0 0 1-8-19z): a big circle with a
+/// bite taken out of its right side.
 struct MoonShape: Shape {
     func path(in rect: CGRect) -> Path {
-        let s = min(rect.width, rect.height) / 24
+        let s = min(rect.width, rect.height) / 40
         func circle(_ cx: CGFloat, _ cy: CGFloat, _ r: CGFloat) -> Path {
             Path(ellipseIn: CGRect(x: rect.minX + (cx - r) * s, y: rect.minY + (cy - r) * s, width: 2 * r * s, height: 2 * r * s))
         }
-        return circle(12.19, 10, 8).subtracting(circle(15, 8.75, 7.385))
+        return circle(19.3, 19.9, 12).subtracting(circle(25, 17.5, 10.3))
     }
 }
 
@@ -81,17 +82,19 @@ struct StretchArcLayer: View {
     var body: some View {
         let g = geometry
         let end = g.point(1)
-        let moonSize = 31 * g.sunSize / 120
+        // The board's moon: a 40 pt box whose left is 19 pt before the arc's end and whose top is 33 pt above it
+        // (for a 110 pt sun; everything scales with the sun).
+        let k = g.sunSize / 110
+        let moonSize = 40 * k
         ZStack(alignment: .topLeading) {
             ArcShape(geometry: g)
                 .stroke(LGColor.arcDots, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [2, 8]))
             ArcShape(geometry: g, upTo: fraction)
                 .stroke(LGColor.sunRays, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-            // Sitting on the horizon: its bottom edge a little above the waterline.
             MoonShape()
                 .fill(moon)
                 .frame(width: moonSize, height: moonSize)
-                .offset(x: end.x - moonSize / 2 + 1, y: end.y - moonSize - 13 * g.sunSize / 120)
+                .offset(x: end.x - 19 * k, y: end.y - 33 * k)
         }
         .accessibilityHidden(true)
     }
