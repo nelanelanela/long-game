@@ -40,11 +40,16 @@ struct TimerSunriseSky: View {
     var horizonY: CGFloat
     /// The sun's centre, for the glow.
     var sunCentre: CGPoint
+    /// The status bar's height when the sky runs under it. The board has no status bar: its top bar starts 16 pt
+    /// down and the moon sits 0.12 of the height down, well below the craft's name. On a phone the bar starts 8 pt
+    /// under the status bar, so the moon moves down by the same amount and keeps that gap.
+    var topInset: CGFloat = 0
 
     var body: some View {
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
             let horizon = min(max(horizonY / h, 0.3), 1)
+            let moonAt = CGPoint(x: 0.74, y: 0.12 + max(topInset - 8, 0) / max(h, 1))
             ZStack(alignment: .topLeading) {
                 LGColor.night
                 // Full day, under the others: pale blue to warm cream, down to the horizon.
@@ -63,7 +68,7 @@ struct TimerSunriseSky: View {
                 SkyView(tone: .dawn, horizon: horizon, moon: false)
                     .frame(width: w, height: h)
                     .opacity(TimerSunrise.dawnOpacity(p: p))
-                SkyView(tone: .night, horizon: horizon, moon: true)
+                SkyView(tone: .night, horizon: horizon, moon: true, moonAt: moonAt)
                     .frame(width: w, height: h)
                     .opacity(TimerSunrise.nightOpacity(p: p))
                 // The glow is cut off at the horizon, so nothing gold ever shows below it.

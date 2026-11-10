@@ -230,7 +230,8 @@ private struct RunningScene: View {
             let centre = CGPoint(x: centreX, y: TimerSunrise.sunCentreY(p: p, horizonY: horizonY, rise: rise))
             ZStack(alignment: .topLeading) {
                 TimerSunriseSky(p: p, paused: paused, horizonY: horizonY,
-                                sunCentre: CGPoint(x: centre.x, y: centre.y + (paused ? 24 : 0)))
+                                sunCentre: CGPoint(x: centre.x, y: centre.y + (paused ? 24 : 0)),
+                                topInset: safe.top)
                     .frame(width: geo.size.width, height: geo.size.height)
 
                 if !reduceMotion && !paused && p < 0.7 {
@@ -626,6 +627,9 @@ private struct SavedScene: View {
         let textOpacity = reduceMotion ? min(1, t / 0.3) : min(1, max(0, (t - 0.3) / 0.5))
         let p = moment.p
         let palette = TimerPalette(p: p)
+        // The outer reader only reads the status bar's height, so the moon sits where the Timer had it.
+        GeometryReader { safeProxy in
+        let topInset = safeProxy.safeAreaInsets.top
         GeometryReader { geo in
             let w = geo.size.width, h = geo.size.height
             let horizonY = h * TimerSunrise.horizonFraction
@@ -633,7 +637,7 @@ private struct SavedScene: View {
             let rest = TimerSunrise.sunCentreY(p: p, horizonY: horizonY, rise: rise)
             let centre = CGPoint(x: w / 2, y: rest - 36 * jump * motion)
             ZStack(alignment: .topLeading) {
-                TimerSunriseSky(p: p, paused: false, horizonY: horizonY, sunCentre: centre)
+                TimerSunriseSky(p: p, paused: false, horizonY: horizonY, sunCentre: centre, topInset: topInset)
                     .scaleEffect(1 + 0.25 * jump * motion, anchor: UnitPoint(x: centre.x / w, y: centre.y / h))
                     .clipped()
                 SaveBurst(progress: q)
@@ -660,6 +664,7 @@ private struct SavedScene: View {
             .frame(width: w, height: h, alignment: .topLeading)
         }
         .ignoresSafeArea()
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(moment.spoken)
     }
