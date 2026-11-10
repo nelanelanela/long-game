@@ -92,7 +92,8 @@ struct GaugeHero: View, Animatable {
                                             scene: onDark || dawnSky ? .dawn : .day, drawsSky: !extendsSky && !(dawnSky && !onDark),
                                             skyMoon: onDark),
                             label: gauge.spoken.label, value: gauge.spoken.value,
-                            dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)
+                            dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning,
+                            behindLand: AnyView(scale(fraction: place.fraction)))
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
                 // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
                 // whole hero as the sun's place.
@@ -102,17 +103,28 @@ struct GaugeHero: View, Animatable {
                     }
                     .position(onArc)
                     .allowsHitTesting(false)
+                // The pill and its dashed line stay in front of the land, so the value can always be read.
                 if gauge.tab.hasScale {
-                    GaugeScale(ticks: gauge.ticks, metrics: metrics, onDark: onDark,
-                               pillY: metrics.centreY(fraction: place.fraction))
-                        .id(gauge.tab)
-                        .transition(.opacity)
                     GaugeMarker(pill: gauge.pill, tab: gauge.tab, fraction: place.fraction, metrics: metrics, onDark: onDark)
                         .transition(.opacity)
                 }
             }
         }
         .frame(height: metrics.height)
+    }
+
+    /// The scale sits behind the land, as on the boards: its foot and the 0 tick disappear behind the dune. The
+    /// sunrise picture turns animations off, so the scale brings back its own fade when the tab changes.
+    private func scale(fraction: Double) -> some View {
+        ZStack(alignment: .topLeading) {
+            if gauge.tab.hasScale {
+                GaugeScale(ticks: gauge.ticks, metrics: metrics, onDark: onDark, pillY: metrics.centreY(fraction: fraction))
+                    .id(gauge.tab)
+                    .transition(.opacity)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .animation(glides ? .easeInOut(duration: 0.3) : nil, value: gauge.tab)
     }
 }
 

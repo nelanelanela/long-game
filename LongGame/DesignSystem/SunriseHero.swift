@@ -136,6 +136,8 @@ struct SunriseCanvas: View {
     /// The giggle that is running (the live hero), or a frozen moment of one (previews and tests).
     var giggleRun: GiggleRun?
     var gigglePose: GigglePose = .rest
+    /// With a scene: drawn after the sun and before the land, so the dunes cover its lower end (Home's scale).
+    var behindLand: AnyView?
 
     var body: some View {
         if let tone = layout.scene {
@@ -165,6 +167,7 @@ struct SunriseCanvas: View {
                     .frame(width: size, height: size)
                     .scaleEffect(1 + 0.03 * frame.breathe)
                     .offset(x: w / 2 - size / 2 + layout.sunOffsetX, y: layout.sunTop + frame.rise - 3 * frame.breathe)
+                if let behindLand { behindLand }
                 LandView(tone: tone == .night ? .night : .day, still: frame.isStill)
                     .frame(width: w, height: landHeight)
                     .offset(y: landTop)
@@ -258,6 +261,8 @@ struct SunriseHero: View {
     var riseStart: Date?
     /// False where the sun must stay still when tapped.
     var giggles = true
+    /// With a scene: drawn between the sun and the land (Home's scale, whose foot hides behind the dunes).
+    var behindLand: AnyView?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.giggleSoundOn) private var soundOn
@@ -267,7 +272,7 @@ struct SunriseHero: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !isRunning || reduceMotion)) { timeline in
             let current = frame(at: timeline.date)
-            SunriseCanvas(layout: layout, frame: current, giggleRun: giggle.run)
+            SunriseCanvas(layout: layout, frame: current, giggleRun: giggle.run, behindLand: behindLand)
                 .overlay { if giggles { tapTarget(frame: current) } }
         }
         // A tab change must never cross-fade the picture (sun ghosting through a see-through sea). The sun's glide
