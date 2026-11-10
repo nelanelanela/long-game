@@ -74,8 +74,8 @@ enum RelativeDay {
         }
     }
 
-    /// "Thursday, 22 October"
+    /// "Thursday 22 October" (no comma, as on the boards)
     static func full(_ date: Date, calendar: Calendar = .current) -> String {
-        formatter("EEEE, d MMMM", calendar).string(from: date)
+        formatter("EEEE d MMMM", calendar).string(from: date)
     }
 }

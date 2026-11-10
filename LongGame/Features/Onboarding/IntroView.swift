@@ -49,11 +49,10 @@ struct IntroView: View {
             pageContent(page).id(page).frame(maxWidth: .infinity, maxHeight: .infinity)
             #endif
 
-            dots.padding(.bottom, 20)
             Button(Self.pages[page].button) { next() }
                 .buttonStyle(.lg(.primary))
                 .padding(.horizontal, 24)
-                .padding(.bottom, 16)
+            LGBrandLine().padding(.top, 12).padding(.bottom, 10)
         }
         .lgScreen()
     }
@@ -64,7 +63,7 @@ struct IntroView: View {
                 .padding(.leading, -10)
             Spacer()
             Button(action: onFinish) {
-                Text("Skip").lgText(LGTextStyle(size: 15, weight: .medium, relativeTo: .subheadline), color: LGColor.inkMuted)
+                Text("Skip").lgText(.rowStrong, color: LGColor.inkMuted)
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
             }
@@ -80,9 +79,9 @@ struct IntroView: View {
             VStack(alignment: .leading, spacing: 0) {
                 IntroIllustration(page: index, startingScore: startingScore, label: copy.illustration)
                     .padding(.top, 8)
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(copy.title)
-                        .lgText(LGTextStyle(size: 30, weight: .bold, relativeTo: .title, tracking: -0.6))
+                        .lgText(.setupTitle)
                         .accessibilityAddTraits(.isHeader)
                     Text(copy.text)
                         .lgText(.body, color: LGColor.inkMuted)
@@ -90,21 +89,24 @@ struct IntroView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 18)
-                .padding(.bottom, 16)
+                // The page dots sit right under the words, as on the boards.
+                dots(for: index)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 20)
+                    .padding(.bottom, 16)
             }
         }
         .scrollBounceBehavior(.basedOnSize)
     }
 
-    private var dots: some View {
+    private func dots(for shown: Int) -> some View {
         HStack(spacing: 6) {
             ForEach(0..<count, id: \.self) { index in
                 Capsule()
-                    .fill(index == page ? LGColor.ink : LGColor.introDot)
-                    .frame(width: index == page ? 22 : 7, height: 7)
+                    .fill(index == shown ? LGColor.ink : LGColor.introDot)
+                    .frame(width: index == shown ? 18 : 6, height: 6)
             }
         }
-        .lgAnimation(.easeInOut(duration: 0.2), value: page)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
         .accessibilityAdjustableAction { direction in

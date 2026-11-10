@@ -15,21 +15,23 @@ struct StartYearView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(step: 2)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("When did you start?").lgText(.screenTitle)
-                    .accessibilityAddTraits(.isHeader)
-                Text("A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
-            }
+            Text("When did you start?").lgText(.setupTitle)
+                .accessibilityAddTraits(.isHeader)
+                .padding(.top, 18)
+            Text("A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
+                .padding(.top, 8)
 
+            // No card: the year sits straight on the peach wash, between two round buttons.
             HStack {
                 stepButton("minus", label: "Earlier year", enabled: model.startYear > earliest) { model.startYear -= 1 }
                 Spacer()
                 VStack(spacing: 6) {
-                    Text(String(model.startYear)).lgNumber(.yearNumber)
-                    Text(yearsAgoText).lgText(.caption, color: LGColor.inkMuted)
+                    Text(String(model.startYear))
+                        .lgNumber(LGTextStyle(size: 68, weight: .bold, relativeTo: .largeTitle, tracking: -2.7))
+                    Text(yearsAgoText).lgText(.row, color: LGColor.inkMuted)
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityAdjustableAction { direction in
@@ -42,30 +44,24 @@ struct StartYearView: View {
                 Spacer()
                 stepButton("plus", label: "Later year", enabled: model.startYear < model.currentYear) { model.startYear += 1 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 36)
-            .lgCard(radius: 24)
+            .padding(.top, 80)
 
-            Spacer()
+            Spacer(minLength: 16)
 
             Button("Continue", action: onContinue).buttonStyle(.lg(.primary))
+            LGBrandLine().padding(.top, 12)
         }
         .padding(.horizontal, 24)
-        .padding(.bottom, 16)
-        .lgScreen()
+        .padding(.bottom, 10)
+        .lgSetupScreen()
         .navigationBarBackButtonHidden()
     }
 
     private func stepButton(_ icon: String, label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(LGColor.ink)
-                .frame(width: 56, height: 56)
-                .background(LGColor.chipFill, in: Circle())
+            LGStepCircle(systemName: icon, diameter: 56, dimmed: !enabled)
         }
         .disabled(!enabled)
-        .opacity(enabled ? 1 : 0.4)
         .accessibilityLabel(label)
     }
 }

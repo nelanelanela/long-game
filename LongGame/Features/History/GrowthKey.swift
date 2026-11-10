@@ -60,11 +60,11 @@ struct GrowthKey: View {
             path.addLine(to: CGPoint(x: canvas.width - 1.25, y: canvas.height / 2))
             switch sample {
             case .chosen:
-                context.stroke(path, with: .color(LGColor.forecast),
-                               style: StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [6, 5]))
+                context.stroke(path, with: .color(LGColor.chosenLine),
+                               style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
             case .actual:
                 context.stroke(path, with: .color(LGColor.actualPace),
-                               style: StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [1, 6]))
+                               style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [1.5, 4]))
             }
         }
         .frame(width: 26, height: 12)

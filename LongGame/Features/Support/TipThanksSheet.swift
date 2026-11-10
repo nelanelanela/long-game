@@ -8,32 +8,37 @@ struct TipThanksSheet: View {
     @State private var startedAt = Date()
 
     var body: some View {
-        VStack(spacing: 18) {
-            TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
-                let t = reduceMotion ? 0 : timeline.date.timeIntervalSince(startedAt)
-                let hop = t.truncatingRemainder(dividingBy: 1.2) / 1.2
-                ZStack {
-                    if !reduceMotion { motes(t) }
-                    SunView(idle: false, face: .celebrate)
-                        .frame(width: 140, height: 140)
-                        .offset(y: reduceMotion ? 0 : -14 * sin(min(hop / 0.6, 1) * .pi))
+        VStack(spacing: 0) {
+            // The day scene with the celebrating sun; the little dots drift out around it.
+            ZStack {
+                SceneHero(tone: .day, height: 239, skyHeight: 200, horizon: 0.82, landTop: 119, sunSize: 140, sunTop: 24,
+                          face: .celebrate, hidden: true)
+                if !reduceMotion {
+                    TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
+                        motes(timeline.date.timeIntervalSince(startedAt))
+                    }
+                    .frame(width: 140, height: 140)
+                    .offset(y: -25)
                 }
-                .frame(width: 140, height: 140)
             }
-            .padding(.top, 28)
+            .padding(.top, 6)
 
-            VStack(spacing: 8) {
-                Text("Thank you!").lgText(.sheetTitle).accessibilityAddTraits(.isHeader)
+            VStack(spacing: 10) {
+                Text("Thank you!").lgText(.setupTitle).accessibilityAddTraits(.isHeader)
                 Text("You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone.")
                     .lgText(.body, color: LGColor.inkMuted).multilineTextAlignment(.center)
+                    .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            Spacer(minLength: 0)
+            .padding(.horizontal, 24)
+            .padding(.top, 10)
+            Spacer(minLength: 16)
             Button("Back to my game", action: onDone).buttonStyle(.lg(.primary))
+                .padding(.horizontal, 24)
         }
-        .padding(.horizontal, 24).padding(.bottom, 16)
+        .padding(.bottom, 16)
         .frame(maxWidth: .infinity)
-        .background(LGColor.surface.ignoresSafeArea())
+        .background(LGColor.background.ignoresSafeArea())
         .sensoryFeedback(.success, trigger: startedAt)
     }
 

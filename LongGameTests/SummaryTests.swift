@@ -33,7 +33,7 @@ struct FormatTests {
         #expect(RelativeDay.label(day(2026, 10, 22), now: now, calendar: utc) == "Thursday")
         #expect(RelativeDay.label(day(2026, 10, 1), now: now, calendar: utc) == "1 Oct")
         #expect(RelativeDay.label(day(2025, 10, 1), now: now, calendar: utc) == "1 Oct 2025")
-        #expect(RelativeDay.full(day(2026, 10, 22), calendar: utc) == "Thursday, 22 October")
+        #expect(RelativeDay.full(day(2026, 10, 22), calendar: utc) == "Thursday 22 October")
     }
 }
 

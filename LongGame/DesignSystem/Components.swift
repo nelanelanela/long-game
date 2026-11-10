@@ -5,8 +5,13 @@ import SwiftUI
 struct LGCardModifier: ViewModifier {
     var radius: CGFloat = 20
     func body(content: Content) -> some View {
+        // White, with the redesign's soft shadow (0 8 24, navy at 6%).
         content
-            .background(LGColor.surface, in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+            .background {
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(LGColor.surface)
+                    .shadow(color: LGColor.ink.opacity(0.06), radius: 12, y: 8)
+            }
     }
 }
 
@@ -16,6 +21,55 @@ extension View {
     /// The warm-white screen background.
     func lgScreen() -> some View {
         background(LGColor.background.ignoresSafeArea())
+    }
+
+    /// The setup steps' background: a peach wash at the top that fades into the screen colour by 38% of the height.
+    func lgSetupScreen(fadeBy: CGFloat = 0.38) -> some View {
+        background {
+            LinearGradient(stops: [.init(color: LGColor.peachWashSetup, location: 0),
+                                   .init(color: LGColor.background, location: fadeBy),
+                                   .init(color: LGColor.background, location: 1)],
+                           startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+        }
+    }
+}
+
+/// "by We Have Sun": the small letter-spaced line under the wordmark and under the setup screens' main button.
+struct LGBrandLine: View {
+    var text: LocalizedStringKey = "by We Have Sun"
+    var body: some View {
+        Text(text)
+            .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2, tracking: 1.76), color: LGColor.inkMuted)
+            .textCase(.uppercase)
+            .frame(maxWidth: .infinity)
+    }
+}
+
+/// The round − / + face used where a screen draws its own stepper (the start year): white, softly lit from the top
+/// left, with a small shadow. From iOS 26 it is a glass circle like every other round control.
+struct LGStepCircle: View {
+    let systemName: String
+    var diameter: CGFloat = 56
+    var dimmed = false
+    @Environment(\.lgFlat) private var flat
+
+    var body: some View {
+        let glyph = Image(systemName: systemName)
+            .font(.system(size: diameter > 40 ? 22 : 15, weight: .semibold))
+            .foregroundStyle(dimmed ? LGColor.stepperGlyphLimit : LGColor.ink)
+            .frame(width: diameter, height: diameter)
+        if #available(iOS 26, macOS 26, *), !flat {
+            glyph.glassEffect(.regular.interactive(), in: .circle).opacity(dimmed ? 0.55 : 1)
+        } else {
+            glyph.background {
+                Circle()
+                    .fill(dimmed ? AnyShapeStyle(LGColor.stepperButtonLimit)
+                                 : AnyShapeStyle(RadialGradient(colors: [.white, LGColor.stepperFace],
+                                                                center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: diameter * 0.7)))
+                    .shadow(color: LGColor.ink.opacity(dimmed ? 0 : 0.1), radius: diameter > 40 ? 8 : 4, y: diameter > 40 ? 6 : 3)
+            }
+        }
     }
 }
 
@@ -190,9 +244,11 @@ struct LGStepBar: View {
     var body: some View {
         HStack(spacing: 6) {
             ForEach(1...of, id: \.self) { i in
+                // Done steps are the sun's gold running to amber; the rest are the quiet track.
                 RoundedRectangle(cornerRadius: 2)
-                    .fill(i <= step ? LGColor.ink : LGColor.chipBorder)
-                    .frame(width: 24, height: 4)
+                    .fill(i <= step ? AnyShapeStyle(LinearGradient(colors: [LGColor.sunBody, LGColor.amber], startPoint: .leading, endPoint: .trailing))
+                                    : AnyShapeStyle(LGColor.chipBorder))
+                    .frame(width: 22, height: 4)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -312,20 +368,16 @@ struct LGRepeatButton: View {
     let systemName: String
     let label: String
     let enabled: Bool
+    var diameter: CGFloat = 44
     let action: () -> Void
 
     @State private var repeatTask: Task<Void, Never>?
     @State private var pressed = false
 
     var body: some View {
-        Image(systemName: systemName)
-            .font(.system(size: 18, weight: .semibold))
-            .foregroundStyle(LGColor.ink)
-            .frame(width: 52, height: 52)
-            .background(LGColor.chipFill, in: Circle())
+        LGStepCircle(systemName: systemName, diameter: diameter, dimmed: !enabled)
             .scaleEffect(pressed ? 0.92 : 1)
             .contentShape(Circle())
-            .opacity(enabled ? 1 : 0.4)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in if !pressed { begin() } }

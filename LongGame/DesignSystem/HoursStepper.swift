@@ -22,7 +22,6 @@ private struct StepButton: View {
     /// Takes one step; false when the value is already at the limit.
     let perform: () -> Bool
 
-    @Environment(\.lgFlat) private var flat
     @State private var holdTask: Task<Void, Never>?
     @State private var repeated = false
     @State private var stepTick = 0
@@ -48,17 +47,7 @@ private struct StepButton: View {
         .onDisappear { endHold() }
     }
 
-    @ViewBuilder private var circle: some View {
-        let glyph = Image(systemName: symbol)
-            .font(.system(size: diameter > 40 ? 24 : 16, weight: .semibold))
-            .foregroundStyle(atLimit ? LGColor.stepperGlyphLimit : LGColor.ink)
-            .frame(width: diameter, height: diameter)
-        if #available(iOS 26, macOS 26, *), !flat {
-            glyph.glassEffect(.regular.interactive(), in: .circle).opacity(atLimit ? 0.55 : 1)
-        } else {
-            glyph.background(atLimit ? LGColor.stepperButtonLimit : LGColor.stepperButton, in: Circle())
-        }
-    }
+    private var circle: some View { LGStepCircle(systemName: symbol, diameter: diameter, dimmed: atLimit) }
 
     @discardableResult private func step() -> Bool {
         if perform() { stepTick += 1; return true }
@@ -272,7 +261,7 @@ struct HoursBigStepper: View {
                     Button { typing = true } label: {
                         VStack(spacing: 2) {
                             Text(WeeklyTarget.number(value)).lgNumber(.yearNumber)
-                            Text(unit).lgText(.caption, color: LGColor.inkMuted)
+                            Text(unit).lgText(.row, color: LGColor.inkMuted)
                         }
                         .frame(maxWidth: .infinity, minHeight: 88)
                         .contentShape(Rectangle())
@@ -297,9 +286,15 @@ struct HoursBigStepper: View {
             ForEach(quickPicks) { pick in
                 let selected = HoursStepping.clamped(value, spec) == HoursStepping.clamped(pick.value, spec)
                 Button { value = HoursStepping.clamped(pick.value, spec) } label: {
-                    Text(pick.title).lgText(.rowStrong, color: selected ? .white : LGColor.ink)
-                        .padding(.horizontal, 14).frame(minHeight: 44)
-                        .background(selected ? LGColor.ink : LGColor.chipFill, in: Capsule())
+                    Text(pick.title)
+                        .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
+                                color: selected ? .white : LGColor.ink)
+                        .padding(.horizontal, 16).frame(minHeight: 40)
+                        .background {
+                            Capsule().fill(selected ? LGColor.ink : LGColor.surface)
+                                .shadow(color: LGColor.ink.opacity(selected ? 0 : 0.06), radius: 5, y: 3)
+                        }
+                        .frame(minHeight: 44)
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selected ? .isSelected : [])

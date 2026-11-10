@@ -13,11 +13,8 @@ struct WelcomeView: View {
                     VStack(spacing: 8) {
                         Text("Long Game").lgText(.welcomeTitle)
                             .accessibilityAddTraits(.isHeader)
-                        Text("by We Have Sun")
-                            .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption, tracking: 1.76),
-                                    color: LGColor.inkMuted)
-                            .textCase(.uppercase)
-                        Text("The longest game on the App Store. Played in real life.")
+                        LGBrandLine()
+                        Text("The longest game on the App Store.\nPlayed in real life.")
                             .lgText(.bodyLarge, color: LGColor.inkMuted)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)

@@ -533,3 +533,40 @@ All 13 parts are built on branch `redesign`. Built and tested on the iPhone, Wat
 
 Years of daily sessions gave thousands of chart points (2,900 for 8 years), drawn as thousands of separate marks and redrawn on every frame of the draw-in, so opening it looked frozen. The chart now gets at most 180 points (`GrowthSeries.thinned`, first and last kept); the forecast and milestone logic still use the full history. Not timed on a device.
 
+
+## Screen-by-screen check against `design/redesign/` (10 November 2026)
+
+Every phone screen was opened in the Simulator (iPhone 17, iOS 27, so with the Liquid Glass controls) and compared with its board. Changed to match:
+
+- **Shared:** cards have the soft shadow; the setup step bar is gold (22 × 4); "by We Have Sun" sits under the main button on the intro pages and steps 1–5; steps 2–4, Add past hours, catch-up and the full-screen chart have the peach wash; round − / + buttons are white with a soft shadow before iOS 26.
+- **Welcome:** the tagline breaks after "App Store.".
+- **Intro pages:** dots (18 / 6 pt) directly under the words; Skip in semibold.
+- **1 · Your game:** Back button (to the intro), no sun in the corner, "What’s your game?", tighter pills (6 pt gaps), 12 pt group labels in the muted colour.
+- **2 · Start year:** no card, the 68 pt year on the wash.
+- **3 · Each year:** the card is as tall as its rows, the score sits right under it.
+- **3b · Weekly pace:** the small scene (sun, dotted road, moon) and "Each day, a stretch from the sea to the moon."
+- **3c · Keep your game safe / Welcome back (iCloud):** the new sky, dunes and sea instead of the old wavy sea; outlined blue cloud.
+- **Home:** the button always says Begin; the long game stats are label over figure with hairlines and an ember finish line; "Meet your future self · Who you’re playing for" with its sun; the year row comes first; This week's day bars are gold in dashed outlines.
+- **Meet your future self:** the track as on the board (today's dot at the start, labels right under it).
+- **Finish sheet:** rebuilt: scene with the celebrating sun, − 42 m +, "this session", photo and note, Save, Discard.
+- **Add past hours / Edit session:** rebuilt: Cancel, 76 pt time with the day under it, steppers for hours and minutes.
+- **History:** small centred title; the calendar card without its "Last 12 months" line, M / W / F letters; stats as a hairline row above the day card; the day card shows "Evening · 1 h 15" with the note.
+- **Growth:** the headline above the card (34 pt), gold area under the past line, thinner lines in the board's colours, no numbers on the hours axis, What-if without a card, Your year as a plain row.
+- **Growth, full screen:** peach wash, key under the chart, 34 pt headline, ember milestone line.
+- **Settings:** small centred title; "Free, with no ads. Tips keep it that way."
+- **One craft, Welcome back after a break, Catch up (both), Tip jar, Thank you:** the scene on top and the boards' copy and sizes.
+- Dates read "Thursday 5 November" (no comma).
+
+Left as they are, on purpose:
+
+- **No + in Home's header** (the boards still show it; update 31 removed it).
+- **See-through dunes by day** (the boards' dunes are solid, but then they hide the low sun on the empty day).
+- **Settings rows** (Week starts on, Rhythm nudge, estimates, export…) follow the spec, not the board's shorter list.
+- **Add past hours keeps the photo square**, which the board leaves out.
+- **Scale labels** on This week and The long game show every tick (the boards label only the ends and the middle).
+- **Straight apostrophes** in older copy ("today's") were not all changed to curly ones.
+- **The moon on Welcome** sits under the status bar's icons on phones with a Dynamic Island, as it does on the board.
+
+Not opened by hand this time: Welcome back (iCloud), the catch-up sheets, the tip jar and Thank you, One craft, the photo viewer, Your photos, the Evening and Photos year cards, iPad, Mac, Watch, widgets and the Live Activity. They build; the first five were rebuilt from the boards' numbers.
+
+Tests: all pass except the 4 StoreKit ones in `TipPurchaseTests`, as before.

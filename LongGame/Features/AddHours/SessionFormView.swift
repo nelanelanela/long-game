@@ -60,16 +60,17 @@ struct SessionFormView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 0) {
                 header
 
-                VStack(spacing: 4) {
-                    Text(DurationFormat.hoursMinutes(seconds: seconds)).lgNumber(.yearNumber)
-                    Text("hours : minutes").lgText(.caption, color: LGColor.inkMuted)
+                VStack(spacing: 6) {
+                    Text(DurationFormat.hoursMinutes(seconds: seconds))
+                        .lgNumber(LGTextStyle(size: 76, weight: .bold, relativeTo: .largeTitle, tracking: -3.4))
+                    Text(RelativeDay.full(day)).lgText(.note, color: LGColor.inkMuted)
                 }
-                .padding(.top, 12)
+                .padding(.top, 24)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Labels.hours(hours) + " " + Labels.minutes(minutes))
+                .accessibilityLabel(Labels.hours(hours) + " " + Labels.minutes(minutes) + ", " + RelativeDay.full(day))
 
                 VStack(spacing: 0) {
                     row("Day") {
@@ -78,27 +79,21 @@ struct SessionFormView: View {
                             .tint(LGColor.ink)
                     }
                     Divider().overlay(LGColor.divider)
-                    row("Hours") {
-                        Picker("Hours", selection: $hours) {
-                            ForEach(0...12, id: \.self) { Text("\($0)").tag($0) }
-                        }
-                        .menuStyleChip()
-                    }
+                    stepperRow("Hours", value: $hours, range: 0...12, step: 1, spoken: Labels.hours(hours),
+                               less: "Fewer hours", more: "More hours")
                     Divider().overlay(LGColor.divider)
-                    row("Minutes") {
-                        Picker("Minutes", selection: $minutes) {
-                            ForEach(Array(stride(from: 0, through: 55, by: 5)), id: \.self) { Text("\($0)").tag($0) }
-                        }
-                        .menuStyleChip()
-                    }
+                    stepperRow("Minutes", value: $minutes, range: 0...55, step: 5, spoken: Labels.minutes(minutes),
+                               less: "Fewer minutes", more: "More minutes")
                 }
-                .padding(.horizontal, 18)
-                .lgCard()
+                .padding(.horizontal, 16).padding(.vertical, 2)
+                .lgCard(radius: 20)
+                .padding(.top, 26)
 
                 if !fits {
                     Text("That would be more than 24 hours on this day. Lower the time or pick another day.")
                         .lgText(.caption, color: LGColor.danger)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 10)
                 }
 
                 NotePhotoRow(photo: $photo, note: $note, photoID: editing?.id ?? UUID(),
@@ -107,15 +102,17 @@ struct SessionFormView: View {
                                                     progress: $0.sunriseProgressAtEnd ?? 0)
                              },
                              hidesDefaultPicture: $hidesDefault)
+                    .padding(.top, 12)
 
                 if editing != nil {
                     Button("Delete session") { confirmDelete = true }
                         .buttonStyle(.lg(.text))
                         .foregroundStyle(LGColor.danger)
+                        .padding(.top, 12)
                 }
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 16)
+            .padding(.bottom, 24)
         }
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
@@ -123,9 +120,8 @@ struct SessionFormView: View {
                 .buttonStyle(.lg(.primary))
                 .disabled(!canSave)
                 .padding(.horizontal, 24).padding(.vertical, 8)
-                .background(LGColor.background)
         }
-        .lgScreen()
+        .lgSetupScreen(fadeBy: 0.34)
         .confirmationDialog("Delete this session?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 if let editing { context.delete(editing); try? context.save() }
@@ -137,26 +133,66 @@ struct SessionFormView: View {
         .presentationDragIndicator(.visible)
     }
 
+    /// "Cancel" as words on the left, the title in the middle.
     private var header: some View {
-        HStack {
-            LGIconButton(systemName: "xmark", label: "Cancel") { dismiss() }
-                .padding(.leading, -10)
-            Spacer()
-            Text(editing == nil ? "Add past hours" : "Edit session").lgText(.navTitle)
+        ZStack {
+            Text(editing == nil ? "Add past hours" : "Edit session")
+                .lgText(LGTextStyle(size: 16, weight: .semibold, relativeTo: .body))
                 .accessibilityAddTraits(.isHeader)
-            Spacer()
-            Color.clear.frame(width: 34, height: 44)
+            HStack {
+                Button { dismiss() } label: {
+                    Text("Cancel").lgText(LGTextStyle(size: 16, weight: .medium, relativeTo: .body))
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                Spacer()
+            }
         }
-        .padding(.top, 8)
+        .frame(minHeight: 44)
+        .padding(.top, 16)
     }
 
-    private func row<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+    private func row<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         HStack {
-            Text(title).lgText(.row)
+            Text(title).lgText(.body)
             Spacer()
             content()
         }
-        .frame(minHeight: 54)
+        .frame(minHeight: 52)
+    }
+
+    /// Label on the left, then − value + (hold to repeat). One adjustable element for VoiceOver.
+    private func stepperRow(_ title: LocalizedStringKey, value: Binding<Int>, range: ClosedRange<Int>, step: Int, spoken: String,
+                            less: String, more: String) -> some View {
+        row(title) {
+            HStack(spacing: 10) {
+                LGRepeatButton(systemName: "minus", label: less, enabled: value.wrappedValue > range.lowerBound, diameter: 36) {
+                    value.wrappedValue = max(range.lowerBound, value.wrappedValue - step)
+                }
+                .frame(width: 44, height: 44)
+                Text("\(value.wrappedValue)")
+                    .lgText(LGTextStyle(size: 17, weight: .semibold, relativeTo: .body))
+                    .monospacedDigit()
+                    .frame(minWidth: 40)
+                    .accessibilityHidden(true)
+                LGRepeatButton(systemName: "plus", label: more, enabled: value.wrappedValue < range.upperBound, diameter: 36) {
+                    value.wrappedValue = min(range.upperBound, value.wrappedValue + step)
+                }
+                .frame(width: 44, height: 44)
+            }
+            .padding(.trailing, -4)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(spoken)
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: value.wrappedValue = min(range.upperBound, value.wrappedValue + step)
+            case .decrement: value.wrappedValue = max(range.lowerBound, value.wrappedValue - step)
+            @unknown default: break
+            }
+        }
     }
 
     private func save() {
@@ -179,15 +215,5 @@ struct SessionFormView: View {
         }
         try? context.save()
         dismiss()
-    }
-}
-
-private extension View {
-    func menuStyleChip() -> some View {
-        self.pickerStyle(.menu)
-            .labelsHidden()
-            .tint(LGColor.ink)
-            .padding(.horizontal, 6)
-            .background(LGColor.chipFill, in: RoundedRectangle(cornerRadius: 10))
     }
 }

@@ -295,10 +295,11 @@ private struct PhotoSwapSheet: View {
 /// The quiet row that opens the year card: History → Growth (all year) and The long game tab (1 Dec – 15 Jan).
 struct YearEntryRow: View {
     let year: Int
+    var sunSize: CGFloat = 40
 
     var body: some View {
         HStack(spacing: 12) {
-            SunView(idle: false, face: .happy).frame(width: 40, height: 40).accessibilityHidden(true)
+            SunView(idle: false, face: .happy).frame(width: sunSize, height: sunSize).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text("Your \(String(year))").lgText(.rowStrong)
                 Text("A card of your year, to keep or share").lgText(.caption, color: LGColor.inkMuted)

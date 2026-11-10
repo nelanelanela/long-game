@@ -46,7 +46,7 @@ struct NotePhotoRow: View {
     private let squareSize: CGFloat = 64
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: 12) {
             photoSquare
             noteField
         }
@@ -105,12 +105,16 @@ struct NotePhotoRow: View {
                                             progress: info.progress, side: squareSize, radius: 14)
                     } else {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .strokeBorder(Color(hex: 0xCFC8BB), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                            .fill(LGColor.surface)
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .strokeBorder(Color(hex: 0xCFC6B6), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                            }
                             .frame(width: squareSize, height: squareSize)
                             .overlay {
                                 Image(systemName: "camera")
                                     .font(.system(size: 22, weight: .regular))
-                                    .foregroundStyle(LGColor.gaugeLabel)
+                                    .foregroundStyle(LGColor.inkMuted)
                             }
                     }
                 }
@@ -158,9 +162,9 @@ struct NotePhotoRow: View {
         ZStack(alignment: .topLeading) {
             if note.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("A note, if you like").lgText(.row, color: LGColor.inkMuted)
+                    Text("A note, if you like").lgText(LGTextStyle(size: 15, weight: .medium, relativeTo: .subheadline))
                     Text("What you made, what needs work")
-                        .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+                        .lgText(.caption, color: LGColor.inkMuted)
                 }
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
@@ -175,9 +179,13 @@ struct NotePhotoRow: View {
                     if clamped != new { note = clamped }
                 }
         }
-        .padding(.horizontal, 14).padding(.vertical, 12)
+        .padding(.horizontal, 14).padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: squareSize, alignment: .topLeading)
-        .background(Color(hex: 0xF6F3EE), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(LGColor.surface)
+                .shadow(color: LGColor.ink.opacity(0.05), radius: 9, y: 6)
+        }
     }
 }
 

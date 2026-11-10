@@ -55,7 +55,9 @@ enum LGColor {
     static let stepperButton = Color(hex: 0xF3F0EA)
     static let stepperButtonLimit = Color(hex: 0xF6F4EF)
     static let stepperGlyphLimit = Color(hex: 0xC9C3B8)
-    static let stepperHighlight = Color(hex: 0xFFF3D6)
+    static let stepperHighlight = Color(hex: 0xFFF0C8)
+    /// The shaded edge of a round − / + button (its face runs from white to this).
+    static let stepperFace = Color(hex: 0xF1ECE3)
 
     // Sun
     static let sunBody = Color(hex: 0xFFC93C)
@@ -70,12 +72,15 @@ enum LGColor {
     static let rest = Color(hex: 0xC5D0EC)
     static let practice: [Color] = [Color(hex: 0xFFE48C), Color(hex: 0xFFC53D), Color(hex: 0xFF9A3C), Color(hex: 0xE8561E)]
     static let forecast = Color(hex: 0xEE6420)
+    /// The dashed line at the chosen pace on the Growth chart, and the warm area under the past line.
+    static let chosenLine = Color(hex: 0xE07A22)
+    static let growthArea = Color(hex: 0xFFC56A)
     /// The forecast orange darkened to 4.5:1 for words (the lines and band keep the brighter orange).
     static let forecastText = Color(hex: 0xB8470E)
     /// The dotted line at the actual pace.
     static let actualPace = Color(hex: 0x9AA1B5)
     /// The name "Your chosen pace" in the Growth key (a darker orange for words, as the spec asks).
-    static let chosenPaceName = Color(hex: 0xC2531A)
+    static let chosenPaceName = Color(hex: 0xB4561A)
     static let currentBar = Color(hex: 0xFFB347)
 
     // Sunrise hero (Home, intro pages, future-self sheet). The sea is fully opaque: nothing shows through it.
@@ -98,9 +103,11 @@ enum LGColor {
     static let arcDots = Color(hex: 0xD9D2C4)
     static let moon = Color(hex: 0xC9D3EC)
     static let moonOnDark = Color(hex: 0xE6ECF8)
-    static let introDot = Color(hex: 0xDDD6CA)
+    static let introDot = Color(hex: 0xD9D2C4)
     /// The iCloud symbol on the Keep your game safe card and the Welcome back illustration.
-    static let icloud = Color(hex: 0x3D8BFD)
+    static let icloud = Color(hex: 0x2F7BF6)
+    /// The pale blue tile behind the iCloud symbol on the Keep your game safe card.
+    static let icloudTile = Color(hex: 0xEAF2FF)
     static let futureSky = Gradient(stops: [
         .init(color: .white, location: 0),
         .init(color: Color(hex: 0xFFF1DA), location: 0.7),

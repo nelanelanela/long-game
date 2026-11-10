@@ -34,18 +34,20 @@ struct HistoryView: View {
             let wide = window.shape.isWide
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    HStack {
-                        LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                            .padding(.leading, -10)
-                        Spacer()
-                        LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
-                            .padding(.trailing, -10)
+                    // Back, the small title in the middle, Settings: one 44 pt row as on the board.
+                    ZStack {
+                        Text("History").lgText(.navTitle)
+                            .accessibilityAddTraits(.isHeader)
+                        HStack {
+                            LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
+                                .padding(.leading, -10)
+                            Spacer()
+                            LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
+                                .padding(.trailing, -10)
+                        }
                     }
                     .frame(height: 44)
-
-                    Text("History").lgText(.screenTitle)
-                        .padding(.top, -6)
-                        .accessibilityAddTraits(.isHeader)
+                    .padding(.bottom, -10)
 
                     if wide {
                         // Calendar and Growth side by side instead of tabs.
@@ -67,7 +69,7 @@ struct HistoryView: View {
             }
             .lgAnimation(.easeInOut(duration: 0.3), value: wide)
         }
-        .lgWarmScreen()
+        .lgScreen()
         .lgHidesNavigationBar()
         // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
         // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.

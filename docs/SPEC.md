@@ -698,7 +698,7 @@ Simple, flat and calm: warm-white background, flat white cards only where conten
 | Token | Value | Use |
 | --- | --- | --- |
 | background | #FAF8F4 | All light screens |
-| surface | #FFFFFF, radius 20–24, no shadow (flat) | Cards (sheets keep a soft top shadow) |
+| surface | #FFFFFF, radius 18–22, soft shadow 0 8 24 at 6% navy (the We Have Sun redesign) | Cards (sheets keep a soft top shadow) |
 | ink | #16244A | Text, primary buttons, timer background |
 | ink-muted | #5E6782 | Secondary text |
 | divider | #F0ECE5 | Lines inside cards |

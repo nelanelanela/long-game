@@ -22,7 +22,7 @@ struct CalendarTab: View {
     }
 
     private let cell: CGFloat = 14
-    private let gap: CGFloat = 3
+    private let gap: CGFloat = 4
     private var calendar: Calendar { .current }
 
     var body: some View {
@@ -31,10 +31,10 @@ struct CalendarTab: View {
         let daily = Practice.dailySeconds(sessions.map(\.record), calendar: calendar)
         let windowStart = weeks.first?.first ?? now
 
-        VStack(spacing: 18) {
+        VStack(spacing: 14) {
             gridCard(weeks: weeks, daily: daily, windowStart: windowStart, now: now)
-            dayCard(daily: daily, now: now)
             statsCard(daily: daily, windowStart: windowStart, now: now)
+            dayCard(daily: daily, now: now)
         }
         .sheet(item: $editing) { session in
             SessionFormView(craft: craft, sessions: sessions, editing: session)
@@ -57,20 +57,11 @@ struct CalendarTab: View {
     // MARK: Grid
 
     private func gridCard(weeks: [[Date]], daily: [Date: Double], windowStart: Date, now: Date) -> some View {
-        let windowHours = sessions
-            .filter { $0.start >= windowStart && $0.start <= now.addingTimeInterval(86_400) }
-            .reduce(0.0) { $0 + $1.durationSec } / 3600
         let today = calendar.startOfDay(for: now)
         let photoDays = SessionPhotos.daysWithPhoto(sessions.map { ($0.start, $0.hasPhoto) }, calendar: calendar)
 
-        return VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("Last 12 months").lgText(.rowStrong)
-                Spacer()
-                Text(Labels.shortHours(Int(windowHours.rounded()))).lgText(.row, color: LGColor.inkMuted)
-            }
-
-            HStack(alignment: .top, spacing: 6) {
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 4) {
                 weekdayLabels(weeks: weeks)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .top, spacing: gap) {
@@ -78,7 +69,7 @@ struct CalendarTab: View {
                         ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
                             VStack(spacing: gap) {
                                 Text(labels[index] ?? "")
-                                    .lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
+                                    .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
                                     .fixedSize()
                                     .dynamicTypeSize(...DynamicTypeSize.xLarge)
                                     .frame(width: cell, height: cell, alignment: .leading)
@@ -103,7 +94,7 @@ struct CalendarTab: View {
                 if !isAccessibilitySize { Spacer() }
                 HStack(spacing: 4) {
                     Text("Less").lgText(.tiny, color: LGColor.inkMuted).padding(.trailing, 4)
-                    ForEach(CalendarLevel.allCases.dropFirst(), id: \.self) { CalendarLevelMark(level: $0, size: 14) }
+                    ForEach(CalendarLevel.allCases.dropFirst(), id: \.self) { CalendarLevelMark(level: $0, size: 12) }
                     Text("More").lgText(.tiny, color: LGColor.inkMuted).padding(.leading, 4)
                 }
             }
@@ -111,15 +102,16 @@ struct CalendarTab: View {
 
             // Only once there is a photo: what the white dot means.
             if !photoDays.isEmpty {
-                HStack(spacing: 6) {
-                    CalendarLevelMark(level: .from2to3, size: 14, hasPhoto: true)
+                HStack(spacing: 8) {
+                    CalendarLevelMark(level: .from2to3, size: 12, hasPhoto: true)
                     Text("White dot: a day with a photo").lgText(.tiny, color: LGColor.inkMuted)
                 }
+                .padding(.top, -4)
                 .accessibilityHidden(true)
             }
         }
-        .padding(.horizontal, 16).padding(.vertical, 18)
-        .lgCard()
+        .padding(16)
+        .lgCard(radius: 22)
     }
 
     private func dayCell(_ day: Date, daily: [Date: Double], today: Date, hasPhoto: Bool) -> some View {
@@ -154,9 +146,11 @@ struct CalendarTab: View {
         VStack(alignment: .leading, spacing: gap) {
             Color.clear.frame(width: 1, height: cell)
             ForEach(Array((weeks.first ?? []).enumerated()), id: \.offset) { _, date in
+                // M, W and F, plus the last row: single letters, as on the board.
                 let weekday = calendar.component(.weekday, from: date)
-                Text([2, 4, 6].contains(weekday) ? Self.shortWeekday(date, calendar) : "")
-                    .lgText(LGTextStyle(size: 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
+                let isLastRow = date == weeks.first?.last
+                Text([2, 4, 6].contains(weekday) || (isLastRow && [1, 7].contains(weekday)) ? Self.weekdayLetter(date, calendar) : "")
+                    .lgText(LGTextStyle(size: 9, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
                     .fixedSize()
                     .dynamicTypeSize(...DynamicTypeSize.xLarge)
                     .frame(height: cell, alignment: .leading)
@@ -167,8 +161,8 @@ struct CalendarTab: View {
     }
 
     private func legendSwatch(_ level: CalendarLevel, _ title: String) -> some View {
-        HStack(spacing: 6) {
-            CalendarLevelMark(level: level, size: 14)
+        HStack(spacing: 8) {
+            CalendarLevelMark(level: level, size: 12)
             Text(title).lgText(.tiny, color: LGColor.inkMuted)
         }
     }
@@ -198,73 +192,64 @@ struct CalendarTab: View {
         let firstNote = daySessions.compactMap(\.note).first(where: { !$0.isEmpty })
         let afterBreak = !daySessions.isEmpty && daySessions.allSatisfy { $0.source == .catchUp }
 
-        return VStack(spacing: 0) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(RelativeDay.full(day, calendar: calendar)).lgText(.rowStrong)
-                    Text(afterBreak ? "Added after a break" : firstNote ?? (seconds > 0 ? Labels.sessions(daySessions.count) : "Rest day"))
-                        .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
-                        .lineLimit(2)
+        return VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text(RelativeDay.full(day, calendar: calendar))
+                        .lgText(LGTextStyle(size: 16, weight: .semibold, relativeTo: .body))
+                    Spacer(minLength: 8)
+                    if seconds > 0 {
+                        Text(TodaySessions.duration(seconds))
+                            .lgText(LGTextStyle(size: 16, weight: .bold, relativeTo: .body))
+                    }
                 }
-                Spacer(minLength: 8)
-                Text(seconds > 0 ? DurationFormat.short(seconds: seconds) : "—")
-                    .lgText(LGTextStyle(size: 17, weight: .semibold, relativeTo: .body))
+                if daySessions.isEmpty {
+                    Text("Rest day").lgText(.caption, color: LGColor.inkMuted)
+                } else if afterBreak {
+                    Text("Added after a break").lgText(.caption, color: LGColor.inkMuted)
+                }
             }
-            .padding(.vertical, 16)
             .accessibilityElement(children: .combine)
 
-            if daySessions.count > 0 {
-                ForEach(daySessions, id: \.persistentModelID) { session in
-                    Divider().overlay(LGColor.divider)
-                    sessionRow(session)
-                }
+            ForEach(daySessions, id: \.persistentModelID) { session in
+                sessionRow(session)
             }
         }
-        .padding(.horizontal, 18)
-        .lgCard()
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .lgCard(radius: 22)
     }
 
-    /// One session in the day card: its photo (56 pt) and note if it has them, otherwise a quiet "No note".
-    /// Tapping the photo opens it full screen; tapping anywhere else edits the session.
+    /// One session in the day card: its photo or drawn picture (56 pt), then "Evening · 1 h 15" over its note, or a
+    /// quiet "No note". Tapping the photo opens it full screen; tapping anywhere else edits the session.
     private func sessionRow(_ session: Session) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             if session.hasPhoto, let data = session.photo {
                 Button { viewing = session } label: {
                     PhotoThumb(id: session.id, data: data, side: 56, radius: 12)
                         .frame(minWidth: 56, minHeight: 56)
                 }
                 .buttonStyle(.plain)
-                .padding(.vertical, 8)
                 .accessibilityLabel(SessionPhotos.spokenLabel(start: session.start))
                 .accessibilityHint("Opens the photo")
             } else if !session.hidesDefaultPicture {
                 SessionPictureThumb(id: session.id, start: session.start, durationSec: session.durationSec,
                                     progress: session.sunriseProgressAtEnd ?? 0, side: 56, radius: 12)
-                    .padding(.vertical, 8)
             }
             Button { editing = session } label: {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(sessionTitle(session)).lgText(.row)
-                        // A manual session already shows its note as the title.
-                        if let note = session.note, !note.isEmpty, session.source != .manual {
-                            Text(note)
-                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
-                                .lineLimit(3)
-                                .multilineTextAlignment(.leading)
-                        } else if !session.hasPhoto, session.note?.isEmpty != false {
-                            Text("No note")
-                                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.gaugeLabel)
-                        }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(sessionTitle(session)) · \(TodaySessions.duration(session.durationSec))")
+                        .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline))
+                    if let note = session.note, !note.isEmpty {
+                        Text(note)
+                            .lgText(.caption, color: LGColor.inkMuted)
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                    } else {
+                        Text("No note").lgText(.caption, color: LGColor.gaugeLabel)
                     }
-                    Spacer(minLength: 8)
-                    Text(DurationFormat.short(seconds: session.durationSec)).lgText(.row, color: LGColor.inkMuted)
-                    Image(systemName: "chevron.right").lgIcon(12, weight: .semibold)
-                        .foregroundStyle(LGColor.inkMuted)
-                        .padding(.top, 4)
                 }
-                .padding(.vertical, 12)
-                .frame(minHeight: 48)
+                .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -272,13 +257,13 @@ struct CalendarTab: View {
         }
     }
 
+    /// "Morning", "Evening"… for a timed session; hours typed in later have no real time of day.
     private func sessionTitle(_ s: Session) -> String {
-        if s.source == .catchUp { return "Added after a break" }
-        if s.source == .manual { return s.note.flatMap { $0.isEmpty ? nil : $0 } ?? "Added hours" }
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.dateFormat = "HH:mm"
-        return "Session at " + f.string(from: s.start)
+        if s.source == .catchUp { return String(localized: "Added after a break") }
+        if s.source == .manual { return String(localized: "Added hours") }
+        let c = calendar.dateComponents([.hour, .minute], from: s.start)
+        let part = SessionDaypart.at(startHour: Double(c.hour ?? 0) + Double(c.minute ?? 0) / 60)
+        return part.rawValue.prefix(1).uppercased() + part.rawValue.dropFirst()
     }
 
     // MARK: Stats
@@ -287,28 +272,30 @@ struct CalendarTab: View {
         let rhythm = Rhythm.compute(daily: daily, since: craft.createdAt, now: now, weekStart: weekStart, calendar: calendar)
         let active = Practice.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
         let needed = max(1, rhythm.daysPerWeek - 1)
+        // A plain row between two hairlines, the middle figure between two more: no card.
         return HStack(spacing: 0) {
             stat(rhythm.daysPerWeek > 0 ? Labels.daysPerWeek(rhythm.daysPerWeek) : "–", "Rhythm", info: .rhythm)
-            Divider().overlay(LGColor.divider)
             stat(rhythm.daysPerWeek > 0 ? Labels.weeks(rhythm.steadyWeeks) : "–", "Steady for",
                  info: .steady(daysNeeded: rhythm.daysPerWeek > 0 ? needed : nil))
-            Divider().overlay(LGColor.divider)
+                .overlay(alignment: .leading) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
+                .overlay(alignment: .trailing) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
             stat("\(active)", "Active days", info: .active)
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 12)
         .fixedSize(horizontal: false, vertical: true)
-        .lgCard()
+        .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        .overlay(alignment: .bottom) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
     }
 
     /// Tapping a stat explains how it is worked out.
     private func stat(_ value: String, _ label: String, info: StatInfo) -> some View {
         Button { explaining = info } label: {
-            VStack(spacing: 4) {
-                Text(value).lgNumber(.statValue)
-                Text(label).lgText(.caption, color: LGColor.inkMuted)
+            VStack(spacing: 2) {
+                Text(label).lgText(.statLabel, color: LGColor.inkMuted)
+                Text(value).lgNumber(.statFigure)
             }
-            .frame(maxWidth: .infinity, minHeight: 56)
-            .padding(.vertical, 12).padding(.horizontal, 6)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .padding(.horizontal, 6)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -327,7 +314,7 @@ struct CalendarTab: View {
         return f
     }
 
-    private static func shortWeekday(_ d: Date, _ c: Calendar) -> String { formatter("EEE", c).string(from: d) }
+    private static func weekdayLetter(_ d: Date, _ c: Calendar) -> String { formatter("EEEEE", c).string(from: d) }
     private static func shortMonth(_ d: Date, _ c: Calendar) -> String { formatter("MMM", c).string(from: d) }
 
     /// "Thursday 22 October. 2 hours, a good day. Has a photo." or "Thursday 22 October. Rest day."

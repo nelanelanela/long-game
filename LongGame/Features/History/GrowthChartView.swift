@@ -38,30 +38,31 @@ struct GrowthChartView: View {
             let actual = LineDraw.partial(data.actual, fraction: draw.actual)
             ForEach(Array(past.enumerated()), id: \.offset) { _, p in
                 AreaMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "PastArea"))
-                    .foregroundStyle(LGColor.ink.opacity(0.07))
+                    .foregroundStyle(LinearGradient(colors: [LGColor.growthArea.opacity(0.35), LGColor.growthArea.opacity(0)],
+                                                    startPoint: .top, endPoint: .bottom))
             }
             ForEach(Array(past.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Past"))
                     .foregroundStyle(LGColor.ink)
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round))
+                    .lineStyle(StrokeStyle(lineWidth: full ? 2.4 : 2.2, lineCap: .round, lineJoin: .round))
             }
             // The dotted grey line at the actual pace (named in the key, not on the chart).
             ForEach(Array(actual.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Recent"))
                     .foregroundStyle(LGColor.actualPace)
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [1, 6]))
+                    .lineStyle(StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [1.5, 4]))
             }
             // The dashed orange line at the chosen pace (the sun sits at its finish).
             ForEach(Array(chosen.enumerated()), id: \.offset) { _, p in
                 LineMark(x: .value("Date", p.date), y: .value("Hours", p.hours), series: .value("Series", "Chosen"))
-                    .foregroundStyle(LGColor.forecast)
-                    .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round, dash: [7, 6]))
+                    .foregroundStyle(LGColor.chosenLine)
+                    .lineStyle(StrokeStyle(lineWidth: full ? 2.2 : 2, dash: [6, 4]))
             }
             RuleMark(y: .value("Goal", Totals.goalHours))
-                .foregroundStyle(LGColor.ink.opacity(0.35))
+                .foregroundStyle(LGColor.finishDash)
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 4]))
                 .annotation(position: .top, alignment: .leading, spacing: 2) {
-                    Text("Finish line · 10,000 h").lgText(LGTextStyle(size: full ? 11 : 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
+                    Text("Finish line · 10,000 h").lgText(LGTextStyle(size: full ? 11 : 10, weight: .semibold, relativeTo: .caption2), color: LGColor.finishLabel)
                 }
             if full {
                 // 1,000 · 2,500 · 5,000 · 7,500: filled navy when reached, white with an orange outline when ahead.
@@ -74,8 +75,8 @@ struct GrowthChartView: View {
             }
             PointMark(x: .value("Date", now), y: .value("Hours", total))
                 .symbol {
-                    Circle().fill(.white).frame(width: 10, height: 10)
-                        .overlay(Circle().stroke(LGColor.ink, lineWidth: 2.5))
+                    Circle().fill(.white).frame(width: 9, height: 9)
+                        .overlay(Circle().stroke(LGColor.ink, lineWidth: 2))
                 }
                 .annotation(position: .topLeading, spacing: 2) {
                     Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
@@ -101,7 +102,8 @@ struct GrowthChartView: View {
             AxisMarks(values: full ? [0, 2_500, 5_000, 7_500, 10_000] : [0, 5_000, 10_000]) { value in
                 AxisGridLine().foregroundStyle(LGColor.divider)
                 AxisValueLabel {
-                    if let v = value.as(Int.self) {
+                    // The small card has no numbers on the hours axis; the full-screen chart has 2.5k, 5k and 7.5k.
+                    if full, let v = value.as(Int.self), v != 0, v != 10_000 {
                         Text(Self.axisLabel(v))
                             .lgText(LGTextStyle(size: full ? 11 : 10, weight: .regular, relativeTo: .caption2), color: LGColor.inkMuted)
                     }
@@ -133,7 +135,7 @@ struct GrowthChartView: View {
         Circle()
             .fill(reached ? LGColor.ink : .white)
             .frame(width: 9, height: 9)
-            .overlay(Circle().stroke(reached ? LGColor.ink : LGColor.forecast, lineWidth: 2))
+            .overlay(Circle().stroke(reached ? LGColor.ink : LGColor.chosenLine, lineWidth: 2))
     }
 
     // MARK: Ring and floating label

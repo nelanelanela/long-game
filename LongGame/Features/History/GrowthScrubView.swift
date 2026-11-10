@@ -100,14 +100,15 @@ struct GrowthScrubView: View {
                     }
                 } else {
                     headline
-                    key.padding(.top, 10)
                     chartArea.padding(.top, 14)
+                    // The key sits under the chart, as on the board.
+                    key.padding(.top, 6)
                 }
                 hint
             }
             .padding(.top, 8)
         }
-        .background(Color.white.ignoresSafeArea())
+        .lgSetupScreen(fadeBy: 0.3)
         .sensoryFeedback(trigger: activeMilestone) { _, new in new == nil ? nil : .impact(weight: .light) }
         .sensoryFeedback(.selection, trigger: ticks)
         .onChange(of: selection) { _, new in scrub(to: new) }
@@ -116,14 +117,14 @@ struct GrowthScrubView: View {
 
     private var top: some View {
         HStack {
-            Text("\(craftName) · the long game").lgText(.rowStrong)
+            Text("\(craftName) · the long game").lgText(.rowStrong, color: LGColor.inkMuted)
             Spacer()
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(LGColor.ink)
                     .frame(width: 40, height: 40)
-                    .background(LGColor.segmentTrack, in: Circle())
+                    .background { Circle().fill(.white).shadow(color: LGColor.ink.opacity(0.1), radius: 6, y: 4) }
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
@@ -145,10 +146,11 @@ struct GrowthScrubView: View {
         return VStack(alignment: .leading, spacing: 2) {
             Text(verbatim: r.small).lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
             Text(verbatim: r.big)
-                .lgText(LGTextStyle(size: 30, weight: .bold, relativeTo: .title, tracking: -0.6))
+                .lgText(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1))
                 .lineLimit(1).minimumScaleFactor(0.5)
             Text(verbatim: r.accent.isEmpty ? " " : r.accent)
-                .lgText(.caption, color: r.accent.hasPrefix("Milestone") || r.accent == "The finish line" ? LGColor.forecast : LGColor.inkMuted)
+                .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline),
+                        color: r.accent.hasPrefix("Milestone") || r.accent == "The finish line" ? LGColor.ember : LGColor.inkMuted)
         }
         .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
         .padding(.horizontal, 24).padding(.top, 18)
@@ -184,9 +186,9 @@ struct GrowthScrubView: View {
         ZStack {
             if !hintSeen && !hasScrubbed {
                 Text("Drag along the line")
-                    .lgText(LGTextStyle(size: 13, weight: .medium, relativeTo: .footnote), color: LGColor.inkMuted)
+                    .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.inkMuted)
                     .padding(.horizontal, 16).padding(.vertical, 8)
-                    .background(LGColor.segmentTrack, in: Capsule())
+                    .background(LGColor.ink.opacity(0.06), in: Capsule())
                     .transition(.opacity)
             }
         }

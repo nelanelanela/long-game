@@ -73,24 +73,28 @@ struct FutureSelfSheet: View {
     private var finish: String { ForecastText.shortFinish(forecast, now: now) }
     private var wholeHours: String { DurationFormat.grouped(Totals.wholeHours(total: total)) }
 
+    /// The road from today to the finish line (a 54 pt strip on the board): the navy dot is today at the start, the
+    /// gold part is what's already played, and the small sun waits at the end.
     private var track: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             GeometryReader { geo in
                 let w = geo.size.width
-                let x = w * Totals.progress(total: total)
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color(hex: 0xE4DFD6)).frame(height: 4)
+                let trackWidth = max(0, w - 6 - 22)
+                ZStack(alignment: .topLeading) {
+                    Capsule().fill(LGColor.chipBorder)
+                        .frame(width: trackWidth, height: 4)
+                        .offset(x: 6, y: 18)
                     Capsule()
                         .fill(LinearGradient(colors: [LGColor.sunBody, LGColor.amber], startPoint: .leading, endPoint: .trailing))
-                        .frame(width: x, height: 4)
+                        .frame(width: trackWidth * Totals.progress(total: total), height: 4)
+                        .offset(x: 6, y: 18)
                     Circle().fill(LGColor.ink).frame(width: 16, height: 16)
                         .overlay(Circle().stroke(LGColor.background, lineWidth: 3).padding(-1.5))
-                        .position(x: x, y: 2)
+                        .offset(x: 0, y: 12)
                     SunView(idle: false, face: .happy)
                         .frame(width: 36, height: 36)
-                        .position(x: w - 14, y: 2)
+                        .offset(x: w - 36, y: 2)
                 }
-                .frame(height: 4)
             }
             .frame(height: 36)
 
@@ -103,16 +107,14 @@ struct FutureSelfSheet: View {
         .accessibilityLabel(String(localized: "Today, \(wholeHours) hours. Forecast finish \(finish), 10,000 hours."))
     }
 
+    private static let trackLabel = LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption)
+
     private var todayLabel: some View {
-        (Text("Today").fontWeight(.semibold) + Text(" · \(wholeHours) h").foregroundColor(LGColor.inkMuted))
-            .lgText(.caption)
-            .fixedSize()
+        Text("Today · \(wholeHours) h").lgText(Self.trackLabel).fixedSize()
     }
 
     private var finishLabel: some View {
-        (Text(finish).fontWeight(.semibold) + Text(" · 10,000 h").foregroundColor(LGColor.inkMuted))
-            .lgText(.caption)
-            .fixedSize()
+        Text("\(finish) · 10,000 h").lgText(Self.trackLabel).fixedSize()
     }
 }
 

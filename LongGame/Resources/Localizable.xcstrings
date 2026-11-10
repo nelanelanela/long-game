@@ -1,6 +1,72 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "The longest game on the App Store.\nPlayed in real life." : {
+
+    },
+    "What’s your game?" : {
+
+    },
+    "Each day, a stretch from the sea to the moon." : {
+
+    },
+    "Who you’re playing for" : {
+
+    },
+    "this session" : {
+
+    },
+    "Fewer hours" : {
+
+    },
+    "More hours" : {
+
+    },
+    "Fewer minutes" : {
+
+    },
+    "More minutes" : {
+
+    },
+    "Today · %@ h" : {
+
+    },
+    "%@ · 10,000 h" : {
+
+    },
+    "+%lld h" : {
+
+    },
+    "One craft at a time" : {
+
+    },
+    "Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with %@." : {
+
+    },
+    "Catch up" : {
+
+    },
+    "How much did you play each week?" : {
+
+    },
+    "A rough guess is fine. The hours are spread across the days." : {
+
+    },
+    "Free, with no ads. Tips keep it that way." : {
+
+    },
+    "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip. Tips don’t unlock anything: every feature is free for everyone." : {
+
+    },
+    "The sun over the sea" : {
+
+    },
+    "Added hours" : {
+
+    },
+    "Rest day" : {
+
+    },
     "" : {
 
     },
@@ -827,9 +893,6 @@
     "Drawn from this session. Replace it with a photo, or remove it." : {
 
     },
-    "Each week's hours are spread evenly across its days in your calendar." : {
-
-    },
     "Edit note" : {
 
     },
@@ -938,9 +1001,6 @@
     "Hours" : {
 
     },
-    "hours : minutes" : {
-
-    },
     "hours · %@" : {
 
     },
@@ -1010,9 +1070,6 @@
     "Keep your game safe" : {
 
     },
-    "Last 12 months" : {
-
-    },
     "last day of the week" : {
 
     },
@@ -1032,9 +1089,6 @@
 
     },
     "Long Game · the longest game, played in real life" : {
-
-    },
-    "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip to support it. Tips don’t unlock anything: every feature is free for everyone." : {
 
     },
     "Long Game, %@ played today" : {
@@ -1116,9 +1170,6 @@
 
     },
     "No note" : {
-
-    },
-    "No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one." : {
 
     },
     "No weekly pace yet" : {
@@ -1207,9 +1258,6 @@
 
     },
     "One game, 10,000 hours" : {
-
-    },
-    "One player, one game" : {
 
     },
     "One-time payments through the App Store. Prices are shown in your currency." : {
@@ -1562,9 +1610,6 @@
         }
       }
     },
-    "The longest game on the App Store. Played in real life." : {
-
-    },
     "the moon" : {
 
     },
@@ -1757,9 +1802,6 @@
 
     },
     "What you made, what needs work" : {
-
-    },
-    "What's your game?" : {
 
     },
     "When did you start?" : {

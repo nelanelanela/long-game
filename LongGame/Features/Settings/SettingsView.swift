@@ -54,16 +54,20 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 if !embedded {
-                    HStack {
-                        LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                            .padding(.leading, -10)
-                        Spacer()
+                    // Back and the small title in the middle: one 44 pt row as on the board.
+                    ZStack {
+                        Text("Settings").lgText(.navTitle).accessibilityAddTraits(.isHeader)
+                        HStack {
+                            LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
+                                .padding(.leading, -10)
+                            Spacer()
+                        }
                     }
                     .frame(height: 44)
+                } else {
+                    Text("Settings").lgText(.screenTitle).padding(.top, 8)
+                        .accessibilityAddTraits(.isHeader)
                 }
-
-                Text("Settings").lgText(.screenTitle).padding(.top, embedded ? 8 : -6)
-                    .accessibilityAddTraits(.isHeader)
 
                 supportCard
                 if let settings {
@@ -150,10 +154,10 @@ struct SettingsView: View {
                 HStack(spacing: 14) {
                     TipSunIcon(tier: .sunrise).scaleEffect(0.8).frame(width: 32, height: 32)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Support Long Game").lgText(.row)
-                        if (settings?.tipCount ?? 0) > 0 {
-                            Text("Thank you for your support").lgText(.caption, color: LGColor.inkMuted)
-                        }
+                        Text("Support Long Game").lgText(.rowStrong)
+                        Text((settings?.tipCount ?? 0) > 0 ? "Thank you for your support" : "Free, with no ads. Tips keep it that way.")
+                            .lgText(.caption, color: LGColor.inkMuted)
+                            .multilineTextAlignment(.leading)
                     }
                     Spacer()
                     Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)

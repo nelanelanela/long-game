@@ -16,7 +16,7 @@ struct CatchUpSheet: View {
 
     private enum Step { case ask, adding }
     @State private var step: Step = .ask
-    @State private var detent: PresentationDetent = .height(520)
+    @State private var detent: PresentationDetent = .height(560)
     @State private var blockHours: [Int]
     @State private var average: Int
     @State private var finished = false
@@ -49,10 +49,17 @@ struct CatchUpSheet: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(step == .ask ? Color.white : LGColor.background)
-        .presentationDetents([.height(520), .large], selection: $detent)
+        .background {
+            // The question sits on the plain screen colour; the two adding steps get the setup wash.
+            if step == .ask { LGColor.background.ignoresSafeArea() }
+            else {
+                LinearGradient(stops: [.init(color: LGColor.peachWashSetup, location: 0), .init(color: LGColor.background, location: 0.3)],
+                               startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            }
+        }
+        .presentationDetents([.height(560), .large], selection: $detent)
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(32)
+        .presentationCornerRadius(30)
         .onDisappear { finish(0) }
     }
 
@@ -65,27 +72,36 @@ struct CatchUpSheet: View {
     // MARK: Ask
 
     private var ask: some View {
-        VStack(spacing: 20) {
-            // Open-eyed and smiling, as in the design.
-            SunView(idle: false, face: .celebrate).frame(width: 112, height: 112)
+        VStack(spacing: 0) {
+            // The day scene with the sun open-eyed, edge to edge under the grabber.
+            SceneHero(tone: .day, height: 211, skyHeight: 170, horizon: 0.8, landTop: 91, sunSize: 120, sunTop: 14,
+                      eyesOpen: 1, hidden: true)
+                .padding(.top, 6)
             VStack(spacing: 10) {
-                Text("Welcome back!").lgText(.sheetTitle).accessibilityAddTraits(.isHeader)
+                Text("Welcome back!")
+                    .lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
+                    .accessibilityAddTraits(.isHeader)
                 Text(question)
-                    .lgText(LGTextStyle(size: 16, weight: .regular, relativeTo: .body), color: LGColor.inkMuted)
+                    .lgText(.body, color: LGColor.inkMuted)
+                    .lineSpacing(4)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            VStack(spacing: 4) {
+            .padding(.horizontal, 24)
+            .padding(.top, 10)
+            Spacer(minLength: 16)
+            VStack(spacing: 2) {
                 Button("Yes, let me add it") {
                     withAnimation(reduceMotion ? nil : .default) { step = .adding; detent = .large }
                 }
                 .buttonStyle(.lg(.primary))
                 Button("No, I took a break") { dismiss() }.buttonStyle(.lg(.text))
+                Text("Rest is part of the craft.").lgText(.caption, color: LGColor.inkMuted)
+                    .padding(.top, 4)
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 28)
-        .padding(.bottom, 12)
     }
 
     private var question: String {
@@ -100,36 +116,30 @@ struct CatchUpSheet: View {
 
     private var weeksStep: some View {
         let blocks = blocks
-        return VStack(spacing: 18) {
-            stepHeader(title: Labels.weeksHavePassed(gap.weeks),
-                       subtitle: "Roughly how many hours did you practise each week?")
+        return VStack(spacing: 0) {
+            addingBar
+            stepHeader(title: String(localized: "How much did you play each week?"),
+                       subtitle: String(localized: "A rough guess is fine. The hours are spread across the days."))
             VStack(spacing: 0) {
                 ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
                     let hours = blockHours[index]
-                    VStack(spacing: 6) {
-                        HoursStepperRow(label: CatchUp.rangeLabel(first: block.first, last: block.last, calendar: calendar),
-                                        value: Binding(get: { Double(hours) }, set: { blockHours[index] = Int($0.rounded()) }))
-                        Text(Labels.days(block.days) + " · " + Labels.aboutPerDay(
-                            minutes: CatchUp.minutesPerDay(totalHours: Double(hours), days: block.days)))
-                            .lgText(.tiny, color: LGColor.inkMuted)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .padding(.vertical, 16)
+                    HoursStepperRow(label: CatchUp.rangeLabel(first: block.first, last: block.last, calendar: calendar),
+                                    subLabel: Labels.days(block.days) + " · " + Labels.aboutPerDay(
+                                        minutes: CatchUp.minutesPerDay(totalHours: Double(hours), days: block.days)),
+                                    value: Binding(get: { Double(hours) }, set: { blockHours[index] = Int($0.rounded()) }))
+                        .padding(.vertical, 12)
                     if index < blocks.count - 1 { Divider().overlay(LGColor.divider) }
                 }
             }
-            .padding(.horizontal, 18)
-            .lgCard()
-            addingRow
-            Text("Each week's hours are spread evenly across its days in your calendar.")
-                .lgText(.caption, color: LGColor.inkMuted)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 4)
-            Spacer(minLength: 0)
+            .padding(.horizontal, 16).padding(.vertical, 2)
+            .lgCard(radius: 22)
+            .padding(.top, 18)
+            addingRow.padding(.top, 16)
+            Spacer(minLength: 16)
             addButton
         }
         .padding(.horizontal, 24)
-        .padding(.top, 28)
+        .padding(.top, 18)
         .padding(.bottom, 16)
     }
 
@@ -137,31 +147,31 @@ struct CatchUpSheet: View {
 
     private var averageStep: some View {
         let perDay = CatchUp.minutesPerDay(totalHours: totalHours, days: gap.days)
-        return VStack(spacing: 18) {
-            stepHeader(title: Labels.weeksHavePassed(gap.weeks),
+        return VStack(spacing: 0) {
+            addingBar
+            stepHeader(title: Labels.weeksHavePassed(gap.weeks) + ".",
                        subtitle: String(localized: "Since \(CatchUp.longDay(gap.anchor, calendar: calendar)). On average, how many hours a week did you practise?"))
-            VStack(spacing: 8) {
-                HoursBigStepper(label: String(localized: "Average hours per week"),
-                                value: Binding(get: { Double(average) }, set: { average = Int($0.rounded()) }),
-                                unit: String(localized: "hours per week"),
-                                quickPicks: averagePicks)
-            }
-            .padding(.horizontal, 18).padding(.vertical, 20)
-            .lgCard()
+            // No card: the big number sits straight on the wash, the quick picks under it.
+            HoursBigStepper(label: String(localized: "Average hours per week"),
+                            value: Binding(get: { Double(average) }, set: { average = Int($0.rounded()) }),
+                            unit: String(localized: "hours a week"),
+                            quickPicks: averagePicks)
+                .padding(.top, 30)
             VStack(spacing: 0) {
                 summaryRow("Period", CatchUp.rangeLabel(first: gap.first, last: gap.last, calendar: calendar) + " · " + Labels.days(gap.days))
                 Divider().overlay(LGColor.divider)
                 summaryRow("Per day in calendar", DurationFormat.short(seconds: Double(perDay) * 60))
                 Divider().overlay(LGColor.divider)
-                summaryRow("Adding", DurationFormat.hours(totalHours))
+                summaryRow("Adding", DurationFormat.hours(totalHours), strong: true)
             }
-            .padding(.horizontal, 18)
-            .lgCard()
-            Spacer(minLength: 0)
+            .padding(.horizontal, 16).padding(.vertical, 2)
+            .lgCard(radius: 22)
+            .padding(.top, 24)
+            Spacer(minLength: 16)
             addButton
         }
         .padding(.horizontal, 24)
-        .padding(.top, 28)
+        .padding(.top, 18)
         .padding(.bottom, 16)
     }
 
@@ -174,21 +184,40 @@ struct CatchUpSheet: View {
 
     // MARK: Shared pieces
 
-    private func stepHeader(title: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title).lgText(.sheetTitle).accessibilityAddTraits(.isHeader)
-            Text(subtitle).lgText(.body, color: LGColor.inkMuted).fixedSize(horizontal: false, vertical: true)
+    /// Back to the question on the left, "Catch up" in the middle.
+    private var addingBar: some View {
+        ZStack {
+            Text("Catch up").lgText(.navTitle)
+            HStack {
+                LGIconButton(systemName: "chevron.left", label: "Back") {
+                    withAnimation(reduceMotion ? nil : .default) { step = .ask }
+                }
+                .padding(.leading, -10)
+                Spacer()
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 44)
     }
 
-    private func summaryRow(_ title: String, _ value: String) -> some View {
+    private func stepHeader(title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+            Text(subtitle).lgText(.row, color: LGColor.inkMuted).lineSpacing(3).fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 12)
+    }
+
+    private func summaryRow(_ title: String, _ value: String, strong: Bool = false) -> some View {
         HStack {
             Text(title).lgText(.row, color: LGColor.inkMuted)
             Spacer()
-            Text(value).lgText(.rowStrong)
+            Text(value).lgText(strong ? LGTextStyle.statFigure : .rowStrong)
         }
-        .frame(minHeight: 50)
+        .frame(minHeight: 48)
         .accessibilityElement(children: .combine)
     }
 
@@ -196,9 +225,8 @@ struct CatchUpSheet: View {
         HStack(alignment: .firstTextBaseline) {
             Text("Adding").lgText(.row, color: LGColor.inkMuted)
             Spacer()
-            Text(DurationFormat.hours(totalHours)).lgText(LGTextStyle(size: 26, weight: .bold, relativeTo: .title2, tracking: -0.5)).monospacedDigit()
+            Text(DurationFormat.hours(totalHours)).lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title2, tracking: -0.56)).monospacedDigit()
         }
-        .padding(.horizontal, 4)
         .accessibilityElement(children: .combine)
     }
 

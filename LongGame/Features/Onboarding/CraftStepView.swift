@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CraftStepView: View {
     @Bindable var model: OnboardingModel
+    var onBack: (() -> Void)?
     let onContinue: () -> Void
 
     @FocusState private var focused: Bool
@@ -10,11 +11,12 @@ struct CraftStepView: View {
     private var matchedCraft: String? { CraftSuggestions.match(model.craftName)?.craft }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            OnboardingHeader(step: 1, showsBack: false)
+        VStack(alignment: .leading, spacing: 0) {
+            OnboardingHeader(step: 1, showsBack: onBack != nil, onBack: onBack)
 
-            Text("What's your game?").lgText(.screenTitle)
+            Text("What’s your game?").lgText(.setupTitle)
                 .accessibilityAddTraits(.isHeader)
+                .padding(.top, 18)
 
             HStack(spacing: 10) {
                 Image(systemName: "magnifyingglass")
@@ -40,18 +42,18 @@ struct CraftStepView: View {
                     .accessibilityLabel("Clear")
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 14)
             .frame(minHeight: 48)
             .lgCard(radius: 14)
+            .padding(.top, 14)
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 14) {
                     let groups = CraftSuggestions.filtered(model.craftName == matchedCraft ? "" : model.craftName)
                     ForEach(groups) { group in
-                        VStack(alignment: .leading, spacing: 10) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text(group.name)
-                                .font(.system(.caption, weight: .semibold))
-                                .foregroundStyle(Color(hex: 0x8A93AB))
+                                .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: LGColor.inkMuted)
                                 .accessibilityAddTraits(.isHeader)
                             if dynamicTypeSize.isAccessibilitySize {
                                 VStack(alignment: .leading, spacing: 6) {
@@ -69,9 +71,9 @@ struct CraftStepView: View {
                             .lgText(.row, color: LGColor.inkMuted)
                     }
                 }
-                .padding(.top, 4)
+                .padding(.top, 14)
                 // Room at the end so the last chips scroll fully clear of the fade.
-                .padding(.bottom, 44)
+                .padding(.bottom, 52)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .scrollDismissesKeyboard(.interactively)
@@ -79,7 +81,7 @@ struct CraftStepView: View {
                 // A soft fade so it is clear the list scrolls.
                 LinearGradient(colors: [LGColor.background.opacity(0), LGColor.background],
                                startPoint: .top, endPoint: .bottom)
-                    .frame(height: 32)
+                    .frame(height: 48)
                     .allowsHitTesting(false)
             }
 
@@ -89,14 +91,11 @@ struct CraftStepView: View {
             }
             .buttonStyle(.lg(.primary))
             .disabled(!CraftSuggestions.isValidName(model.craftName))
+            .padding(.top, 14)
+            LGBrandLine().padding(.top, 12)
         }
         .padding(.horizontal, 24)
-        .padding(.bottom, 16)
-        .overlay(alignment: .topTrailing) {
-            SunView(idle: false, face: .happy).frame(width: 96, height: 96)
-                .offset(x: 18, y: 8)
-                .allowsHitTesting(false)
-        }
+        .padding(.bottom, 10)
         .lgScreen()
     }
 
@@ -113,14 +112,15 @@ struct CraftStepView: View {
             }
         } label: {
             Text(verbatim: craft)
-                .font(.system(.subheadline, weight: .medium))
-                .foregroundStyle(selected ? Color.white : LGColor.ink)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
+                .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
+                        color: selected ? Color.white : LGColor.ink)
+                .padding(.horizontal, 13)
+                .padding(.vertical, 8)
                 .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? .infinity : nil, alignment: .leading)
                 .background(selected ? LGColor.ink : LGColor.surface, in: Capsule())
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                .shadow(color: LGColor.ink.opacity(selected ? 0.2 : 0), radius: 6, y: 4)
+                // The pills are 6 pt apart as on the board; the touch area reaches into the gaps.
+                .contentShape(Rectangle().inset(by: -3))
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(selected ? .isSelected : [])

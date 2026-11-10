@@ -26,61 +26,70 @@ struct FinishSheet: View {
     private var canSave: Bool { FinishRules.canSave(elapsed: elapsed) }
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Finish session").lgText(.navTitle)
-                .accessibilityAddTraits(.isHeader)
+        VStack(spacing: 0) {
+            // The day scene with the celebrating sun, edge to edge under the grabber.
+            SceneHero(tone: .day, height: canSave ? 203 : 170, skyHeight: 160, horizon: 0.8, landTop: canSave ? 83 : 70,
+                      sunSize: 120, sunTop: 10, face: canSave ? .celebrate : .sleepy, hidden: true)
+                .padding(.top, 6)
 
-            if canSave {
-                HStack {
-                    LGRepeatButton(systemName: "minus", label: "Less time", enabled: duration > FinishRules.minimumSave) {
-                        duration = FinishRules.lowered(duration)
+            VStack(spacing: 0) {
+                if canSave {
+                    HStack {
+                        LGRepeatButton(systemName: "minus", label: "Less time", enabled: duration > FinishRules.minimumSave) {
+                            duration = FinishRules.lowered(duration)
+                        }
+                        Spacer()
+                        VStack(spacing: 4) {
+                            Text(DurationFormat.short(seconds: duration))
+                                .lgNumber(LGTextStyle(size: 48, weight: .bold, relativeTo: .largeTitle, tracking: -1.9))
+                            Text("this session").lgText(.note, color: LGColor.inkMuted)
+                        }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(DurationFormat.short(seconds: duration))
+                        .accessibilityHint("You can trim up to what you really practised.")
+                        Spacer()
+                        LGRepeatButton(systemName: "plus", label: "More time", enabled: duration < elapsed) {
+                            duration = FinishRules.raised(duration, elapsed: elapsed)
+                        }
                     }
-                    Spacer()
-                    VStack(spacing: 4) {
-                        Text(DurationFormat.hoursMinutes(seconds: duration)).lgNumber(.yearNumber)
-                        Text("hours : minutes").lgText(.caption, color: LGColor.inkMuted)
+                    .padding(.top, 6)
+
+                    // Optional and quiet: nothing here opens or focuses by itself, and Save works the same without it.
+                    NotePhotoRow(photo: $photo, note: $note)
+                        .padding(.top, 22)
+
+                    Spacer(minLength: 12)
+
+                    if coversStretch(duration) {
+                        Text("Today's stretch covered.")
+                            .lgText(.label, color: LGColor.ember)
+                            .padding(.bottom, 12)
                     }
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(DurationFormat.short(seconds: duration))
-                    Spacer()
-                    LGRepeatButton(systemName: "plus", label: "More time", enabled: duration < elapsed) {
-                        duration = FinishRules.raised(duration, elapsed: elapsed)
+
+                    Button("Save") {
+                        onSave(duration, SessionRules.savedNote(note), photo)
                     }
-                }
-                Text("You can trim up to what you really practised.")
-                    .lgText(.caption, color: LGColor.inkMuted)
-
-                // Optional and quiet: nothing here opens or focuses by itself, and Save works the same without it.
-                NotePhotoRow(photo: $photo, note: $note)
-
-                if coversStretch(duration) {
-                    Text("Today's stretch covered.")
-                        .lgText(.label, color: LGColor.finishLabel)
+                    .buttonStyle(.lg(.primary))
+                } else {
+                    Text("Sessions under a minute can't be saved.")
+                        .lgText(.body, color: LGColor.inkMuted)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 12)
+                    Spacer(minLength: 12)
                 }
 
-                Button("Save") {
-                    onSave(duration, SessionRules.savedNote(note), photo)
-                }
-                .buttonStyle(.lg(.primary))
-            } else {
-                SunView(idle: false, face: .sleepy).frame(width: 80, height: 80)
-                Text("Sessions under a minute can't be saved.")
-                    .lgText(.body, color: LGColor.inkMuted)
-                    .multilineTextAlignment(.center)
+                Button("Discard") { confirmDiscard = true }
+                    .buttonStyle(.lg(.text))
+                    .padding(.top, 2)
             }
-
-            Button("Discard") { confirmDiscard = true }
-                .buttonStyle(.lg(.quiet))
-                .foregroundStyle(LGColor.danger)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 28)
-        .padding(.bottom, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(LGColor.background)
-        .presentationDetents([.height(canSave ? (coversStretch(duration) ? 548 : 520) : 340), .large])
+        .presentationDetents([.height(canSave ? 600 : 340), .large])
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(32)
+        .presentationCornerRadius(30)
         .confirmationDialog("Discard this session?", isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button("Discard", role: .destructive, action: onDiscard)
         } message: {

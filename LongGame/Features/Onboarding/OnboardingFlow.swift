@@ -101,7 +101,9 @@ struct OnboardingFlow: View {
                               onBack: { withAnimation(reduceMotion ? nil : .default) { stage = .welcome } },
                               onFinish: { withAnimation(reduceMotion ? nil : .default) { stage = .craft } })
                 case .craft:
-                    CraftStepView(model: model) { path.append(.start) }
+                    CraftStepView(model: model,
+                                  onBack: { withAnimation(reduceMotion ? nil : .default) { stage = showIntro ? .intro : .welcome } },
+                                  onContinue: { path.append(.start) })
                 }
             }
             .navigationDestination(for: OnboardingStep.self) { step in
@@ -128,20 +130,21 @@ struct OnboardingFlow: View {
 struct OnboardingHeader: View {
     let step: Int
     var showsBack: Bool = true
+    /// Where Back goes when the screen is not a pushed one (step 1 goes back to the intro pages).
+    var onBack: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        HStack {
-            if showsBack {
-                LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
-                    .padding(.leading, -10)
-            } else {
-                Color.clear.frame(width: 34, height: 44)
-            }
-            Spacer()
+        ZStack {
+            // The step bar is centred on the screen, whatever sits beside it.
             LGStepBar(step: step, of: 5)
-            Spacer()
-            Color.clear.frame(width: 34, height: 44)
+            HStack {
+                if showsBack {
+                    LGIconButton(systemName: "chevron.left", label: "Back") { if let onBack { onBack() } else { dismiss() } }
+                        .padding(.leading, -10)
+                }
+                Spacer()
+            }
         }
         .frame(height: 44)
     }

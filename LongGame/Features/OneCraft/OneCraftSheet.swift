@@ -11,29 +11,40 @@ struct OneCraftSheet: View {
     @State private var confirmReplace = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            SunView(idle: false, face: .happy).frame(width: 104, height: 104)
+        VStack(spacing: 0) {
+            // The day scene, edge to edge under the grabber.
+            SceneHero(tone: .day, height: 195, skyHeight: 150, horizon: 0.8, landTop: 75, sunSize: 110, sunTop: 14, hidden: true)
+                .padding(.top, 6)
             VStack(spacing: 10) {
-                Text("One player, one game").lgText(.sheetTitle)
+                Text("One craft at a time")
+                    .lgText(LGTextStyle(size: 26, weight: .bold, relativeTo: .title, tracking: -0.52))
                     .accessibilityAddTraits(.isHeader)
-                Text("No switching games. Splitting your hours across several crafts slows every one of them down, so Long Game keeps you playing just one.")
+                Text("Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with \(craft.name).")
                     .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
+                    .lineSpacing(4)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            VStack(spacing: 4) {
+            .padding(.horizontal, 24)
+            .padding(.top, 10)
+            Spacer(minLength: 16)
+            VStack(spacing: 2) {
                 Button("Keep playing") { dismiss() }.buttonStyle(.lg(.primary))
-                Button("Switch to a new game") { confirmReplace = true }.buttonStyle(.lg(.text))
+                Button { confirmReplace = true } label: {
+                    Text("Switch to a new game").lgText(.rowStrong, color: LGColor.ember)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 12)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 28)
-        .padding(.bottom, 12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.white)
-        .presentationDetents([.height(440), .large])
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(LGColor.background)
+        .presentationDetents([.height(500), .large])
         .presentationDragIndicator(.visible)
-        .presentationCornerRadius(32)
+        .presentationCornerRadius(30)
         .alert("Replace \(craft.name)?", isPresented: $confirmReplace) {
             Button("Cancel", role: .cancel) {}
             Button("Archive and replace", role: .destructive, action: replace)

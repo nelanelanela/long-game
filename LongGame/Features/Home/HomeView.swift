@@ -781,9 +781,9 @@ struct HomeView: View {
     private func longGameContent(_ s: ProgressSummary, now: Date) -> some View {
         VStack(spacing: 0) {
             statsRow(s, now: now)
-                .padding(.top, 18)
-            futureSelfRow
+                .padding(.top, 16)
             yearRow(now: now)
+            futureSelfRow
         }
     }
 
@@ -801,7 +801,7 @@ struct HomeView: View {
                     YearEntryRow(year: year)
                 }
                 .buttonStyle(.plain)
-                .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+                .overlay(alignment: .bottom) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
             }
         }
     }
@@ -811,14 +811,19 @@ struct HomeView: View {
         let added = WeeklyTarget.addedByEnd(target, now: now)
         return HStack(spacing: 0) {
             stat(DurationFormat.perWeek(s.pace), "Pace")
-            if let target, let added {
-                stat("+\(DurationFormat.grouped(Int(added.rounded()))) h", "By \(DateText.monthYear(target.end))")
-            } else {
-                stat("–", "Year of pace")
+            Group {
+                if let target, let added {
+                    stat("+\(DurationFormat.grouped(Int(added.rounded()))) h", "By \(DateText.monthYear(target.end))")
+                } else {
+                    stat("–", "Year of pace")
+                }
             }
-            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line")
+            // Hairlines either side of the middle figure, as on the board.
+            .overlay(alignment: .leading) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
+            .overlay(alignment: .trailing) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
+            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line", colour: LGColor.ember)
         }
-        .padding(.vertical, 14)
+        .padding(.vertical, 12)
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
         .overlay(alignment: .bottom) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
     }
@@ -827,9 +832,10 @@ struct HomeView: View {
     private var futureSelfRow: some View {
         Button { sheet = .futureSelf } label: {
             HStack(spacing: 12) {
+                SunView(idle: false, face: .happy, eyesOpen: 1).frame(width: 40, height: 40).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Meet your future self").lgText(.rowStrong)
-                    Text("Where 10,000 hours can take you").lgText(.caption, color: LGColor.inkMuted)
+                    Text("Who you’re playing for").lgText(.caption, color: LGColor.inkMuted)
                 }
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.right")
@@ -870,10 +876,11 @@ struct HomeView: View {
         sheet = .target(first: settings.currentTarget == nil)
     }
 
-    private func stat(_ value: String, _ label: LocalizedStringKey) -> some View {
-        VStack(spacing: 4) {
-            Text(value).lgNumber(.statValue)
-            Text(label).lgText(.caption, color: LGColor.inkMuted)
+    /// A small label over its figure (12 pt over 17 pt bold), as on the boards.
+    private func stat(_ value: String, _ label: LocalizedStringKey, colour: Color = LGColor.ink) -> some View {
+        VStack(spacing: 2) {
+            Text(label).lgText(.statLabel, color: LGColor.inkMuted)
+            Text(value).lgNumber(.statFigure, color: colour)
         }
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity)
@@ -1052,8 +1059,7 @@ struct HomeView: View {
 
     private func startTitle(at now: Date) -> String {
         guard let state = timer.state, state.craftId == craft.id else {
-            let played = tab == .today && !TodaySessions.startedToday(sessions, start: \.start, now: now).isEmpty
-            return tab == .today && !played ? "Begin" : "Start session"
+            return String(localized: "Begin")
         }
         // A running timer isn't waiting to be resumed: the button takes you back to it.
         let verb = state.isPaused(at: now) ? "Resume" : "Back to session"

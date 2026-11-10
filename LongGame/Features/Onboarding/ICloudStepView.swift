@@ -1,23 +1,29 @@
 import SwiftUI
 import SwiftData
 
-/// The sun over the sea with a small white circle holding the blue iCloud symbol. Also used by Welcome back.
+/// The day scene (sun over the dunes and sea) with a small white circle holding the blue iCloud outline, as on
+/// ICloud.dc.html: a 390 × 270 box.
 struct ICloudIllustration: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
-            SunriseHero(layout: .intro(page: 0), label: "").accessibilityHidden(true)
+            SceneHero(tone: .day, height: 270, skyHeight: 250, horizon: 0.78, landTop: 150,
+                      sunSize: 140, sunTop: 56, hidden: true)
             GeometryReader { geo in
-                Image(systemName: "icloud.fill")
-                    .font(.system(size: 22, weight: .semibold))
+                Image(systemName: "icloud")
+                    .font(.system(size: 24, weight: .regular))
                     .foregroundStyle(LGColor.icloud)
-                    .frame(width: 52, height: 52)
-                    .background(.white, in: Circle())
-                    .shadow(color: LGColor.ink.opacity(0.12), radius: 8, y: 3)
-                    .position(x: geo.size.width / 2 + 104, y: 52)
+                    .frame(width: 60, height: 60)
+                    .background {
+                        Circle()
+                            .fill(RadialGradient(colors: [.white, Color(hex: 0xEEF2FB)], center: UnitPoint(x: 0.35, y: 0.3),
+                                                 startRadius: 0, endRadius: 42))
+                            .shadow(color: LGColor.ink.opacity(0.16), radius: 12, y: 10)
+                    }
+                    .position(x: geo.size.width / 2 + 76, y: 60)
                     .accessibilityHidden(true)
             }
         }
-        .frame(height: 300)
+        .frame(height: 270)
     }
 }
 
@@ -38,36 +44,45 @@ struct ICloudStepView: View {
             OnboardingHeader(step: 5)
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    ICloudIllustration().padding(.top, 4)
-                    Text("Keep your game safe").lgText(.screenTitle)
-                        .accessibilityAddTraits(.isHeader)
-                        .padding(.top, 12)
-                    card.padding(.top, 20)
-                    Text("Private to your Apple Account. Only you can see it. No sign-in needed.")
-                        .lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote), color: LGColor.inkMuted)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 12).padding(.horizontal, 4)
+                    ICloudIllustration()
+                        .padding(.top, 8)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Keep your game safe").lgText(.setupTitle)
+                            .accessibilityAddTraits(.isHeader)
+                            .padding(.top, 16)
+                        card.padding(.top, 16)
+                        Text("Private to your Apple Account. Only you can see it. No sign-in needed.")
+                            .lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote), color: LGColor.inkMuted)
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 12).padding(.horizontal, 4)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
             }
             .scrollBounceBehavior(.basedOnSize)
+            .padding(.horizontal, -24)
             Button("Start playing", action: onStart).buttonStyle(.lg(.primary))
                 .padding(.top, 8)
+            LGBrandLine().padding(.top, 12)
         }
         .padding(.horizontal, 24)
-        .padding(.bottom, 16)
+        .padding(.bottom, 10)
         .lgScreen()
         .navigationBarBackButtonHidden()
     }
 
     private var card: some View {
         HStack(alignment: .center, spacing: 14) {
-            Image(systemName: "icloud.fill")
-                .font(.system(size: 22, weight: .semibold))
+            Image(systemName: "icloud")
+                .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(LGColor.icloud)
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
+                .background(LGColor.icloudTile, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Save to iCloud").lgText(.rowStrong)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Save to iCloud").lgText(LGTextStyle(size: 16, weight: .semibold, relativeTo: .body))
                 Text(state.showsSignInHint
                      ? "Sign in to iCloud in the Settings app to keep a copy."
                      : "On all your Apple devices, and back if you get a new iPhone.")

@@ -30,10 +30,11 @@ struct GrowthTab: View {
                                      onboardingDate: craft.createdAt, startYear: craft.startYear, now: now)
         let data = GrowthSeries.chartData(forecast: s.forecast, past: past, now: now)
 
-        VStack(spacing: 14) {
-            forecastCard(s: s, data: data, now: now)
-            whatIfCard(s: s, now: now)
-            yearRow(now: now)
+        VStack(alignment: .leading, spacing: 0) {
+            headline(s: s, data: data, now: now)
+            forecastCard(s: s, data: data, now: now).padding(.top, 14)
+            whatIf(s: s, now: now).padding(.top, 16)
+            yearRow(now: now).padding(.top, 20)
         }
         .fullScreenCover(isPresented: $scrubbing) {
             GrowthScrubView(craftName: craft.name, past: past, data: data, forecast: s.forecast, total: s.total,
@@ -61,53 +62,44 @@ struct GrowthTab: View {
             NavigationLink {
                 YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
             } label: {
-                YearEntryRow(year: year).padding(.horizontal, 18)
+                YearEntryRow(year: year, sunSize: 34)
             }
             .buttonStyle(.plain)
-            .lgCard()
+            .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
         }
     }
 
     // MARK: Forecast
 
-    private func forecastCard(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 2) {
-                if s.total >= Totals.goalHours {
-                    Text(ForecastText.crossed(on: data.past.first { $0.hours >= Totals.goalHours }?.date ?? now))
-                        .lgText(LGTextStyle(size: 20, weight: .bold, relativeTo: .title3, tracking: -0.4))
-                } else {
-                    Text("At your chosen pace, you'll finish around").lgText(.caption, color: LGColor.inkMuted)
-                    Text(ForecastText.headline(s.forecast.chosen, now: now))
-                        .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48))
-                    Text(ForecastText.actualLine(s.forecast, now: now))
-                        .lgText(.caption, color: LGColor.inkMuted)
-                }
-                if !s.hasEnoughData {
-                    Text("Forecast improves as you log more")
-                        .lgText(.caption, color: LGColor.inkMuted)
-                }
+    /// Above the chart, straight on the page: a quiet line, the finish date large, the actual pace under it.
+    private func headline(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if s.total >= Totals.goalHours {
+                Text(ForecastText.crossed(on: data.past.first { $0.hours >= Totals.goalHours }?.date ?? now))
+                    .lgText(LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.5))
+            } else {
+                Text("At your chosen pace, you'll finish around").lgText(.note, color: LGColor.inkMuted)
+                Text(ForecastText.headline(s.forecast.chosen, now: now))
+                    .lgText(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1))
+                    .lineLimit(1).minimumScaleFactor(0.6)
+                Text(ForecastText.actualLine(s.forecast, now: now))
+                    .lgText(.note, color: LGColor.inkMuted)
             }
-            .accessibilityElement(children: .combine)
-                Spacer(minLength: 8)
-                Button { scrubbing = true } label: {
-                    Image(systemName: "arrow.up.left.and.arrow.down.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(LGColor.ink)
-                        .frame(width: 36, height: 36)
-                        .background(LGColor.segmentTrack, in: Circle())
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("Open chart full screen")
-                .accessibilityInputLabels(["Open chart full screen", "Expand chart", "Full screen"])
-                .padding(.top, -6).padding(.trailing, -6)
+            if !s.hasEnoughData {
+                Text("Forecast improves as you log more")
+                    .lgText(.note, color: LGColor.inkMuted)
             }
-            .padding(.horizontal, 4)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
 
+    private func forecastCard(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
             GrowthChartView(data: data, total: s.total, now: now)
                 .frame(height: 210)
+                // Room above the finish line, so the round button never covers the sun at its end.
+                .padding(.top, 30)
                 .contentShape(Rectangle())
                 .onTapGesture { scrubbing = true }
                 .accessibilityElement(children: .ignore)
@@ -116,33 +108,47 @@ struct GrowthTab: View {
                 .scrubTransitionSource(id: "growth-chart", in: chartSpace)
 
             if s.total < Totals.goalHours {
-                Rectangle().fill(LGColor.hairline).frame(height: 1)
+                Rectangle().fill(LGColor.divider).frame(height: 1).padding(.horizontal, 6)
                 GrowthKey(forecast: s.forecast, now: now)
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 6).padding(.top, 4)
             }
         }
-        .padding(.horizontal, 14).padding(.vertical, 16)
-        .lgCard()
+        .padding(.horizontal, 10).padding(.top, 14).padding(.bottom, 12)
+        .lgCard(radius: 22)
+        // The round "open full screen" button sits on the card's top right corner.
+        .overlay(alignment: .topTrailing) {
+            Button { scrubbing = true } label: {
+                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(LGColor.ink)
+                    .frame(width: 36, height: 36)
+                    .background(LGColor.stepperButton, in: Circle())
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel("Open chart full screen")
+            .accessibilityInputLabels(["Open chart full screen", "Expand chart", "Full screen"])
+            .padding(6)
+        }
     }
 
     // MARK: What if
 
-    private func whatIfCard(s: ProgressSummary, now: Date) -> some View {
+    /// Straight on the page, no card: the question, the extra hours, a gold slider and what it would change.
+    private func whatIf(s: ProgressSummary, now: Date) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("What if I practise more?").lgText(.rowStrong)
                 Spacer()
-                Text(Labels.extraPerWeek(Int(extra))).lgText(.rowStrong)
+                Text("+\(Int(extra)) h").lgText(.rowStrong).monospacedDigit()
             }
             Slider(value: $extra, in: 0...10, step: 1)
-                .tint(LGColor.ink)
+                .tint(LGColor.amber)
                 .accessibilityLabel("Extra hours per week")
                 .accessibilityValue("\(Int(extra))")
             Text(ForecastText.whatIf(extra: extra, total: s.total, chosenPace: s.chosenPace, now: now))
                 .lgText(.caption, color: LGColor.inkMuted)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, 18).padding(.vertical, 14)
-        .lgCard()
     }
 }

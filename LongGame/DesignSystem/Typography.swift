@@ -8,6 +8,8 @@ struct LGTextStyle: Sendable {
     var tracking: CGFloat = 0
 
     static let screenTitle = LGTextStyle(size: 32, weight: .bold, relativeTo: .largeTitle, tracking: -0.64)
+    /// Setup steps, intro pages and sheets with a scene: 30 pt.
+    static let setupTitle = LGTextStyle(size: 30, weight: .bold, relativeTo: .title, tracking: -0.6)
     static let welcomeTitle = LGTextStyle(size: 44, weight: .bold, relativeTo: .largeTitle, tracking: -1.3)
     static let sheetTitle = LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48)
     static let navTitle = LGTextStyle(size: 17, weight: .semibold, relativeTo: .headline)
@@ -28,6 +30,9 @@ struct LGTextStyle: Sendable {
     static let timerNumber = LGTextStyle(size: 80, weight: .light, relativeTo: .largeTitle, tracking: -3.2)
     static let timerNumberWide = LGTextStyle(size: 88, weight: .light, relativeTo: .largeTitle, tracking: -3.5)
     static let timerTotal = LGTextStyle(size: 56, weight: .semibold, relativeTo: .largeTitle, tracking: -1.7)
+    /// The stats rows between two hairlines (Home's long game, History's calendar): a 12 pt label over a 17 pt figure.
+    static let statLabel = LGTextStyle(size: 12, weight: .regular, relativeTo: .caption)
+    static let statFigure = LGTextStyle(size: 17, weight: .bold, relativeTo: .body)
     static let statValue = LGTextStyle(size: 19, weight: .semibold, relativeTo: .title3)
     static let body = LGTextStyle(size: 16, weight: .regular, relativeTo: .body)
     static let bodyLarge = LGTextStyle(size: 17, weight: .regular, relativeTo: .body)
