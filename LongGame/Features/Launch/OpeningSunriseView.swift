@@ -110,7 +110,8 @@ struct OpeningSunriseView: View {
             let landTop = waterY - 46 * k
             let landHeight = 120 * k
             let sunSize: CGFloat = 150
-            let nightCentre = CGPoint(x: w / 2, y: waterY + 6)
+            // Launch.dc.html: the sun's centre sits exactly on the shoreline, so only its top half shows.
+            let nightCentre = CGPoint(x: w / 2, y: waterY)
             let morningCentre = CGPoint(x: w / 2, y: waterY - h * (120.0 / 844))
             // The sun rises with the sky: night spot → dawn spot.
             let rise = CGFloat(f.sky)
@@ -132,8 +133,17 @@ struct OpeningSunriseView: View {
                 .frame(width: w, height: waterY)
                 .frame(width: w, height: h, alignment: .top)
 
-                SunView(idle: false, face: f.awake ? .happy : .asleep, raysOpacity: f.rays, raysScale: f.rays,
-                        unlitOpacity: 0, eyesOpen: f.eyesOpen ? 1 : 0)
+                // The sun's soft gold halo (Sun.dc.html: radius 130 of 200, 32% at the centre, gone by 62%).
+                let haloRadius = 130 * size / 200
+                RadialGradient(stops: [.init(color: LGColor.sunBody.opacity(0.32), location: 0),
+                                       .init(color: LGColor.sunBody.opacity(0), location: 0.62)],
+                               center: .center, startRadius: 0, endRadius: haloRadius)
+                    .frame(width: 2 * haloRadius, height: 2 * haloRadius)
+                    .position(centre)
+                    .opacity(f.sun * f.scenery)
+                // Asleep, every ray is drawn faintly (22%, as on the board); they light up as the sun rises.
+                SunView(idle: false, face: f.awake ? .happy : .asleep, litRays: 0,
+                        unlitOpacity: 0.22 + 0.78 * f.rays, eyesOpen: f.eyesOpen ? 1 : 0)
                     .frame(width: size, height: size)
                     .position(centre)
                     .opacity(f.sun)

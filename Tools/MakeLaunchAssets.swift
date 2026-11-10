@@ -1,4 +1,4 @@
-// Draws the three vector PDFs the launch screen uses: the night sky (with stars and moon), the sleeping sun and the night land and sea.
+// Draws the three pictures the launch screen uses: the night sky (with stars and moon) and the sleeping sun as 2x/3x bitmaps, and the night land and sea as a vector PDF.
 // Run from the project folder:  swift Tools/MakeLaunchAssets.swift
 // Shapes and colours come from design/redesign/Sky.dc.html, Land.dc.html and Launch.dc.html (same numbers as SkyView and LandView). Y runs downward here, like the design.
 import CoreGraphics
@@ -103,22 +103,58 @@ try? """
 }
 """.write(toFile: "\(skyDir)/Contents.json", atomically: true, encoding: .utf8)
 
-// The sleeping sun: 200 x 200 box, body radius 56, closed eyes and mouth, cheeks, no rays.
-makePDF("\(dir("LaunchSun"))/LaunchSun.pdf", width: 200, height: 200) { c in
+// The sleeping sun, as Launch.dc.html draws it (Sun.dc.html, face "sleepy", lit 0): 200 x 200 box, a soft gold halo,
+// all 12 rays faint (22%), body radius 56, cheeks, low closed eyes, a small mouth and a blue-grey "z".
+// A bitmap at 2x and 3x, like the sky, because the halo is a translucent gradient.
+func drawSun(_ c: CGContext) {
+    let halo = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
+                          colors: [rgb(0xFFC93C, 0.32), rgb(0xFFC93C, 0)] as CFArray, locations: [0, 1])!
+    c.drawRadialGradient(halo, startCenter: CGPoint(x: 100, y: 100), startRadius: 0,
+                         endCenter: CGPoint(x: 100, y: 100), endRadius: 130 * 0.62, options: [])
+    c.setLineCap(.round)
+    c.setStrokeColor(rgb(0xFFB627, 0.22))
+    c.setLineWidth(9)
+    for i in 0..<12 {
+        let a = CGFloat(i * 30 - 90) * .pi / 180
+        let r2: CGFloat = i % 2 == 0 ? 92 : 82
+        c.move(to: CGPoint(x: 100 + 66 * cos(a), y: 100 + 66 * sin(a)))
+        c.addLine(to: CGPoint(x: 100 + r2 * cos(a), y: 100 + r2 * sin(a)))
+        c.strokePath()
+    }
     c.setFillColor(rgb(0xFFC93C))
     c.fillEllipse(in: CGRect(x: 44, y: 44, width: 112, height: 112))
     c.setFillColor(rgb(0xF7A1B5))
     c.fillEllipse(in: CGRect(x: 65, y: 106, width: 14, height: 14))
     c.fillEllipse(in: CGRect(x: 121, y: 106, width: 14, height: 14))
     c.setStrokeColor(rgb(0x16244A))
-    c.setLineWidth(5)
-    c.setLineCap(.round)
-    for (a, ctl, b) in [((76, 100), (84, 107), (92, 100)), ((108, 100), (116, 107), (124, 100)), ((90, 116), (100, 122), (110, 116))] as [((CGFloat, CGFloat), (CGFloat, CGFloat), (CGFloat, CGFloat))] {
-        c.move(to: CGPoint(x: a.0, y: a.1))
-        c.addQuadCurve(to: CGPoint(x: b.0, y: b.1), control: CGPoint(x: ctl.0, y: ctl.1))
+    c.setLineWidth(4.5)
+    // M77 101q7 4 14 0, M109 101q7 4 14 0, M95 118q5 2 10 0
+    for (x, y, dx, dy, w) in [(77, 101, 7, 4, 14), (109, 101, 7, 4, 14), (95, 118, 5, 2, 10)] as [(CGFloat, CGFloat, CGFloat, CGFloat, CGFloat)] {
+        c.move(to: CGPoint(x: x, y: y))
+        c.addQuadCurve(to: CGPoint(x: x + w, y: y), control: CGPoint(x: x + dx, y: y + dy))
         c.strokePath()
     }
+    // The "z" (22 pt semibold at baseline 150, 54), drawn as its three strokes.
+    c.setStrokeColor(rgb(0x8FA2E0))
+    c.setLineWidth(2.6)
+    c.setLineJoin(.round)
+    c.move(to: CGPoint(x: 151, y: 42.5)); c.addLine(to: CGPoint(x: 160.5, y: 42.5))
+    c.addLine(to: CGPoint(x: 151, y: 53)); c.addLine(to: CGPoint(x: 161, y: 53))
+    c.strokePath()
 }
+let sunDir = dir("LaunchSun")
+try? FileManager.default.removeItem(atPath: "\(sunDir)/LaunchSun.pdf")
+makePNG("\(sunDir)/LaunchSun@2x.png", width: 200, height: 200, scale: 2, draw: drawSun)
+makePNG("\(sunDir)/LaunchSun@3x.png", width: 200, height: 200, scale: 3, draw: drawSun)
+try? """
+{
+  "images" : [
+    { "filename" : "LaunchSun@2x.png", "idiom" : "universal", "scale" : "2x" },
+    { "filename" : "LaunchSun@3x.png", "idiom" : "universal", "scale" : "3x" }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}
+""".write(toFile: "\(sunDir)/Contents.json", atomically: true, encoding: .utf8)
 
 // The night land and sea: Land.dc.html's 390 x 120 box (the shoreline is at y = 46 on the left edge).
 func curve(_ c: CGContext, y: CGFloat, c1: CGFloat, c2: CGFloat, mid: CGFloat, c3: CGFloat, end: CGFloat, from: CGFloat = -20, to: CGFloat = 410) {

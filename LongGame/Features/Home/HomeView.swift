@@ -63,10 +63,9 @@ struct HomeView: View {
     @State private var historyDay: Date?
     /// The gear in the bar at the top.
     @State private var showSettings = false
-    /// The phone's bar is transparent: once the page has scrolled past the hero the craft name fades (1...0), so
-    /// it never sits on top of the content. `barBottom` is where the bar ends on screen.
-    @State private var titleOpacity = 1.0
-    @State private var barBottom: CGFloat = 0
+    /// The phone's bar is transparent: once the page has scrolled past the hero the craft name fades, so it never
+    /// sits on top of the content. Only the title reads it, so scrolling never makes all of Home work itself out again.
+    @State private var barFade = BarFade()
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     /// The sidebar layout's view (the Play views follow `tab`; History and Settings are kept here).
     @SceneStorage("sidebar.section") private var section: SidebarSection = .today
@@ -382,16 +381,12 @@ struct HomeView: View {
         // The sky behind the bar is dark on The long game and on the empty day.
         let darkSky = f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
         let heroTop: CGFloat = short ? 2 : 8
-        let bar = barBottom
+        let fade = barFade
         return ScrollView {
             VStack(spacing: 0) {
                 hero(f, metrics: short ? .short : .standard, extendsSky: true)
-                    // How far the hero's bottom has gone up past its resting top: the title fades over the next 24 pt.
-                    .onGeometryChange(for: Double.self) { proxy in
-                        let past: CGFloat = bar + heroTop - proxy.frame(in: .global).maxY
-                        let faded = Double(min(max(past / 24, 0), 1))
-                        return 1 - (faded * 20).rounded() / 20
-                    } action: { titleOpacity = $0 }
+                    // Where the hero ends on screen: the title fades once it has gone up past the bar.
+                    .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { fade.heroBottom = $0 }
                     .overlay(alignment: .topTrailing) { toastView }
                     .padding(.top, heroTop)
                     .id(ScrollSpot.top)
@@ -426,7 +421,7 @@ struct HomeView: View {
         .background(LGColor.background.ignoresSafeArea())
         .lgTopBar(transparent: true) {
             VStack(spacing: 0) {
-                header(dark: darkSky, paired: true, titleOpacity: reduceTransparency ? 1 : titleOpacity)
+                header(dark: darkSky, paired: true, fade: reduceTransparency ? nil : fade)
                     .padding(.top, short ? 0 : 8)
                 // The tabs stay pinned under the craft name; only the page below them scrolls.
                 LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
@@ -436,7 +431,7 @@ struct HomeView: View {
             .lgReadableColumn(560)
             .environment(\.lgOnDark, darkSky)
             .environment(\.lgOverSky, true)
-            .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { barBottom = $0 }
+            .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { fade.barBottom = $0 }
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -725,12 +720,13 @@ struct HomeView: View {
     // MARK: Pieces
 
     /// `paired` (the phone's transparent bar): from iOS 26 the two glass circles share one glass container.
-    private func header(dark: Bool = false, paired: Bool = false, titleOpacity: Double = 1) -> some View {
+    private func header(dark: Bool = false, paired: Bool = false, fade: BarFade? = nil) -> some View {
         HStack {
-            Text(craft.name).lgText(.screenTitle, color: dark ? .white : LGColor.ink)
-                .lineLimit(1).minimumScaleFactor(0.6)
-                .accessibilityAddTraits(.isHeader)
-                .opacity(titleOpacity)
+            BarTitle(fade: fade) {
+                Text(craft.name).lgText(.screenTitle, color: dark ? .white : LGColor.ink)
+                    .lineLimit(1).minimumScaleFactor(0.6)
+                    .accessibilityAddTraits(.isHeader)
+            }
             Spacer()
             headerButtons(paired: paired)
                 .padding(.trailing, -10)
@@ -1150,5 +1146,31 @@ private struct TodayLive: ViewModifier {
                     tick = Date()
                 }
             }
+    }
+}
+
+/// Where the phone's top bar and the hero end on screen, for fading the craft name. Kept outside `HomeView`'s state:
+/// only `BarTitle` reads it, so the measurements never make all of Home work itself out again (which looped at launch).
+@MainActor @Observable
+final class BarFade {
+    var barBottom: CGFloat = 0
+    /// Where the hero's bottom is on screen (far below the bar at rest).
+    var heroBottom: CGFloat = .infinity
+
+    /// 1 at rest; once the hero has gone up past the bar it fades to 0 over 24 pt, in 5% steps.
+    var titleOpacity: Double {
+        guard barBottom > 0, heroBottom.isFinite else { return 1 }
+        let faded = Double(min(max((barBottom - heroBottom) / 24, 0), 1))
+        return 1 - (faded * 20).rounded() / 20
+    }
+}
+
+/// The craft name, faded by `BarFade` (nil: never fades, e.g. with Reduce Transparency).
+private struct BarTitle<Content: View>: View {
+    var fade: BarFade?
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        content.opacity(fade?.titleOpacity ?? 1)
     }
 }

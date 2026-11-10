@@ -2,7 +2,8 @@ import SwiftUI
 
 enum SunFace: Equatable, Sendable {
     case happy, focus, wink, sleepy, celebrate
-    /// Only on the opening sunrise's night frame: closed, smiling eyes and a calm mouth, exactly as the launch screen draws them.
+    /// Only on the opening sunrise's night frame: the Launch board's sleeping sun (low closed eyes, a small mouth and a
+    /// blue-grey "z"), exactly as the launch screen draws it.
     case asleep
     /// Only during a giggle (spec section 18): the gasp (wide eyes, round "o"), then the baby laugh (^ ^ eyes, big open mouth).
     case surprised, laughing
@@ -133,10 +134,17 @@ struct SunView: View {
             // relaxed, closed eyes
             EyeArc(x: 76, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus || shown == .wink ? 1 : 0)
             EyeArc(x: 108, y: 98, bend: 7).stroke(ink, style: line).opacity(shown == .focus ? 1 : 0)
-            // asleep (the launch screen's sun): same lines as the still image
-            EyeArc(x: 76, y: 100, bend: 7).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
-            EyeArc(x: 108, y: 100, bend: 7).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
-            EyeArc(x: 90, y: 116, bend: 6, width: 20).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            // asleep (the launch screen's sun, Sun.dc.html "sleepy"): same lines as the still image
+            EyeArc(x: 77, y: 101, bend: 4, width: 14).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            EyeArc(x: 109, y: 101, bend: 4, width: 14).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            EyeArc(x: 95, y: 118, bend: 2, width: 10).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
+            // Its "z": 22 pt semibold, #8FA2E0, the baseline's left end at (150, 54).
+            Text(verbatim: "z")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(LGColor.sleepZ)
+                .fixedSize()
+                .position(x: 156, y: 47)
+                .opacity(shown == .asleep ? 1 : 0)
             // winking: right eye open
             OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
             // celebrating: both eyes open

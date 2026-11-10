@@ -601,3 +601,19 @@ Worth a look by Natalia:
 Not seen: the iOS 17–25 look (only the iOS 27.2 runtime is installed here), Reduce Transparency, the smallest text size, iPad, Duo open and Mac (their code paths are untouched).
 
 Tests: all 609 pass on the iPhone 17 Simulator.
+
+## Launch screen on the Launch board (10 November 2026)
+
+Natalia's phone showed a bare yellow half-disc. The board's sleeping sun has more, and the launch screen and the app's first frame now both draw it:
+
+- all 12 rays, faint (22%), lighting up as the sun rises;
+- the soft gold halo behind the sun;
+- the blue-grey "z" at its top right;
+- the board's sleepy face (under the water, as on the board);
+- the sun's centre exactly on the shoreline (it was 6 pt lower).
+
+The still sun is now a 2x/3x bitmap like the sky, from `Tools/MakeLaunchAssets.swift`. Checked on the iPhone 18 Pro Simulator: the launch picture and the app's first frame match, and the sunrise goes on to Home.
+
+Also fixed: Update 34's title fade kept its measurements in Home's own state, so every measurement made all of Home work itself out again. They now live in a small `BarFade` object that only the title reads.
+
+Not fixed here: on the iPhone 17 Simulator the app sometimes stays on the night frame at full CPU. Another session is fixing that in `AppRoot` (Home's sun position making Home rebuild). Tests: all pass except the 4 StoreKit ones in `TipPurchaseTests`, as before.

@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--The still night frame: navy sky, faint stars, the sleeping sun half under an opaque night sea. No text. See docs/SPEC.md section 21. -->
+        <!--The still night frame (design/redesign/Launch.dc.html): night sky, stars and moon, the sleeping sun (faint rays, halo, z) with its centre on the shoreline, half under an opaque night sea. No text. See docs/SPEC.md section 21. -->
         <scene sceneID="LGScene">
             <objects>
                 <viewController id="LGLaunch" sceneMemberID="viewController">
@@ -50,7 +50,7 @@
                             <constraint firstItem="LGSky" firstAttribute="trailing" secondItem="LGRoot" secondAttribute="trailing" id="c7"/>
                             <constraint firstItem="LGSky" firstAttribute="bottom" secondItem="LGWaterline" secondAttribute="bottom" id="c8"/>
                             <constraint firstItem="LGSun" firstAttribute="centerX" secondItem="LGRoot" secondAttribute="centerX" id="c9"/>
-                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" constant="6" id="c10"/>
+                            <constraint firstItem="LGSun" firstAttribute="centerY" secondItem="LGWaterline" secondAttribute="bottom" id="c10"/>
                             <constraint firstAttribute="width" constant="150" id="c11" firstItem="LGSun"/>
                             <constraint firstAttribute="height" constant="150" id="c12" firstItem="LGSun"/>
                             <constraint firstItem="LGLand" firstAttribute="leading" secondItem="LGRoot" secondAttribute="leading" id="c13"/>

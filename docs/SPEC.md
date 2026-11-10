@@ -439,16 +439,17 @@ Every game begins at dawn. The app opens on a still night sea with the sun aslee
 **1 · The launch screen (still, shown by iOS)**
 - iOS shows this the instant the icon is tapped, before the app has loaded, so it can't move.
 - Contents:
-  - navy sky #16244A with nine faint white stars (1.5–2 pt, 25–50% opacity) in the top half;
-  - the night sea: fill #22306A, a pale wave #2E3C7A and a wave line #3E4C8A. The waterline sits at 56% of the screen height;
-  - the sleeping sun (closed eyes, cheeks, no rays). Its body is about 96 pt wide, centred horizontally, with its lower part under the water.
+  - the night sky of `design/redesign/Sky.dc.html` (navy, a peach glow at the horizon, stars and the crescent moon);
+  - the night land and sea of `Land.dc.html`, with the shoreline at 60% of the screen height;
+  - the sleeping sun of `Launch.dc.html` (Sun.dc.html, face "sleepy", no lit rays): 150 pt, centred, with its centre exactly on the shoreline so only its top half shows. All 12 rays are drawn faintly (22%), with the sun's soft gold halo behind it and a small blue-grey "z" (#8FA2E0) at its top right.
 - No text, logo or wordmark. Launch screens aren't localised, and Apple asks that they don't look like an ad.
-- Built as `LaunchScreen.storyboard`, because a storyboard can pin the sea to the bottom and the sun to the waterline on every screen size. The sun, sea and stars are vector PDF assets with "Preserve Vector Data" on. The colours come from the asset catalogue.
+- Built as `LaunchScreen.storyboard`, because a storyboard can pin the sea to the bottom and the sun to the waterline on every screen size. The land and sea are a vector PDF; the sky and the sun are 2x/3x bitmaps (both have translucent gradients, which a PDF bands). `Tools/MakeLaunchAssets.swift` draws all three. The colours come from the asset catalogue.
 - The water rule applies as everywhere: the sea is opaque and drawn in front of the sun, with nothing gold on or in the water.
 
 **2 · The sunrise (in the app, 0–0.6 s)**
 - The app's first frame draws exactly the same night scene in SwiftUI, so the hand-over from the still image is invisible.
 - Then, together:
+  - the sun's faint rays light up to full strength;
   - the sky warms from navy through dusk (#2A2F6B → #6E3D74 → #F2A07A) to morning (#FFE3B0 → #FFF1DA → #FAF8F4);
   - the stars fade out;
   - the sun rises, and its rays unfold (scale 0 → 1) with a soft gold glow behind it;

@@ -22,6 +22,8 @@ enum LGColor {
     static let chipFill = Color(hex: 0xF3EFE8)
     /// The small clock tile for a session without a photo.
     static let clockTile = Color(hex: 0xF1EDE6)
+    /// The sleeping sun's "z" on the launch screen.
+    static let sleepZ = Color(hex: 0x8FA2E0)
     static let segmentTrack = Color(hex: 0xEFE2CF)
 
     // We Have Sun redesign (update prompt 32, part 1)
@@ -103,6 +105,8 @@ enum LGColor {
     static let arcDots = Color(hex: 0xD9D2C4)
     static let moon = Color(hex: 0xC9D3EC)
     static let moonOnDark = Color(hex: 0xE6ECF8)
+    /// The soft circle behind Today's moon (#DCE3F5 at 60 % on the board).
+    static let moonHalo = Color(hex: 0xDCE3F5).opacity(0.6)
     static let introDot = Color(hex: 0xD9D2C4)
     /// The iCloud symbol on the Keep your game safe card and the Welcome back illustration.
     static let icloud = Color(hex: 0x2F7BF6)
