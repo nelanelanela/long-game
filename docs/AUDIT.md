@@ -567,6 +567,14 @@ Left as they are, on purpose:
 - **Straight apostrophes** in older copy ("today's") were not all changed to curly ones.
 - **The moon on Welcome** sits under the status bar's icons on phones with a Dynamic Island, as it does on the board.
 
-Not opened by hand this time: Welcome back (iCloud), the catch-up sheets, the tip jar and Thank you, One craft, the photo viewer, Your photos, the Evening and Photos year cards, iPad, Mac, Watch, widgets and the Live Activity. They build; the first five were rebuilt from the boards' numbers.
+Second pass, opened by hand in the simulator (10 November 2026): Welcome, the three intro pages, steps 1–5, Meet your future self, the three catch-up sheets, One craft, the full-screen Growth chart and the Sunrise, Evening and Photos year cards. All match their boards. Fixed on the way:
+
+- **Full-screen Growth chart did not open.** The tap was registered but the chart never appeared; the Growth tab now reads its open flag, which brings it back.
+- **Catch up, average step:** the quick-pick chips are centred.
+- **Year cards:** the total reads "3,333 h" with a comma on every device (some regions wrote "3 333"); "Show hours" sits straight on the page.
+
+Noted, not changed: on **Weekly pace** the small sun sits behind the left dune (the board places it there too, where its solid dune would hide it completely).
+
+Still not opened by hand: Welcome back (iCloud; needs an iCloud copy), Thank you (needs a tip through Xcode's StoreKit test), the photo viewer, Your photos, iPad, Mac, Watch, widgets and the Live Activity.
 
 Tests: all pass except the 4 StoreKit ones in `TipPurchaseTests`, as before.

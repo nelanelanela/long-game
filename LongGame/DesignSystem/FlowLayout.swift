@@ -3,6 +3,8 @@ import SwiftUI
 /// Wraps its children onto new lines, like the craft tags.
 struct FlowLayout: Layout {
     var spacing: CGFloat = 8
+    /// Centres each line (the quick-pick chips); the craft tags stay leading.
+    var centred = false
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let rows = arrange(width: proposal.width ?? .infinity, subviews: subviews)
@@ -12,7 +14,10 @@ struct FlowLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let rows = arrange(width: bounds.width, subviews: subviews)
         for item in rows.items {
-            subviews[item.index].place(at: CGPoint(x: bounds.minX + item.origin.x, y: bounds.minY + item.origin.y),
+            // Every item on a line shares its y, so the line's right edge is the furthest item there.
+            let lineWidth = rows.items.filter { $0.origin.y == item.origin.y }.map { $0.origin.x + $0.size.width }.max() ?? 0
+            let shift = centred ? max(0, (bounds.width - lineWidth) / 2) : 0
+            subviews[item.index].place(at: CGPoint(x: bounds.minX + item.origin.x + shift, y: bounds.minY + item.origin.y),
                                        proposal: ProposedViewSize(item.size))
         }
     }

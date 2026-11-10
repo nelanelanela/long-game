@@ -151,8 +151,10 @@ struct YearSummary: Equatable, Sendable {
 
 /// The words on the cards, so they can be tested and read aloud.
 enum YearCardText {
+    /// "3,294": commas on every device, like the rest of the app and the "of 10,000" beside it (some regions
+    /// would write "3 294").
     private static func number(_ n: Int, locale: Locale = .current) -> String {
-        n.formatted(.number.grouping(.automatic).locale(locale))
+        DurationFormat.grouped(n)
     }
 
     /// "+624 h", or "241 days" with hours hidden.

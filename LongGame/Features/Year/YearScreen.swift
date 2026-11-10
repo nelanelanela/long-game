@@ -158,8 +158,8 @@ struct YearScreen: View {
             }
         }
         .tint(LGColor.ink)
-        .padding(.horizontal, 16).padding(.vertical, 6)
-        .lgCard()
+        // Straight on the page, as on the board: no card around it.
+        .frame(minHeight: 44)
     }
 
     @ViewBuilder private var shareButton: some View {

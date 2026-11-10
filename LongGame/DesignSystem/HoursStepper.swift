@@ -282,7 +282,7 @@ struct HoursBigStepper: View {
     }
 
     private var chips: some View {
-        FlowLayout(spacing: 8) {
+        FlowLayout(spacing: 8, centred: true) {
             ForEach(quickPicks) { pick in
                 let selected = HoursStepping.clamped(value, spec) == HoursStepping.clamped(pick.value, spec)
                 Button { value = HoursStepping.clamped(pick.value, spec) } label: {

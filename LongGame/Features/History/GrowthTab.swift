@@ -36,6 +36,9 @@ struct GrowthTab: View {
             whatIf(s: s, now: now).padding(.top, 16)
             yearRow(now: now).padding(.top, 20)
         }
+        // Reading the flag here ties this screen to it. Without that the tap set it but the full-screen chart
+        // never appeared (seen in the iOS 27 simulator, November 2026).
+        .onChange(of: scrubbing) { _, _ in }
         .fullScreenCover(isPresented: $scrubbing) {
             GrowthScrubView(craftName: craft.name, past: past, data: data, forecast: s.forecast, total: s.total,
                             onboardingDate: craft.createdAt, now: now, hintSeen: settingsRows.first?.scrubHintSeen ?? false,
