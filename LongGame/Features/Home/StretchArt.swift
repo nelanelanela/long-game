@@ -72,30 +72,46 @@ struct MoonShape: Shape {
     }
 }
 
-/// The arc, the gold line travelled so far and the moon, drawn behind the sea and the sun.
+/// The arc and the gold line travelled so far, drawn behind the sea and the sun.
 struct StretchArcLayer: View {
     var geometry: ArcGeometry
     /// How far along the sun is: the gold line stops here.
     var fraction: Double
-    var moon: Color = LGColor.moon
 
     var body: some View {
         let g = geometry
-        let end = g.point(1)
-        // The board's moon: a 40 pt box whose left is 19 pt before the arc's end and whose top is 33 pt above it
-        // (for a 110 pt sun; everything scales with the sun).
-        let k = g.sunSize / 110
-        let moonSize = 40 * k
         ZStack(alignment: .topLeading) {
             ArcShape(geometry: g)
                 .stroke(LGColor.arcDots, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [2, 8]))
             ArcShape(geometry: g, upTo: fraction)
                 .stroke(LGColor.sunRays, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+/// The moon at the arc's end, as on the HomeToday board: a 40 pt box whose left is 19 pt before the arc's end and
+/// whose top is 33 pt above it (for a 110 pt sun; everything scales with the sun), holding a soft circle (r 18)
+/// with the crescent on it. It is drawn over the land, so the dunes never cover it.
+struct StretchMoon: View {
+    var geometry: ArcGeometry
+    var moon: Color = LGColor.moon
+
+    var body: some View {
+        let end = geometry.point(1)
+        let k = geometry.sunSize / 110
+        let box = 40 * k
+        ZStack(alignment: .topLeading) {
+            Circle()
+                .fill(LGColor.moonHalo)
+                .frame(width: 36 * k, height: 36 * k)
+                .offset(x: 2 * k, y: 2 * k)
             MoonShape()
                 .fill(moon)
-                .frame(width: moonSize, height: moonSize)
-                .offset(x: end.x - 19 * k, y: end.y - 33 * k)
+                .frame(width: box, height: box)
         }
+        .frame(width: box, height: box, alignment: .topLeading)
+        .offset(x: end.x - 19 * k, y: end.y - 33 * k)
         .accessibilityHidden(true)
     }
 }
@@ -104,7 +120,10 @@ struct StretchArcLayer: View {
     VStack(spacing: 8) {
         ForEach([0.0, 0.62, 1.0], id: \.self) { f in
             let g = ArcGeometry(width: 390, metrics: .standard)
-            StretchArcLayer(geometry: g, fraction: f)
+            ZStack(alignment: .topLeading) {
+                StretchArcLayer(geometry: g, fraction: f)
+                StretchMoon(geometry: g)
+            }
                 .frame(width: 390, height: 280)
                 .background(LGColor.background)
         }

@@ -85,7 +85,7 @@ struct GaugeHero: View, Animatable {
                         .frame(width: width, height: metrics.height)
                         .opacity(Double(mix))
                 }
-                // Today's arc and moon sit behind the sea and the sun, and fade with the tab.
+                // Today's arc sits behind the sea and the sun, and fades with the tab.
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
@@ -94,6 +94,9 @@ struct GaugeHero: View, Animatable {
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning,
                             behindLand: AnyView(scale(fraction: place.fraction)))
+                // Its moon sits on top of the land, as on the board, and fades with the tab too.
+                StretchMoon(geometry: arc)
+                    .opacity(Double(mix))
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
                 // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
                 // whole hero as the sun's place.

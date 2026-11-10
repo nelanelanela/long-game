@@ -62,9 +62,7 @@ struct AppRoot: View {
             // The first frame: exactly the launch screen's night.
             OpeningSunriseView(plan: OpeningPlan(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0)
         } else if let run = opening.running {
-            OpeningSunriseView(plan: run.plan, start: run.start,
-                               target: run.plan.landing == .home ? opening.sunTarget : nil,
-                               onTap: { opening.finish() })
+            RunningOpening(opening: opening, plan: run.plan, start: run.start)
                 .task(id: run.start) {
                     try? await Task.sleep(for: .seconds(run.plan.style.duration + OpeningCenter.lead))
                     if !Task.isCancelled { opening.finish() }
@@ -118,5 +116,20 @@ struct AppRoot: View {
         try? context.save()
         playIntro = true
         phase = .done
+    }
+}
+
+/// The opening while it plays. It reads Home's sun position (`sunTarget`) itself, so only this overlay redraws when
+/// Home reports it. If `AppRoot` read it, every report would rebuild Home, which measures and reports again: on some
+/// launches that never settled and the app froze on the night frame.
+private struct RunningOpening: View {
+    let opening: OpeningCenter
+    let plan: OpeningPlan
+    let start: Date
+
+    var body: some View {
+        OpeningSunriseView(plan: plan, start: start,
+                           target: plan.landing == .home ? opening.sunTarget : nil,
+                           onTap: { opening.finish() })
     }
 }

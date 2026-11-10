@@ -1,82 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "The longest game on the App Store.\nPlayed in real life." : {
-
-    },
-    "What’s your game?" : {
-
-    },
-    "Each day, a stretch from the sea to the moon." : {
-
-    },
-    "Who you’re playing for" : {
-
-    },
-    "this session" : {
-
-    },
-    "Fewer hours" : {
-
-    },
-    "More hours" : {
-
-    },
-    "Fewer minutes" : {
-
-    },
-    "More minutes" : {
-
-    },
-    "Today · %@ h" : {
-
-    },
-    "%@ · 10,000 h" : {
-
-    },
-    "+%lld h" : {
-
-    },
-    "One craft at a time" : {
-
-    },
-    "Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with %@." : {
-
-    },
-    "Catch up" : {
-
-    },
-    "How much did you play each week?" : {
-
-    },
-    "A rough guess is fine. The hours are spread across the days." : {
-
-    },
-    "Free, with no ads. Tips keep it that way." : {
-
-    },
-    "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip. Tips don’t unlock anything: every feature is free for everyone." : {
-
-    },
-    "The sun over the sea" : {
-
-    },
-    "Added hours" : {
-
-    },
-    "Rest day" : {
-
-    },
     "" : {
 
     },
     " " : {
-
-    },
-    " · %@ h" : {
-
-    },
-    " · 10,000 h" : {
 
     },
     "–" : {
@@ -86,6 +14,19 @@
 
     },
     "%@" : {
+
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ · 10,000 h" : {
 
     },
     "%@ · milestone" : {
@@ -561,6 +502,9 @@
     "+%lld" : {
 
     },
+    "+%lld h" : {
+
+    },
     "+%lld h/wk" : {
 
     },
@@ -613,6 +557,9 @@
 
     },
     "A rough guess is fine." : {
+
+    },
+    "A rough guess is fine. The hours are spread across the days." : {
 
     },
     "A small thank-you" : {
@@ -695,6 +642,12 @@
     "Add past hours" : {
 
     },
+    "Added after a break" : {
+
+    },
+    "Added hours" : {
+
+    },
     "Adding" : {
 
     },
@@ -765,6 +718,9 @@
 
     },
     "Cancel" : {
+
+    },
+    "Catch up" : {
 
     },
     "Change photo" : {
@@ -893,6 +849,9 @@
     "Drawn from this session. Replace it with a photo, or remove it." : {
 
     },
+    "Each day, a stretch from the sea to the moon." : {
+
+    },
     "Edit note" : {
 
     },
@@ -917,6 +876,12 @@
     "Extra hours per week" : {
 
     },
+    "Fewer hours" : {
+
+    },
+    "Fewer minutes" : {
+
+    },
     "Finish" : {
 
     },
@@ -939,6 +904,9 @@
 
     },
     "Forecast improves as you log more" : {
+
+    },
+    "Free, with no ads. Tips keep it that way." : {
 
     },
     "Full screen" : {
@@ -1016,9 +984,6 @@
     "Hours a week, each year" : {
 
     },
-    "hours per week" : {
-
-    },
     "Hours per week for each year. Only focused practice." : {
 
     },
@@ -1029,6 +994,9 @@
 
     },
     "How Long Game helps." : {
+
+    },
+    "How much did you play each week?" : {
 
     },
     "iCloud" : {
@@ -1091,6 +1059,12 @@
     "Long Game · the longest game, played in real life" : {
 
     },
+    "Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with %@." : {
+
+    },
+    "Long Game is free, with no ads and no subscription, and it will stay that way. If it helps you play, you can leave a tip. Tips don’t unlock anything: every feature is free for everyone." : {
+
+    },
     "Long Game, %@ played today" : {
 
     },
@@ -1140,6 +1114,12 @@
 
     },
     "More" : {
+
+    },
+    "More hours" : {
+
+    },
+    "More minutes" : {
 
     },
     "Morning" : {
@@ -1255,6 +1235,9 @@
 
     },
     "On top of your chosen pace of %@ h a week." : {
+
+    },
+    "One craft at a time" : {
 
     },
     "One game, 10,000 hours" : {
@@ -1404,6 +1387,9 @@
 
     },
     "rest day" : {
+
+    },
+    "Rest day" : {
 
     },
     "Rest is part of the craft." : {
@@ -1610,6 +1596,9 @@
         }
       }
     },
+    "The longest game on the App Store.\nPlayed in real life." : {
+
+    },
     "the moon" : {
 
     },
@@ -1653,6 +1642,9 @@
     "The sun just rising out of the sea, above a badge showing your starting score" : {
 
     },
+    "The sun over the sea" : {
+
+    },
     "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
 
     },
@@ -1666,6 +1658,9 @@
 
     },
     "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
+
+    },
+    "this session" : {
 
     },
     "This session" : {
@@ -1716,6 +1711,9 @@
 
     },
     "Today" : {
+
+    },
+    "Today · %@ h" : {
 
     },
     "today %@" : {
@@ -1804,6 +1802,9 @@
     "What you made, what needs work" : {
 
     },
+    "What’s your game?" : {
+
+    },
     "When did you start?" : {
 
     },
@@ -1820,6 +1821,9 @@
 
     },
     "Who you’re becoming." : {
+
+    },
+    "Who you’re playing for" : {
 
     },
     "Why steady matters." : {
