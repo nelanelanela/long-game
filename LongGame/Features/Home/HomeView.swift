@@ -63,6 +63,11 @@ struct HomeView: View {
     @State private var historyDay: Date?
     /// The gear in the bar at the top.
     @State private var showSettings = false
+    /// The phone's bar is transparent: once the page has scrolled past the hero the craft name fades (1...0), so
+    /// it never sits on top of the content. `barBottom` is where the bar ends on screen.
+    @State private var titleOpacity = 1.0
+    @State private var barBottom: CGFloat = 0
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     /// The sidebar layout's view (the Play views follow `tab`; History and Settings are kept here).
     @SceneStorage("sidebar.section") private var section: SidebarSection = .today
     /// The window's layout, kept for the keyboard commands.
@@ -374,11 +379,21 @@ struct HomeView: View {
     /// Phone and short window: one column. The craft name with History and + stays on top as a bar while the page
     /// scrolls under it, and the buttons stay pinned under the page.
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
-        ScrollView {
+        // The sky behind the bar is dark on The long game and on the empty day.
+        let darkSky = f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
+        let heroTop: CGFloat = short ? 2 : 8
+        let bar = barBottom
+        return ScrollView {
             VStack(spacing: 0) {
                 hero(f, metrics: short ? .short : .standard, extendsSky: true)
+                    // How far the hero's bottom has gone up past its resting top: the title fades over the next 24 pt.
+                    .onGeometryChange(for: Double.self) { proxy in
+                        let past: CGFloat = bar + heroTop - proxy.frame(in: .global).maxY
+                        let faded = Double(min(max(past / 24, 0), 1))
+                        return 1 - (faded * 20).rounded() / 20
+                    } action: { titleOpacity = $0 }
                     .overlay(alignment: .topTrailing) { toastView }
-                    .padding(.top, short ? 2 : 8)
+                    .padding(.top, heroTop)
                     .id(ScrollSpot.top)
                 number(f, style: short ? .inline : .stacked)
                     .padding(.top, short ? 4 : 8)
@@ -407,9 +422,11 @@ struct HomeView: View {
             .scrollTargetLayout()
         }
         .scrollPosition(id: $scrollSpot)
-        .lgTopBar(transparent: f.shown == .longGame) {
+        // No warm wash on the phone's Home: the sky is the only thing behind the bar, the plain background below it.
+        .background(LGColor.background.ignoresSafeArea())
+        .lgTopBar(transparent: true) {
             VStack(spacing: 0) {
-                header(dark: f.shown == .longGame)
+                header(dark: darkSky, paired: true, titleOpacity: reduceTransparency ? 1 : titleOpacity)
                     .padding(.top, short ? 0 : 8)
                 // The tabs stay pinned under the craft name; only the page below them scrolls.
                 LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
@@ -417,7 +434,9 @@ struct HomeView: View {
             }
             .padding(.horizontal, 24)
             .lgReadableColumn(560)
-            .environment(\.lgOnDark, f.shown == .longGame)
+            .environment(\.lgOnDark, darkSky)
+            .environment(\.lgOverSky, true)
+            .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { barBottom = $0 }
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -705,21 +724,32 @@ struct HomeView: View {
 
     // MARK: Pieces
 
-    private func header(dark: Bool = false) -> some View {
+    /// `paired` (the phone's transparent bar): from iOS 26 the two glass circles share one glass container.
+    private func header(dark: Bool = false, paired: Bool = false, titleOpacity: Double = 1) -> some View {
         HStack {
             Text(craft.name).lgText(.screenTitle, color: dark ? .white : LGColor.ink)
                 .lineLimit(1).minimumScaleFactor(0.6)
                 .accessibilityAddTraits(.isHeader)
+                .opacity(titleOpacity)
             Spacer()
-            HStack(spacing: 10) {
-                LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
-                    historyDay = Calendar.current.startOfDay(for: Date())
-                }
-                LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
-            }
-            .padding(.trailing, -10)
+            headerButtons(paired: paired)
+                .padding(.trailing, -10)
         }
         .frame(minHeight: 44)
+    }
+
+    @ViewBuilder private func headerButtons(paired: Bool) -> some View {
+        let buttons = HStack(spacing: 10) {
+            LGIconButton(systemName: "calendar", label: "History", size: 19, weight: .regular) {
+                historyDay = Calendar.current.startOfDay(for: Date())
+            }
+            LGIconButton(systemName: "gearshape", label: "Settings") { showSettings = true }
+        }
+        if #available(iOS 26, macOS 26, *), paired {
+            GlassEffectContainer(spacing: 4) { buttons }
+        } else {
+            buttons
+        }
     }
 
     private static func title(_ tab: HomeTab) -> LocalizedStringKey {

@@ -17,7 +17,8 @@ struct GaugeHero: View, Animatable {
     var isRunning = true
     /// False with Reduce Motion: the sun jumps to its new place and only the labels cross-fade.
     var glides = true
-    /// True in the phone's single column: the long game's sky runs up behind the title and tabs, which turn white.
+    /// True in the phone's single column: the tab's sky runs up behind the status bar, title and tabs, so there is
+    /// one continuous sky with no seam (day on Today and This week, dawn on the empty day and The long game).
     var extendsSky = false
     /// Today with nothing played yet: the dark, starry dawn sky of the empty-day board (a day sky once the sun climbs).
     var dawnSky = false
@@ -45,7 +46,7 @@ struct GaugeHero: View, Animatable {
         }
     }
 
-    /// How far the long game's sky reaches above the hero, to sit behind the status bar, title and tabs.
+    /// How far the sky reaches above the hero, to sit behind the status bar, title and tabs.
     static let skyExtension: CGFloat = 340
 
     /// The long game is the dark one: dawn sky, white scale and a white pill.
@@ -68,16 +69,17 @@ struct GaugeHero: View, Animatable {
             let size = metrics.sunSize + (arc.sunSize - metrics.sunSize) * mix
 
             ZStack(alignment: .topLeading) {
-                // The long game's dawn sky runs on up behind the title and tabs (the page draws no background there).
-                if onDark && extendsSky {
+                // The sky runs on up behind the title and tabs (the page draws nothing of its own there): the day sky
+                // on Today and This week, the dawn sky on the empty day and The long game. It is drawn here, under the
+                // arc, so the dotted arc and its moon show on it.
+                if extendsSky {
                     let ext = Self.skyExtension
-                    SkyView(tone: .dawn, horizon: (ext + metrics.waterY) / (ext + metrics.height),
-                            glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
+                    SkyView(tone: onDark || dawnSky ? .dawn : .day, horizon: (ext + metrics.waterY) / (ext + metrics.height),
+                            moon: onDark, glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
                         .frame(width: width, height: ext + metrics.height)
                         .offset(y: -ext)
-                }
-                // The empty day's dark dawn sky is drawn here, under the arc, so the dotted arc and the moon show on it.
-                if dawnSky && !onDark {
+                } else if dawnSky && !onDark {
+                    // Other windows: the empty day's dark dawn sky stays inside the hero.
                     SkyView(tone: .dawn, horizon: metrics.waterY / metrics.height, moon: false,
                             glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
                         .frame(width: width, height: metrics.height)
@@ -87,7 +89,7 @@ struct GaugeHero: View, Animatable {
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
-                                            scene: onDark || dawnSky ? .dawn : .day, drawsSky: !(onDark && extendsSky) && !(dawnSky && !onDark),
+                                            scene: onDark || dawnSky ? .dawn : .day, drawsSky: !extendsSky && !(dawnSky && !onDark),
                                             skyMoon: onDark),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning)

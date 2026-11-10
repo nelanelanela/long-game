@@ -172,6 +172,15 @@ extension EnvironmentValues {
     }
 }
 
+/// True where the controls float straight on a sky (the phone's Home): the tabs' track lets it show through.
+private struct LGOverSkyKey: EnvironmentKey { static let defaultValue = false }
+extension EnvironmentValues {
+    var lgOverSky: Bool {
+        get { self[LGOverSkyKey.self] }
+        set { self[LGOverSkyKey.self] = newValue }
+    }
+}
+
 struct LGIconButton: View {
     let systemName: String
     let label: String
@@ -271,7 +280,9 @@ struct LGSegmentedControl<Item: Hashable>: View {
 
     @Environment(\.lgFlat) private var flat
     @Environment(\.lgOnDark) private var onDark
+    @Environment(\.lgOverSky) private var overSky
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Namespace private var lens
 
     var body: some View {
@@ -326,7 +337,20 @@ struct LGSegmentedControl<Item: Hashable>: View {
             }
         }
         .padding(3)
-        .background(onDark ? Color.white.opacity(0.16) : LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background { flatTrack }
+    }
+
+    /// The flat track. On a sky it is a little see-through, with a thin material behind so the sky shows softly;
+    /// with Reduce Transparency it is the solid track.
+    @ViewBuilder private var flatTrack: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        if onDark {
+            shape.fill(Color.white.opacity(0.16))
+        } else if overSky && !reduceTransparency {
+            shape.fill(LGColor.segmentTrack.opacity(0.85)).background(.ultraThinMaterial, in: shape)
+        } else {
+            shape.fill(LGColor.segmentTrack)
+        }
     }
 
     @available(iOS 26, macOS 26, *)
@@ -345,7 +369,8 @@ struct LGSegmentedControl<Item: Hashable>: View {
                 }
             }
             .padding(3)
-            .glassEffect(.regular, in: .capsule)
+            // On the day sky a very light warm tint keeps the track from disappearing.
+            .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35)) : .regular, in: .capsule)
         }
     }
 

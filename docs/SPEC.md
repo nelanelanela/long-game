@@ -121,7 +121,7 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 
 No cards on Home: everything sits directly on the warm-white background. A segmented control under the header switches between three tabs: **Today** (4c), **This week** (4a) and **The long game** (4b). Each tab shows one sun, one big number and one quiet line, so no screen carries too many numbers. Home opens on **Today** every time the app starts; only right after onboarding does it open on **The long game**, once, so the first thing you see is the whole game. Choosing another tab is not remembered for next time.
 
-- Header: craft name; History (calendar icon) and Settings (gear) buttons. There is no + button. On a phone the header stays on top as a bar while the page scrolls under it. Then the segmented control.
+- Header: craft name; History (calendar icon) and Settings (gear) buttons. There is no + button. On a phone the header and the segmented control stay on top as a **transparent bar** while the page scrolls under it: no background, no material, no divider and (iOS 26) no scroll edge effect. The tab's sky runs up behind it to the top of the screen as one continuous sky: the day sky and its glow on Today and This week, the dawn sky on the empty day and The long game. Home draws no warm wash on a phone; below the hero the background is plain. The craft name has nothing behind it: navy on the day sky, white on the dawn sky (the empty day and The long game). iOS 26: History and Settings are glass circles in one glass container, and the tabs' glass track has a very light warm tint (the track colour at about 35%) on the day sky. iOS 17–25: plain icons, and the tabs' track is the track colour at 85% over a thin material. Once the page has scrolled past the hero, the craft name fades out over the next 24 pt (the controls stay) and comes back on the way up; with Reduce Transparency it never fades and the track is solid. iPad, the Duo open and Mac keep their own header.
 
 **The sun as a gauge (This week and The long game)**
 
@@ -738,7 +738,7 @@ On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–
 | Timer: Finish | Bright glass capsule, navy text | `.buttonStyle(.glassProminent)` + `.tint(.white)` |
 
 - **Glass only on controls.** The sun, sea, numbers, cards, the calendar, charts and sheet contents stay flat. No glass on glass.
-- **Something to refract:** Home and History get a soft warm wash at the top of the background (#FFF0D6 fading into #FAF8F4 by about 40% of the screen). The header and tabs float as a glass layer and the content scrolls under them.
+- **Something to refract:** History, and Home on iPad, the Duo open and Mac, get a soft warm wash at the top of the background (#FFF0D6 fading into #FAF8F4 by about 40% of the screen). On a phone Home has no wash: its glass controls float on the sky itself (update 34). The content scrolls under them.
 - **Shapes:** controls become capsules (corner radius = half the height); cards keep their 20–24 pt corners.
 - **Accessibility:** Reduce Transparency and Increase Contrast make the system glass solid automatically; keep text contrast at 4.5:1 or better (navy on light glass, white on dark glass). With Reduce Motion the lens moves without the stretch.
 - Sheets and the Live Activity keep the system's own appearance.

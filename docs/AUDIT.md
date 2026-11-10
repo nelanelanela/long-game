@@ -578,3 +578,26 @@ Second pass, opened by hand in the simulator (10 November 2026): Welcome, the th
 Still not opened by hand: Welcome back (iCloud; needs an iCloud copy), Thank you (needs a tip through Xcode's StoreKit test), the photo viewer, Your photos, iPad, Mac, Watch, widgets and the Live Activity.
 
 Tests: all pass except the 4 StoreKit ones in `TipPurchaseTests`, as before.
+
+## Update 34: a transparent glass top bar on the phone's Home (10 November 2026)
+
+| What | State | Where | Notes |
+|---|---|---|---|
+| One continuous sky from the top of the screen to the sea on every tab | ✅ | `GaugeHero` (`extendsSky`), `HomeView.columnPage` | Day sky and glow on Today and This week, dawn on the empty day and The long game. `SunriseHero` draws no sky of its own there. Seen on the iPhone 17 Simulator (iOS 27.2): no line, band or colour change on any tab |
+| No warm wash behind the phone's bar | ✅ | `HomeView.columnPage` | Plain background under the page; iPad, Duo open and Mac keep the wash |
+| Transparent bar, no scroll edge effect | ✅ | `lgTopBar(transparent:)` | iOS 26: `safeAreaBar` with `scrollEdgeEffectHidden(true, for: .top)`. Before: `safeAreaInset` on `Color.clear`. Other screens keep their bar |
+| Glass controls | ✅ | `HomeView.headerButtons`, `LGSegmentedControl` (`lgOverSky`) | The two circles share a `GlassEffectContainer`; the track is tinted with `segmentTrack` at 35% on the day sky. Flat look: `segmentTrack` 85% over `.ultraThinMaterial` |
+| Title fades after the hero has scrolled away | ✅ | `HomeView` (`titleOpacity`) | Over 24 pt; never with Reduce Transparency. Seen at the largest text size, where the page is long enough |
+
+Different from the prompt, on purpose:
+
+- **The craft name and tabs are white on the empty day**, not navy. The empty day's dark dawn sky now runs behind the bar, and navy on it could not be read.
+
+Worth a look by Natalia:
+
+- **Scrolling before the hero is gone.** The hero slides under the transparent bar as asked, so for a moment the scale, its pill and the sun sit behind the craft name and the clock. The title only fades once the whole hero has passed.
+- **The clock and battery stay dark** on the dawn sky (the empty day and The long game), as they already did on The long game.
+
+Not seen: the iOS 17–25 look (only the iOS 27.2 runtime is installed here), Reduce Transparency, the smallest text size, iPad, Duo open and Mac (their code paths are untouched).
+
+Tests: all 609 pass on the iPhone 17 Simulator.

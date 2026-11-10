@@ -29,11 +29,16 @@ extension View {
 
     /// A bar pinned to the top while the page scrolls under it. On iOS 26 it floats on the system's soft scroll edge
     /// (the content blurs gently under it); before that it has the screen colour behind it, as it always did.
+    /// `transparent` (the phone's Home): the bar has nothing of its own behind it, because the sky shows there. No
+    /// background, no material, no divider, and on iOS 26 no scroll edge effect either.
     @ViewBuilder
-    /// `transparent`: the bar has no background of its own (before iOS 26), because a sky shows behind it.
     func lgTopBar<Bar: View>(transparent: Bool = false, @ViewBuilder _ bar: () -> Bar) -> some View {
         if #available(iOS 26, macOS 26, *) {
-            safeAreaBar(edge: .top, spacing: 0) { bar() }
+            if transparent {
+                scrollEdgeEffectHidden(true, for: .top).safeAreaBar(edge: .top, spacing: 0) { bar() }
+            } else {
+                safeAreaBar(edge: .top, spacing: 0) { bar() }
+            }
         } else {
             safeAreaInset(edge: .top, spacing: 0) { bar().background(transparent ? Color.clear : LGColor.background) }
         }
