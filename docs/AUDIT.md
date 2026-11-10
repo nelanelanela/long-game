@@ -506,7 +506,7 @@ Run with `-demoData` for sample data.
 - **Milestone notification:** same jump, but choose a total just under a milestone first (for example edit estimates in Settings → Your estimates so the total is near 100, 500, 1,000…), allow notifications, start a session and lock the phone.
 - **Reduce Motion:** Settings app → Accessibility → Motion → Reduce Motion, then save a session.
 - **Largest text:** Settings app → Accessibility → Display & Text Size → Larger Text.
-- **Opening sunrise (update 30):** full version: Settings off, light mode, delete nothing; stop the app in Xcode and run it again (or Settings → Debug only → Play opening sunrise). Short version: turn Reduce Motion on (Settings app → Accessibility → Motion), or start a session and relaunch. Dark version: Simulator → Features → Toggle Appearance, then run again: it plays the same full sunrise (update 32 removed the dusk stop). Tap anywhere to skip it. Launch-screen cache: delete the app, or run `xcrun simctl erase all` with the Simulator closed.
+- **Opening sunrise (update 30):** full version: Settings off, light mode, delete nothing; stop the app in Xcode and run it again (or Settings → Debug only → Play opening sunrise). Short version: turn Reduce Motion on (Settings app → Accessibility → Motion) and relaunch. A running session plays the full sunrise. Dark version: Simulator → Features → Toggle Appearance, then run again: it plays the same full sunrise (update 32 removed the dusk stop). Tap anywhere to skip it. Launch-screen cache: delete the app, or run `xcrun simctl erase all` with the Simulator closed.
 
 ## We Have Sun redesign (update 32)
 

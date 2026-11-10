@@ -21,8 +21,9 @@ struct OpeningSunriseTests {
         #expect(plan(from: source).style == .skip)
     }
 
-    @Test func aRunningSessionGetsTheShortFade() {
-        #expect(plan(session: true).style == .short)
+    @Test func aRunningSessionStillGetsTheWholeSunrise() {
+        // The Launch board makes no exception for a running session.
+        #expect(plan(session: true) == OpeningPlan(style: .full, landing: .home))
     }
 
     @Test func reduceMotionGetsTheShortFade() {
@@ -45,7 +46,7 @@ struct OpeningSunriseTests {
 
     @Test func theShortFadeStillBeatsTheFullSunrise() {
         #expect(plan(reduceMotion: true).style == .short)
-        #expect(plan(session: true).style == .short)
+        #expect(plan(session: true, voiceOver: true).style == .short)
     }
 
     @Test func aWarmStartOrLinkStaysSilentEvenInDarkModeOrWithReduceMotion() {
@@ -63,47 +64,81 @@ struct OpeningSunriseTests {
 
     @Test func theFullSunriseStartsOnTheNightFrame() {
         let f = OpeningTimeline.frame(at: 0, style: .full)
-        #expect(f.sky == 0 && f.stars == 1 && f.rays == 0 && f.glow == 0)
-        #expect(!f.awake && f.glide == 0 && f.scenery == 1 && f.sun == 1)
+        #expect(f == OpeningFrame(sky: 0, rise: 0, awake: 0, eyesOpen: 0, glide: 0, scenery: 1))
     }
 
-    @Test func atHalfASecondItIsDawnAndTheSunWakesWithWideEyes() {
+    @Test func theBoardsKeyframesLandOnTheAppsPhases() {
+        // Launch.dc.html: 20% → 0 s, 50% → 0.5 s, 58% → 0.65 s, 72% → 1 s.
+        #expect(abs(OpeningTimeline.boardTime(20) - 0) < 1e-9)
+        #expect(abs(OpeningTimeline.boardTime(50) - 0.5) < 1e-9)
+        #expect(abs(OpeningTimeline.boardTime(58) - 0.65) < 1e-9)
+        #expect(abs(OpeningTimeline.boardTime(72) - 1.0) < 1e-9)
+        #expect(abs(OpeningTimeline.wakeStart - 0.25) < 1e-9)
+        #expect(abs(OpeningTimeline.homeStart - 0.75) < 1e-9)
+    }
+
+    @Test func theSunWakesHalfwayUpAndIsFullyAwakeBeforeDawn() {
+        #expect(OpeningTimeline.frame(at: 0.24, style: .full).awake == 0)
+        let mid = OpeningTimeline.frame(at: 0.33, style: .full).awake
+        #expect(mid > 0 && mid < 1)
+        #expect(OpeningTimeline.frame(at: 0.42, style: .full).awake == 1)
+    }
+
+    @Test func atHalfASecondItIsDawnAndTheSunHasRisen() {
         let f = OpeningTimeline.frame(at: 0.5, style: .full)
-        #expect(f.sky == 1 && f.stars == 0 && f.rays == 1 && f.awake && f.eyesOpen && f.glide == 0)
+        #expect(f.sky == 1 && f.rise == 1 && f.awake == 1 && f.glide == 0 && f.scenery == 1)
     }
 
-    @Test func theEyesCloseToASmileBeforeTheGlide() {
-        let f = OpeningTimeline.frame(at: 0.7, style: .full)
-        #expect(f.awake && !f.eyesOpen && f.glide > 0 && f.glide < 1)
-        #expect(!OpeningTimeline.frame(at: 0.49, style: .full).awake)
+    @Test func theEyesOpenForAMomentThenCloseBeforeTheGlide() {
+        #expect(OpeningTimeline.frame(at: 0.5, style: .full).eyesOpen == 0)
+        #expect(OpeningTimeline.frame(at: 0.58, style: .full).eyesOpen == 1)
+        #expect(OpeningTimeline.frame(at: 0.65, style: .full).eyesOpen == 0)
+        #expect(OpeningTimeline.frame(at: 0.9, style: .full).eyesOpen == 0)
+    }
+
+    @Test func homeShowsOnlyInTheLastQuarterSecond() {
+        #expect(OpeningTimeline.frame(at: 0.75, style: .full).scenery == 1)
+        let f = OpeningTimeline.frame(at: 0.875, style: .full)
+        #expect(f.scenery > 0.4 && f.scenery < 0.6)
+        #expect(OpeningTimeline.frame(at: 1.0, style: .full).scenery == 0)
     }
 
     @Test func atTheEndTheSunIsOnHomeAndTheSceneryIsGone() {
         let f = OpeningTimeline.frame(at: 1.0, style: .full)
-        #expect(f.glide == 1 && f.scenery == 0 && f.sun == 1)
+        #expect(f.glide == 1 && f.scenery == 0)
     }
 
-    @Test func withoutASunOnHomeTheSunFadesWithTheScenery() {
+    @Test func withoutASunOnHomeTheSunStaysAndFadesWithTheScenery() {
         let f = OpeningTimeline.frame(at: 1.0, style: .full, hasTarget: false)
-        #expect(f.glide == 0 && f.sun == 0)
+        #expect(f.glide == 0 && f.scenery == 0)
     }
 
-    @Test func theSunGlidesOntoHomeAndStaysThereUntilTheSceneryIsGone() {
-        // The sun rises with the sky, wakes at half a second, then glides to Home's sun and is not faded on the way.
-        for t in stride(from: 0.65, through: 1.0, by: 0.05) {
-            let f = OpeningTimeline.frame(at: t, style: .full)
-            #expect(f.sun == 1)
-            #expect(f.glide >= 0 && f.glide <= 1)
-        }
+    @Test func theSunGlidesBetweenTheGoodMorningAndTheEnd() {
         #expect(OpeningTimeline.frame(at: 0.65, style: .full).glide == 0)
+        var last = 0.0
+        for t in stride(from: 0.65, through: 1.0, by: 0.05) {
+            let g = OpeningTimeline.frame(at: t, style: .full).glide
+            #expect(g >= last - 1e-9 && g <= 1)
+            last = g
+        }
         #expect(OpeningTimeline.frame(at: 1.0, style: .full).glide == 1)
     }
 
     @Test func theShortFadeKeepsTheNightFrameAndFadesIt() {
         let start = OpeningTimeline.frame(at: 0, style: .short)
         let end = OpeningTimeline.frame(at: 0.3, style: .short)
-        #expect(start.scenery == 1 && start.sky == 0 && start.stars == 1)
+        #expect(start.scenery == 1 && start.sky == 0 && start.awake == 0)
         #expect(end.scenery == 0)
+    }
+
+    @Test func cubicBezierMatchesCSS() {
+        #expect(abs(cubicBezier(0, 0.42, 0, 0.58, 1)) < 1e-6)
+        #expect(abs(cubicBezier(1, 0.42, 0, 0.58, 1) - 1) < 1e-6)
+        // ease-in-out is symmetric, so halfway in time is halfway in value.
+        #expect(abs(cubicBezier(0.5, 0.42, 0, 0.58, 1) - 0.5) < 1e-6)
+        // The sun's curve (.45,0,.25,1) starts slow and lands soft: past halfway by the midpoint.
+        #expect(cubicBezier(0.5, 0.45, 0, 0.25, 1) > 0.5)
+        #expect(cubicBezier(0.1, 0.45, 0, 0.25, 1) < 0.05)
     }
 
     @Test func colourMixHitsItsAnchors() {

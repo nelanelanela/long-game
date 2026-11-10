@@ -34,7 +34,7 @@ func dir(_ name: String) -> String {
 // The night sky: 390 x 506, everything above the horizon (the horizon is the bottom edge, 60% of an 844 pt screen).
 // It is a bitmap at 2x and 3x, not a PDF: the glow is a transparent gradient, and a PDF would flatten or band it
 // (stacked translucent circles came out olive green on the phone). One real gradient in one pass stays warm.
-let skyW: CGFloat = 390, skyH: CGFloat = 506
+let skyW: CGFloat = 390, skyH: CGFloat = 506, screenH: CGFloat = 844
 func linear(_ c: CGContext, _ stops: [(CGFloat, UInt32)], from: CGPoint, to: CGPoint) {
     let g = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!, colors: stops.map { rgb($0.1) } as CFArray,
                        locations: stops.map { $0.0 })!
@@ -60,7 +60,8 @@ func drawNightSky(_ c: CGContext) {
     linear(c, [(0, 0x060A1E), (0.55, 0x0F1A3D), (0.85, 0x22305C), (0.97, 0x6B5A5E), (1, 0xC8915A)],
            from: .zero, to: CGPoint(x: 0, y: skyH))
     // The warm glow rising from the horizon (the CSS gradient ends at 0.62 of the farthest corner).
-    let glowSize = max(skyW, skyH) * 1.1
+    // Launch.dc.html draws the sky over the whole 390 x 844 screen, so the glow is sized from the screen's height.
+    let glowSize = max(skyW, screenH) * 1.1
     let glowRadius = 0.62 * glowSize / 2 * 2.0.squareRoot()
     let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
                           colors: [rgb(0xF2A07A, 0.55), rgb(0xF2A07A, 0.22), rgb(0xF2A07A, 0)] as CFArray,
@@ -75,18 +76,31 @@ func drawNightSky(_ c: CGContext) {
         c.setFillColor(i % 7 == 0 ? rgb(0xFFF4D6, 0.75) : rgb(0xFFFFFF, 0.75))
         c.fillEllipse(in: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r))
     }
-    // The crescent moon: where SkyView puts it (moonAt 0.74, 0.12), a circle with a smaller one taken out.
-    let mr: CGFloat = 14
-    let mc = CGPoint(x: skyW * 0.74 - 0.38 * mr, y: skyH * 0.12 - 0.58 * mr)
-    let ic = CGPoint(x: mc.x + 0.45 * mr, y: mc.y + 0.5 * mr)
-    c.saveGState()
-    c.addEllipse(in: CGRect(x: mc.x - mr, y: mc.y - mr, width: 2 * mr, height: 2 * mr))
-    c.clip()
-    c.addRect(CGRect(x: 0, y: 0, width: skyW, height: skyH))
-    c.addEllipse(in: CGRect(x: ic.x - 0.95 * mr, y: ic.y - 0.95 * mr, width: 1.9 * mr, height: 1.9 * mr))
+    // The crescent moon: Sky.dc.html's own SVG path, at (0.74, 0.12) of the whole 844 pt screen (not of this
+    // 506 pt sky), lit along its lower right. The same shape as SkyMoon in Scene.swift.
+    c.addPath(moonPath(centre: CGPoint(x: skyW * 0.74, y: screenH * 0.12)))
     c.setFillColor(rgb(0xF4E9D2, 0.9))
-    c.fillPath(using: .evenOdd)
-    c.restoreGState()
+    c.fillPath()
+}
+
+/// `M x+0.6r y-0.8r  A r r 0 1 1 x-r y+0.2r  A 0.95r 0.95r 0 0 0 x+0.6r y-0.8r Z`, r = 14.
+func moonPath(centre c: CGPoint, radius r: CGFloat = 14) -> CGPath {
+    func arc(_ p: CGMutablePath, _ a: CGPoint, _ b: CGPoint, _ radius: CGFloat, large: Bool, sweep: Bool) {
+        let hx = (a.x - b.x) / 2, hy = (a.y - b.y) / 2
+        let d2 = hx * hx + hy * hy
+        let r = max(radius, d2.squareRoot())
+        let k = (large != sweep ? 1 : -1) * max(0, (r * r - d2) / d2).squareRoot()
+        let o = CGPoint(x: k * hy + (a.x + b.x) / 2, y: -k * hx + (a.y + b.y) / 2)
+        p.addArc(center: o, radius: r, startAngle: atan2(a.y - o.y, a.x - o.x), endAngle: atan2(b.y - o.y, b.x - o.x),
+                 clockwise: !sweep)
+    }
+    let p = CGMutablePath()
+    let a = CGPoint(x: c.x + 0.6 * r, y: c.y - 0.8 * r), b = CGPoint(x: c.x - r, y: c.y + 0.2 * r)
+    p.move(to: a)
+    arc(p, a, b, r, large: true, sweep: true)
+    arc(p, b, a, 0.95 * r, large: false, sweep: false)
+    p.closeSubpath()
+    return p
 }
 
 let skyDir = dir("LaunchNightSky")

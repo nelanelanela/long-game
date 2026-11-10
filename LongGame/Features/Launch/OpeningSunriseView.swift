@@ -112,9 +112,9 @@ struct OpeningSunriseView: View {
             let sunSize: CGFloat = 150
             // Launch.dc.html: the sun's centre sits exactly on the shoreline, so only its top half shows.
             let nightCentre = CGPoint(x: w / 2, y: waterY)
+            // It rises 120 pt (on the 844 pt board) to its morning spot.
             let morningCentre = CGPoint(x: w / 2, y: waterY - h * (120.0 / 844))
-            // The sun rises with the sky: night spot → dawn spot.
-            let rise = CGFloat(f.sky)
+            let rise = CGFloat(f.rise)
             let base = CGPoint(x: nightCentre.x + (morningCentre.x - nightCentre.x) * rise,
                                y: nightCentre.y + (morningCentre.y - nightCentre.y) * rise)
             let glide = CGFloat(f.glide)
@@ -125,13 +125,13 @@ struct OpeningSunriseView: View {
             let night = 1 - f.sky
 
             ZStack(alignment: .topLeading) {
-                // Sky: dawn underneath (always opaque), the night sky on top fading out. No animated parts.
+                // Sky: the board's two full-screen skies (horizon at 60%), dawn underneath and night on top fading
+                // out. Full screen, so the moon (12% down) and the glow are where the board has them.
                 ZStack {
-                    SkyView(tone: .dawn, horizon: 1).frame(width: w, height: waterY)
-                    SkyView(tone: .night, horizon: 1).frame(width: w, height: waterY).opacity(night)
+                    SkyView(tone: .dawn, horizon: 0.6)
+                    SkyView(tone: .night, horizon: 0.6).opacity(night)
                 }
-                .frame(width: w, height: waterY)
-                .frame(width: w, height: h, alignment: .top)
+                .frame(width: w, height: h)
 
                 // The sun's soft gold halo (Sun.dc.html: radius 130 of 200, 32% at the centre, gone by 62%).
                 let haloRadius = 130 * size / 200
@@ -140,13 +140,17 @@ struct OpeningSunriseView: View {
                                center: .center, startRadius: 0, endRadius: haloRadius)
                     .frame(width: 2 * haloRadius, height: 2 * haloRadius)
                     .position(centre)
-                    .opacity(f.sun * f.scenery)
-                // Asleep, every ray is drawn faintly (22%, as on the board); they light up as the sun rises.
-                SunView(idle: false, face: f.awake ? .happy : .asleep, litRays: 0,
-                        unlitOpacity: 0.22 + 0.78 * f.rays, eyesOpen: f.eyesOpen ? 1 : 0)
-                    .frame(width: size, height: size)
-                    .position(centre)
-                    .opacity(f.sun)
+                // The board's three suns in one spot: asleep (faint rays and a "z") cross-fades to happy (all rays
+                // lit), which opens its eyes for a moment. A plain body underneath keeps the sun solid mid-fade.
+                ZStack {
+                    Circle().fill(LGColor.sunBody).frame(width: size * 0.56, height: size * 0.56)
+                    SunView(idle: false, face: .asleep, litRays: 0)
+                        .opacity(1 - f.awake)
+                    SunView(idle: false, face: .happy, eyesOpen: f.eyesOpen)
+                        .opacity(f.awake)
+                }
+                .frame(width: size, height: size)
+                .position(centre)
 
                 // The sea is always in front of the sun and always opaque: the day land lies underneath and the
                 // night land fades on top of it, never the other way round.
@@ -164,6 +168,8 @@ struct OpeningSunriseView: View {
                 .frame(width: w, height: h, alignment: .topLeading)
             }
             .frame(width: w, height: h, alignment: .topLeading)
+            // Sky, sea and sun fade together as Home shows underneath: on the board the sun is under Home, so it gives
+            // way to Home's own sun in the same spot.
             .opacity(f.scenery)
             .clipped()
         }
@@ -176,5 +182,5 @@ struct OpeningSunriseView: View {
 }
 
 #Preview("Night frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0) }
-#Preview("Dusk frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.25) }
+#Preview("Waking frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.33) }
 #Preview("Morning frame") { OpeningSunriseView(plan: .init(style: .full, landing: .home), start: .now, target: nil, frozenAt: 0.55) }

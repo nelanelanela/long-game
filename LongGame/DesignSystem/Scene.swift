@@ -110,16 +110,39 @@ struct SkyView: View {
     }
 
     private func drawMoon(_ ctx: inout GraphicsContext, size: CGSize) {
-        let mr: CGFloat = 14
-        let c = CGPoint(x: size.width * moonAt.x - 0.2 * mr - 0.18 * mr, y: size.height * moonAt.y - 0.3 * mr - 0.28 * mr)
-        let outer = Path(ellipseIn: CGRect(x: c.x - mr, y: c.y - mr, width: 2 * mr, height: 2 * mr))
-        let ic = CGPoint(x: c.x + 0.45 * mr, y: c.y + 0.5 * mr)
-        let inner = Path(ellipseIn: CGRect(x: ic.x - 0.95 * mr, y: ic.y - 0.95 * mr, width: 1.9 * mr, height: 1.9 * mr))
-        ctx.drawLayer { layer in
-            layer.fill(outer, with: .color(Color(hex: 0xF4E9D2).opacity(0.9)))
-            layer.blendMode = .clear
-            layer.fill(inner, with: .color(.black))
-        }
+        let centre = CGPoint(x: size.width * moonAt.x, y: size.height * moonAt.y)
+        ctx.fill(Path(SkyMoon.path(centre: centre)), with: .color(Color(hex: 0xF4E9D2).opacity(0.9)))
+    }
+}
+
+/// The crescent moon of Sky.dc.html, drawn from the board's own SVG path (r = 14 around the moon's spot):
+/// `M x+0.6r y-0.8r  A r r 0 1 1 x-r y+0.2r  A 0.95r 0.95r 0 0 0 x+0.6r y-0.8r Z`.
+/// Lit along its lower right, with the horns pointing up-right and left. `Tools/MakeLaunchAssets.swift` keeps a copy.
+enum SkyMoon {
+    static let radius: CGFloat = 14
+
+    static func path(centre c: CGPoint, radius r: CGFloat = radius) -> CGPath {
+        let p = CGMutablePath()
+        let a = CGPoint(x: c.x + 0.6 * r, y: c.y - 0.8 * r)
+        let b = CGPoint(x: c.x - r, y: c.y + 0.2 * r)
+        p.move(to: a)
+        addSVGArc(p, from: a, to: b, radius: r, largeArc: true, sweep: true)
+        addSVGArc(p, from: b, to: a, radius: 0.95 * r, largeArc: false, sweep: false)
+        p.closeSubpath()
+        return p
+    }
+
+    /// SVG's endpoint arc (circular, unrotated), converted to a centre arc. `sweep` true = increasing angle, which on
+    /// a y-down screen is clockwise.
+    static func addSVGArc(_ p: CGMutablePath, from a: CGPoint, to b: CGPoint, radius: CGFloat, largeArc: Bool, sweep: Bool) {
+        let hx = (a.x - b.x) / 2, hy = (a.y - b.y) / 2
+        let d2 = hx * hx + hy * hy
+        let r = max(radius, d2.squareRoot())
+        let k = (largeArc != sweep ? 1 : -1) * max(0, (r * r - d2) / d2).squareRoot()
+        let centre = CGPoint(x: k * hy + (a.x + b.x) / 2, y: -k * hx + (a.y + b.y) / 2)
+        let start = atan2(a.y - centre.y, a.x - centre.x)
+        let end = atan2(b.y - centre.y, b.x - centre.x)
+        p.addArc(center: centre, radius: r, startAngle: start, endAngle: end, clockwise: !sweep)
     }
 }
 

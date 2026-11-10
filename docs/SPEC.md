@@ -446,24 +446,27 @@ Every game begins at dawn. The app opens on a still night sea with the sun aslee
 - Built as `LaunchScreen.storyboard`, because a storyboard can pin the sea to the bottom and the sun to the waterline on every screen size. The land and sea are a vector PDF; the sky and the sun are 2x/3x bitmaps (both have translucent gradients, which a PDF bands). `Tools/MakeLaunchAssets.swift` draws all three. The colours come from the asset catalogue.
 - The water rule applies as everywhere: the sea is opaque and drawn in front of the sun, with nothing gold on or in the water.
 
-**2 · The sunrise (in the app, 0–0.6 s)**
+**2 · The sunrise (in the app, 0–0.5 s)**
 - The app's first frame draws exactly the same night scene in SwiftUI, so the hand-over from the still image is invisible.
-- Then, together:
-  - the sun's faint rays light up to full strength;
-  - the sky warms from navy through dusk (#2A2F6B → #6E3D74 → #F2A07A) to morning (#FFE3B0 → #FFF1DA → #FAF8F4);
-  - the stars fade out;
-  - the sun rises, and its rays unfold (scale 0 → 1) with a soft gold glow behind it;
-  - the water turns from night blue to day blue (#D3DEF4, wave line #16244A).
+- Then, together (all fades ease-in-out):
+  - the night sky (with its stars and moon) and the night land fade away, showing the dawn sky and the day land underneath;
+  - the sun rises 120 pt (on an 844 pt screen) with the curve `cubic-bezier(.45,0,.25,1)`;
+  - 0.25–0.42 s: the sleeping sun cross-fades into the happy sun, so its rays light up and the "z" goes.
 
-**3 · Good morning (0.6–0.8 s)**
-- The sun opens its eyes and smiles, then glides into its spot on Today's arc (`matchedGeometryEffect`) as Home fades in under it.
+**3 · Good morning (0.5–0.65 s)**
+- The sun opens its eyes for a moment (0.5–0.54 s open, 0.61–0.65 s closed again).
+
+**4 · Settle (0.65–1 s)**
+- The sun glides and shrinks into its spot on Today's arc (same curve as the rise).
+- From 0.75 s the whole scene, sun included, fades out and Home shows underneath, so the sun hands over to Home's own sun.
+- These are the keyframes of `design/redesign/Launch.dc.html`, which plays the same thing slowed down to a 7 s loop. `Logic/OpeningSunrise.swift` maps each board percentage to app time.
 - The whole opening is never longer than about 1 second.
 
 **When it plays**
 - Only on a cold start, when the app process launches. Coming back from the background goes straight to the app as it was.
 - A tap anywhere skips to the end at once.
 - It never plays when the app is opened from a widget, the Live Activity, a notification or a link. Those go straight to where they point.
-- If a session is running, it uses the short version (below), so the user gets back to their session quickly.
+- A running session doesn't change it: the full sunrise plays (the Launch board makes no exception).
 - Before onboarding (first launch), it ends on Welcome instead of Home.
 - With **Reduce Motion** on, or **VoiceOver** running: the short version, a 0.3 s cross-fade from the night frame to Home.
 - In **dark mode** the launch screen is the same night frame. The sunrise stops at dusk and cross-fades into Home in dark.
