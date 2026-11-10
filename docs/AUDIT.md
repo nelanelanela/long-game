@@ -573,7 +573,7 @@ Second pass, opened by hand in the simulator (10 November 2026): Welcome, the th
 - **Catch up, average step:** the quick-pick chips are centred.
 - **Year cards:** the total reads "3,333 h" with a comma on every device (some regions wrote "3 333"); "Show hours" sits straight on the page.
 
-Noted, not changed: on **Weekly pace** the small sun sits behind the left dune (the board places it there too, where its solid dune would hide it completely).
+- **Weekly pace:** the small sun rests on the left dune's ridge, in full view, and the dotted road starts from it. The board places it lower, where the dune would hide it; Natalia chose to show it.
 
 Still not opened by hand: Welcome back (iCloud; needs an iCloud copy), Thank you (needs a tip through Xcode's StoreKit test), the photo viewer, Your photos, iPad, Mac, Watch, widgets and the Live Activity.
 

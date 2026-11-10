@@ -137,8 +137,8 @@ private struct PaceScene: View {
                 SkyView(tone: .day, horizon: 0.62, glowX: 0.2)
                     .frame(width: geo.size.width, height: 170)
                 Path { p in
-                    p.move(to: CGPoint(x: 60 * k, y: 100))
-                    p.addCurve(to: CGPoint(x: 336 * k, y: 72), control1: CGPoint(x: 110 * k, y: 10), control2: CGPoint(x: 280 * k, y: 10))
+                    p.move(to: CGPoint(x: 60 * k, y: 52))
+                    p.addCurve(to: CGPoint(x: 336 * k, y: 72), control1: CGPoint(x: 120 * k, y: 2), control2: CGPoint(x: 280 * k, y: 8))
                 }
                 .stroke(LGColor.arcDots, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [2, 8]))
                 MoonShape().fill(LGColor.moon)
@@ -146,7 +146,8 @@ private struct PaceScene: View {
                     .offset(x: 336 * k - 21, y: 42)
                 SunView(idle: false, face: .happy)
                     .frame(width: 60, height: 60)
-                    .offset(x: 30 * k, y: 74)
+                    // Higher than on the board (74), where the left dune would hide it: here it rests on the ridge.
+                    .offset(x: 30 * k, y: 22)
                 LandView(tone: .day)
                     .frame(width: geo.size.width, height: 120)
                     .offset(y: 60)
