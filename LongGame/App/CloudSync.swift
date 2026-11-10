@@ -87,8 +87,17 @@ final class StoreHost {
     private let make: (Bool) throws -> ModelContainer
     private let defaults: UserDefaults
 
-    init(defaults: UserDefaults = .standard, isFreshInstall: Bool? = nil, make: ((Bool) throws -> ModelContainer)? = nil) throws {
+    /// The stores that were just replaced. When a store closes, everything read from it (the craft Settings is
+    /// showing, say) becomes unusable, and reading it crashes the app. The screens need a moment to redraw with the
+    /// new store, so the old one stays open for `retireAfter` and is closed only then.
+    private var retired: [ModelContainer] = []
+    private var closingRetired: Task<Void, Never>?
+    private let retireAfter: Duration
+
+    init(defaults: UserDefaults = .standard, isFreshInstall: Bool? = nil, retireAfter: Duration = .seconds(3),
+         make: ((Bool) throws -> ModelContainer)? = nil) throws {
         self.defaults = defaults
+        self.retireAfter = retireAfter
         let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self, ActiveSession.self])
         self.make = make ?? { iCloud in
             try ModelContainer(for: schema, configurations: CloudSync.configuration(for: schema, iCloud: iCloud))
@@ -109,6 +118,7 @@ final class StoreHost {
         try container.mainContext.save()
         let next = try make(on && CloudSync.isAvailable)
         CloudSync.setPreference(on, defaults)
+        retire(container)
         container = next
         generation += 1
         if let row = (try? next.mainContext.fetch(FetchDescriptor<AppSettings>()))?.first, row.syncEnabled != on {
@@ -121,7 +131,21 @@ final class StoreHost {
     /// with it), then removes only the iCloud data. The games on this device stay.
     func deleteICloudCopy(removeRemote: () async throws -> Void = { try await CloudSync.deleteCloudZone() }) async throws {
         try setICloud(false)
+        // Wait for the old, mirrored store to close, so nothing it still holds can be sent up after the copy is gone.
+        await closingRetired?.value
         try await removeRemote()
+    }
+
+    /// Keeps a replaced store open a little longer (see `retired`). Each switch restarts the wait.
+    private func retire(_ old: ModelContainer) {
+        retired.append(old)
+        closingRetired?.cancel()
+        let wait = retireAfter
+        closingRetired = Task { [weak self] in
+            try? await Task.sleep(for: wait)
+            guard !Task.isCancelled else { return }
+            self?.retired.removeAll()
+        }
     }
 }
 

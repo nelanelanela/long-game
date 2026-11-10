@@ -115,6 +115,25 @@ struct ICloudTests {
         #expect(try host.container.mainContext.fetchCount(FetchDescriptor<Craft>()) == 1)
     }
 
+    /// The crash from switching iCloud off while Settings was showing the craft: the old store closed at once, and the
+    /// craft read from it could no longer be used. Here the store is a real file, reopened as a new container, as in the app.
+    @Test func whatTheScreensHoldStaysReadableRightAfterSwitching() async throws {
+        let d = freshDefaults()
+        CloudSync.setPreference(true, d)
+        let url = FileManager.default.temporaryDirectory.appending(path: "switch-\(UUID().uuidString).store")
+        let schema = schema
+        let host = try StoreHost(defaults: d, isFreshInstall: false, retireAfter: .milliseconds(200), make: { _ in
+            try ModelContainer(for: schema, configurations: ModelConfiguration(url: url, cloudKitDatabase: .none))
+        })
+        let shown = Craft(name: "Piano", startYear: 2020)
+        host.container.mainContext.insert(shown)
+        try host.container.mainContext.save()
+
+        try host.setICloud(false)
+        #expect(shown.name == "Piano")
+        #expect(try host.container.mainContext.fetch(FetchDescriptor<Craft>()).map(\.name) == ["Piano"])
+    }
+
     @Test func aStoreThatCannotBeOpenedChangesNothing() throws {
         let d = freshDefaults()
         struct Boom: Error {}
