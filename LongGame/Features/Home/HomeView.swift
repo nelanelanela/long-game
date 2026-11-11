@@ -58,10 +58,15 @@ struct HomeView: View {
     @State private var choseOpeningTab = false
     /// Which part of the page is at the top, so a fold, unfold or resize keeps the scroll position.
     @State private var scrollSpot: ScrollSpot?
-    /// Set by tapping a day bar: History opens on that day.
-    @State private var historyDay: Date?
-    /// Set by tapping the Finish line figure: History opens on the Growth chart.
-    @State private var showGrowth = false
+    /// Which History to push: on a day (a tapped day bar, the calendar button) or on the Growth chart (the Finish
+    /// line figure). One destination for both: a second `navigationDestination(isPresented:)` beside the day one
+    /// looped forever when the Finish line was tapped (Home redraws every second) and iOS closed the app.
+    @State private var historyRoute: HistoryRoute?
+    /// The day History opens on, read and set through `historyRoute`.
+    private var historyDay: Date? {
+        get { if case .day(let day) = historyRoute { day } else { nil } }
+        nonmutating set { historyRoute = newValue.map(HistoryRoute.day) }
+    }
     /// The gear in the bar at the top.
     @State private var showSettings = false
     /// The phone's bar is transparent: once the page has scrolled past the hero the craft name fades, so it never
@@ -136,17 +141,16 @@ struct HomeView: View {
         .onChange(of: commands?.issued) { _, issued in
             if let command = issued?.command { handle(command, total: s.total) }
         }
-        .navigationDestination(item: $historyDay) { day in
-            HistoryView(craft: craft, day: day)
-        }
-        .navigationDestination(isPresented: $showGrowth) {
-            HistoryView(craft: craft, opensOnGrowth: true)
+        .navigationDestination(item: $historyRoute) { route in
+            switch route {
+            case .day(let day): HistoryView(craft: craft, day: day)
+            case .growth: HistoryView(craft: craft, opensOnGrowth: true)
+            }
         }
         // A widget opens Home on its tab: back out of History and any sheet first.
         .onOpenURL { url in
             guard let link = WidgetLink.tab(from: url) else { return }
-            historyDay = nil
-            showGrowth = false
+            historyRoute = nil
             sheet = nil
             showSettings = false
             selectTab(link)
@@ -545,7 +549,7 @@ struct HomeView: View {
             byValue: added.map { "+\(DurationFormat.grouped(Int($0.rounded()))) h" } ?? "–",
             byLabel: target.map { "By \(DateText.monthYear($0.end))" } ?? "Year of pace",
             rhythm: IPadFigures.rhythmText(daysPerWeek: rhythm.daysPerWeek),
-            showGrowth: { if shape == .sidebar { selectSection(.growth) } else { showGrowth = true } })
+            showGrowth: { if shape == .sidebar { selectSection(.growth) } else { historyRoute = .growth } })
     }
 
     private func todayCard(_ f: HomeFigures) -> some View {
@@ -896,7 +900,7 @@ struct HomeView: View {
 
     /// The Finish line figure: tapping it opens History on the Growth chart, where the finish line is drawn.
     private func finishLineStat(_ value: String, colour: Color = LGColor.ink) -> some View {
-        Button { showGrowth = true } label: {
+        Button { historyRoute = .growth } label: {
             stat(value, "Finish line", colour: colour)
                 .frame(minHeight: 44)
                 .contentShape(Rectangle())
@@ -1167,4 +1171,11 @@ private struct BarTitle<Content: View>: View {
     var body: some View {
         content.opacity(fade?.titleOpacity ?? 1)
     }
+}
+
+/// Where Home's History push opens.
+enum HistoryRoute: Hashable, Identifiable {
+    case day(Date)
+    case growth
+    var id: Self { self }
 }
