@@ -31,10 +31,12 @@ func dir(_ name: String) -> String {
     return p
 }
 
-// The night sky: 390 x 506, everything above the horizon (the horizon is the bottom edge, 60% of an 844 pt screen).
+// The night sky: 402 x 524.4, everything above the horizon (the horizon is the bottom edge, 60% of an 874 pt screen).
+// Drawn for a 402 x 874 phone (iPhone 17, iPhone 18 Pro), so on those the still picture is exactly the opening
+// sunrise's first frame, stars included (each sky size has its own stars). Other phones stretch it to fit.
 // It is a bitmap at 2x and 3x, not a PDF: the glow is a transparent gradient, and a PDF would flatten or band it
 // (stacked translucent circles came out olive green on the phone). One real gradient in one pass stays warm.
-let skyW: CGFloat = 390, skyH: CGFloat = 506, screenH: CGFloat = 844
+let skyW: CGFloat = 402, screenH: CGFloat = 874, skyH: CGFloat = screenH * 0.6
 func linear(_ c: CGContext, _ stops: [(CGFloat, UInt32)], from: CGPoint, to: CGPoint) {
     let g = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!, colors: stops.map { rgb($0.1) } as CFArray,
                        locations: stops.map { $0.0 })!
@@ -57,10 +59,11 @@ func makePNG(_ path: String, width: CGFloat, height: CGFloat, scale: CGFloat, dr
 }
 
 func drawNightSky(_ c: CGContext) {
-    linear(c, [(0, 0x060A1E), (0.55, 0x0F1A3D), (0.85, 0x22305C), (0.97, 0x6B5A5E), (1, 0xC8915A)],
+    // Stops as in Sky.dc.html, which places them on the whole screen (horizon p = 60%): 0, 0.55p, 0.85p, p − 3%, p.
+    linear(c, [(0, 0x060A1E), (0.55, 0x0F1A3D), (0.85, 0x22305C), ((0.6 - 0.03) / 0.6, 0x6B5A5E), (1, 0xC8915A)],
            from: .zero, to: CGPoint(x: 0, y: skyH))
     // The warm glow rising from the horizon (the CSS gradient ends at 0.62 of the farthest corner).
-    // Launch.dc.html draws the sky over the whole 390 x 844 screen, so the glow is sized from the screen's height.
+    // Launch.dc.html draws the sky over the whole screen, so the glow is sized from the screen's height.
     let glowSize = max(skyW, screenH) * 1.1
     let glowRadius = 0.62 * glowSize / 2 * 2.0.squareRoot()
     let glow = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB)!,
@@ -68,14 +71,14 @@ func drawNightSky(_ c: CGContext) {
                           locations: [0, 0.30 / 0.62, 1])!
     c.drawRadialGradient(glow, startCenter: CGPoint(x: skyW / 2, y: skyH), startRadius: 0,
                          endCenter: CGPoint(x: skyW / 2, y: skyH), endRadius: glowRadius, options: [])
-    // Stars: the same natural star field SkyView draws for the opening sunrise's first frame, a full 390 x 844
-    // screen with the horizon at 60% (all of them sit above 0.9 of the horizon, so inside this 506 pt bitmap).
+    // Stars: the same natural star field SkyView draws for the opening sunrise's first frame, a full 402 x 874
+    // screen with the horizon at 60% (all of them sit above 0.9 of the horizon, so inside this bitmap).
     for s in launchStars(width: skyW, height: screenH, horizon: 0.6) {
         c.setFillColor(rgb(s.warm ? 0xFFF4D6 : 0xFFFFFF, s.opacity))
         c.fillEllipse(in: CGRect(x: s.x - s.r, y: s.y - s.r, width: 2 * s.r, height: 2 * s.r))
     }
-    // The crescent moon: Sky.dc.html's own SVG path, at (0.74, 0.12) of the whole 844 pt screen (not of this
-    // 506 pt sky), lit along its lower right. The same shape as SkyMoon in Scene.swift.
+    // The crescent moon: Sky.dc.html's own SVG path, at (0.74, 0.12) of the whole 874 pt screen (not of this
+    // 524 pt sky), lit along its lower right. The same shape as SkyMoon in Scene.swift.
     c.addPath(moonPath(centre: CGPoint(x: skyW * 0.74, y: screenH * 0.12)))
     c.setFillColor(rgb(0xF4E9D2, 0.9))
     c.fillPath()
