@@ -188,12 +188,7 @@ enum YearCardText {
     }
 
     static func dayMonth(_ date: Date, calendar: Calendar = .current, locale: Locale = .current) -> String {
-        let f = DateFormatter()
-        f.locale = locale
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.setLocalizedDateFormatFromTemplate("dMMMM")
-        return f.string(from: date)
+        CachedFormatter.template("dMMMM", calendar: calendar, locale: locale).string(from: date)
     }
 
     /// "3,294 h" or, with hours hidden, "33%".

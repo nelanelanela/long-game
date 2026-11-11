@@ -44,10 +44,12 @@ struct SunView: View {
     private var shown: SunFace { giggle.face ?? face }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         if idle && !reduceMotion {
-            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
+            // Paused while the app is covered (Control Center, the app switcher), like the sea and the dunes.
+            TimelineView(.animation(minimumInterval: 1.0 / 30, paused: scenePhase != .active)) { timeline in
                 let t = timeline.date.timeIntervalSinceReferenceDate
                 let breath = (1 - cos(2 * .pi * t / 4)) / 2
                 resting(at: t)

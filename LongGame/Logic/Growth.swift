@@ -30,13 +30,16 @@ enum GrowthSeries {
         }
         dates.insert(onboardingDate)
         dates.insert(now)
-        for s in sessions { dates.insert(calendar.startOfDay(for: s.start)) }
+        dates.formUnion(Practice.perDay(sessions, calendar: calendar) { _ in 0 }.keys)
 
         let sorted = sessions.sorted { $0.start < $1.start }
         let ordered = dates.filter { $0 <= now }.sorted()
         var points: [CumulativePoint] = []
+        points.reserveCapacity(ordered.count)
         var cursor = 0
         var logged = 0.0
+        // From onboarding on, the estimate part never changes: work it out once, not for every day.
+        let fullBaseline = Baseline.hours(estimates: estimates, onboardingDate: onboardingDate, calendar: calendar)
         for date in ordered {
             // sessions of the day count at the end of that day
             let cutoff = calendar.isDate(date, equalTo: calendar.startOfDay(for: date), toGranularity: .second)
@@ -45,7 +48,8 @@ enum GrowthSeries {
                 logged += sorted[cursor].hours
                 cursor += 1
             }
-            let baseline = Baseline.hours(estimates: estimates, onboardingDate: min(date, onboardingDate), calendar: calendar)
+            let baseline = date >= onboardingDate ? fullBaseline
+                : Baseline.hours(estimates: estimates, onboardingDate: date, calendar: calendar)
             points.append(CumulativePoint(date: date, hours: baseline + logged))
         }
         return points

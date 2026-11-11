@@ -190,12 +190,10 @@ enum WeekBars {
         let cal = WeekMath.calendar(calendar, weekStart: weekStart)
         let start = WeekMath.startOfWeek(now, weekStart: weekStart, calendar: calendar)
         let today = cal.startOfDay(for: now)
-        let daily = Practice.dailySeconds(sessions, calendar: cal)
-        let letters = DateFormatter()
-        letters.locale = Locale(identifier: "en_GB")
-        letters.calendar = cal
-        letters.timeZone = cal.timeZone
-        letters.dateFormat = "EEEEE"
+        // Only this week's sessions matter here; working out the day of every session ever was the slow part.
+        let end = cal.date(byAdding: .day, value: 7, to: start) ?? start.addingTimeInterval(7 * 86_400)
+        let daily = Practice.dailySeconds(sessions.filter { $0.start >= start && $0.start < end }, calendar: cal)
+        let letters = CachedFormatter.pattern("EEEEE", calendar: cal)
         return (0..<7).compactMap { offset in
             guard let day = cal.date(byAdding: .day, value: offset, to: start) else { return nil }
             let hours = (daily[day] ?? 0) / 3600

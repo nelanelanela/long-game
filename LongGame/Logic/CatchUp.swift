@@ -112,12 +112,7 @@ enum CatchUp {
     }
 
     private static func formatter(_ format: String, _ calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = format
-        return f
+        CachedFormatter.pattern(format, calendar: calendar)
     }
 
     /// "3–10 Oct" within a month, "28 Sep – 4 Oct" across two.

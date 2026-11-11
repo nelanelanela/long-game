@@ -1,5 +1,54 @@
 import Foundation
 
+/// Date formatters are slow to make (the Calendar's 371 day squares each made one for VoiceOver on every redraw), so
+/// each one is made once per pattern, locale, calendar and time zone, then kept. Never change a formatter it returns.
+/// Formatting with one `DateFormatter` from several threads is safe.
+enum CachedFormatter {
+    private final class Store: @unchecked Sendable {
+        private let lock = NSLock()
+        private var formatters: [String: DateFormatter] = [:]
+
+        func formatter(_ key: String, make: () -> DateFormatter) -> DateFormatter {
+            lock.lock()
+            defer { lock.unlock() }
+            if let f = formatters[key] { return f }
+            let f = make()
+            formatters[key] = f
+            return f
+        }
+    }
+
+    private static let store = Store()
+
+    private static func key(_ kind: String, _ format: String, _ calendar: Calendar, _ locale: Locale) -> String {
+        "\(kind)|\(format)|\(locale.identifier)|\(calendar.identifier)|\(calendar.timeZone.identifier)"
+    }
+
+    /// A fixed pattern such as "EEEE d MMMM" (British English unless told otherwise, as on the boards).
+    static func pattern(_ format: String, calendar: Calendar, locale: Locale = Locale(identifier: "en_GB")) -> DateFormatter {
+        store.formatter(key("p", format, calendar, locale)) {
+            let f = DateFormatter()
+            f.locale = locale
+            f.calendar = calendar
+            f.timeZone = calendar.timeZone
+            f.dateFormat = format
+            return f
+        }
+    }
+
+    /// A template such as "dMMMM", laid out the way the locale writes dates.
+    static func template(_ template: String, calendar: Calendar, locale: Locale) -> DateFormatter {
+        store.formatter(key("t", template, calendar, locale)) {
+            let f = DateFormatter()
+            f.locale = locale
+            f.calendar = calendar
+            f.timeZone = calendar.timeZone
+            f.setLocalizedDateFormatFromTemplate(template)
+            return f
+        }
+    }
+}
+
 enum DurationFormat {
     /// "1 h 30 m", "2 h", "45 m"
     static func short(seconds: Double) -> String {
@@ -53,12 +102,7 @@ enum DurationFormat {
 
 enum RelativeDay {
     private static func formatter(_ format: String, _ calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = format
-        return f
+        CachedFormatter.pattern(format, calendar: calendar)
     }
 
     /// Today, Yesterday, a weekday name within the last week, otherwise "22 Oct".

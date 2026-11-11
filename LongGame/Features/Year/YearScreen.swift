@@ -43,7 +43,7 @@ struct YearScreen: View {
                          estimates: estimates.map(\.rate), onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
     }
 
-    private var looks: [YearCardStyle] { summary.offersPhotosCard ? YearCardStyle.allCases : [.sunrise, .evening] }
+    private func looks(_ s: YearSummary) -> [YearCardStyle] { s.offersPhotosCard ? YearCardStyle.allCases : [.sunrise, .evening] }
 
     /// Everything that changes the picture; the shared image is made again when it changes.
     private struct RenderKey: Hashable {
@@ -56,11 +56,12 @@ struct YearScreen: View {
 
     var body: some View {
         let s = summary
-        let shown = looks.contains(style) ? style : .sunrise
+        let cardLooks = looks(s)
+        let shown = cardLooks.contains(style) ? style : .sunrise
         VStack(spacing: 14) {
             header
-            if looks.count > 1 {
-                LGSegmentedControl(items: looks, selection: shown, label: "Look of the card", title: { $0.title }, onSelect: { style = $0 })
+            if cardLooks.count > 1 {
+                LGSegmentedControl(items: cardLooks, selection: shown, label: "Look of the card", title: { $0.title }, onSelect: { style = $0 })
             }
             preview(s, style: shown)
             hoursRow

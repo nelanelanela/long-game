@@ -4,9 +4,21 @@ enum Practice {
     /// Seconds per day, keyed by the start of the day a session began on
     /// (a session crossing midnight counts on the day it started).
     static func dailySeconds(_ sessions: [SessionRecord], calendar: Calendar = .current) -> [Date: Double] {
+        perDay(sessions, calendar: calendar, \.durationSec)
+    }
+
+    /// Adds up `value` per day a session began on. Sessions come in date order, so the day just worked out is
+    /// reused while the next session falls inside it: asking the calendar for each session's day was the slow part.
+    static func perDay(_ sessions: [SessionRecord], calendar: Calendar = .current,
+                       _ value: (SessionRecord) -> Double) -> [Date: Double] {
         var result: [Date: Double] = [:]
+        var day: DateInterval?
         for s in sessions {
-            result[calendar.startOfDay(for: s.start), default: 0] += s.durationSec
+            if day.map({ s.start < $0.start || s.start >= $0.end }) ?? true {
+                day = calendar.dateInterval(of: .day, for: s.start)
+                    ?? DateInterval(start: calendar.startOfDay(for: s.start), duration: 0)
+            }
+            result[day!.start, default: 0] += value(s)
         }
         return result
     }

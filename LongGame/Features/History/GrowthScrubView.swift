@@ -293,6 +293,7 @@ struct GrowthChartDescriptor: AXChartDescriptorRepresentable {
 // MARK: Previews (drawn already, so each frame can be inspected)
 
 #if DEBUG
+@MainActor
 private enum ScrubPreviewData {
     static let now = Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 4))!
 

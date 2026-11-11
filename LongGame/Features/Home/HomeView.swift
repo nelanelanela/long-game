@@ -84,23 +84,27 @@ struct HomeView: View {
     private var weekStart: WeekStart { settingsRows.first?.weekStart ?? .localeDefault }
     private var target: TargetRecord? { settingsRows.first?.currentTarget }
 
-    private func summary(now: Date) -> ProgressSummary {
-        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: sessions.map(\.record),
+    /// `records` is the sessions already read out of the store this redraw (reading thousands of them is the
+    /// slow part, so the body does it once and shares the result).
+    private func summary(now: Date, records: [SessionRecord]? = nil) -> ProgressSummary {
+        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: records ?? sessions.map(\.record),
                              onboardingDate: craft.createdAt, weekStart: weekStart, now: now, target: target)
     }
 
     var body: some View {
         let now = Date()
-        let s = summary(now: now)
+        let records = sessions.map(\.record)
+        let s = summary(now: now, records: records)
         let shownTotal = countingTotal ?? s.total
         // While the total counts up after a saved session, this week's hours count up with it.
         let shownWeek = max(0, s.thisWeek - (s.total - shownTotal))
         let weekTarget = target?.hoursPerWeek ?? WeeklyTarget.suggested(pace: s.pace)
-        let records = sessions.map(\.record)
         let plan = StretchSource.plan(sessions: records, settings: settingsRows.first, periods: targetPeriods, now: now)
         let stretch = plan.state(running: StretchSource.runningSeconds(timer.state, craftID: craft.id, now: now))
         let figures = HomeFigures(now: now, summary: s, week: shownWeek, total: shownTotal, weekTarget: weekTarget,
-                                  stretch: stretch, shown: tab == .today && stretch == .noTarget ? .week : tab)
+                                  stretch: stretch, shown: tab == .today && stretch == .noTarget ? .week : tab,
+                                  records: records,
+                                  bars: WeekBars.make(sessions: records, now: now, weekStart: weekStart))
         let _ = tick
         let page = AdaptiveLayout { window in
             Group {
@@ -247,6 +251,10 @@ struct HomeView: View {
         var stretch: StretchState
         /// The tab on show: Today falls back to This week when there is no weekly target yet.
         var shown: HomeTab
+        /// The craft's sessions as plain values, read once per redraw.
+        var records: [SessionRecord]
+        /// This week's day bars.
+        var bars: [DayBar]
     }
 
     private enum ScrollSpot: Hashable { case top, details }
@@ -255,20 +263,14 @@ struct HomeView: View {
         if (f.shown.hasScale ? f.shown : lastScaleTab) == .longGame {
             return .longGame(total: f.total, pace: f.summary.hasEnoughData ? SunSpeech.pace(f.summary.forecast.chosen, now: f.now) : nil)
         }
-        let daysLeft = weekBars(f.now).filter(\.isFuture).count
+        let daysLeft = f.bars.filter(\.isFuture).count
         return .week(hours: f.week, target: f.weekTarget, daysLeft: daysLeft)
     }
 
-    private func weekBars(_ now: Date) -> [DayBar] {
-        WeekBars.make(sessions: sessions.map(\.record), now: now, weekStart: weekStart)
-    }
-
     /// "Monday, 1 hour 10 minutes", "Tuesday, rest day", "Saturday, not yet": read when the sun is swiped on This week.
-    private func dayReadings(_ now: Date) -> [String] {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateFormat = "EEEE"
-        return weekBars(now).map { bar in
+    private func dayReadings(_ bars: [DayBar]) -> [String] {
+        let formatter = CachedFormatter.pattern("EEEE", calendar: .current, locale: .current)
+        return bars.map { bar in
             let name = formatter.string(from: bar.day)
             if bar.isFuture { return String(localized: "\(name), not yet") }
             if bar.hours <= 0 { return String(localized: "\(name), rest day") }
@@ -333,7 +335,7 @@ struct HomeView: View {
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
                          extendsSky: extendsSky, dawnSky: onToday && isEmptyDay(f.stretch), metrics: metrics, final: place,
-                         dayReadings: dayReadings(f.now))
+                         dayReadings: dayReadings(f.bars))
             // The sun and sea change tabs with a clean cut: no glide, no cross-fade, so the water never shows through.
             .transaction { $0.animation = nil }
     }
@@ -402,10 +404,10 @@ struct HomeView: View {
                         .padding(.top, short ? 6 : 14)
                         .transition(.opacity)
                     case .week:
-                        weekContent(f.summary, now: f.now, showBars: !short)
+                        weekContent(f, showBars: !short)
                             .transition(.opacity)
                     case .longGame:
-                        longGameContent(f.summary, now: f.now)
+                        longGameContent(f)
                             .transition(.opacity)
                     }
                 }
@@ -467,10 +469,10 @@ struct HomeView: View {
                             todaySessions(f)
                                 .padding(.top, 18)
                         case .week:
-                            weekContent(f.summary, now: f.now, showBars: true)
+                            weekContent(f, showBars: true)
                             wideStatsRow(f.summary, now: f.now, total: f.total)
                         case .longGame:
-                            longGameContent(f.summary, now: f.now)
+                            longGameContent(f)
                         }
                     }
                     .padding(.top, 8)
@@ -547,8 +549,7 @@ struct HomeView: View {
 
     private func numbersCard(_ f: HomeFigures) -> some View {
         let added = WeeklyTarget.addedByEnd(target, now: f.now)
-        let records = sessions.map(\.record)
-        let rhythm = Rhythm.compute(daily: IPadFigures.daily(records), since: craft.createdAt, now: f.now, weekStart: weekStart)
+        let rhythm = Rhythm.compute(daily: IPadFigures.daily(f.records), since: craft.createdAt, now: f.now, weekStart: weekStart)
         return IPadNumbersCard(
             pace: target.map { DurationFormat.perWeek($0.hoursPerWeek) } ?? DurationFormat.perWeek(f.summary.pace),
             finish: ForecastText.homeMastery(f.summary.forecast.chosen, now: f.now),
@@ -583,7 +584,7 @@ struct HomeView: View {
         if f.shown == .week {
             IPadCard {
                 VStack(spacing: 0) {
-                    DayBarsRow(bars: weekBars(f.now)) { day in historyDay = day }
+                    DayBarsRow(bars: f.bars) { day in historyDay = day }
                     targetRow(f.summary, now: f.now)
                 }
             }
@@ -601,7 +602,7 @@ struct HomeView: View {
             todayCard(f)
         }
         futureSelfCard()
-        if f.shown == .longGame { yearRow(now: f.now) }
+        if f.shown == .longGame { yearRow(f) }
     }
 
     /// Wide iPad windows: a sidebar, a title bar, the sun gauge on the left and a 340 pt column of cards on the right.
@@ -779,15 +780,15 @@ struct HomeView: View {
 
     // MARK: This week
 
-    private func weekContent(_ s: ProgressSummary, now: Date, showBars: Bool) -> some View {
+    private func weekContent(_ f: HomeFigures, showBars: Bool) -> some View {
         VStack(spacing: 0) {
             if showBars {
-                DayBarsRow(bars: weekBars(now)) { day in
+                DayBarsRow(bars: f.bars) { day in
                     historyDay = day
                 }
                 .padding(.top, 18)
             }
-            targetRow(s, now: now)
+            targetRow(f.summary, now: f.now)
                 .padding(.top, showBars ? 0 : 6)
         }
     }
@@ -804,21 +805,22 @@ struct HomeView: View {
 
     // MARK: The long game
 
-    private func longGameContent(_ s: ProgressSummary, now: Date) -> some View {
+    private func longGameContent(_ f: HomeFigures) -> some View {
         VStack(spacing: 0) {
-            statsRow(s, now: now)
+            statsRow(f.summary, now: f.now)
                 .padding(.top, 16)
-            yearRow(now: now)
+            yearRow(f)
             futureSelfRow
         }
     }
 
     /// From 1 December to 15 January only: the year card, under "Meet your future self". No notification.
     @ViewBuilder
-    private func yearRow(now: Date) -> some View {
+    private func yearRow(_ f: HomeFigures) -> some View {
+        let now = f.now
         if YearSummary.showsOnLongGame(now: now) {
             let year = YearSummary.defaultYear(now: now)
-            let summary = YearSummary.make(year: year, sessions: sessions.map(\.record), estimates: estimates.map(\.rate),
+            let summary = YearSummary.make(year: year, sessions: f.records, estimates: estimates.map(\.rate),
                                            onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
             if summary.hasEnoughData {
                 NavigationLink {

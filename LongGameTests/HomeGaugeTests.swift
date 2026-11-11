@@ -174,3 +174,66 @@ struct YearOutlookTests {
         #expect(WeekTarget(hoursThisWeek: 6.5, target: 12, daysLeft: 3).percent == 54)
     }
 }
+
+/// The faster ways of working out days and dates give exactly what the plain ways did.
+struct SpeedupTests {
+    /// São Paulo moved its clocks at midnight (4 November 2018 began at 01:00), the hardest case for "the start of the day".
+    private var saoPaulo: Calendar {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "America/Sao_Paulo")!
+        return c
+    }
+
+    private func sessions(around day: Date, calendar: Calendar) -> [SessionRecord] {
+        // Every 5 hours over three weeks, in a jumbled order, with catch-ups mixed in.
+        var all: [SessionRecord] = []
+        for step in 0..<100 {
+            let i = (step * 37) % 100
+            let offset: TimeInterval = Double(i - 50) * 5 * 3600
+            all.append(SessionRecord(start: day.addingTimeInterval(offset), durationSec: Double(600 + i * 7),
+                                     isCatchUp: i % 9 == 0))
+        }
+        return all
+    }
+
+    @Test(arguments: [false, true])
+    func dailyTotalsMatchAskingTheCalendarForEachSession(sorted: Bool) {
+        let cal = saoPaulo
+        let day = cal.date(from: DateComponents(year: 2018, month: 11, day: 4, hour: 12))!
+        var list = sessions(around: day, calendar: cal)
+        if sorted { list.sort { $0.start > $1.start } }
+        var plain: [Date: Double] = [:]
+        for s in list { plain[cal.startOfDay(for: s.start), default: 0] += s.durationSec }
+        #expect(Practice.dailySeconds(list, calendar: cal) == plain)
+        let hours = IPadFigures.daily(list, calendar: cal)
+        #expect(hours.keys.sorted() == plain.keys.sorted())
+        for (k, v) in plain { #expect(abs(hours[k]! - v / 3600) < 1e-9) }
+    }
+
+    @Test(arguments: [WeekStart.monday, .sunday])
+    func theWeekBarsOnlyLookAtThisWeekButShowTheSameDays(weekStart: WeekStart) {
+        let cal = saoPaulo
+        let now = cal.date(from: DateComponents(year: 2018, month: 11, day: 6, hour: 18))!
+        let list = sessions(around: now, calendar: cal)
+        let bars = WeekBars.make(sessions: list, now: now, weekStart: weekStart, calendar: cal)
+        let wcal = WeekMath.calendar(cal, weekStart: weekStart)
+        let plain = Practice.dailySeconds(list, calendar: wcal)
+        #expect(bars.count == 7)
+        for bar in bars { #expect(abs(bar.hours - (plain[bar.day] ?? 0) / 3600) < 1e-9) }
+        #expect(bars.reduce(0) { $0 + $1.hours } > 0)
+    }
+
+    @Test func aFormatterIsMadeOnceAndFollowsTheTimeZone() {
+        var london = Calendar(identifier: .gregorian)
+        london.timeZone = TimeZone(identifier: "Europe/London")!
+        var tokyo = london
+        tokyo.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        let a = CachedFormatter.pattern("HH:mm", calendar: london)
+        #expect(a === CachedFormatter.pattern("HH:mm", calendar: london))
+        let date = london.date(from: DateComponents(year: 2026, month: 1, day: 10, hour: 20))!
+        #expect(a.string(from: date) == "20:00")
+        #expect(CachedFormatter.pattern("HH:mm", calendar: tokyo).string(from: date) == "05:00")
+        #expect(CachedFormatter.template("dMMMM", calendar: london, locale: Locale(identifier: "en_GB")).string(from: date) == "10 January")
+        #expect(CachedFormatter.template("dMMMM", calendar: london, locale: Locale(identifier: "en_US")).string(from: date) == "January 10")
+    }
+}

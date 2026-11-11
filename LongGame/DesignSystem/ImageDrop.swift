@@ -22,7 +22,7 @@ enum ImageDropLoader {
                 Task { @MainActor in done(data) }
             }
         } else {
-            _ = provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, _ in
+            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, _ in
                 let url = (item as? Data).flatMap { URL(dataRepresentation: $0, relativeTo: nil) } ?? (item as? URL)
                 guard let url, let type = UTType(filenameExtension: url.pathExtension), type.conforms(to: .image),
                       let data = try? Data(contentsOf: url) else { return }

@@ -30,12 +30,7 @@ enum TodaySessions {
     }
 
     private static func formatter(_ format: String, calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = format
-        return f
+        CachedFormatter.pattern(format, calendar: calendar)
     }
 
     /// "07:40 – 08:20"

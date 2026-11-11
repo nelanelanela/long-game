@@ -179,7 +179,7 @@ final class ICloudMonitor {
             for await note in center.notifications(named: NSPersistentCloudKitContainer.eventChangedNotification) {
                 let event = note.userInfo?[NSPersistentCloudKitContainer.eventNotificationUserInfoKey]
                     as? NSPersistentCloudKitContainer.Event
-                await self?.handle(endDate: event?.endDate, succeeded: event?.succeeded ?? false)
+                self?.handle(endDate: event?.endDate, succeeded: event?.succeeded ?? false)
             }
         }
         Task { [weak self] in

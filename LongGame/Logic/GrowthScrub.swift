@@ -254,12 +254,7 @@ struct ScrubReadout: Equatable {
 
 enum ScrubText {
     private static func formatter(_ template: String, calendar: Calendar, locale: Locale) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = locale
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.setLocalizedDateFormatFromTemplate(template)
-        return f
+        CachedFormatter.template(template, calendar: calendar, locale: locale)
     }
 
     static func day(_ date: Date, calendar: Calendar = .current, locale: Locale = .current) -> String {

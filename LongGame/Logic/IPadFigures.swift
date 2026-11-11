@@ -40,6 +40,6 @@ enum IPadFigures {
 
     /// Hours per calendar day, for `Rhythm.compute`.
     static func daily(_ sessions: [SessionRecord], calendar: Calendar = .current) -> [Date: Double] {
-        Dictionary(sessions.map { (calendar.startOfDay(for: $0.start), $0.hours) }, uniquingKeysWith: +)
+        Practice.perDay(sessions, calendar: calendar, \.hours)
     }
 }

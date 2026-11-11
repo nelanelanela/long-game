@@ -58,7 +58,7 @@ struct CalendarTab: View {
 
     private func gridCard(weeks: [[Date]], daily: [Date: Double], windowStart: Date, now: Date) -> some View {
         let today = calendar.startOfDay(for: now)
-        let photoDays = SessionPhotos.daysWithPhoto(sessions.map { ($0.start, $0.hasPhoto) }, calendar: calendar)
+        let photoDays = SessionPhotos.daysWithPhoto(sessions.filter(\.hasPhoto).map { ($0.start, true) }, calendar: calendar)
 
         return VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 4) {
@@ -185,11 +185,12 @@ struct CalendarTab: View {
 
     private func dayCard(daily: [Date: Double], now: Date) -> some View {
         let day = selected
+        // A plain date range: asking the calendar about every session ever was slow with years of them.
+        let nextDay = calendar.date(byAdding: .day, value: 1, to: day) ?? day.addingTimeInterval(86_400)
         let daySessions = sessions
-            .filter { calendar.isDate($0.start, inSameDayAs: day) }
+            .filter { $0.start >= day && $0.start < nextDay }
             .sorted { $0.start < $1.start }
         let seconds = daily[day] ?? 0
-        let firstNote = daySessions.compactMap(\.note).first(where: { !$0.isEmpty })
         let afterBreak = !daySessions.isEmpty && daySessions.allSatisfy { $0.source == .catchUp }
 
         return VStack(alignment: .leading, spacing: 10) {
@@ -306,12 +307,7 @@ struct CalendarTab: View {
     // MARK: Formatting
 
     private static func formatter(_ format: String, _ calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = format
-        return f
+        CachedFormatter.pattern(format, calendar: calendar)
     }
 
     private static func weekdayLetter(_ d: Date, _ c: Calendar) -> String { formatter("EEEEE", c).string(from: d) }

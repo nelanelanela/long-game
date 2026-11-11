@@ -119,12 +119,7 @@ enum SessionPhotos {
 
     /// "Thursday 22 October"
     static func dayName(_ date: Date, calendar: Calendar = .current) -> String {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = "EEEE d MMMM"
-        return f.string(from: date)
+        CachedFormatter.pattern("EEEE d MMMM", calendar: calendar).string(from: date)
     }
 
     /// "Photo from Thursday 22 October, evening session"

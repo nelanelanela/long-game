@@ -176,12 +176,7 @@ struct WeekTarget: Equatable {
 
 enum DateText {
     private static func formatter(_ format: String, _ calendar: Calendar) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
-        f.calendar = calendar
-        f.timeZone = calendar.timeZone
-        f.dateFormat = format
-        return f
+        CachedFormatter.pattern(format, calendar: calendar)
     }
 
     /// "Nov 2027"

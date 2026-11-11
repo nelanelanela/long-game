@@ -18,15 +18,17 @@ struct GrowthTab: View {
     @Query private var settingsRows: [AppSettings]
     @Environment(\.modelContext) private var context
 
-    private func summary(now: Date, extra: Double) -> ProgressSummary {
-        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: sessions.map(\.record),
+    private func summary(now: Date, extra: Double, records: [SessionRecord]) -> ProgressSummary {
+        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: records,
                              onboardingDate: craft.createdAt, weekStart: weekStart, now: now, extra: extra, target: target)
     }
 
     var body: some View {
         let now = Date()
-        let s = summary(now: now, extra: extra)
-        let past = GrowthSeries.past(estimates: estimates.map(\.rate), sessions: sessions.map(\.record),
+        // Reading the sessions out of the store is the slow part: once per redraw, shared below.
+        let records = sessions.map(\.record)
+        let s = summary(now: now, extra: extra, records: records)
+        let past = GrowthSeries.past(estimates: estimates.map(\.rate), sessions: records,
                                      onboardingDate: craft.createdAt, startYear: craft.startYear, now: now)
         let data = GrowthSeries.chartData(forecast: s.forecast, past: past, now: now)
 
@@ -34,7 +36,7 @@ struct GrowthTab: View {
             headline(s: s, data: data, now: now)
             forecastCard(s: s, data: data, now: now).padding(.top, 14)
             whatIf(s: s, now: now).padding(.top, 16)
-            yearRow(now: now).padding(.top, 20)
+            yearRow(now: now, records: records).padding(.top, 20)
         }
         // Reading the flag here ties this screen to it. Without that the tap set it but the full-screen chart
         // never appeared (seen in the iOS 27 simulator, November 2026).
@@ -57,9 +59,9 @@ struct GrowthTab: View {
 
     /// A quiet row at the bottom, there all year: opens the year card (the year so far, or last year in early January).
     @ViewBuilder
-    private func yearRow(now: Date) -> some View {
+    private func yearRow(now: Date, records: [SessionRecord]) -> some View {
         let year = YearSummary.defaultYear(now: now)
-        let summary = YearSummary.make(year: year, sessions: sessions.map(\.record), estimates: estimates.map(\.rate),
+        let summary = YearSummary.make(year: year, sessions: records, estimates: estimates.map(\.rate),
                                        onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
         if summary.hasEnoughData {
             NavigationLink {
