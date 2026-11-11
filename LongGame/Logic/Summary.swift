@@ -68,6 +68,21 @@ enum SessionRules {
         existingSecondsThatDay + adding <= maxDaySeconds
     }
 
+    /// The first day Add past hours offers: 1 January of the start year, so hours from before the onboarding
+    /// date can be added too. An older session being edited keeps its own day.
+    static func earliestDay(startYear: Int, onboardingDate: Date, editing: Date? = nil, calendar: Calendar = .current) -> Date {
+        let onboarded = calendar.startOfDay(for: onboardingDate)
+        let jan1 = calendar.date(from: DateComponents(year: startYear, month: 1, day: 1)).map { calendar.startOfDay(for: $0) } ?? onboarded
+        let earliest = min(jan1, onboarded)
+        guard let editing else { return earliest }
+        return min(earliest, calendar.startOfDay(for: editing))
+    }
+
+    /// A day before the onboarding date: its hours add to the estimated starting score.
+    static func isBeforeStart(_ day: Date, onboardingDate: Date, calendar: Calendar = .current) -> Bool {
+        calendar.startOfDay(for: day) < calendar.startOfDay(for: onboardingDate)
+    }
+
     /// Manual sessions sit at 12:00 local on the chosen day.
     static func manualStart(on day: Date, calendar: Calendar = .current) -> Date {
         calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day) ?? day

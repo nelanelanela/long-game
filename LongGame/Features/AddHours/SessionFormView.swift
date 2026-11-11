@@ -41,13 +41,13 @@ struct SessionFormView: View {
     private var calendar: Calendar { .current }
     private var seconds: Double { Double(hours * 3600 + minutes * 60) }
 
-    /// Hours before the onboarding date are already part of the estimates, so the calendar starts there.
-    /// (An older session that is being edited keeps its own day.)
+    /// Back to 1 January of the start year, so hours from before the game began can be added too.
     private var earliestDay: Date {
-        let start = calendar.startOfDay(for: craft.createdAt)
-        guard let editing else { return start }
-        return min(start, calendar.startOfDay(for: editing.start))
+        SessionRules.earliestDay(startYear: craft.startYear, onboardingDate: craft.createdAt,
+                                 editing: editing?.start, calendar: calendar)
     }
+
+    private var isBeforeStart: Bool { SessionRules.isBeforeStart(day, onboardingDate: craft.createdAt, calendar: calendar) }
 
     private var otherSecondsThatDay: Double {
         sessions
@@ -92,6 +92,11 @@ struct SessionFormView: View {
                 if !fits {
                     Text("That would be more than 24 hours on this day. Lower the time or pick another day.")
                         .lgText(.caption, color: LGColor.danger)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 10)
+                } else if isBeforeStart {
+                    Text("Before you began. These hours add to your starting score, on top of your estimates.")
+                        .lgText(.caption, color: LGColor.inkMuted)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 10)
                 }

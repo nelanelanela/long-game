@@ -68,4 +68,22 @@ struct SummaryTests {
         let start = SessionRules.manualStart(on: day(2026, 10, 22, hour: 3), calendar: utc)
         #expect(start == day(2026, 10, 22, hour: 12))
     }
+
+    @Test func pastHoursReachBackToTheStartYear() {
+        let onboarded = day(2026, 10, 22, hour: 15)
+        #expect(SessionRules.earliestDay(startYear: 2019, onboardingDate: onboarded, calendar: utc) == day(2019, 1, 1, hour: 0))
+        // Started this year: still the whole year, not just from onboarding.
+        #expect(SessionRules.earliestDay(startYear: 2026, onboardingDate: onboarded, calendar: utc) == day(2026, 1, 1, hour: 0))
+        // An odd start year after onboarding never cuts days off.
+        #expect(SessionRules.earliestDay(startYear: 2027, onboardingDate: onboarded, calendar: utc) == day(2026, 10, 22, hour: 0))
+        // Editing an even older session keeps its day reachable.
+        #expect(SessionRules.earliestDay(startYear: 2019, onboardingDate: onboarded, editing: day(2018, 6, 3, hour: 12),
+                                         calendar: utc) == day(2018, 6, 3, hour: 0))
+    }
+
+    @Test func daysBeforeOnboardingAreFlagged() {
+        let onboarded = day(2026, 10, 22, hour: 15)
+        #expect(SessionRules.isBeforeStart(day(2026, 10, 21, hour: 23), onboardingDate: onboarded, calendar: utc))
+        #expect(!SessionRules.isBeforeStart(day(2026, 10, 22, hour: 8), onboardingDate: onboarded, calendar: utc))
+    }
 }
