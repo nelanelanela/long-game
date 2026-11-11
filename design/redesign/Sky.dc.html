@@ -15,8 +15,10 @@ body{margin:0}
 <div style="width: {{wpx}}; height: {{hpx}}; position: relative; overflow: hidden; background: {{bg}}">
 <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: {{gy}}; overflow: hidden"><div style="position: absolute; left: {{gx}}; top: {{gy}}; width: {{gs}}; height: {{gs}}; transform: translate(-50%,-50%); border-radius: 50%; background: {{glow}}"></div></div>
 <svg aria-hidden="true" width="100%" height="100%" viewBox="{{vb}}" style="display: block; position: absolute; inset: 0">
-<path d="{{stars}}" fill="#FFFFFF" opacity="{{starOp}}"></path>
-<path d="{{starsBig}}" fill="#FFF4D6" opacity="{{starOp}}"></path>
+<path d="{{s0}}" fill="#FFFFFF" opacity="{{op0}}"></path>
+<path d="{{s1}}" fill="#FFFFFF" opacity="{{op1}}"></path>
+<path d="{{s2}}" fill="#FFFFFF" opacity="{{op2}}"></path>
+<path d="{{s3}}" fill="#FFF4D6" opacity="{{op3}}"></path>
 <path d="{{moon}}" fill="#F4E9D2" opacity="{{moonOp}}"></path>
 </svg>
 </div>
@@ -41,25 +43,43 @@ class Component extends DCLogic {
       dawn: 'radial-gradient(circle, rgba(255,240,205,0.85) 0%, rgba(255,205,140,0.35) 32%, rgba(255,205,140,0) 64%)',
       day: 'radial-gradient(circle, rgba(255,226,170,0.7) 0%, rgba(255,214,150,0.25) 34%, rgba(255,214,150,0) 64%)'
     };
-    let s = '', sb = '';
-    for (let i = 0; i < 34; i++) {
-      const x = ((i * 61 + 13) % 100) / 100 * w;
-      const y = ((i * 37 + 7) % 100) / 100 * h * hz * 0.82;
-      const r = i % 7 === 0 ? 1.2 : 0.7;
-      const d = 'M' + (x - r).toFixed(1) + ' ' + y.toFixed(1) + 'a' + r + ' ' + r + ' 0 1 0 ' + (2 * r) + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-2 * r) + ' 0';
-      if (r > 1) sb += d; else s += d;
+    // Stars like a real dark sky over the Alentejo: many faint ones, a few bright, a soft band of the Milky Way,
+    // thinning towards the horizon. Seeded by the sky's size, so each sky is different but never changes.
+    let a = (Math.round(w) * 73856093 ^ Math.round(h) * 19349663) >>> 0;
+    const rnd = () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const gauss = () => (rnd() + rnd() + rnd() - 1.5) / 1.5;
+    const top = h * hz * 0.9;
+    const n = Math.max(14, Math.min(170, Math.round(w * top / 1500)));
+    const classes = [{ d: '', r: 0.45 }, { d: '', r: 0.65 }, { d: '', r: 0.9 }, { d: '', r: 1.3 }];
+    let made = 0, tries = 0;
+    while (made < n && tries < n * 6) {
+      tries++;
+      let x, y;
+      if (rnd() < 0.32) {
+        const t = rnd();
+        x = w * (0.08 + 0.9 * t) + gauss() * Math.min(w, top) * 0.1;
+        y = top * (0.02 + 0.95 * t) + gauss() * Math.min(w, top) * 0.1;
+      } else { x = rnd() * w; y = rnd() * top; }
+      if (x < 0 || x > w || y < 0 || y > top) continue;
+      if (rnd() < Math.pow(y / top, 2) * 0.7) continue;
+      const u = rnd();
+      const k = u < 0.62 ? 0 : u < 0.88 ? 1 : u < 0.97 ? 2 : 3;
+      const r = classes[k].r * (0.85 + rnd() * 0.3);
+      classes[k].d += 'M' + (x - r).toFixed(1) + ' ' + y.toFixed(1) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0';
+      made++;
     }
     const moonX = this.props.moonX === undefined ? 0.74 : parseFloat(this.props.moonX);
     const moonY = this.props.moonY === undefined ? 0.12 : parseFloat(this.props.moonY);
     const mx = w * moonX, my = h * moonY, mr = 14;
     const moon = 'M' + (mx + mr * 0.6).toFixed(1) + ' ' + (my - mr * 0.8).toFixed(1) + 'A' + mr + ' ' + mr + ' 0 1 1 ' + (mx - mr).toFixed(1) + ' ' + (my + mr * 0.2).toFixed(1) + 'A' + (mr * 0.95).toFixed(1) + ' ' + (mr * 0.95).toFixed(1) + ' 0 0 0 ' + (mx + mr * 0.6).toFixed(1) + ' ' + (my - mr * 0.8).toFixed(1) + 'Z';
+    const starK = tone === 'night' ? 1 : (tone === 'dawn' ? 0.45 : 0);
     const gs = Math.max(w, h) * (tone === 'night' ? 1.1 : 1.3);
     return {
       wpx: w + 'px', hpx: h + 'px', vb: '0 0 ' + w + ' ' + h,
       bg: bgs[tone] || bgs.night, glow: glows[tone] || glows.night,
       gx: (gx * w).toFixed(0) + 'px', gy: (hz * h).toFixed(0) + 'px', gs: gs.toFixed(0) + 'px',
-      stars: s, starsBig: sb,
-      starOp: tone === 'night' ? 0.75 : (tone === 'dawn' ? 0.35 : 0),
+      s0: classes[0].d, s1: classes[1].d, s2: classes[2].d, s3: classes[3].d,
+      op0: (starK * 0.45).toFixed(2), op1: (starK * 0.7).toFixed(2), op2: (starK * 0.9).toFixed(2), op3: starK.toFixed(2),
       moon: moon, moonOp: moonOn && tone !== 'day' ? 0.9 : 0
     };
   }

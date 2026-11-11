@@ -68,19 +68,57 @@ func drawNightSky(_ c: CGContext) {
                           locations: [0, 0.30 / 0.62, 1])!
     c.drawRadialGradient(glow, startCenter: CGPoint(x: skyW / 2, y: skyH), startRadius: 0,
                          endCenter: CGPoint(x: skyW / 2, y: skyH), endRadius: glowRadius, options: [])
-    // Stars: the same 34 as SkyView.
-    for i in 0..<34 {
-        let x = CGFloat((i * 61 + 13) % 100) / 100 * skyW
-        let y = CGFloat((i * 37 + 7) % 100) / 100 * skyH * 0.82
-        let r: CGFloat = i % 7 == 0 ? 1.2 : 0.7
-        c.setFillColor(i % 7 == 0 ? rgb(0xFFF4D6, 0.75) : rgb(0xFFFFFF, 0.75))
-        c.fillEllipse(in: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r))
+    // Stars: the same natural star field SkyView draws for the opening sunrise's first frame, a full 390 x 844
+    // screen with the horizon at 60% (all of them sit above 0.9 of the horizon, so inside this 506 pt bitmap).
+    for s in launchStars(width: skyW, height: screenH, horizon: 0.6) {
+        c.setFillColor(rgb(s.warm ? 0xFFF4D6 : 0xFFFFFF, s.opacity))
+        c.fillEllipse(in: CGRect(x: s.x - s.r, y: s.y - s.r, width: 2 * s.r, height: 2 * s.r))
     }
     // The crescent moon: Sky.dc.html's own SVG path, at (0.74, 0.12) of the whole 844 pt screen (not of this
     // 506 pt sky), lit along its lower right. The same shape as SkyMoon in Scene.swift.
     c.addPath(moonPath(centre: CGPoint(x: skyW * 0.74, y: screenH * 0.12)))
     c.setFillColor(rgb(0xF4E9D2, 0.9))
     c.fillPath()
+}
+
+/// A copy of StarField.stars (LongGame/Logic/StarField.swift, from Sky.dc.html), so this script runs on its own.
+/// Keep the two the same: seeded by the size, mulberry32, a Milky Way band, thinning towards the horizon.
+func launchStars(width w: Double, height h: Double, horizon: Double) -> [(x: Double, y: Double, r: Double, opacity: Double, warm: Bool)] {
+    func jsRound(_ v: Double) -> Double { (v + 0.5).rounded(.down) }
+    var a = UInt32(truncatingIfNeeded: Int64(jsRound(w)) &* 73_856_093) ^ UInt32(truncatingIfNeeded: Int64(jsRound(h)) &* 19_349_663)
+    func rnd() -> Double {
+        a = a &+ 0x6D2B79F5
+        var t = a
+        t = (t ^ (t >> 15)) &* (t | 1)
+        t ^= t &+ ((t ^ (t >> 7)) &* (t | 61))
+        return Double(t ^ (t >> 14)) / 4_294_967_296
+    }
+    func gauss() -> Double { let p = rnd(), q = rnd(), r = rnd(); return (p + q + r - 1.5) / 1.5 }
+    let top = h * horizon * 0.9
+    let n = Int(min(170, max(14, jsRound(w * top / 1500))))
+    let spread = min(w, top) * 0.1
+    let radii = [0.45, 0.65, 0.9, 1.3], opacities = [0.45, 0.7, 0.9, 1.0]
+    var out: [(x: Double, y: Double, r: Double, opacity: Double, warm: Bool)] = []
+    var tries = 0
+    while out.count < n && tries < n * 6 {
+        tries += 1
+        var x: Double, y: Double
+        if rnd() < 0.32 {
+            let t = rnd()
+            x = w * (0.08 + 0.9 * t) + gauss() * spread
+            y = top * (0.02 + 0.95 * t) + gauss() * spread
+        } else {
+            x = rnd() * w
+            y = rnd() * top
+        }
+        if x < 0 || x > w || y < 0 || y > top { continue }
+        if rnd() < (y / top) * (y / top) * 0.7 { continue }
+        let u = rnd()
+        let k = u < 0.62 ? 0 : u < 0.88 ? 1 : u < 0.97 ? 2 : 3
+        let r = radii[k] * (0.85 + rnd() * 0.3)
+        out.append((x, y, r, opacities[k], k == 3))
+    }
+    return out
 }
 
 /// `M x+0.6r y-0.8r  A r r 0 1 1 x-r y+0.2r  A 0.95r 0.95r 0 0 0 x+0.6r y-0.8r Z`, r = 14.

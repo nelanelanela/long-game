@@ -632,3 +632,20 @@ Not fixed here: on the iPhone 17 Simulator the app sometimes stays on the night 
 
 Not checked: the new wording on a real iPhone or Mac, and real VoiceOver speech.
 
+## Update 37: natural stars (11 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Star rule as a pure function (seed, area, count, Milky Way band, thinning, four classes) | ✅ | `Logic/StarField.swift` (`StarField.stars`, `StarClass`, `Mulberry32`) | Checked against the board's own JavaScript (run with macOS's JavaScript engine): 319 stars over four sky sizes, identical to 6 decimals |
+| SkyView draws it on every screen, then the moon; × 1 night, × 0.45 dawn, 0 day | ✅ | `drawStars` in `DesignSystem/Scene.swift` | One path per class. Stars are cached per size, so skies redrawn every frame (Timer, opening sunrise) don't work them out again |
+| Launch bitmap uses the same stars | ✅ | `launchStars` in `Tools/MakeLaunchAssets.swift` (a copy, so the script runs on its own), `LaunchNightSky@2x/@3x.png` regenerated | Drawn for a 390 × 844 screen with the horizon at 60%, the size of the opening sunrise's SkyView on that phone. The copy was checked against the board too. The land PDF only changed its date, so it was left as it was |
+| App icon and session pictures keep their own stars | ✅ | unchanged | |
+| Tests | ✅ | `LongGameTests/StarFieldTests.swift` | Same size → same stars; pinned seed and first star; different sizes differ; nothing below `top`; class shares within 2% of 62/26/9/3 over ~20,000 stars; fewer stars in the bottom fifth than the top fifth |
+| Previews | ✅ | "Stars · night and dawn at phone, widget and Watch sizes" in `Scene.swift` | Phone 390 × 844, small and medium widget, Watch 184 × 224 |
+
+All 638 tests pass on the iPhone 17 Simulator (no iPhone 16 Simulator is installed). The Watch app builds with the iPhone app. The two new files were added to `project.pbxproj` by hand, as XcodeGen isn't installed.
+
+Not caused by this update: on the Mac test run, `YearCardRenderTests.theCardIgnoresTheSystemAppearance` fails its "rendering is repeatable" check (two renders of the same card differ). It fails the same way with the old sky, so something else on the card isn't repeatable.
+
+Only the 390 × 844 phone gets a pixel-identical hand-over from the launch picture; on other sizes the launch picture is stretched to fit (scale to fill), as before, and the stars there differ slightly from the first animated frame.
+

@@ -93,20 +93,19 @@ struct SkyView: View {
         }
     }
 
-    private var starOpacity: Double { tone == .night ? 0.75 : (tone == .dawn ? 0.35 : 0) }
+    /// How strongly the stars show: full at night, under half at dawn, none by day.
+    private var starStrength: Double { tone == .night ? 1 : (tone == .dawn ? 0.45 : 0) }
 
+    /// The natural star field of Logic/StarField.swift, one path per brightness class.
     private func drawStars(_ ctx: inout GraphicsContext, size: CGSize) {
-        guard starOpacity > 0 else { return }
-        var small = Path(), big = Path()
-        for i in 0..<34 {
-            let x = CGFloat((i * 61 + 13) % 100) / 100 * size.width
-            let y = CGFloat((i * 37 + 7) % 100) / 100 * size.height * horizon * 0.82
-            let r: CGFloat = i % 7 == 0 ? 1.2 : 0.7
-            let dot = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: 2 * r, height: 2 * r))
-            if r > 1 { big.addPath(dot) } else { small.addPath(dot) }
+        guard starStrength > 0 else { return }
+        var paths = Array(repeating: Path(), count: StarClass.allCases.count)
+        for s in StarField.cached(width: size.width, height: size.height, horizon: horizon) {
+            paths[s.kind.rawValue].addEllipse(in: CGRect(x: s.x - s.radius, y: s.y - s.radius, width: 2 * s.radius, height: 2 * s.radius))
         }
-        ctx.fill(small, with: .color(.white.opacity(starOpacity)))
-        ctx.fill(big, with: .color(Color(hex: 0xFFF4D6).opacity(starOpacity)))
+        for kind in StarClass.allCases {
+            ctx.fill(paths[kind.rawValue], with: .color(Color(hex: kind.hex).opacity(kind.opacity * starStrength)))
+        }
     }
 
     private func drawMoon(_ ctx: inout GraphicsContext, size: CGSize) {
@@ -297,6 +296,26 @@ struct LandView: View {
         }
     }
     .padding().background(LGColor.background)
+}
+
+#Preview("Stars · night and dawn at phone, widget and Watch sizes") {
+    // Each size has its own stars (seeded by the size), so these are four different skies.
+    let sizes: [(String, CGSize, CGFloat)] = [("Phone", CGSize(width: 390, height: 844), 0.6),
+                                             ("Widget, small", CGSize(width: 170, height: 170), 0.7),
+                                             ("Widget, medium", CGSize(width: 364, height: 170), 0.7),
+                                             ("Watch", CGSize(width: 184, height: 224), 0.7)]
+    ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach([SceneTone.night, .dawn], id: \.self) { tone in
+                ForEach(sizes, id: \.0) { name, size, horizon in
+                    Text("\(name) · \(tone == .night ? "night" : "dawn")").font(.caption)
+                    SkyView(tone: tone, horizon: horizon).frame(width: size.width, height: size.height)
+                }
+            }
+        }
+        .padding()
+    }
+    .background(LGColor.background)
 }
 
 #Preview("Land · day, night, still") {
