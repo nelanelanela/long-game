@@ -12,7 +12,7 @@ enum OpeningSource: Equatable, Sendable {
 enum OpeningStyle: Equatable, Sendable {
     /// Nothing at all: straight to the app.
     case skip
-    /// The whole sunrise, about 1 s.
+    /// The whole sunrise, about 2.2 s.
     case full
     /// A 0.3 s cross-fade from the night frame to the app.
     case short
@@ -39,7 +39,7 @@ struct OpeningPlan: Equatable, Sendable {
 
 /// Decides which opening plays. Only a cold start from the icon plays one at all; Reduce Motion and VoiceOver get the
 /// short fade; everyone else sees the whole sunrise, a running session and dark mode included (the Launch board makes no
-/// exception for them, and the sunrise is only a second). Before onboarding it ends on Welcome.
+/// exception for them, and the sunrise is only about 2 seconds, which a tap skips). Before onboarding it ends on Welcome.
 func openingStyle(coldStart: Bool, openedFrom: OpeningSource, sessionRunning: Bool, reduceMotion: Bool,
                   voiceOver: Bool, onboarded: Bool) -> OpeningPlan {
     let landing: OpeningLanding = onboarded ? .home : .welcome
@@ -65,21 +65,21 @@ struct OpeningFrame: Equatable, Sendable {
 }
 
 /// The timings of `design/redesign/Launch.dc.html`. The board plays it as a 7 s loop (night held 0-20%, home held
-/// 72-92%); its note gives the app's real times: sunrise 0-0.5 s, good morning 0.5-0.65 s, settle 0.65-1 s.
+/// 72-92%); its note gives the app's real times: sunrise 0-1.1 s, good morning 1.1-1.4 s, settle 1.4-2.2 s.
 /// Each keyframe of the board maps onto those three phases:
 ///
 /// | Board  | App      | What happens                                                         |
 /// | ------ | -------- | -------------------------------------------------------------------- |
-/// | 20-50% | 0-0.5 s  | night sky and land fade to dawn; the sun rises 120 pt                |
-/// | 35-45% | 0.25-0.42| the sleeping sun becomes the happy sun (its rays light up)           |
-/// | 50-52% | 0.5-0.54 | its eyes open...                                                     |
-/// | 56-58% | 0.61-0.65| ...and close again                                                   |
-/// | 58-72% | 0.65-1 s | it glides and shrinks onto Today's arc                               |
-/// | 62-72% | 0.75-1 s | the scenery fades and Home shows underneath                          |
+/// | 20-50% | 0-1.1 s  | night sky and land fade to dawn; the sun rises 120 pt                |
+/// | 35-45% | 0.55-0.92| the sleeping sun becomes the happy sun (its rays light up)           |
+/// | 50-52% | 1.1-1.18 | its eyes open...                                                     |
+/// | 56-58% | 1.32-1.4 | ...and close again                                                   |
+/// | 58-72% | 1.4-2.2 s| it glides and shrinks onto Today's arc                               |
+/// | 62-72% | 1.62-2.2 | the scenery fades and Home shows underneath                          |
 enum OpeningTimeline {
-    static let sunrise = 0.5
-    static let glideStart = 0.65
-    static let total = 1.0
+    static let sunrise = 1.1
+    static let glideStart = 1.4
+    static let total = 2.2
     static let shortTotal = 0.3
 
     /// Board percentage → app seconds, piecewise along the three phases.

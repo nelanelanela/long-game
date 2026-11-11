@@ -662,3 +662,17 @@ Seeing the new launch picture in the Simulator: iOS keeps a snapshot of the laun
 | "Your usual · %lld" removed from the String Catalog | ✅ | `Resources/Localizable.xcstrings` | Nothing else used it |
 | Tests and previews | ✅ | | None counted the quick picks, so none needed changing |
 | `docs/SPEC.md` section 9 | ✅ | | Quick picks 0, 5, 10 |
+
+## Update 39: a slower opening sunrise (11 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| `sunrise = 1.1`, `glideStart = 1.4`, `total = 2.2` | ✅ | `OpeningTimeline` in `Logic/OpeningSunrise.swift` | Night still held for `OpeningCenter.lead` (0.4 s), unchanged |
+| Wake, eyes and fade follow from `boardTime(_:)` | ✅ | same | Wake 0.55–0.917 s, eyes open 1.1–1.175 s, close 1.325–1.4 s, Home from 1.629 s: the table's values to two decimals |
+| Same curves; short version still 0.3 s; tap skips; safety timer follows `total` | ✅ | unchanged code | Nothing in `OpeningSunriseView` or `AppRoot` had a time of its own |
+| Comments and spec section 21 | ✅ | `OpeningSunrise.swift`, `docs/SPEC.md` | "The whole opening takes about 2 seconds, and a tap skips it." Design note updated in `design/redesign/canvas.json` |
+| Tests | ✅ | `LongGameTests/OpeningSunriseTests.swift` | Night frame at 0; awake by 0.92 s; eyes open at 1.2 s, closed at 1.4 s; 2.2 s nothing left. At 1.8 s the glide is halfway in time; the sun's curve has then covered about 73% of the way (it lands soft), and the test says so |
+
+All 646 tests pass on the iPhone 17 Simulator (no iPhone 16 Simulator is installed). One earlier run on the iPhone 18 Pro was stopped by the Simulator before any test started ("Test crashed with signal kill while preparing to run tests"); the run before that passed there too.
+
+Checked on the iPhone 17 Simulator with a cold start from a fresh install: the launch picture and the app's first night frame look the same, the sun rises and wakes, and the opening ends on Home. Not checked on a real iPhone.
