@@ -10,6 +10,8 @@ struct HistoryView: View {
     let craft: Craft
     /// The day the calendar opens on (a tapped day bar on Home); today when nil.
     var day: Date?
+    /// Opens on the Growth tab (the Finish line figure on Home) instead of the last tab used.
+    var opensOnGrowth = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -19,9 +21,10 @@ struct HistoryView: View {
     @SceneStorage("history.tab") private var tab: HistoryTab = .calendar
     @State private var showSettings = false
 
-    init(craft: Craft, day: Date? = nil) {
+    init(craft: Craft, day: Date? = nil, opensOnGrowth: Bool = false) {
         self.craft = craft
         self.day = day
+        self.opensOnGrowth = opensOnGrowth
         let id = craft.id
         _sessions = Query(filter: #Predicate<Session> { $0.craftId == id }, sort: \Session.start, order: .reverse)
         _estimates = Query(filter: #Predicate<YearEstimate> { $0.craftId == id })
@@ -71,6 +74,7 @@ struct HistoryView: View {
         }
         .lgScreen()
         .lgHidesNavigationBar()
+        .onAppear { if opensOnGrowth { tab = .growth } }
         // Settings has its own stack: a screen that hides the navigation bar and is pushed on top of another
         // pushed screen (Settings → Your estimates) sent SwiftUI into an endless layout loop.
         .fullScreenCover(isPresented: $showSettings) {

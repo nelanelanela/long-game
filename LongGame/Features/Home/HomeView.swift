@@ -61,6 +61,8 @@ struct HomeView: View {
     @State private var scrollSpot: ScrollSpot?
     /// Set by tapping a day bar: History opens on that day.
     @State private var historyDay: Date?
+    /// Set by tapping the Finish line figure: History opens on the Growth chart.
+    @State private var showGrowth = false
     /// The gear in the bar at the top.
     @State private var showSettings = false
     /// The phone's bar is transparent: once the page has scrolled past the hero the craft name fades, so it never
@@ -138,10 +140,14 @@ struct HomeView: View {
         .navigationDestination(item: $historyDay) { day in
             HistoryView(craft: craft, day: day)
         }
+        .navigationDestination(isPresented: $showGrowth) {
+            HistoryView(craft: craft, opensOnGrowth: true)
+        }
         // A widget opens Home on its tab: back out of History and any sheet first.
         .onOpenURL { url in
             guard let link = WidgetLink.tab(from: url) else { return }
             historyDay = nil
+            showGrowth = false
             sheet = nil
             showSettings = false
             selectTab(link)
@@ -495,7 +501,7 @@ struct HomeView: View {
         HStack(spacing: 0) {
             stat("\(DurationFormat.grouped(Totals.wholeHours(total: total))) h", "The long game")
             stat(DurationFormat.perWeek(s.pace), "Pace")
-            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line")
+            finishLineStat(ForecastText.homeMastery(s.forecast.chosen, now: now))
         }
         .padding(.vertical, 14)
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
@@ -546,7 +552,8 @@ struct HomeView: View {
             finish: ForecastText.homeMastery(f.summary.forecast.chosen, now: f.now),
             byValue: added.map { "+\(DurationFormat.grouped(Int($0.rounded()))) h" } ?? "–",
             byLabel: target.map { "By \(DateText.monthYear($0.end))" } ?? "Year of pace",
-            rhythm: IPadFigures.rhythmText(daysPerWeek: rhythm.daysPerWeek))
+            rhythm: IPadFigures.rhythmText(daysPerWeek: rhythm.daysPerWeek),
+            showGrowth: { if shape == .sidebar { selectSection(.growth) } else { showGrowth = true } })
     }
 
     private func todayCard(_ f: HomeFigures) -> some View {
@@ -840,7 +847,7 @@ struct HomeView: View {
             // Hairlines either side of the middle figure, as on the board.
             .overlay(alignment: .leading) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
             .overlay(alignment: .trailing) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
-            stat(ForecastText.homeMastery(s.forecast.chosen, now: now), "Finish line", colour: LGColor.ember)
+            finishLineStat(ForecastText.homeMastery(s.forecast.chosen, now: now), colour: LGColor.ember)
         }
         .padding(.vertical, 12)
         .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
@@ -893,6 +900,18 @@ struct HomeView: View {
         settings.targetPromptShownAt = Date()
         try? context.save()
         sheet = .target(first: settings.currentTarget == nil)
+    }
+
+    /// The Finish line figure: tapping it opens History on the Growth chart, where the finish line is drawn.
+    private func finishLineStat(_ value: String, colour: Color = LGColor.ink) -> some View {
+        Button { showGrowth = true } label: {
+            stat(value, "Finish line", colour: colour)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Opens the Growth chart")
     }
 
     /// A small label over its figure (12 pt over 17 pt bold), as on the boards.

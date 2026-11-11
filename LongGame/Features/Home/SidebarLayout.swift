@@ -169,13 +169,22 @@ struct IPadNumbersCard: View {
     let byValue: String
     let byLabel: String
     let rhythm: String
+    /// Tapping Finish line: opens the Growth chart.
+    let showGrowth: () -> Void
 
     var body: some View {
         IPadCard(padding: EdgeInsets(top: 18, leading: 18, bottom: 18, trailing: 18)) {
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 16) {
                 GridRow {
                     IPadStat(value: pace, label: "Your chosen pace")
-                    IPadStat(value: finish, label: "Finish line")
+                    Button(action: showGrowth) {
+                        IPadStat(value: finish, label: "Finish line")
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(.isButton)
+                    .accessibilityHint("Opens the Growth chart")
                 }
                 GridRow {
                     IPadStat(value: byValue, label: LocalizedStringKey(byLabel))
