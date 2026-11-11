@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Allow notifications</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 16px 24px 22px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column">
+<div style="height: 44px; display: flex; align-items: center; justify-content: space-between; position: relative">
+<a href="ICloud.dc.html" aria-label="Back" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16244A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></a>
+<div aria-label="Step 6 of 6" style="position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 6px"><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span><span style="width: 22px; height: 4px; border-radius: 2px; background: linear-gradient(90deg,#FFC93C,#F0922A)"></span></div>
+<span style="width: 44px"></span>
+</div>
+<div style="position: relative; height: 196px; margin: 4px -24px 0; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="180" tone="day" horizon="0.72" hint-size="390px,180px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 28px; margin-left: -55px"><dc-import name="Sun" size="110" face="wink" hint-size="110px,110px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 76px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 14px; margin-left: 38px; width: 52px; height: 52px; border-radius: 26px; background: radial-gradient(circle at 35% 30%, #FFFFFF, #FFF4E4); box-shadow: 0 10px 24px rgba(22,36,74,0.16); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F0922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></div>
+</div>
+<h1 style="margin: 12px 0 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">A gentle nudge</h1>
+<p style="margin: 8px 0 0; font-size: 15px; line-height: 1.45; color: #5E6782">Long Game can send you a few quiet notifications. Never ads, never streaks.</p>
+<div style="margin-top: 12px; padding: 2px 16px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 30px rgba(22,36,74,0.06); display: flex; flex-direction: column">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #FFF1DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4561A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">A daily reminder</span><span style="font-size: 13px; line-height: 1.4; color: #5E6782">At 7 pm, when the sun is waiting. Change the time or days in Settings.</span></span>
+</div>
+<div style="height: 1px; background: #F0ECE5"></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #FFF1DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4561A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.4 6.7 19.3l1.1-5.9L3.4 9.3l6-.8z"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Milestones</span><span style="font-size: 13px; line-height: 1.4; color: #5E6782">“1,000 hours of piano. Sunrise is coming.”</span></span>
+</div>
+<div style="height: 1px; background: #F0ECE5"></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #FFF1DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4561A" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">A long-session check</span><span style="font-size: 13px; line-height: 1.4; color: #5E6782">“Still practising?” after 4 hours, so a forgotten timer doesn’t count.</span></span>
+</div>
+</div>
+<p style="margin: 12px 4px 0; font-size: 13px; line-height: 1.45; color: #5E6782">Your session on the Lock Screen shows either way. Change your mind any time in Settings.</p>
+<div style="flex: 1"></div>
+<a href="HomeEmpty.dc.html" style="height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Allow notifications</a>
+<a href="HomeEmpty.dc.html" style="height: 44px; margin-top: 4px; flex-shrink: 0; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Not now</a>
+<span style="margin-top: 6px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #5E6782">by We Have Sun</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
