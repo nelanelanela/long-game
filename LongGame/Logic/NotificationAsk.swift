@@ -46,13 +46,10 @@ enum OnboardingSteps {
     }
 }
 
-/// The answer to "A gentle nudge".
-enum NotificationAsk {
-    static let everyDay = [1, 2, 3, 4, 5, 6, 7]
-
-    /// The daily reminder that "Allow notifications" turns on: 7 pm, only when iOS said yes.
-    static func reminderTime(granted: Bool, now: Date = Date(), calendar: Calendar = .current) -> Date? {
-        guard granted else { return nil }
-        return calendar.date(bySettingHour: 19, minute: 0, second: 0, of: now)
+/// The daily reminder, which only the person turns on, in Settings. Onboarding never sets it.
+enum DailyReminder {
+    /// The time a newly switched-on reminder starts at: 7 pm today. The person can change it, and the days, there.
+    static func defaultTime(now: Date = Date(), calendar: Calendar = .current) -> Date {
+        calendar.date(bySettingHour: 19, minute: 0, second: 0, of: now) ?? now
     }
 }

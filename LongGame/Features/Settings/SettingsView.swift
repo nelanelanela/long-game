@@ -254,7 +254,7 @@ struct SettingsView: View {
         let dailyOn = Binding(
             get: { settings.reminderTime != nil },
             set: { on in
-                if on { enableNotifications { settings.reminderTime = defaultReminder(); save() } }
+                if on { enableNotifications { settings.reminderTime = DailyReminder.defaultTime(); save() } }
                 else { settings.reminderTime = nil; save() }
             })
         let nudgeOn = Binding(
@@ -654,10 +654,6 @@ struct SettingsView: View {
         }
         .frame(minHeight: 54)
         .contentShape(Rectangle())
-    }
-
-    private func defaultReminder() -> Date {
-        Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date()) ?? Date()
     }
 
     private func save() {

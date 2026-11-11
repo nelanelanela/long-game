@@ -88,9 +88,6 @@ struct NotificationsStepView: View {
 
     private var card: some View {
         VStack(spacing: 0) {
-            row(icon: "bell", title: "A daily reminder",
-                detail: "At 7 pm, when the sun is waiting. Change the time or days in Settings.")
-            Divider().overlay(LGColor.divider)
             row(icon: "star", title: "Milestones",
                 detail: "“1,000 hours of \(displayCraft). Sunrise is coming.”")
             Divider().overlay(LGColor.divider)
@@ -127,7 +124,7 @@ struct NotificationsStepView: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 12)
-        // Read as one sentence pair: "A daily reminder. At 7 pm…".
+        // Read as one sentence pair: "Milestones. 1,000 hours of piano…".
         .accessibilityElement(children: .combine)
     }
 }

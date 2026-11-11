@@ -13,8 +13,6 @@ final class OnboardingModel {
     var targetHours: Double = 0
     /// Step 5's Save to iCloud switch: on unless the person turns it off (or has no iCloud account).
     var saveToICloud = true
-    /// Step 6's answer: 7 pm on every day when notifications were allowed, nil otherwise.
-    var reminderTime: Date?
 
     let currentYear: Int
 
@@ -38,7 +36,8 @@ final class OnboardingModel {
     /// This year's estimate is the pace on offer in step 4: there are no sessions to measure yet.
     var actualPace: Double { Double(hoursFor(currentYear)) }
 
-    /// Saves the craft, the estimates, the weekly target, the iCloud choice and the daily reminder; Home then opens on
+    /// Saves the craft, the estimates, the weekly target, and the iCloud choice (never the daily reminder, which
+    /// only Settings turns on); Home then opens on
     /// The long game, once.
     func save(in context: ModelContext, now: Date = Date()) {
         let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -58,10 +57,6 @@ final class OnboardingModel {
         }
         settings.milestonesSeen = seen
         settings.syncEnabled = saveToICloud
-        if let reminderTime {
-            settings.reminderTime = reminderTime
-            settings.reminderDays = NotificationAsk.everyDay
-        }
         // The first Home after onboarding opens on The long game; every launch after that opens on This week.
         settings.lastHomeTab = .longGame
         TargetSaving.apply(hours: targetHours, now: now, settings: settings, context: context)
@@ -90,14 +85,13 @@ struct OnboardingFlow: View {
         if let next = OnboardingSteps.next(after: step, permission: permission) { path.append(next) } else { startPlaying() }
     }
 
-    /// "Allow notifications" shows iOS's prompt and turns on the 7 pm reminder if it says yes; "Not now" doesn't ask.
+    /// "Allow notifications" only shows iOS's prompt (the daily reminder stays off); "Not now" doesn't ask.
     /// Either way the question has been asked, and onboarding finishes.
     private func answerNotifications(allow: Bool) {
         UserDefaults.standard.set(true, forKey: Notifications.askedKey)
         guard allow else { startPlaying(); return }
         Task {
-            let granted = await Notifications.requestAuthorization()
-            model.reminderTime = NotificationAsk.reminderTime(granted: granted)
+            _ = await Notifications.requestAuthorization()
             startPlaying()
         }
     }

@@ -33,38 +33,47 @@ struct NotificationAskTests {
 
     // MARK: Allow notifications
 
-    @Test func allowSetsSevenPmOnlyWhenGranted() throws {
-        let now = day(2026, 11, 11, hour: 10)
-        let time = try #require(NotificationAsk.reminderTime(granted: true, now: now, calendar: utc))
-        #expect(utc.component(.hour, from: time) == 19)
-        #expect(utc.component(.minute, from: time) == 0)
-        #expect(NotificationAsk.reminderTime(granted: false, now: now, calendar: utc) == nil)
-    }
-
     private func makeContext() throws -> ModelContext {
         let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self])
         let container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none))
         return ModelContext(container)
     }
 
-    private func savedSettings(granted: Bool) throws -> AppSettings {
+    /// Onboarding saved, whatever was answered on "A gentle nudge": the model no longer carries any reminder.
+    private func onboardingSettings() throws -> (AppSettings, ModelContext) {
         let context = try makeContext()
         let model = OnboardingModel(now: Date(), calendar: .current)
         model.craftName = "Piano"
-        model.reminderTime = NotificationAsk.reminderTime(granted: granted)
         model.save(in: context)
-        return try #require(try context.fetch(FetchDescriptor<AppSettings>()).first)
+        return (try #require(try context.fetch(FetchDescriptor<AppSettings>()).first), context)
     }
 
-    @Test func aGrantedAllowSavesTheDailyReminderOnEveryDay() throws {
-        let settings = try savedSettings(granted: true)
-        let time = try #require(settings.reminderTime)
-        #expect(Calendar.current.component(.hour, from: time) == 19)
-        #expect(settings.reminderDays == [1, 2, 3, 4, 5, 6, 7])
+    @Test func onboardingLeavesTheDailyReminderOff() throws {
+        let (settings, _) = try onboardingSettings()
+        #expect(settings.reminderTime == nil)
+        #expect(!settings.rhythmNudge)
     }
 
-    @Test func aDeclinedAllowOrNotNowSavesNoReminder() throws {
-        #expect(try savedSettings(granted: false).reminderTime == nil)
+    @Test func freshSettingsHaveEveryReminderOff() {
+        let settings = AppSettings()
+        #expect(settings.reminderTime == nil)
+        #expect(!settings.rhythmNudge)
+    }
+
+    @Test func turningTheReminderOnInSettingsStartsAtSevenPm() throws {
+        let now = day(2026, 11, 11, hour: 10)
+        let time = DailyReminder.defaultTime(now: now, calendar: utc)
+        #expect(utc.component(.hour, from: time) == 19)
+        #expect(utc.component(.minute, from: time) == 0)
+        #expect(utc.isDate(time, inSameDayAs: now))
+
+        // As Settings' Daily reminder switch does after onboarding: it saves, on every day.
+        let (settings, context) = try onboardingSettings()
+        settings.reminderTime = DailyReminder.defaultTime()
+        try context.save()
+        let saved = try #require(try context.fetch(FetchDescriptor<AppSettings>()).first)
+        #expect(saved.reminderTime != nil)
+        #expect(saved.reminderDays == [1, 2, 3, 4, 5, 6, 7])
     }
 
     // MARK: The milestone notification

@@ -124,12 +124,11 @@ The one place the app asks for notifications, so nothing interrupts the first se
 - Step 6 of 6. Shown only while iOS has never asked (status "not determined"); otherwise step 3c finishes onboarding.
 - Illustration: the day sky, the sun with the wink face, the land and sea, and a bell (amber) in a small white bubble beside the sun (decorative, hidden from VoiceOver).
 - Title "A gentle nudge". Line: "Long Game can send you a few quiet notifications. Never ads, never streaks."
-- A white card with three rows, each an icon on a peach tile, a 15 pt semibold title and a 13 pt muted line; VoiceOver reads each row as one element:
-  - **A daily reminder** — "At 7 pm, when the sun is waiting. Change the time or days in Settings."
+- A white card with two rows, each an icon on a peach tile, a 15 pt semibold title and a 13 pt muted line; VoiceOver reads each row as one element:
   - **Milestones** — "“1,000 hours of piano. Sunrise is coming.”" (with the user's craft)
   - **A long-session check** — "“Still practising?” after 4 hours, so a forgotten timer doesn’t count."
 - Under the card, 13 pt muted: "Your session on the Lock Screen shows either way. Change your mind any time in Settings."
-- **Allow notifications** (primary) shows iOS's own prompt. If allowed, the daily reminder is turned on at 19:00 on every day; if not, no reminder. Then onboarding finishes (everything saved, Home opens on The long game once).
+- **Allow notifications** (primary) only shows iOS's own prompt. It never turns on the daily reminder, which stays off until the person turns it on in Settings. Then onboarding finishes (everything saved, Home opens on The long game once).
 - **Not now** (text button) finishes onboarding without asking iOS.
 - Either way `notifications.asked` is set. "by We Have Sun" under the buttons.
 - The milestone notification itself reads the same: "1,000 hours of piano. Sunrise is coming." (at 10,000: "10,000 hours of piano. The sun has fully risen."). The celebration on Home keeps its short line ("A thousand hours.").
@@ -597,7 +596,7 @@ No account and no sign-in: the app uses the iCloud account already on the device
 
 **Notifications** (all off by default; asked once, on the last setup step "A gentle nudge" (3d). Starting a session never shows a permission prompt; the milestone and long-session notifications are still planned, and iOS drops them if permission was not given)
 
-Settings keeps a switch for the daily reminder and the rhythm nudge. Turning one on asks iOS only if it never asked (someone who chose Not now). If notifications are off for Long Game, the switch stays off and a line reads "Notifications are off for Long Game in iPhone Settings" with an **Open Settings** button to the app's page in the Settings app.
+Settings keeps a switch for the daily reminder and the rhythm nudge. Both start off for everyone; Settings is the only place to turn the daily reminder on (at 19:00 on every day to start) and choose its time and days. Turning one on asks iOS only if it never asked (someone who chose Not now). If notifications are off for Long Game, the switch stays off and a line reads "Notifications are off for Long Game in iPhone Settings" with an **Open Settings** button to the app's page in the Settings app.
 
 | Type | Trigger | Example copy |
 | --- | --- | --- |
