@@ -7,6 +7,15 @@
     " " : {
 
     },
+    "%@ of %@" : {
+
+    },
+    "%@. Sunrise is coming." : {
+
+    },
+    "%@. The sun has fully risen." : {
+
+    },
     "“1,000 hours of %@. Sunrise is coming.”" : {
 
     },

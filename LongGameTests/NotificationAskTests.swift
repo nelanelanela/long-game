@@ -67,6 +67,16 @@ struct NotificationAskTests {
         #expect(try savedSettings(granted: false).reminderTime == nil)
     }
 
+    // MARK: The milestone notification
+
+    @Test func theMilestoneNotificationNamesTheCraftAsTheCardShows() {
+        #expect(Milestones.notificationMessage(hours: 1_000, craft: "Piano") == "1,000 hours of piano. Sunrise is coming.")
+        #expect(Milestones.notificationMessage(hours: 100, craft: " Watercolour ") == "100 hours of watercolour. Sunrise is coming.")
+        #expect(Milestones.notificationMessage(hours: 10_000, craft: "Piano") == "10,000 hours of piano. The sun has fully risen.")
+        // The celebration on Home keeps its own short line.
+        #expect(Milestones.message(hours: 1_000, craft: "Piano") == "A thousand hours.")
+    }
+
     // MARK: Starting a session
 
     @MainActor @Test func startingASessionNeverAsks() async throws {

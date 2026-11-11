@@ -34,6 +34,15 @@ enum Milestones {
         }
     }
 
+    /// The notification for a milestone reached while the app is in the background, as on "A gentle nudge":
+    /// "1,000 hours of piano. Sunrise is coming." At 10,000 the sun has risen instead.
+    static func notificationMessage(hours: Int, craft: String) -> String {
+        let name = craft.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let amount = String(localized: "\(DurationFormat.grouped(hours)) hours")
+        let of = name.isEmpty ? amount : String(localized: "\(amount) of \(name)")
+        return hours >= 10_000 ? String(localized: "\(of). The sun has fully risen.") : String(localized: "\(of). Sunrise is coming.")
+    }
+
     /// Only the thousands change the app icon, so only they say it has grown.
     static func iconGrows(at hours: Int) -> Bool { [1_000, 5_000, 10_000].contains(hours) }
 }

@@ -132,6 +132,7 @@ The one place the app asks for notifications, so nothing interrupts the first se
 - **Allow notifications** (primary) shows iOS's own prompt. If allowed, the daily reminder is turned on at 19:00 on every day; if not, no reminder. Then onboarding finishes (everything saved, Home opens on The long game once).
 - **Not now** (text button) finishes onboarding without asking iOS.
 - Either way `notifications.asked` is set. "by We Have Sun" under the buttons.
+- The milestone notification itself reads the same: "1,000 hours of piano. Sunrise is coming." (at 10,000: "10,000 hours of piano. The sun has fully risen."). The celebration on Home keeps its short line ("A thousand hours.").
 
 ### 4 · Home (`design/TodayStretch.dc.html`, `design/HomeWeek.dc.html`, `design/Home.dc.html`)
 

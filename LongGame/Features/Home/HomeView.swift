@@ -1044,7 +1044,7 @@ struct HomeView: View {
         }
         let base = summary(now: Date()).total
         if let next = Milestones.nextCrossing(baseTotal: base, state: state, seen: settings.milestonesSeen, now: Date()) {
-            Notifications.scheduleMilestone(at: next.date, message: Milestones.message(hours: next.hours, craft: craft.name))
+            Notifications.scheduleMilestone(at: next.date, message: Milestones.notificationMessage(hours: next.hours, craft: craft.name))
         } else {
             Notifications.scheduleMilestone(at: nil, message: "")
         }
