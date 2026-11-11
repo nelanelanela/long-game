@@ -652,3 +652,13 @@ Launch picture size (follow-up the same day): the launch sky is now drawn for a 
 
 Seeing the new launch picture in the Simulator: iOS keeps a snapshot of the launch screen per app, and an older build on a Simulator keeps the old picture. Running the app again from Xcode (or deleting the app from the Simulator) brings the new one. On 11 November the new build was installed on the booted iPhone 17 and iPhone 18 Pro and their launch snapshots (`Library/SplashBoard` in the app's data folder) were cleared; the app's own data was kept.
 
+
+## Update 41: no "Your usual" on Catch up (11 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| The average step's quick picks are 0, 5 and 10 | ✅ | `CatchUpSheet.averagePicks` in `Features/CatchUp/CatchUpSheet.swift` | "Your usual · N" removed; comment updated |
+| The stepper still starts on the current pace | ✅ | unchanged, `CatchUp.defaultHours(pace:)` | |
+| "Your usual · %lld" removed from the String Catalog | ✅ | `Resources/Localizable.xcstrings` | Nothing else used it |
+| Tests and previews | ✅ | | None counted the quick picks, so none needed changing |
+| `docs/SPEC.md` section 9 | ✅ | | Quick picks 0, 5, 10 |

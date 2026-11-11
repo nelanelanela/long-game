@@ -175,11 +175,9 @@ struct CatchUpSheet: View {
         .padding(.bottom, 16)
     }
 
-    /// "Your usual · N", 0, 5 and 10.
+    /// 0, 5 and 10. The stepper itself starts on the current pace (`CatchUp.defaultHours(pace:)`).
     private var averagePicks: [HoursQuickPick] {
-        let usual = Double(CatchUp.defaultHours(pace: pace))
-        return [HoursQuickPick(title: String(localized: "Your usual · \(Int(usual))"), value: usual)]
-            + [0.0, 5, 10].map { HoursQuickPick(title: "\(Int($0))", value: $0) }
+        [0.0, 5, 10].map { HoursQuickPick(title: "\(Int($0))", value: $0) }
     }
 
     // MARK: Shared pieces

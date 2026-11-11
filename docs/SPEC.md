@@ -255,7 +255,7 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 **Screen 12 · 4 weeks or more (gap of 28+ days): one average**
 
 - "N weeks have passed. Since <date>. On average, how many hours a week did you practise?"
-- One big stepper 0–168 h/week, step 1 (default = current pace rounded), with quick picks "Your usual · N", 0, 5, 10, with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
+- One big stepper 0–168 h/week, step 1 (default = current pace rounded), with quick picks 0, 5, 10, with Period (dates · days), Per day in calendar, and Adding (= average × gap days ÷ 7).
 
 **How the hours are stored**
 
