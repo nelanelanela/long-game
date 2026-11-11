@@ -4,6 +4,12 @@
     "%@ / %@ h this week" : {
 
     },
+    "%@ extra" : {
+
+    },
+    "%@ extra today" : {
+
+    },
     "%@ hours this week" : {
 
     },
@@ -43,22 +49,12 @@
         }
       }
     },
-    "%@ of %@, %@ to go." : {
+    "%@ of %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ of %2$@, %3$@ to go."
-          }
-        }
-      }
-    },
-    "%@ of %@. Anything more is a bonus." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@. Anything more is a bonus."
+            "value" : "%1$@ of %2$@."
           }
         }
       }
@@ -79,8 +75,21 @@
         }
       }
     },
-    "%@ to the moon" : {
+    "%@ to go" : {
 
+    },
+    "%@ to go." : {
+
+    },
+    "%@, %@ extra today." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ extra today."
+          }
+        }
+      }
     },
     "%@. %@, %@." : {
       "localizations" : {
@@ -220,10 +229,13 @@
     "At your chosen pace, around %@." : {
 
     },
-    "covered" : {
+    "done" : {
 
     },
     "Done" : {
+
+    },
+    "Done for today" : {
 
     },
     "Estimate" : {
@@ -429,9 +441,6 @@
     "The long game" : {
 
     },
-    "the moon" : {
-
-    },
     "The sun has reached %@." : {
 
     },
@@ -475,34 +484,27 @@
     "today %@" : {
 
     },
-    "today's %@ · covered" : {
+    "today's %@" : {
 
     },
-    "Today's stretch covered: %@ of %@. Anything more is a bonus." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today's stretch covered: %1$@ of %2$@. Anything more is a bonus."
-          }
-        }
-      }
+    "today's %@ · covered" : {
+
     },
     "Today's stretch covered." : {
 
     },
-    "Today's stretch is covered. The sun has reached the moon." : {
-
-    },
-    "Today's stretch: %@ of %@. %@ to go." : {
+    "Today's stretch, %@ of %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Today's stretch: %1$@ of %2$@. %3$@ to go."
+            "value" : "Today's stretch, %1$@ of %2$@."
           }
         }
       }
+    },
+    "Today's stretch, done for today." : {
+
     },
     "two thirds of the way" : {
 
