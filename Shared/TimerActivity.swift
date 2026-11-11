@@ -11,6 +11,8 @@ struct TimerActivityAttributes: ActivityAttributes {
         var pausedElapsed: Double?
         var litRays: Int
         var hours: Int
+        /// Today's stretch is covered: the sun smiles, as on the Timer screen.
+        var dayComplete: Bool
     }
 
     var craftName: String

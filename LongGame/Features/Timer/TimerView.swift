@@ -249,7 +249,7 @@ private struct RunningScene: View {
                 }
 
                 SunView(idle: false, face: face,
-                        litRays: golden != nil || p >= 1 && !paused ? 12 : sun.litRays,
+                        litRays: golden != nil ? 12 : TimerSunrise.litRays(p: p, paused: paused, hourRays: sun.litRays),
                         glowingRay: golden != nil || paused ? nil : sun.litRays,
                         glowOpacity: glow,
                         growingRay: growing == nil ? nil : sun.litRays - 1,
@@ -309,6 +309,8 @@ private struct RunningScene: View {
         }
         .onChange(of: sun.litRays) { _, _ in rayLit(sun: sun, paused: paused) }
         .onChange(of: paused) { _, isPaused in pauseChanged(isPaused) }
+        // The lock screen sun lights all its rays and smiles the moment today's stretch is covered, as here.
+        .onChange(of: p >= 1, initial: true) { _, _ in LiveActivityManager.sync(state, now: now, plan: stretchPlan) }
     }
 
     private func rayLit(sun: SunHour, paused: Bool) {
@@ -326,11 +328,11 @@ private struct RunningScene: View {
             AccessibilityNotification.Announcement(announcement).post()
             #endif
         }
-        LiveActivityManager.sync(state, now: now)
+        LiveActivityManager.sync(state, now: now, plan: stretchPlan)
     }
 
     private func pauseChanged(_ isPaused: Bool) {
-        LiveActivityManager.sync(state, now: now)
+        LiveActivityManager.sync(state, now: now, plan: stretchPlan)
         let message = isPaused ? String(localized: "Timer paused") : String(localized: "Timer resumed")
         AccessibilityNotification.Announcement(message).post()
     }

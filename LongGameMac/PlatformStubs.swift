@@ -2,7 +2,7 @@ import Foundation
 
 /// The Mac has no Live Activities. The shared Timer screen and TimerStore call this; here it does nothing.
 enum LiveActivityManager {
-    static func sync(_ state: TimerState?, now: Date) {}
+    static func sync(_ state: TimerState?, now: Date, plan: StretchPlan? = nil) {}
 }
 
 import SwiftUI

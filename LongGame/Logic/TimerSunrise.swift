@@ -90,6 +90,12 @@ enum TimerSunrise {
         return covered ? .covered : .nextRay(seconds: secondsToNextRay)
     }
 
+    /// How many rays the sun shows lit: once today's sunrise is complete (p = 1) and the timer is running, all 12,
+    /// otherwise the rays of the current hour. The Timer screen and the Live Activity both use this, so they match.
+    static func litRays(p: Double, paused: Bool, hourRays: Int) -> Int {
+        p >= 1 && !paused ? 12 : hourRays
+    }
+
     /// Where the progress bar's two parts end: what the day had before this session, and the part played now.
     static func bar(doneSaved: TimeInterval, running: TimeInterval, target: TimeInterval?) -> (before: Double, now: Double) {
         let stretch = (target ?? fallbackStretch)

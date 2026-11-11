@@ -168,5 +168,18 @@ struct TimerSunriseTests {
         let m = SavedMoment.make(plan: StretchPlan(target: nil, doneSaved: 0), duration: 600, startedToday: true)
         #expect(m.accentLine == nil && !m.covered)
     }
-}
 
+    // The Live Activity and the Timer screen light the same rays.
+
+    @Test func onceTheDaysSunriseIsCompleteAllRaysAreLit() {
+        #expect(TimerSunrise.litRays(p: 1, paused: false, hourRays: 2) == 12)
+    }
+
+    @Test func beforeThatTheRaysFollowTheHour() {
+        #expect(TimerSunrise.litRays(p: 0.6, paused: false, hourRays: 2) == 2)
+    }
+
+    @Test func pausedTheRaysFollowTheHourEvenWhenTheDayIsComplete() {
+        #expect(TimerSunrise.litRays(p: 1, paused: true, hourRays: 5) == 5)
+    }
+}
