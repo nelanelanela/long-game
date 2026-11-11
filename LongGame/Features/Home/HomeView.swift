@@ -535,17 +535,8 @@ struct HomeView: View {
         }
     }
 
-    /// "1 h 05 of 1 h 45 · 40 m to the moon" for the Today card.
-    private func todayLine(_ stretch: StretchState) -> String {
-        switch stretch {
-        case .inProgress(let target, let done):
-            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target)) · \(StretchText.toGo(target - done))"
-        case .covered(let target, let done):
-            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target))"
-        case .noTarget:
-            ""
-        }
-    }
+    /// "1 h 05 of 1 h 45 · 40 m to go" for the Today card.
+    private func todayLine(_ stretch: StretchState) -> String { StretchText.cardLine(stretch) }
 
     private func numbersCard(_ f: HomeFigures) -> some View {
         let added = WeeklyTarget.addedByEnd(target, now: f.now)

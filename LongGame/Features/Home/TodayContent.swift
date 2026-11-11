@@ -51,13 +51,7 @@ struct TodayQuietLine: View {
     /// Left-aligned, in the wide window's right pane.
     var leading = false
 
-    private var text: String {
-        switch state {
-        case .inProgress(let target, let done): StretchText.toGo(target - done)
-        case .covered: String(localized: "You reached the moon.")
-        case .noTarget: ""
-        }
-    }
+    private var text: String { StretchText.quietLine(state) }
 
     var body: some View {
         Text(verbatim: text)
@@ -67,10 +61,11 @@ struct TodayQuietLine: View {
     }
 }
 
-#Preview("Today · in progress, covered") {
+#Preview("Today · to go, done, extra") {
     let states: [StretchState] = [
         .inProgress(target: 6_300, done: 3_900),
-        .covered(target: 3_600, done: 3_700),
+        .covered(target: 3_600, done: 3_620),
+        .covered(target: 6_300, done: 7_800),
     ]
     VStack(spacing: 24) {
         ForEach(Array(states.enumerated()), id: \.offset) { _, state in

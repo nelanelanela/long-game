@@ -115,9 +115,15 @@ struct SunSpeechTests {
 
     @Test func todayDescribesTheStretch() {
         let s = SunSpeech.today(.inProgress(target: 6_300, done: 3_900))
-        #expect(s.label == "The sun is about two thirds of the way to the moon.")
-        #expect(s.value == "1 hour 5 minutes of 1 hour 45 minutes, 40 minutes to go.")
-        #expect(SunSpeech.today(.covered(target: 3_600, done: 3_700)).label.contains("covered"))
+        #expect(s.label == "Today's stretch, 1 hour 5 minutes of 1 hour 45 minutes.")
+        #expect(s.value == "40 minutes to go.")
+        let done = SunSpeech.today(.covered(target: 6_300, done: 6_300))
+        #expect(done.label == "Today's stretch, done for today.")
+        #expect(done.value == "1 hour 45 minutes of 1 hour 45 minutes.")
+        #expect(SunSpeech.today(.covered(target: 6_300, done: 6_330)).value == "1 hour 45 minutes of 1 hour 45 minutes.")
+        let over = SunSpeech.today(.covered(target: 6_300, done: 7_800))
+        #expect(over.label == "Today's stretch, done for today.")
+        #expect(over.value == "2 hours 10 minutes, 25 minutes extra today.")
     }
 
     @Test func theTimerReadsSessionRaysAndTotal() {

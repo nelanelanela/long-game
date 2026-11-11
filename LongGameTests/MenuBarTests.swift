@@ -36,16 +36,19 @@ struct MenuBarTextTests {
 
     @Test func runningLineAndIdleCaptionUseTodaysStretch() {
         let mid = StretchState.inProgress(target: 6_300, done: 5_400)
-        #expect(MenuBarText.todayLine(mid) == "1 h 30 of 1 h 45 · 15 m to the moon")
+        #expect(MenuBarText.todayLine(mid) == "1 h 30 of 1 h 45 · 15 m to go")
         let idle = StretchState.inProgress(target: 6_300, done: 3_900)
         #expect(MenuBarText.bigTime(idle) == "1 h 05")
-        #expect(MenuBarText.idleCaption(idle) == "of today's 1 h 45 · 40 m to the moon")
+        #expect(MenuBarText.idleCaption(idle) == "of today's 1 h 45 · 40 m to go")
     }
 
     @Test func coveredAndNoTargetWording() {
-        let covered = StretchState.covered(target: 6_300, done: 7_000)
-        #expect(MenuBarText.idleCaption(covered) == "today's 1 h 45 · covered")
-        #expect(MenuBarText.todayLine(covered).hasSuffix("covered"))
+        let done = StretchState.covered(target: 6_300, done: 6_330)
+        #expect(MenuBarText.idleCaption(done) == "today's 1 h 45 · done")
+        #expect(MenuBarText.todayLine(done) == "1 h 45 of 1 h 45 · done")
+        let over = StretchState.covered(target: 6_300, done: 7_800)
+        #expect(MenuBarText.idleCaption(over) == "today's 1 h 45 · 25 m extra")
+        #expect(MenuBarText.todayLine(over) == "2 h 10 of 1 h 45 · 25 m extra")
         #expect(MenuBarText.todayLine(.noTarget) == "")
     }
 

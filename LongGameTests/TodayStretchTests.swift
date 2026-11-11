@@ -138,16 +138,38 @@ struct StretchPictureTests {
         #expect(StretchText.clock(seconds: mins(59) + 59) == "59 m")
         #expect(StretchText.clock(seconds: 2 * 3600) == "2 h 00")
         #expect(StretchText.ofToday(mins(105)) == "of today's 1 h 45")
-        #expect(StretchText.toGo(mins(40)) == "40 m to the moon")
+        #expect(StretchText.toGo(mins(40)) == "40 m to go")
         // A part-minute left still reads as a minute to go.
-        #expect(StretchText.toGo(mins(39) + 10) == "40 m to the moon")
+        #expect(StretchText.toGo(mins(39) + 10) == "40 m to go")
         #expect(StretchText.clockUp(seconds: 0) == "0 m")
+    }
+
+    @Test func theQuietLineSaysToGoDoneOrExtra() {
+        #expect(StretchText.quietLine(.inProgress(target: mins(105), done: mins(65))) == "40 m to go")
+        // Exactly at the stretch, and 30 s over, is simply done.
+        #expect(StretchText.quietLine(.covered(target: mins(105), done: mins(105))) == "Done for today")
+        #expect(StretchText.quietLine(.covered(target: mins(105), done: mins(105) + 30)) == "Done for today")
+        #expect(StretchText.quietLine(.covered(target: mins(105), done: mins(105) + 59)) == "Done for today")
+        #expect(StretchText.quietLine(.covered(target: mins(105), done: mins(106))) == "1 m extra today")
+        #expect(StretchText.quietLine(.covered(target: mins(105), done: mins(130))) == "25 m extra today")
+        #expect(StretchText.quietLine(.covered(target: mins(60), done: mins(130))) == "1 h 10 extra today")
+        #expect(StretchText.quietLine(.noTarget) == "")
+    }
+
+    @Test func theTodayCardLineEndsWithTheSameWords() {
+        #expect(StretchText.cardLine(.inProgress(target: mins(105), done: mins(65))) == "1 h 05 of 1 h 45 · 40 m to go")
+        #expect(StretchText.cardLine(.covered(target: mins(105), done: mins(105))) == "1 h 45 of 1 h 45 · Done for today")
+        #expect(StretchText.cardLine(.covered(target: mins(105), done: mins(130))) == "2 h 10 of 1 h 45 · 25 m extra today")
+        #expect(StretchText.cardLine(.noTarget) == "")
     }
 
     @Test func voiceOverReadsThePictureAsOneSentence() {
         let s = StretchState.inProgress(target: mins(105), done: mins(65))
-        #expect(StretchText.description(s) == "Today's stretch: 1 hour 5 minutes of 1 hour 45 minutes. 40 minutes to go.")
-        #expect(StretchText.description(.covered(target: 3600, done: 3600)).hasPrefix("Today's stretch covered"))
+        #expect(StretchText.description(s) == "Today's stretch, 1 hour 5 minutes of 1 hour 45 minutes. 40 minutes to go.")
+        #expect(StretchText.description(.covered(target: mins(105), done: mins(105)))
+                == "Today's stretch, done for today. 1 hour 45 minutes of 1 hour 45 minutes.")
+        #expect(StretchText.description(.covered(target: mins(105), done: mins(130)))
+                == "Today's stretch, done for today. 2 hours 10 minutes, 25 minutes extra today.")
     }
 
     @Test func homeOpensOnTodayAndLegacyValuesStillRead() {

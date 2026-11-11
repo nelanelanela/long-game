@@ -139,8 +139,39 @@ enum StretchText {
     /// "today's 1 h 45 · covered"
     static func coveredToday(_ target: TimeInterval) -> String { String(localized: "today's \(clock(seconds: target)) · covered") }
 
-    /// "40 m to the moon"
-    static func toGo(_ remaining: TimeInterval) -> String { String(localized: "\(clockUp(seconds: remaining)) to the moon") }
+    /// "40 m to go"
+    static func toGo(_ remaining: TimeInterval) -> String { String(localized: "\(clockUp(seconds: remaining)) to go") }
+
+    /// "Done for today"
+    static var doneForToday: String { String(localized: "Done for today") }
+
+    /// "25 m extra today"
+    static func extraToday(_ extra: TimeInterval) -> String { String(localized: "\(clock(seconds: extra)) extra today") }
+
+    /// Whole minutes beyond today's stretch: 0 until a full minute over (30 s over is still just "done").
+    static func extraMinutes(target: TimeInterval, done: TimeInterval) -> Int { max(0, Int((done - target) / 60)) }
+
+    /// The quiet line once the stretch is covered: "Done for today", or "25 m extra today".
+    static func covered(target: TimeInterval, done: TimeInterval) -> String {
+        let extra = extraMinutes(target: target, done: done)
+        return extra > 0 ? extraToday(TimeInterval(extra * 60)) : doneForToday
+    }
+
+    /// The line under Today's number for any state ("" with no target).
+    static func quietLine(_ state: StretchState) -> String {
+        switch state {
+        case .inProgress(let target, let done): toGo(target - done)
+        case .covered(let target, let done): covered(target: target, done: done)
+        case .noTarget: ""
+        }
+    }
+
+    /// The iPad Today card: "1 h 05 of 1 h 45 · 40 m to go", "1 h 45 of 1 h 45 · Done for today" or
+    /// "2 h 10 of 1 h 45 · 25 m extra today".
+    static func cardLine(_ state: StretchState) -> String {
+        guard let target = state.target else { return "" }
+        return "\(clock(seconds: state.done)) of \(clock(seconds: target)) · \(quietLine(state))"
+    }
 
     /// "1 hour 5 minutes" (spoken), whole minutes.
     static func spoken(seconds: TimeInterval) -> String { Labels.spoken(seconds: Int(max(0, seconds) / 60) * 60, includeSeconds: false) }
@@ -148,15 +179,9 @@ enum StretchText {
         Labels.spoken(seconds: Int((max(0, seconds) / 60).rounded(.up)) * 60, includeSeconds: false)
     }
 
-    /// What VoiceOver reads for the whole picture.
+    /// What VoiceOver reads for the whole picture: the label and value of `SunSpeech.today` in one sentence pair.
     static func description(_ state: StretchState) -> String {
-        switch state {
-        case .inProgress(let target, let done):
-            return String(localized: "Today's stretch: \(spoken(seconds: done)) of \(spoken(seconds: target)). \(spokenUp(seconds: target - done)) to go.")
-        case .covered(let target, let done):
-            return String(localized: "Today's stretch covered: \(spoken(seconds: done)) of \(spoken(seconds: target)). Anything more is a bonus.")
-        case .noTarget:
-            return String(localized: "No weekly target yet.")
-        }
+        let spoken = SunSpeech.today(state)
+        return spoken.value.isEmpty ? spoken.label : "\(spoken.label) \(spoken.value)"
     }
 }

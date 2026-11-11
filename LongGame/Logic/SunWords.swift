@@ -136,16 +136,19 @@ enum SunSpeech {
         return String(localized: "At your chosen pace, around \(ForecastText.headline(result, now: now, calendar: calendar)).")
     }
 
-    /// Today. "The sun is almost two thirds of the way to the moon." / "1 hour 5 minutes of 1 hour 45 minutes,
-    /// 40 minutes to go."
+    /// Today. "Today's stretch, 1 hour 5 minutes of 1 hour 45 minutes." / "40 minutes to go."
+    /// Covered: "Today's stretch, done for today." / "2 hours 10 minutes, 25 minutes extra today."
     static func today(_ state: StretchState) -> SpokenGauge {
         switch state {
         case .inProgress(let target, let done):
-            let label = sunPositionWords(fraction: state.fraction).sentence(to: String(localized: "the moon"))
-            return SpokenGauge(label: label, value: String(localized: "\(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target)), \(StretchText.spokenUp(seconds: target - done)) to go."))
+            return SpokenGauge(label: String(localized: "Today's stretch, \(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target))."),
+                               value: String(localized: "\(StretchText.spokenUp(seconds: target - done)) to go."))
         case .covered(let target, let done):
-            return SpokenGauge(label: String(localized: "Today's stretch is covered. The sun has reached the moon."),
-                               value: String(localized: "\(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target)). Anything more is a bonus."))
+            let extra = StretchText.extraMinutes(target: target, done: done)
+            let value = extra > 0
+                ? String(localized: "\(StretchText.spoken(seconds: done)), \(StretchText.spoken(seconds: TimeInterval(extra * 60))) extra today.")
+                : String(localized: "\(StretchText.spoken(seconds: done)) of \(StretchText.spoken(seconds: target)).")
+            return SpokenGauge(label: String(localized: "Today's stretch, done for today."), value: value)
         case .noTarget:
             return SpokenGauge(label: String(localized: "No weekly target yet."), value: "")
         }

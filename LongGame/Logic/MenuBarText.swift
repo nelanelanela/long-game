@@ -13,13 +13,14 @@ enum MenuBarText {
     /// While a session runs the clock ticks every second; otherwise the label only changes with the minute.
     static func ticksEverySecond(timer: TimerState?) -> Bool { timer != nil }
 
-    /// "1 h 30 of 1 h 45 · 15 m to the moon" (running popover and the title of today's arc).
+    /// "1 h 30 of 1 h 45 · 15 m to go" (running popover and the title of today's arc); covered, "· done" or
+    /// "· 25 m extra".
     static func todayLine(_ stretch: StretchState) -> String {
         switch stretch {
         case .inProgress(let target, let done):
             "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target)) · \(StretchText.toGo(target - done))"
         case .covered(let target, let done):
-            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target)) · " + String(localized: "covered")
+            "\(StretchText.clock(seconds: done)) of \(StretchText.clock(seconds: target)) · \(coveredTail(target: target, done: done))"
         case .noTarget:
             ""
         }
@@ -28,16 +29,22 @@ enum MenuBarText {
     /// The big time of the idle popover: "1 h 05".
     static func bigTime(_ stretch: StretchState) -> String { StretchText.clock(seconds: stretch.done) }
 
-    /// Under the big time: "of today's 1 h 45 · 40 m to the moon", or "today's 1 h 45 · covered".
+    /// Under the big time: "of today's 1 h 45 · 40 m to go", or "today's 1 h 45 · done" ("· 25 m extra" when over).
     static func idleCaption(_ stretch: StretchState) -> String {
         switch stretch {
         case .inProgress(let target, let done):
             "\(StretchText.ofToday(target)) · \(StretchText.toGo(target - done))"
-        case .covered(let target, _):
-            StretchText.coveredToday(target)
+        case .covered(let target, let done):
+            String(localized: "today's \(StretchText.clock(seconds: target))") + " · " + coveredTail(target: target, done: done)
         case .noTarget:
             String(localized: "played today")
         }
+    }
+
+    /// "done", or "25 m extra" when a minute or more over.
+    private static func coveredTail(target: TimeInterval, done: TimeInterval) -> String {
+        let extra = StretchText.extraMinutes(target: target, done: done)
+        return extra > 0 ? String(localized: "\(StretchText.clock(seconds: TimeInterval(extra * 60))) extra") : String(localized: "done")
     }
 
     /// "Next ray in 2:42" for the running card, from the same sun rule as the Timer.
