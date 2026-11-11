@@ -240,14 +240,41 @@ struct SettingsView: View {
                 AppIconManager.apply(IconPlan.wanted(totalHours: total, growsWithYou: newValue),
                                      settings: settings, context: context, timerRunning: timer.isActive)
             })
-        return card {
-            VStack(alignment: .leading, spacing: 2) {
-                Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.ink)
-                Text("Grows every 1,000 hours")
-                    .lgText(.caption, color: LGColor.inkMuted)
+        return VStack(alignment: .leading, spacing: 6) {
+            groupLabel("Your game")
+            card {
+                VStack(spacing: 0) {
+                    weeklyPaceRow(settings)
+                    Divider().overlay(LGColor.divider)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.ink)
+                        Text("Grows every 1,000 hours")
+                            .lgText(.caption, color: LGColor.inkMuted)
+                    }
+                    .padding(.vertical, 10)
+                }
             }
-            .padding(.vertical, 10)
         }
+    }
+
+    /// "Weekly pace · 12 h ›": opens Your pace for the year, the same screen as the target row on Home.
+    private func weeklyPaceRow(_ settings: AppSettings) -> some View {
+        let current = settings.currentTarget?.hoursPerWeek
+        return NavigationLink {
+            WeeklyTargetView(mode: .edit, initial: current, actualPace: currentPace(settings)) { hours in
+                TargetSaving.apply(hours: hours, settings: settings, context: context)
+            }
+        } label: {
+            row(String(localized: "Weekly pace"),
+                detail: current.map { "\(WeeklyTarget.number($0)) h" } ?? String(localized: "Not set"))
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Where the pace screen's stepper starts when there is no target yet: the pace actually played.
+    private func currentPace(_ settings: AppSettings) -> Double {
+        ProgressSummary.make(estimates: craftEstimates.map(\.rate), sessions: craftSessions.map(\.record),
+                             onboardingDate: craft.createdAt, weekStart: settings.weekStart, now: Date()).pace
     }
 
     private func reminderCard(_ settings: AppSettings) -> some View {

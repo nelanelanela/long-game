@@ -155,6 +155,8 @@ private struct PaceScene: View {
         }
         .frame(height: 180)
         .clipped()
+        // Only a picture: it must never take a tap meant for the stepper above it.
+        .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
 }

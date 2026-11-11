@@ -34,6 +34,9 @@ struct SkyView: View {
                     .position(x: glowX * w, y: hy)
                     .frame(width: w, height: hy, alignment: .topLeading)
                     .clipped()
+                    // Clipping hides the glow but not its touch area: the full glow circle reaches well above a
+                    // small sky and would swallow taps on the controls over it (the − on Your weekly pace).
+                    .contentShape(Rectangle())
                     .frame(width: w, height: h, alignment: .topLeading)
                 Canvas { ctx, size in
                     drawStars(&ctx, size: size)
@@ -42,6 +45,7 @@ struct SkyView: View {
             }
             .frame(width: w, height: h)
             .clipped()
+            .contentShape(Rectangle())
         }
         .accessibilityHidden(true)
     }
