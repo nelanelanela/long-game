@@ -93,10 +93,10 @@ struct GaugeHero: View, Animatable {
                                             skyMoon: onDark),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning,
-                            behindLand: AnyView(scale(fraction: place.fraction)))
-                // Its moon sits on top of the land, as on the board, and fades with the tab too.
-                StretchMoon(geometry: arc)
-                    .opacity(Double(mix))
+                            behindLand: AnyView(scale(fraction: place.fraction)),
+                            // Its moon sits behind the sun, so the sun passes in front of it when the day is covered,
+                            // and fades with the tab too.
+                            behindSun: AnyView(StretchMoon(geometry: arc).opacity(Double(mix))))
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
                 // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
                 // whole hero as the sun's place.
