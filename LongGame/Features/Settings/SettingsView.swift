@@ -153,15 +153,20 @@ struct SettingsView: View {
             } label: {
                 HStack(spacing: 14) {
                     TipSunIcon(tier: .sunrise).scaleEffect(0.8).frame(width: 32, height: 32)
+                    // The text wraps onto more lines at larger sizes, and the row grows to fit it.
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Support Long Game").lgText(.rowStrong)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                         Text((settings?.tipCount ?? 0) > 0 ? "Thank you for your support" : "Free, with no ads. Tips keep it that way.")
                             .lgText(.caption, color: LGColor.inkMuted)
                             .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
                 }
+                .padding(.vertical, 10)
                 .frame(minHeight: 54)
                 .contentShape(Rectangle())
             }
