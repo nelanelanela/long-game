@@ -64,10 +64,11 @@ Not done or not testable here:
 | When did you start: stepper, default year − 3, 1940…now | ✅ | `StartYearView` | |
 | Current year skips step 3 | ✅ | `StartYearView`, `YearlyHoursView` | Decided: no skip. Step 3 shows one slider for this year; set it to 0 if starting from scratch. Spec updated |
 | Hours per week: one slider per year 0–40, live estimate, Continue | ✅ | `YearlyHoursView` | Design file says max 30; spec says 40, code follows spec. The button now says Continue |
-| Step dots show 5 steps | ✅ | `LGStepBar`, `OnboardingHeader` | Update 21 |
+| Step dots show 6 steps (5 when A gentle nudge is left out) | ✅ | `LGStepBar`, `OnboardingHeader`, `OnboardingSteps` | Update 38 |
 | Lighter copy: one title and at most one short line on Welcome, the intro pages and steps 1, 2, 3, 3b; chips under group labels; big − / + year stepper; "Your starting score" under the card | ✅ | `WelcomeView`, `IntroView`, `CraftStepView`, `StartYearView`, `YearlyHoursView` | Update 21. Unused strings removed from the catalog |
 | Step 4 "Your weekly pace": one line, big − / + stepper 1–40 by 0.5, no hint line, no quick-pick chips, one quiet line "About 1 h 43 m a day · until Nov 2027", Continue. From This week it keeps "Your pace for the year" and Save | ✅ | `WeeklyTargetView`, `OnboardingFlow` | Update 21. The quick-pick chips remain only on the catch-up average stepper |
-| Step 5 "Keep your game safe": iCloud card with the switch on by default, privacy line, Start playing saves everything and opens Home on The long game once. Without an iCloud account the switch is off and disabled with the sign-in line | ✅ | `ICloudStepView`, `OnboardingFlow`, `ICloudSwitchState` | Update 21. The signed-out look was seen in the Simulator (no iCloud account there) |
+| Step 5 "Keep your game safe": iCloud card with the switch on by default, privacy line, Continue to step 6 (Start playing, which saves everything and opens Home on The long game once, when step 6 is left out). Without an iCloud account the switch is off and disabled with the sign-in line | ✅ | `ICloudStepView`, `OnboardingFlow`, `ICloudSwitchState` | Update 21. The signed-out look was seen in the Simulator (no iCloud account there) |
+| Step 6 "A gentle nudge": winking sun with a bell bubble, three rows (daily reminder, milestones with the craft's name, long-session check), Allow notifications (iOS prompt; 19:00 reminder every day only if allowed) or Not now (no prompt), both finish onboarding and set `notifications.asked`. Left out when permission is already decided | ✅ | `NotificationsStepView`, `OnboardingFlow`, `OnboardingSteps`, `NotificationAsk` | Update 38. Tested: step order, skipping, the reminder only when granted. Previews at the smallest and largest text. Not yet seen in the Simulator by me |
 | Edit from Home: Save restarts the 12 months today | ✅ | `WeeklyTargetView`, `TargetSaving` | |
 | Reminder 14 days before the end; "A new year of pace" sheet once, old value filled in | ✅ | `TargetCycle`, `TargetRow`, `HomeView` | After the end date the reminder stays in the target row until a new target is set. A game with no target yet gets the same sheet once, titled "Your pace for the year" |
 
@@ -277,7 +278,7 @@ Not seen: the Growth chart, its full-screen draw-in and the Today list at AX5 in
 | Export CSV, Delete all data | ✅ | `SettingsView` | |
 | YearEstimates editable; archived crafts listed | ✅ | `EstimatesEditorView`, `ArchivedCraftsView` | |
 | Settings reachable | ✅ | `HomeView`, `HistoryView` | The gear in the Home bar, and the gear in History |
-| Notifications off by default, asked after first saved session | ✅ | `HomeView`, `Notifications` | |
+| Notifications off by default, asked on onboarding step 6 only; starting a session never asks; the old "Want a gentle nudge?" alert is gone. Settings asks only if never asked, and points to iPhone Settings when off | ✅ | `OnboardingFlow`, `SettingsView`, `Notifications` | Update 38. `NotificationAskTests.startingASessionNeverAsks` |
 | Daily reminder | ✅ | `NotificationPlanner` | |
 | Rhythm nudge (no streak notification) | ✅ | `ReminderPlanner` | |
 | Long session | ✅ | `Notifications` | |
@@ -394,7 +395,7 @@ Also: the spec's Forecast section says the Growth card "still shows the real val
 - iCloud sync between a Mac and an iPhone cannot run until the steps below are done. The conflict rules are unit-tested; the sync itself has never run on two real devices.
 - A session started on the Mac reaches an iPhone that is in the background only as fast as iCloud delivers it (usually seconds, sometimes longer); the Live Activity can only start while the iPhone app is open.
 - A session started on a Mac that is asleep or offline has no record in iCloud until it is back online; if two sessions start in that time the earlier start still wins afterwards.
-- Notifications: the same code as the iPhone (`Notifications.swift`) runs on Mac and is unit-tested, but I have not seen one arrive. macOS asks for permission the first time a session starts.
+- Notifications: the same code as the iPhone (`Notifications.swift`) runs on Mac and is unit-tested, but I have not seen one arrive. macOS asks for permission on the last setup step (A gentle nudge), as on iPhone; starting a session never asks.
 - Liquid Glass on macOS 26 is used through the shared button styles behind `if #available(iOS 26, macOS 26, *)`; not seen.
 - Menu commands (Start session, Add past hours, the View shortcuts) open the window first if it was closed; not seen on screen.
 - Accessibility: the same labels as the iPhone; the menu bar item and popover have their own labels. Keyboard: the menus carry every shortcut. I have not run VoiceOver or the Accessibility Inspector on the Mac.

@@ -31,7 +31,6 @@ struct HomeView: View {
     /// A 1,000+ hour celebration is due or showing: the icon waits until its main button is tapped.
     @State private var iconHeld = false
     @State private var offerSupport = false
-    @State private var askAboutReminders = false
     @State private var sheet: HomeSheet?
     /// The session opened from Today's sessions to edit.
     @State private var editingSession: Session?
@@ -203,7 +202,6 @@ struct HomeView: View {
         .onChange(of: sessions.count) { old, new in
             fillSessionPictures()
             refreshNotifications()
-            if old == 0, new == 1, !UserDefaults.standard.bool(forKey: "notifications.asked") { askAboutReminders = true }
         }
         .overlay {
             if let hours = celebrating {
@@ -216,12 +214,6 @@ struct HomeView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: celebrating)
         .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.25), value: toast)
-        .alert("Want a gentle nudge?", isPresented: $askAboutReminders) {
-            Button("Yes, remind me") { enableDailyReminder() }
-            Button("Not now", role: .cancel) { UserDefaults.standard.set(true, forKey: "notifications.asked") }
-        } message: {
-            Text("A daily reminder at 7 pm, when the sun is waiting. You can change it in Settings.")
-        }
         .sheet(item: $editingSession, onDismiss: sheetClosed) { session in
             SessionFormView(craft: craft, sessions: sessions, editing: session)
                 .lgSheetCard()
@@ -1040,16 +1032,6 @@ struct HomeView: View {
         Task {
             await NotificationPlanner.refresh(craftName: name, reminderTime: time, reminderDays: days,
                                               rhythmNudge: nudge, sessions: records)
-        }
-    }
-
-    private func enableDailyReminder() {
-        UserDefaults.standard.set(true, forKey: "notifications.asked")
-        Task {
-            guard await Notifications.requestAuthorization(), let settings = settingsRows.first else { return }
-            settings.reminderTime = Calendar.current.date(bySettingHour: 19, minute: 0, second: 0, of: Date())
-            try? context.save()
-            refreshNotifications()
         }
     }
 

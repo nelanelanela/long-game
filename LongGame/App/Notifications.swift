@@ -1,26 +1,26 @@
 import Foundation
 import UserNotifications
 
-/// Local notifications. Everything is off until the user agrees after their
-/// first saved session.
+/// Local notifications. iOS's permission prompt is shown only from "A gentle nudge" (the last setup step) or when
+/// a notification switch is turned on in Settings; starting a session never asks.
 enum Notifications {
     static let longSessionId = "long-session"
     static let milestoneId = "milestone"
+    /// Set once "A gentle nudge" (or a Settings switch) has asked.
+    static let askedKey = "notifications.asked"
 
-    static func requestAuthorization() async -> Bool {
+    /// Shows iOS's own prompt (only the first time; after that iOS answers at once with the earlier choice).
+    /// Tests swap it to count the asks.
+    @MainActor static var requestAuthorization: @MainActor () async -> Bool = {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])) ?? false
     }
 
-    /// Asks iOS for permission the first time it is needed (status "not determined"). Does nothing once the
-    /// user has answered, so it is safe to call whenever a notification is about to matter.
-    @discardableResult
-    static func requestIfNeeded() async -> Bool {
-        let center = UNUserNotificationCenter.current()
-        let status = await center.notificationSettings().authorizationStatus
-        switch status {
-        case .notDetermined: return await requestAuthorization()
-        case .authorized, .provisional, .ephemeral: return true
-        default: return false
+    /// Where iOS stands, without asking.
+    static func permission() async -> NotificationPermission {
+        switch await UNUserNotificationCenter.current().notificationSettings().authorizationStatus {
+        case .notDetermined: .notAsked
+        case .denied: .denied
+        default: .allowed
         }
     }
 

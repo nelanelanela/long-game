@@ -27,11 +27,14 @@ struct ICloudIllustration: View {
     }
 }
 
-/// Step 5 of 5, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Start playing.
+/// Step 5 of 6, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Continue to
+/// "A gentle nudge". When that step is left out (notifications already decided) this is the last one: Start playing.
 struct ICloudStepView: View {
     @Bindable var model: OnboardingModel
-    /// Saves everything and opens Home on The long game.
-    let onStart: () -> Void
+    /// True when this step finishes onboarding.
+    var finishes = false
+    /// Goes to step 6, or saves everything and opens Home when `finishes`.
+    let onContinue: () -> Void
 
     @Environment(ICloudMonitor.self) private var monitor
 
@@ -41,7 +44,7 @@ struct ICloudStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            OnboardingHeader(step: 5)
+            OnboardingHeader(step: OnboardingSteps.number(of: .keepSafe))
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     ICloudIllustration()
@@ -63,7 +66,7 @@ struct ICloudStepView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .padding(.horizontal, -24)
-            Button("Start playing", action: onStart).buttonStyle(.lg(.primary))
+            Button(finishes ? "Start playing" : "Continue", action: onContinue).buttonStyle(.lg(.primary))
                 .padding(.top, 8)
             LGBrandLine().padding(.top, 12)
         }

@@ -53,7 +53,7 @@ All sessions belong to the active craft; the timer and add-hours flows never ask
 
 ## Screens
 
-Phone screens: a launch screen with a short opening sunrise; Welcome (and Welcome back when iCloud already holds a game), three intro pages and five setup steps (the last is Keep your game safe); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
+Phone screens: a launch screen with a short opening sunrise; Welcome (and Welcome back when iCloud already holds a game), three intro pages and six setup steps (Keep your game safe, then A gentle nudge; the last is left out when notification permission is already decided); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
 
 ### 0 · Welcome (`design/Welcome.dc.html`)
 
@@ -99,7 +99,7 @@ Shown only during first onboarding (not after Switch to a new game, which goes s
 
 A weekly target for the next 12 months, counted from the day it's set (not the calendar year). The idea: a long walk is made one day's stretch at a time, so for a year the 10,000 hours step back and each week's target becomes the only distance to cover.
 
-- Onboarding step 4 of 5 (step dots show 5 steps on steps 1–5). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
+- Onboarding step 4 of 6 (step dots show 6 steps on steps 1–6; 5 when A gentle nudge is left out). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
 - Title "Your weekly pace". One line: "For the next 12 months, the only distance to cover."
 - Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–168 h a week (no limit below the 168 hours in a week), step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
 - One quiet line under the chips instead of a card: "About 1 h 43 m a day · until Nov 2027" (target ÷ 7, and the set date + 12 months). The "In a year" forecast moves to the Growth chart.
@@ -107,15 +107,31 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 
 ### 3c · Keep your game safe (`design/ICloud.dc.html`)
 
-- Step 5 of 5. Illustration: the sun over the sea with a small white circle holding a blue iCloud symbol. Title "Keep your game safe".
+- Step 5 of 6. Illustration: the sun over the sea with a small white circle holding a blue iCloud symbol. Title "Keep your game safe".
 - One card: iCloud icon, **Save to iCloud**, line "On all your Apple devices, and back if you get a new iPhone.", and a switch, **on** by default.
 - Under the card, 13 pt muted: "Private to your Apple Account. Only you can see it. No sign-in needed."
 - If the device has no iCloud account (`CKContainer.accountStatus` ≠ available), the switch is off and disabled and the line reads "Sign in to iCloud in the Settings app to keep a copy."
-- **Start playing** saves everything (and the iCloud choice) and opens Home on The long game (once).
-- Button **Start playing** (onboarding) saves the craft, estimates and target and opens Home on The long game tab, once. When editing, the button reads **Save** and the 12 months restart from today.
+- **Continue** opens step 3d (A gentle nudge). When that step is left out (notifications already allowed or turned off, for example after "Switch to a new game"), this is the last step and the button reads **Start playing**: it saves everything (and the iCloud choice) and opens Home on The long game (once).
+- The weekly pace (step 3b) is saved with everything else when onboarding finishes. When editing from Home, the button reads **Save** and the 12 months restart from today.
 - Data: `Settings.weeklyTargetHours`, `targetSetAt`, `targetEndsAt` (= set date + 12 months). Earlier targets are kept in a small `TargetPeriod` list (hours, start, end) so past weeks are judged against the target that applied then.
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
 - Effect on the forecast: the finish-line forecast everywhere uses this chosen pace (see Forecast algorithm), so changing it moves the finish line straight away.
+
+### 3d · A gentle nudge (`design/redesign/Notifications.dc.html`)
+
+The one place the app asks for notifications, so nothing interrupts the first session.
+
+- Step 6 of 6. Shown only while iOS has never asked (status "not determined"); otherwise step 3c finishes onboarding.
+- Illustration: the day sky, the sun with the wink face, the land and sea, and a bell (amber) in a small white bubble beside the sun (decorative, hidden from VoiceOver).
+- Title "A gentle nudge". Line: "Long Game can send you a few quiet notifications. Never ads, never streaks."
+- A white card with three rows, each an icon on a peach tile, a 15 pt semibold title and a 13 pt muted line; VoiceOver reads each row as one element:
+  - **A daily reminder** — "At 7 pm, when the sun is waiting. Change the time or days in Settings."
+  - **Milestones** — "“1,000 hours of piano. Sunrise is coming.”" (with the user's craft)
+  - **A long-session check** — "“Still practising?” after 4 hours, so a forgotten timer doesn’t count."
+- Under the card, 13 pt muted: "Your session on the Lock Screen shows either way. Change your mind any time in Settings."
+- **Allow notifications** (primary) shows iOS's own prompt. If allowed, the daily reminder is turned on at 19:00 on every day; if not, no reminder. Then onboarding finishes (everything saved, Home opens on The long game once).
+- **Not now** (text button) finishes onboarding without asking iOS.
+- Either way `notifications.asked` is set. "by We Have Sun" under the buttons.
 
 ### 4 · Home (`design/TodayStretch.dc.html`, `design/HomeWeek.dc.html`, `design/Home.dc.html`)
 
@@ -205,7 +221,7 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 ### 7 · Add past hours (`design/LogPast.dc.html`)
 
-- Fields: Day (date picker, today back to start of the craft, no future), Hours (0–12), Minutes (0, 5 … 55), Note (optional, 280 characters).
+- Fields: Day (date picker, today back to 1 January of the start year, no future; days before the onboarding date are allowed and add on top of the estimates, with a quiet note under the card: "Before you began. These hours add to your starting score, on top of your estimates."), Hours (0–12), Minutes (0, 5 … 55), Note (optional, 280 characters).
 - Big preview "H:MM" updates live. Button label "Add N hours". Disabled at 0:00.
 - Validation: a day's total (all sessions) cannot exceed 24 h; show an inline message if it would.
 
@@ -578,7 +594,9 @@ No account and no sign-in: the app uses the iCloud account already on the device
 - A running timer syncs its timestamps (startedAt, pausedAt, accumulated pause, device) through iCloud as one small `ActiveSession` record, so a session started on one device shows on the others (iPhone, Mac) and any of them can pause or finish it. Only one active session at a time; if two devices start at once, the earlier start wins and the other device shows it. The Watch keeps using WatchConnectivity with the iPhone.
 - Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. Its practice group has Your estimates, Archived crafts and **Switch to a new game** (opens the One craft sheet, screen 8). It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
-**Notifications** (all off by default; asked after the first saved session)
+**Notifications** (all off by default; asked once, on the last setup step "A gentle nudge" (3d). Starting a session never shows a permission prompt; the milestone and long-session notifications are still planned, and iOS drops them if permission was not given)
+
+Settings keeps a switch for the daily reminder and the rhythm nudge. Turning one on asks iOS only if it never asked (someone who chose Not now). If notifications are off for Long Game, the switch stays off and a line reads "Notifications are off for Long Game in iPhone Settings" with an **Open Settings** button to the app's page in the Settings app.
 
 | Type | Trigger | Example copy |
 | --- | --- | --- |

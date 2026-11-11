@@ -30,6 +30,8 @@ enum LGColor {
     /// The wash behind Home's top titles; setup steps use `peachWashSetup`.
     static let peachWash = Color(hex: 0xFFF0D6)
     static let peachWashSetup = Color(hex: 0xFFF1DA)
+    /// The inside edge of the white bubble round the bell on "A gentle nudge".
+    static let bellBubble = Color(hex: 0xFFF4E4)
     static let tabTrack = Color(hex: 0xEFE2CF)
     static let amber = Color(hex: 0xF0922A)
     static let ember = Color(hex: 0xB4561A)

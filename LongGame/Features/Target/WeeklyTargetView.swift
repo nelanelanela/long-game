@@ -4,7 +4,7 @@ import SwiftUI
 /// Step 4 of onboarding, pushed from the target row on Home to change it, and a sheet when a year ends.
 struct WeeklyTargetView: View {
     enum Mode {
-        /// Setup step 4 of 5: back chevron, five step dots, "Continue" (step 5 is Keep your game safe).
+        /// Setup step 4 of 6: back chevron, six step dots, "Continue" (step 5 is Keep your game safe).
         case onboarding
         /// Pushed from Home: back chevron, "Save".
         case edit

@@ -10,6 +10,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.lgEmbedded) private var embedded
     @Environment(\.modelContext) private var context
+    @Environment(\.openURL) private var openURL
     @Environment(TimerStore.self) private var timer
     @Query private var settingsRows: [AppSettings]
     @Query private var allCrafts: [Craft]
@@ -95,6 +96,7 @@ struct SettingsView: View {
         .lgScreen()
         .lgHidesNavigationBar()
         .onAppear { ensureSettings(); buildCSV() }
+        .task { notificationsDenied = await Notifications.permission() == .denied }
         .onChange(of: allSessions.count) { _, _ in buildCSV() }
         .sheet(isPresented: $showOneCraft) {
             OneCraftSheet(craft: craft, totalHours: oneCraftHours)
@@ -285,10 +287,16 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 10)
                 if notificationsDenied {
-                    Text("Notifications are off for Long Game. Turn them on in the iPhone's Settings app.")
-                        .lgText(.caption, color: LGColor.danger)
-                        .padding(.bottom, 10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Notifications are off for Long Game in iPhone Settings")
+                            .lgText(.caption, color: LGColor.danger)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Button("Open Settings") { openURL(Self.notificationSettingsURL) }
+                            .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote))
+                            .frame(minHeight: 44)
+                    }
+                    .padding(.bottom, 4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
@@ -668,12 +676,30 @@ struct SettingsView: View {
         if settingsRows.isEmpty { context.insert(AppSettings()); try? context.save() }
     }
 
+    /// Turning a notification switch on: iOS's prompt only if it has never asked (someone who chose Not now in
+    /// setup); if notifications are off for Long Game, the switch stays off and the note points to iPhone Settings.
     private func enableNotifications(then apply: @escaping () -> Void) {
         Task {
-            let granted = await Notifications.requestAuthorization()
+            let granted: Bool
+            switch await Notifications.permission() {
+            case .allowed: granted = true
+            case .denied: granted = false
+            case .notAsked:
+                UserDefaults.standard.set(true, forKey: Notifications.askedKey)
+                granted = await Notifications.requestAuthorization()
+            }
             notificationsDenied = !granted
             if granted { apply() }
         }
+    }
+
+    /// Long Game's own page in the Settings app (its notification settings).
+    private static var notificationSettingsURL: URL {
+        #if os(iOS)
+        URL(string: UIApplication.openNotificationSettingsURLString)!
+        #else
+        URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension")!
+        #endif
     }
 
     private func buildCSV() {
@@ -733,6 +759,6 @@ struct SettingsView: View {
         try? context.delete(model: AppSettings.self)
         try? context.delete(model: TargetPeriod.self)
         try? context.save()
-        UserDefaults.standard.removeObject(forKey: "notifications.asked")
+        UserDefaults.standard.removeObject(forKey: Notifications.askedKey)
     }
 }

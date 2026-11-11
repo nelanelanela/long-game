@@ -13,6 +13,8 @@ final class OnboardingModel {
     var targetHours: Double = 0
     /// Step 5's Save to iCloud switch: on unless the person turns it off (or has no iCloud account).
     var saveToICloud = true
+    /// Step 6's answer: 7 pm on every day when notifications were allowed, nil otherwise.
+    var reminderTime: Date?
 
     let currentYear: Int
 
@@ -36,7 +38,8 @@ final class OnboardingModel {
     /// This year's estimate is the pace on offer in step 4: there are no sessions to measure yet.
     var actualPace: Double { Double(hoursFor(currentYear)) }
 
-    /// Saves the craft, the estimates, the weekly target and the iCloud choice; Home then opens on The long game, once.
+    /// Saves the craft, the estimates, the weekly target, the iCloud choice and the daily reminder; Home then opens on
+    /// The long game, once.
     func save(in context: ModelContext, now: Date = Date()) {
         let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
                           category: category, startYear: startYear, createdAt: now)
@@ -55,18 +58,18 @@ final class OnboardingModel {
         }
         settings.milestonesSeen = seen
         settings.syncEnabled = saveToICloud
+        if let reminderTime {
+            settings.reminderTime = reminderTime
+            settings.reminderDays = NotificationAsk.everyDay
+        }
         // The first Home after onboarding opens on The long game; every launch after that opens on This week.
         settings.lastHomeTab = .longGame
         TargetSaving.apply(hours: targetHours, now: now, settings: settings, context: context)
     }
 }
 
-enum OnboardingStep: Hashable {
-    case start, hours, pace, keepSafe
-}
-
 /// Welcome (first launch, and again after "Switch to a new game"), the three "How the game works" pages (first
-/// onboarding only), then the five setup steps.
+/// onboarding only), then the six setup steps (five when notifications were already decided: see `OnboardingSteps`).
 struct OnboardingFlow: View {
     /// False after "Switch to a new game": the user has played before, so the intro pages are skipped.
     let showIntro: Bool
@@ -80,6 +83,24 @@ struct OnboardingFlow: View {
     @State private var model = OnboardingModel()
     @State private var path: [OnboardingStep] = []
     @State private var stage = Stage.welcome
+    /// Read from iOS when onboarding opens; "A gentle nudge" is left out once permission is decided.
+    @State private var permission = NotificationPermission.notAsked
+
+    private func push(after step: OnboardingStep) {
+        if let next = OnboardingSteps.next(after: step, permission: permission) { path.append(next) } else { startPlaying() }
+    }
+
+    /// "Allow notifications" shows iOS's prompt and turns on the 7 pm reminder if it says yes; "Not now" doesn't ask.
+    /// Either way the question has been asked, and onboarding finishes.
+    private func answerNotifications(allow: Bool) {
+        UserDefaults.standard.set(true, forKey: Notifications.askedKey)
+        guard allow else { startPlaying(); return }
+        Task {
+            let granted = await Notifications.requestAuthorization()
+            model.reminderTime = NotificationAsk.reminderTime(granted: granted)
+            startPlaying()
+        }
+    }
 
     /// Saves the game, then applies the iCloud choice (which reopens the same database with or without mirroring).
     private func startPlaying() {
@@ -109,20 +130,35 @@ struct OnboardingFlow: View {
             .navigationDestination(for: OnboardingStep.self) { step in
                 switch step {
                 case .start:
-                    StartYearView(model: model) { path.append(.hours) }
+                    StartYearView(model: model) { push(after: .start) }
                 case .hours:
-                    YearlyHoursView(model: model) { path.append(.pace) }
+                    YearlyHoursView(model: model) { push(after: .hours) }
                 case .pace:
                     WeeklyTargetView(mode: .onboarding, actualPace: model.actualPace) { hours in
                         model.targetHours = hours
-                        path.append(.keepSafe)
+                        push(after: .pace)
                     }
                 case .keepSafe:
-                    ICloudStepView(model: model, onStart: startPlaying)
+                    ICloudStepView(model: model, finishes: OnboardingSteps.next(after: .keepSafe, permission: permission) == nil) {
+                        push(after: .keepSafe)
+                    }
+                case .notifications:
+                    NotificationsStepView(craftName: model.craftName, onAnswer: answerNotifications)
                 }
             }
             .lgHidesNavigationBar()
         }
+        .environment(\.onboardingStepCount, OnboardingSteps.count(permission: permission))
+        .task { permission = await Notifications.permission() }
+    }
+}
+
+private struct OnboardingStepCountKey: EnvironmentKey { static let defaultValue = 6 }
+extension EnvironmentValues {
+    /// How many step dots onboarding shows: six, or five when "A gentle nudge" is left out.
+    var onboardingStepCount: Int {
+        get { self[OnboardingStepCountKey.self] }
+        set { self[OnboardingStepCountKey.self] = newValue }
     }
 }
 
@@ -133,11 +169,12 @@ struct OnboardingHeader: View {
     /// Where Back goes when the screen is not a pushed one (step 1 goes back to the intro pages).
     var onBack: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.onboardingStepCount) private var stepCount
 
     var body: some View {
         ZStack {
             // The step bar is centred on the screen, whatever sits beside it.
-            LGStepBar(step: step, of: 5)
+            LGStepBar(step: step, of: stepCount)
             HStack {
                 if showsBack {
                     LGIconButton(systemName: "chevron.left", label: "Back") { if let onBack { onBack() } else { dismiss() } }
