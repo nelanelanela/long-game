@@ -645,7 +645,9 @@ Not checked: the new wording on a real iPhone or Mac, and real VoiceOver speech.
 
 All 638 tests pass on the iPhone 17 Simulator (no iPhone 16 Simulator is installed). The Watch app builds with the iPhone app. The two new files were added to `project.pbxproj` by hand, as XcodeGen isn't installed.
 
-Not caused by this update: on the Mac test run, `YearCardRenderTests.theCardIgnoresTheSystemAppearance` fails its "rendering is repeatable" check (two renders of the same card differ). It fails the same way with the old sky, so something else on the card isn't repeatable.
+Mac tests (follow-up the same day): `YearCardRenderTests.theCardIgnoresTheSystemAppearance` failed its "rendering is repeatable" check, with or without the new stars. Two renders of the same card differed in about 2,000 sky pixels by at most 1 step in 255: the Mac dithers gradients (a little random noise against banding), so no two renders are byte-identical. The card is fine; the test now compares pixels with a tolerance of 2 in 255. All 606 Mac tests and 638 iPhone tests pass.
 
-Only the 390 × 844 phone gets a pixel-identical hand-over from the launch picture; on other sizes the launch picture is stretched to fit (scale to fill), as before, and the stars there differ slightly from the first animated frame.
+Only a 390 × 844 phone (the board's size) gets a pixel-identical hand-over from the launch picture. The iPhone 17 and iPhone 18 Pro are 402 × 874: there the launch picture is stretched to fit (scale to fill), as before, and its stars differ a little from the first animated frame's, because each sky size has its own stars.
+
+Seeing the new launch picture in the Simulator: iOS keeps a snapshot of the launch screen per app, and an older build on a Simulator keeps the old picture. Running the app again from Xcode (or deleting the app from the Simulator) brings the new one. On 11 November the new build was installed on the booted iPhone 17 and iPhone 18 Pro and their launch snapshots (`Library/SplashBoard` in the app's data folder) were cleared; the app's own data was kept.
 

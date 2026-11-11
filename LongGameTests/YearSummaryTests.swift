@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 import SwiftUI
+import ImageIO
 @testable import LongGame
 
 private let early = day(2025, 6, 1, hour: 0)      // the game began before 2026
@@ -249,8 +250,30 @@ struct YearCardRenderTests {
             r.scale = 1
             return r.platformImage?.pngData()
         }
-        #expect(pixels(.light) == pixels(.light), "rendering is repeatable")
-        #expect(pixels(.light) == pixels(.dark))
+        // Compared pixel by pixel with a tiny tolerance: the sky's gradients are dithered (a little random noise
+        // against banding), so two renders can differ by 1 step in 255 in the sky. Anything more is a real change.
+        #expect(Self.nearlySame(pixels(.light), pixels(.light)), "rendering is repeatable")
+        #expect(Self.nearlySame(pixels(.light), pixels(.dark)))
+    }
+
+    /// True when two PNGs have the same size and no colour channel differs by more than `tolerance` (of 255).
+    private static func nearlySame(_ a: Data?, _ b: Data?, tolerance: Int = 2) -> Bool {
+        func rgba(_ data: Data?) -> (Int, Int, [UInt8])? {
+            guard let data, let src = CGImageSourceCreateWithData(data as CFData, nil),
+                  let img = CGImageSourceCreateImageAtIndex(src, 0, nil) else { return nil }
+            let w = img.width, h = img.height
+            var buf = [UInt8](repeating: 0, count: w * h * 4)
+            let drawn = buf.withUnsafeMutableBytes { raw -> Bool in
+                guard let ctx = CGContext(data: raw.baseAddress, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
+                                          space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+                ctx.draw(img, in: CGRect(x: 0, y: 0, width: w, height: h))
+                return true
+            }
+            return drawn ? (w, h, buf) : nil
+        }
+        guard let x = rgba(a), let y = rgba(b), x.0 == y.0, x.1 == y.1 else { return false }
+        return zip(x.2, y.2).allSatisfy { abs(Int($0) - Int($1)) <= tolerance }
     }
 }
 
