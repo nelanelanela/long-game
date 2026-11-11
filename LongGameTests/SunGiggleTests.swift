@@ -267,29 +267,61 @@ private final class FakeAudioSession: GiggleAudioSession {
     var wantsSilence = false
     var otherAudioWantsSilence: Bool { wantsSilence }
     func useAmbient() { useAmbientCalls += 1 }
+    nonisolated let backgroundCalls = Count()
+    nonisolated var backgroundAmbient: @Sendable () -> Void { { [backgroundCalls] in backgroundCalls.add() } }
+}
+
+/// A thread-safe counter for work that runs off the main thread.
+private final class Count: @unchecked Sendable {
+    private let lock = NSLock()
+    private var n = 0
+    var value: Int { lock.withLock { n } }
+    func add() { lock.withLock { n += 1 } }
 }
 
 @MainActor
 @Suite("Giggle · sound")
 struct GiggleSoundTests {
-    @Test func withTheSettingOffTheAudioSessionIsNeverTouched() {
+    @Test func withTheSettingOffTheAudioSessionIsNeverTouched() async {
         let session = FakeAudioSession()
-        var loads = 0
-        let player = GiggleSoundPlayer(session: session) { loads += 1; return [] }
-        player.prepare(enabled: false)
+        let loads = Count()
+        let player = GiggleSoundPlayer(session: session) { loads.add(); return [] }
+        await player.prepare(enabled: false)
         #expect(player.play(big: false, enabled: false) == nil)
         #expect(player.play(big: true, enabled: false) == nil)
         #expect(session.useAmbientCalls == 0)
-        #expect(loads == 0)
+        #expect(session.backgroundCalls.value == 0)
+        #expect(loads.value == 0)
     }
 
-    @Test func withTheSettingOnTheSessionIsWokenAsAmbientBeforeEveryGiggle() {
+    @Test func withTheSettingOnTheSessionIsWokenAsAmbientBeforeEveryGiggle() async {
         let session = FakeAudioSession()
         let player = GiggleSoundPlayer(session: session) { [] }
-        player.prepare(enabled: true)
+        await player.prepare(enabled: true)
         _ = player.play(big: false, enabled: true)
         _ = player.play(big: false, enabled: true)
-        #expect(session.useAmbientCalls == 3)
+        #expect(session.backgroundCalls.value == 1)
+        #expect(session.useAmbientCalls == 2)
+    }
+
+    @Test func preparingLoadsTheClipsOnceAwayFromTheMainThread() async {
+        let session = FakeAudioSession()
+        let loads = Count()
+        let offMain = Count()
+        let player = GiggleSoundPlayer(session: session) {
+            loads.add()
+            if !Thread.isMainThread { offMain.add() }
+            return GiggleSoundPlayer.bundledClips()
+        }
+        async let first: Void = player.prepare(enabled: true)
+        async let second: Void = player.prepare(enabled: true)
+        _ = await (first, second)
+        await player.prepare(enabled: true)
+        #expect(loads.value == 1)
+        #expect(offMain.value == 1)
+        // Ready: the first giggle plays without loading again.
+        #expect(player.play(big: false, enabled: true) != nil)
+        #expect(loads.value == 1)
     }
 
     @Test func itStillGigglesWhenOtherAudioIsPlaying() {
@@ -378,9 +410,9 @@ struct GiggleControllerTests {
         #expect(c.run?.pose(at: t0.addingTimeInterval(0.81)) == nil)
     }
 
-    @Test func withTheSoundOffTappingNeverTouchesTheAudioSession() {
+    @Test func withTheSoundOffTappingNeverTouchesTheAudioSession() async {
         let (c, session) = controller()
-        c.prepare(soundOn: false)
+        await c.prepare(soundOn: false)
         for i in 0..<6 { c.tap(soundOn: false, reduceMotion: false, now: t0.addingTimeInterval(Double(i) * 0.2)) }
         #expect(session.useAmbientCalls == 0)
     }

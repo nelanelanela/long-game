@@ -7,13 +7,19 @@ protocol GiggleAudioSession {
     var otherAudioWantsSilence: Bool { get }
     /// Ambient: silent with the Ring/Silent switch on silent, mixes with music, never stops or ducks it.
     func useAmbient()
+    /// The same set-up, safe to run away from the main thread: `prepare` uses it so launching never waits on audio.
+    nonisolated var backgroundAmbient: @Sendable () -> Void { get }
 }
 
 struct SystemGiggleAudioSession: GiggleAudioSession {
     #if os(iOS)
     var otherAudioWantsSilence: Bool { AVAudioSession.sharedInstance().secondaryAudioShouldBeSilencedHint }
 
-    func useAmbient() {
+    func useAmbient() { Self.activateAmbient() }
+
+    nonisolated var backgroundAmbient: @Sendable () -> Void { { Self.activateAmbient() } }
+
+    nonisolated static func activateAmbient() {
         let session = AVAudioSession.sharedInstance()
         try? session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
         try? session.setActive(true)
@@ -22,6 +28,7 @@ struct SystemGiggleAudioSession: GiggleAudioSession {
     // The Mac has no audio session or Silent switch: the sound simply mixes in at its own low volume.
     var otherAudioWantsSilence: Bool { false }
     func useAmbient() {}
+    nonisolated var backgroundAmbient: @Sendable () -> Void { {} }
     #endif
 }
 
@@ -36,30 +43,50 @@ final class GiggleSoundPlayer {
     nonisolated static let startDelay: TimeInterval = 0.10
 
     private let session: GiggleAudioSession
-    private let loader: () -> [AVAudioPlayer]
+    private let loader: @Sendable () -> [AVAudioPlayer]
+    /// The clips being loaded in the background by `prepare`, so a second call waits for the same load.
+    private var loading: Task<Void, Never>?
     private var players: [AVAudioPlayer] = []
     private var bigIndex: Int?
     private var picker = GiggleClipPicker(count: 0)
     private var current: AVAudioPlayer?
 
     init(session: GiggleAudioSession = SystemGiggleAudioSession(),
-         loader: @escaping () -> [AVAudioPlayer] = GiggleSoundPlayer.bundledClips) {
+         loader: @escaping @Sendable () -> [AVAudioPlayer] = { GiggleSoundPlayer.bundledClips() }) {
         self.session = session
         self.loader = loader
     }
 
-    /// Sets up the audio session and loads the clips, once. Only when the setting is on.
-    func prepare(enabled: Bool) {
+    /// Sets up the audio session and loads the clips, once, away from the main thread. Only when the setting is on.
+    /// Home calls this as it appears; doing it on the main thread held up the first frames and the opening sunrise
+    /// (a quarter to over half a second), so the screen keeps drawing while the clips load.
+    func prepare(enabled: Bool) async {
         guard enabled else { return }
-        session.useAmbient()
-        loadClipsIfNeeded()
+        if loading == nil, players.isEmpty {
+            let warmUp = session.backgroundAmbient
+            let load = loader
+            loading = Task { [weak self] in
+                let clips = await Task.detached(priority: .utility) {
+                    warmUp()
+                    return LoadedClips(players: load())
+                }.value
+                // A giggle may have loaded the clips itself in the meantime; those stay.
+                guard let self, self.players.isEmpty else { return }
+                self.install(clips.players)
+            }
+        }
+        await loading?.value
     }
 
     private func loadClipsIfNeeded(force: Bool = false) {
         guard force || players.isEmpty else { return }
         current?.stop()
         current = nil
-        players = loader()
+        install(loader())
+    }
+
+    private func install(_ loaded: [AVAudioPlayer]) {
+        players = loaded
         bigIndex = players.indices.max(by: { players[$0].duration < players[$1].duration })
         // The other clips take turns at random; the longest is for the big laugh.
         picker = GiggleClipPicker(count: max(0, players.count - (bigIndex == nil ? 0 : 1)))
@@ -121,4 +148,9 @@ final class GiggleSoundPlayer {
                 return player
             }
     }
+}
+
+/// Clips made on a background thread and handed to the player once, before anything plays them.
+private struct LoadedClips: @unchecked Sendable {
+    let players: [AVAudioPlayer]
 }

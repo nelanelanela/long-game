@@ -55,7 +55,7 @@ struct SceneHero: View {
         .clipped()
         .modifier(SceneAccessibility(label: label, hidden: hidden || (label == ""), giggles: giggles,
                                      tickle: { giggle.tap(soundOn: soundOn, reduceMotion: reduceMotion) }))
-        .task(id: soundOn) { if giggles { giggle.prepare(soundOn: soundOn) } }
+        .task(id: soundOn) { if giggles { await giggle.prepare(soundOn: soundOn) } }
     }
 
     /// The whole sun, and at least 44 pt, but never below the shoreline.

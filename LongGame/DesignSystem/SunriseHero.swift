@@ -296,7 +296,7 @@ struct SunriseHero: View {
             }
         }
         .accessibilityAction(named: Text("Tickle the sun")) { if giggles { tickle() } }
-        .task(id: soundOn) { if giggles { giggle.prepare(soundOn: soundOn) } }
+        .task(id: soundOn) { if giggles { await giggle.prepare(soundOn: soundOn) } }
     }
 
     private func tickle() {

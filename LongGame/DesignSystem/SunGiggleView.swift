@@ -54,8 +54,8 @@ final class GiggleController {
 
     init(player: GiggleSoundPlayer = .shared) { self.player = player }
 
-    /// Gets the sound ready ahead of the first tap, when the setting is on.
-    func prepare(soundOn: Bool) { player.prepare(enabled: soundOn) }
+    /// Gets the sound ready ahead of the first tap, when the setting is on (in the background).
+    func prepare(soundOn: Bool) async { await player.prepare(enabled: soundOn) }
 
     /// A tap on the sun. `winkOnly` is the Timer: a soft wink, never sound or wiggle.
     func tap(soundOn: Bool, reduceMotion: Bool, winkOnly: Bool = false, now: Date = .now) {
