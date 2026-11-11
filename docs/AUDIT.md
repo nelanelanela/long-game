@@ -617,3 +617,18 @@ The still sun is now a 2x/3x bitmap like the sky, from `Tools/MakeLaunchAssets.s
 Also fixed: Update 34's title fade kept its measurements in Home's own state, so every measurement made all of Home work itself out again. They now live in a small `BarFade` object that only the title reads.
 
 Not fixed here: on the iPhone 17 Simulator the app sometimes stays on the night frame at full CPU. Another session is fixing that in `AppRoot` (Home's sun position making Home rebuild). Tests: all pass except the 4 StoreKit ones in `TipPurchaseTests`, as before.
+
+## Updates 35 and 36: direct words on Today, a natural sample year, the year card's shapes (11 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Line under Today's number: "40 m to go" / "Done for today" / "25 m extra today" | ✅ | `StretchText.quietLine`, `TodayQuietLine` | Less than a full minute over is still "Done for today"; extra is whole minutes |
+| Same words on the iPad Today card and the Mac menu bar | ✅ | `StretchText.cardLine`, `MenuBarText.todayLine` / `idleCaption` | Mac covered: "· done" or "· 25 m extra" |
+| VoiceOver drops the moon | ✅ | `SunSpeech.today`, `StretchText.description` | Weekly target explainer ("from the sea to the moon") unchanged, as asked |
+| Old moon strings out of the String Catalog, new ones in | ✅ | `Localizable.xcstrings` | |
+| Seeded sample year (SplitMix64, weekly energy, breaks, weekends, 1 in 7 photos) | ✅ | `SampleYear`, `SeededRandom` in `Logic/Practice.swift`; Settings → Fill a sample year; `YearSummary.sample()` | Lives in an existing file because XcodeGen isn't installed here, so no new files could be added to the project |
+| Year card strip uses the calendar's shapes; rest is a small dot (#C5D0EC / #3D4D93) | ✅ | `YearStrip` in `Features/Year/YearCardView.swift` | Shape size stays pitch × 0.86. Checked the 1080 px Sunrise and Evening PNGs: dots, circles and squares are clear. New preview "Strip · Sunrise and Evening" |
+| Tests | ✅ | `TodayStretchTests`, `MenuBarTests`, `SunWordsTests`, `YearSummaryTests` (`SampleYearTests`) | All 628 pass on the iPhone 18 Pro Simulator (no iPhone 16 Simulator is installed). Mac app builds |
+
+Not checked: the new wording on a real iPhone or Mac, and real VoiceOver speech.
+

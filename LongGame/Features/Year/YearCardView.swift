@@ -202,7 +202,8 @@ struct YearStrip: View {
 
     var body: some View {
         let grid = YearSummary.grid(year: summary.year, levels: summary.levels, now: now, weekStart: weekStart)
-        let rest = evening ? Color(hex: 0x2A3566) : Color(hex: 0xDCE3F3)
+        // Rest is the calendar's small dot: the History rest colour on Sunrise, the night contour on Evening.
+        let rest = evening ? LGColor.contourNight : LGColor.rest
         Canvas { context, size in
             guard !grid.isEmpty else { return }
             let pitch = min(size.width / CGFloat(grid.count), size.height / 7)
@@ -211,8 +212,11 @@ struct YearStrip: View {
             for (c, column) in grid.enumerated() {
                 for (r, level) in column.enumerated() {
                     guard let level else { continue }
-                    let rect = CGRect(x: left + CGFloat(c) * pitch, y: CGFloat(r) * pitch, width: cell, height: cell)
-                    context.fill(Path(roundedRect: rect, cornerRadius: cell * 0.3, style: .continuous),
+                    // The calendar's shape for the level. CalendarLevelShape draws 12/14 of the box it is given, so a
+                    // box of one pitch gives a shape of `cell` (pitch × 0.86), centred where the old square was.
+                    let box = CGRect(x: left + CGFloat(c) * pitch + (cell - pitch) / 2, y: CGFloat(r) * pitch + (cell - pitch) / 2,
+                                     width: pitch, height: pitch)
+                    context.fill(CalendarLevelShape(level: level).path(in: box),
                                  with: .color(level == .rest ? rest : LGColor.calendar(level)))
                 }
             }
@@ -224,19 +228,17 @@ struct YearStrip: View {
 // MARK: Previews
 
 extension YearSummary {
-    /// A year of sample practice, for previews and the debug option.
+    /// A year of sample practice for previews, from the same seeded rule as the debug sample year.
     static func sample(year: Int = 2026) -> YearSummary {
-        var levels: [Date: CalendarLevel] = [:]
         let cal = Calendar(identifier: .gregorian)
-        var day = cal.date(from: DateComponents(year: year, month: 1, day: 1))!
-        var n = 0
-        while cal.component(.year, from: day) == year {
-            if (n * 7919) % 10 < 6 { levels[day] = CalendarLevel.allCases[1 + (n * 31) % 4] }
-            day = cal.date(byAdding: .day, value: 1, to: day)!
-            n += 1
-        }
-        return YearSummary(year: year, hours: 624, daysOfPractice: levels.count, rhythm: 5, mostPlayedMonth: 3, total: 3_294,
-                           percent: 32, levels: levels, since: nil, photos: [], daysCovered: 365)
+        let days = SampleYear.days(year: year, calendar: cal).filter { $0.level != .rest }
+        let levels = Dictionary(days.map { ($0.date, $0.level) }, uniquingKeysWith: { a, _ in a })
+        let minutes = days.reduce(0) { $0 + $1.minutes }
+        var byMonth: [Int: Int] = [:]
+        for d in days { byMonth[cal.component(.month, from: d.date), default: 0] += d.minutes }
+        let topMonth = byMonth.max { $0.value == $1.value ? $0.key > $1.key : $0.value < $1.value }?.key ?? 3
+        return YearSummary(year: year, hours: (Double(minutes) / 60).rounded(), daysOfPractice: levels.count, rhythm: 5, mostPlayedMonth: topMonth,
+                           total: 3_294, percent: 32, levels: levels, since: nil, photos: [], daysCovered: 365)
     }
 }
 
@@ -250,6 +252,14 @@ extension YearSummary {
             }
         }
         .padding()
+    }
+}
+
+#Preview("Strip · Sunrise and Evening") {
+    let now = Calendar.current.date(from: DateComponents(year: 2026, month: 11, day: 11))!
+    VStack(spacing: 0) {
+        YearStrip(summary: .sample(), now: now).frame(height: 70).padding(24).background(Color(hex: 0xFFF6E6))
+        YearStrip(summary: .sample(), now: now, evening: true).frame(height: 70).padding(24).background(Color(hex: 0x16244A))
     }
 }
 

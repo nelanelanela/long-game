@@ -502,7 +502,7 @@ struct SettingsView: View {
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
                     Button("Remove the sample year") { removeSampleYear() }
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
-                    Text("Adds about 60% of the days of this year so far as sessions, six with a photo, so History → Growth → Your year shows a full card straight away. Remove deletes only those sessions.")
+                    Text("Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions.")
                         .lgText(.caption, color: LGColor.inkMuted)
                         .padding(.bottom, 12)
                 }
@@ -555,26 +555,23 @@ struct SettingsView: View {
 
     private static let sampleNote = "Debug: sample year"
 
-    /// Sessions on about 60% of the days of this year so far, six of them with a made-up photo.
+    /// This year so far as sample sessions, from the seeded rule in `SampleYear` (busy and quiet weeks, quieter
+    /// weekends, the odd week off), with a made-up photo on about one practice day in seven. Same days every time.
     private func fillSampleYear() {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
-        guard var day = cal.date(from: DateComponents(year: cal.component(.year, from: today), month: 1, day: 1)) else { return }
         let id = craft.id
-        let start = max(cal.startOfDay(for: craft.createdAt), day)
-        var n = 0
-        var photoDays: [Date] = []
-        while day < today {
-            if day >= start, (n * 7919) % 10 < 6 {
-                let minutes = 20 + (n * 37) % 100
-                let session = Session(craftId: id, start: SessionRules.manualStart(on: day), durationSec: Double(minutes * 60),
-                                      source: .manual, note: Self.sampleNote)
-                context.insert(session)
-                photoDays.append(day)
-                if photoDays.count % 9 == 0, let data = Self.samplePhoto(seed: photoDays.count) { session.setPhoto(data) }
+        let start = cal.startOfDay(for: craft.createdAt)
+        var photos = 0
+        for day in SampleYear.days(year: cal.component(.year, from: today), calendar: cal)
+        where day.level != .rest && day.date >= start && day.date < today {
+            let session = Session(craftId: id, start: SessionRules.manualStart(on: day.date), durationSec: Double(day.minutes * 60),
+                                  source: .manual, note: Self.sampleNote)
+            context.insert(session)
+            if day.hasPhoto, let data = Self.samplePhoto(seed: photos + 1) {
+                session.setPhoto(data)
+                photos += 1
             }
-            day = cal.date(byAdding: .day, value: 1, to: day) ?? today
-            n += 1
         }
         try? context.save()
         (closeAll ?? { dismiss() })()

@@ -114,3 +114,104 @@ enum CalendarGrid {
         }
     }
 }
+
+// MARK: Sample year
+
+/// A small, fast random generator that gives the same numbers every time for the same seed (SplitMix64).
+/// Used for sample data, so previews and the debug option look natural but never change between runs.
+struct SeededRandom: RandomNumberGenerator {
+    private var state: UInt64
+
+    init(seed: UInt64) { state = seed }
+
+    mutating func next() -> UInt64 {
+        state &+= 0x9E37_79B9_7F4A_7C15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+        return z ^ (z >> 31)
+    }
+
+    /// A number in 0..<1.
+    mutating func unit() -> Double { Double(next() >> 11) * 0x1.0p-53 }
+}
+
+/// A made-up year of practice that looks like a real person's: busy weeks and quiet ones, quieter weekends, the odd
+/// week off, and a photo on about one practice day in seven. The same year always gives the same days.
+/// The designs (`design/redesign/Calendar.dc.html`, `YearCard.dc.html`) use the same rule.
+enum SampleYear {
+    struct Day: Equatable, Sendable {
+        var date: Date
+        var level: CalendarLevel
+        /// Minutes played (0 on a rest day), inside the level's range.
+        var minutes: Int
+        var hasPhoto: Bool
+    }
+
+    /// Share of weeks that are a break.
+    static let breakChance = 0.08
+    /// On a break week, the share of days that are rest.
+    static let breakRest = 0.85
+    static let photoChance = 1.0 / 7
+
+    /// Every day of `year`, in order, weeks starting on Monday.
+    static func days(year: Int, calendar: Calendar = .current) -> [Day] {
+        var cal = calendar
+        cal.firstWeekday = 2
+        var rng = SeededRandom(seed: UInt64(max(0, year)))
+        guard let first = cal.date(from: DateComponents(year: year, month: 1, day: 1)) else { return [] }
+        var result: [Day] = []
+        var day = first
+        var energy = 0.0, isBreak = false
+        var started = false
+        while cal.component(.year, from: day) == year {
+            let weekday = cal.component(.weekday, from: day)   // 1 = Sunday … 7 = Saturday
+            if !started || weekday == 2 {
+                energy = rng.unit()
+                isBreak = rng.unit() < breakChance
+                started = true
+            }
+            result.append(self.day(day, weekend: weekday == 1 || weekday == 7, energy: energy, isBreak: isBreak, rng: &rng))
+            guard let next = cal.date(byAdding: .day, value: 1, to: day) else { break }
+            day = next
+        }
+        return result
+    }
+
+    /// One day from the week's energy (0–1) and whether the week is a break.
+    static func day(_ date: Date, weekend: Bool, energy: Double, isBreak: Bool, rng: inout SeededRandom) -> Day {
+        if rng.unit() < restChance(weekend: weekend, energy: energy, isBreak: isBreak) {
+            return Day(date: date, level: .rest, minutes: 0, hasPhoto: false)
+        }
+        let level = level(x: rng.unit() * 0.75 + energy * 0.42)
+        let range = minutes(level)
+        let minutes = range.lowerBound + Int(rng.unit() * Double(range.count))
+        return Day(date: date, level: level, minutes: minutes, hasPhoto: rng.unit() < photoChance)
+    }
+
+    /// 0.20, plus 0.14 at the weekend, minus energy × 0.14; 0.85 in a break week.
+    static func restChance(weekend: Bool, energy: Double, isBreak: Bool) -> Double {
+        isBreak ? breakRest : 0.20 + (weekend ? 0.14 : 0) - energy * 0.14
+    }
+
+    /// 1 below 0.33, 2 below 0.58, 3 below 0.84, otherwise 4.
+    static func level(x: Double) -> CalendarLevel {
+        switch x {
+        case ..<0.33: .under1
+        case ..<0.58: .from1to2
+        case ..<0.84: .from2to3
+        default: .over3
+        }
+    }
+
+    /// The minutes a sample session can have at each level (the calendar's hour bands).
+    static func minutes(_ level: CalendarLevel) -> Range<Int> {
+        switch level {
+        case .rest: 0..<1
+        case .under1: 15..<60
+        case .from1to2: 60..<120
+        case .from2to3: 120..<180
+        case .over3: 180..<241
+        }
+    }
+}

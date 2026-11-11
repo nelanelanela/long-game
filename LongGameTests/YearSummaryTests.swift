@@ -253,3 +253,77 @@ struct YearCardRenderTests {
         #expect(pixels(.light) == pixels(.dark))
     }
 }
+
+struct SampleYearTests {
+    private let cal: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "UTC")!
+        return c
+    }()
+
+    @Test func theGeneratorRepeatsForTheSameSeed() {
+        var a = SeededRandom(seed: 2026), b = SeededRandom(seed: 2026), c = SeededRandom(seed: 2027)
+        let first = (0..<20).map { _ in a.next() }
+        #expect(first == (0..<20).map { _ in b.next() })
+        #expect(first != (0..<20).map { _ in c.next() })
+        for _ in 0..<1_000 {
+            let u = a.unit()
+            #expect(u >= 0 && u < 1)
+        }
+    }
+
+    @Test func theSampleYearIsTheSameEveryTime() {
+        let one = SampleYear.days(year: 2026, calendar: cal)
+        #expect(one == SampleYear.days(year: 2026, calendar: cal))
+        #expect(one.count == 365)
+        #expect(SampleYear.days(year: 2028, calendar: cal).count == 366)
+        #expect(one.map(\.level) != SampleYear.days(year: 2025, calendar: cal).map(\.level))
+    }
+
+    @Test func everyDayIsInOrderAndInsideItsLevel() {
+        let days = SampleYear.days(year: 2026, calendar: cal)
+        #expect(days.first?.date == cal.date(from: DateComponents(year: 2026, month: 1, day: 1)))
+        for (a, b) in zip(days, days.dropFirst()) { #expect(cal.dateComponents([.day], from: a.date, to: b.date).day == 1) }
+        for d in days {
+            if d.level == .rest {
+                #expect(d.minutes == 0 && !d.hasPhoto)
+            } else {
+                #expect(CalendarLevel.level(hours: Double(d.minutes) / 60) == d.level)
+            }
+        }
+    }
+
+    @Test func itLooksLikeARealYear() {
+        // Over a few years, so the shares are not down to one lucky seed.
+        let days = (2024...2028).flatMap { SampleYear.days(year: $0, calendar: cal) }
+        let practice = days.filter { $0.level != .rest }
+        let restShare = Double(days.count - practice.count) / Double(days.count)
+        #expect(restShare > 0.15 && restShare < 0.35)
+        let photoShare = Double(practice.filter(\.hasPhoto).count) / Double(practice.count)
+        #expect(photoShare > 0.10 && photoShare < 0.19)
+        // Every level shows up, and weekends rest more than weekdays.
+        for level in CalendarLevel.allCases { #expect(days.contains { $0.level == level }) }
+        func restShareOf(weekend: Bool) -> Double {
+            let set = days.filter { [1, 7].contains(cal.component(.weekday, from: $0.date)) == weekend }
+            return Double(set.filter { $0.level == .rest }.count) / Double(set.count)
+        }
+        #expect(restShareOf(weekend: true) > restShareOf(weekend: false))
+    }
+
+    @Test func theRuleMatchesTheDesign() {
+        #expect(SampleYear.restChance(weekend: false, energy: 0, isBreak: false) == 0.20)
+        #expect(abs(SampleYear.restChance(weekend: true, energy: 1, isBreak: false) - 0.20) < 1e-9)
+        #expect(SampleYear.restChance(weekend: false, energy: 0.5, isBreak: true) == 0.85)
+        #expect(SampleYear.level(x: 0.32) == .under1)
+        #expect(SampleYear.level(x: 0.33) == .from1to2)
+        #expect(SampleYear.level(x: 0.58) == .from2to3)
+        #expect(SampleYear.level(x: 0.84) == .over3)
+    }
+
+    @Test func thePreviewSummaryUsesTheSampleYear() {
+        let summary = YearSummary.sample()
+        let practice = SampleYear.days(year: 2026, calendar: Calendar(identifier: .gregorian)).filter { $0.level != .rest }
+        #expect(summary.daysOfPractice == practice.count)
+        #expect(summary.levels.count == practice.count)
+    }
+}
