@@ -1,15 +1,8 @@
 import SwiftUI
-#if os(iOS) && canImport(FamilyControls)
-import FamilyControls
-#endif
 
-/// Settings card for the "Practising" Focus: which Shortcuts to run and which apps to mute during a session.
+/// Settings card for the "Practising" Focus: which Shortcuts to run when a session starts and finishes.
 struct FocusSettingsCard: View {
     @State private var focus = FocusMode.shared
-    @State private var choosingApps = false
-    #if os(iOS) && canImport(FamilyControls)
-    @State private var draft = FamilyActivitySelection()
-    #endif
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -27,41 +20,6 @@ struct FocusSettingsCard: View {
                     .lgText(.caption, color: LGColor.inkMuted)
                     .padding(.vertical, 10)
             }
-            #if os(iOS) && canImport(FamilyControls)
-            Divider().overlay(LGColor.divider)
-            Toggle("Mute chosen apps", isOn: Binding(
-                get: { focus.settings.muteApps },
-                set: { on in Task { await focus.setMuteApps(on) } }))
-                .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
-            Text("Chosen apps are blocked with Screen Time until you finish the session.")
-                .lgText(.caption, color: LGColor.inkMuted)
-                .padding(.bottom, 10)
-            if let problem = focus.permissionProblem {
-                Text(problem).lgText(.caption, color: LGColor.danger).padding(.bottom, 10)
-            }
-            if focus.settings.muteApps {
-                Divider().overlay(LGColor.divider)
-                Button {
-                    draft = focus.selection
-                    choosingApps = true
-                } label: {
-                    HStack {
-                        Text("Choose apps").lgText(.row)
-                        Spacer()
-                        Text(focus.chosenSummary).lgText(.row, color: LGColor.inkMuted)
-                        Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
-                    }
-                    .frame(minHeight: 54)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityHint("Opens the list of apps to mute during a session")
-                .familyActivityPicker(isPresented: $choosingApps, selection: $draft)
-                .onChange(of: choosingApps) { _, showing in
-                    if !showing { focus.setSelection(draft) }
-                }
-            }
-            #endif
         }
         .padding(.horizontal, 18)
         .frame(maxWidth: .infinity, alignment: .leading)

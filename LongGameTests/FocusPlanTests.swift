@@ -3,18 +3,7 @@ import Foundation
 @testable import LongGame
 
 struct FocusPlanTests {
-    func on() -> FocusSettings { FocusSettings(switchFocus: true, muteApps: true) }
-
-    @Test func shieldOnlyWhileASessionRuns() {
-        #expect(FocusPlan.shouldShield(on(), sessionActive: true, hasChosenApps: true, authorised: true))
-        #expect(!FocusPlan.shouldShield(on(), sessionActive: false, hasChosenApps: true, authorised: true))
-    }
-
-    @Test func shieldNeedsEveryCondition() {
-        #expect(!FocusPlan.shouldShield(FocusSettings(), sessionActive: true, hasChosenApps: true, authorised: true))
-        #expect(!FocusPlan.shouldShield(on(), sessionActive: true, hasChosenApps: false, authorised: true))
-        #expect(!FocusPlan.shouldShield(on(), sessionActive: true, hasChosenApps: true, authorised: false))
-    }
+    func on() -> FocusSettings { FocusSettings(switchFocus: true) }
 
     @Test func shortcutNamesFollowTheSwitch() {
         #expect(FocusPlan.shortcutName(on(), starting: true) == "Start Practising")
@@ -38,12 +27,6 @@ struct FocusPlanTests {
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
         #expect(items.first { $0.name == "name" }?.value == "Start Practising & more")
         #expect(items.first { $0.name == "x-success" }?.value == "longgame://focus")
-    }
-
-    @Test func chosenSummaryReadsNaturally() {
-        #expect(FocusPlan.chosenSummary(apps: 0, categories: 0, websites: 0) == "None")
-        #expect(FocusPlan.chosenSummary(apps: 1, categories: 0, websites: 0) == "1 app")
-        #expect(FocusPlan.chosenSummary(apps: 3, categories: 1, websites: 2) == "3 apps, 1 category, 2 websites")
     }
 
     @Test func settingsSurviveEncoding() throws {
