@@ -116,10 +116,12 @@ struct WeekLookBackSheet: View {
             ForEach(look.days.indices, id: \.self) { i in
                 let longest = i == look.longestDay
                 VStack(spacing: 6) {
-                    Text(verbatim: longest ? StretchText.clock(seconds: (look.dayHours[i] * 3600).rounded()) : " ")
+                    // Every column keeps a label's room (so the bars line up); only the longest day's shows. It grows
+                    // with the text size instead of sitting in a fixed 14 pt box.
+                    Text(verbatim: StretchText.clock(seconds: (look.dayHours[i] * 3600).rounded()))
                         .lgText(LGTextStyle(size: 11, weight: .bold, relativeTo: .caption2), color: LGColor.ember)
                         .lineLimit(1).minimumScaleFactor(0.6)
-                        .frame(height: 14)
+                        .opacity(longest ? 1 : 0)
                     ZStack(alignment: .bottom) {
                         Color.clear.frame(width: 22, height: 64)
                         if look.dayHours[i] > 0 {

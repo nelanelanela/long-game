@@ -107,6 +107,10 @@ struct IntroView: View {
                     .frame(width: index == shown ? 18 : 6, height: 6)
             }
         }
+        // The dots are 6 pt tall; the element they make (adjustable: swipe up or down to change page) gets a 44 pt
+        // target, as the audit asked.
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
         .accessibilityAdjustableAction { direction in

@@ -172,6 +172,9 @@ struct NotePhotoRow: View {
             TextField("", text: $note, axis: .vertical)
                 .lineLimit(1...4)
                 .lgText(.row)
+                // The whole box is the field, not just its first line (the audit found the tap area too small).
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .topLeading)
+                .contentShape(Rectangle())
                 .accessibilityLabel("A note, if you like")
                 .accessibilityHint("What you made, what needs work")
                 .onChange(of: note) { _, new in
