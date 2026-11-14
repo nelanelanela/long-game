@@ -430,9 +430,14 @@ struct LGRepeatButton: View {
     @State private var pressed = false
 
     var body: some View {
+        // Smaller circles (Add past hours draws 36 pt) still get a 44 pt target; the extra is taken back from the
+        // layout, so nothing moves.
+        let target = max(44, diameter)
         LGStepCircle(systemName: systemName, diameter: diameter, dimmed: !enabled)
             .scaleEffect(pressed ? 0.92 : 1)
+            .frame(width: target, height: target)
             .contentShape(Circle())
+            .contentShape(.accessibility, Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in if !pressed { begin() } }
@@ -444,6 +449,7 @@ struct LGRepeatButton: View {
             .accessibilityLabel(label)
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { if enabled { action() } }
+            .padding(-(target - diameter) / 2)
     }
 
     private func begin() {
