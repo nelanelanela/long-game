@@ -14,6 +14,8 @@ struct GrowthTab: View {
     @State private var extra = 0.0
     /// The full-screen scrub chart.
     @State private var scrubbing = false
+    /// The keepsake poster sheet, for these hours.
+    @State private var keepsakeHours: KeepsakeChoice?
     @Namespace private var chartSpace
     @Query private var settingsRows: [AppSettings]
     @Environment(\.modelContext) private var context
@@ -39,6 +41,7 @@ struct GrowthTab: View {
             VStack(spacing: 0) {
                 thenAndNowRow
                 yearRow(now: now, records: records)
+                keepsakeRow(total: s.total)
             }
             .padding(.top, 20)
         }
@@ -59,6 +62,36 @@ struct GrowthTab: View {
         guard let settings = settingsRows.first, !settings.scrubHintSeen else { return }
         settings.scrubHintSeen = true
         try? context.save()
+    }
+
+    /// "Keepsake poster": once past 1,000 hours, for the last 1,000 passed.
+    @ViewBuilder
+    private func keepsakeRow(total: Double) -> some View {
+        if let hours = Keepsake.lastThousand(total: total) {
+            Button { keepsakeHours = KeepsakeChoice(hours: hours) } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "photo.artframe").lgIcon(18, weight: .regular)
+                        .foregroundStyle(LGColor.amber).frame(width: 34, height: 34).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Keepsake poster").lgText(.rowStrong)
+                        Text("Your whole calendar, ready to print").lgText(.caption, color: LGColor.inkMuted)
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
+                        .foregroundStyle(LGColor.inkMuted).accessibilityHidden(true)
+                }
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+            .sheet(item: $keepsakeHours) { choice in
+                if let content = KeepsakePoster.Content.make(hours: choice.hours, craft: craft, sessions: sessions, estimates: estimates) {
+                    KeepsakeSheet(content: content).lgSheetCard()
+                }
+            }
+        }
     }
 
     /// "Then and now": the first photo next to the latest. Only when a pair exists (two photos 90 days apart).
@@ -187,4 +220,10 @@ struct GrowthTab: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
+}
+
+/// The keepsake poster to make, for a sheet.
+struct KeepsakeChoice: Identifiable {
+    let hours: Int
+    var id: Int { hours }
 }
