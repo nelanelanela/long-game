@@ -207,6 +207,10 @@ struct HomeView: View {
             onScreen = true
             if knownSessionIDs == nil { knownSessionIDs = Set(sessions.map(\.id)) }
             refreshAnniversary()
+            #if DEBUG
+            // After the opening tab is chosen below, so the route wins.
+            Task { @MainActor in applyUITestRoute(total: summary(now: Date()).total) }
+            #endif
             chooseOpeningTab()
             fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
@@ -1112,6 +1116,11 @@ struct HomeView: View {
     /// and never over a running session or another sheet (it waits for the next open).
     private func checkLookBack(summary s: ProgressSummary) {
         guard let settings = settingsRows.first else { return }
+        #if DEBUG
+        // UI tests: only when asked for (it would cover the screen another test is after).
+        if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("-uitest.") || $0.hasPrefix("-debug.") }),
+           UITestLaunch.screen != "lookback" { return }
+        #endif
         let now = Date()
         var force = false
         #if DEBUG
@@ -1297,6 +1306,47 @@ struct HomeView: View {
             Notifications.scheduleMilestone(at: nil, message: "")
         }
     }
+
+    #if DEBUG
+    /// UI tests (`-uitest.screen <name>`): open one screen straight away, once.
+    private func applyUITestRoute(total: Double) {
+        guard !Self.usedUITestRoute, let screen = UITestLaunch.screen else { return }
+        Self.usedUITestRoute = true
+        let now = Date()
+        switch screen {
+        case "home.today": selectTab(.today)
+        case "home.week": selectTab(.week)
+        case "home.longGame": selectTab(.longGame)
+        case "lookback":
+            let entries = sessions.map { WeekLookBack.Entry(id: $0.id, start: $0.start, seconds: $0.durationSec, hasPhoto: $0.hasPhoto,
+                                                            viewCount: $0.viewCount, note: $0.note) }
+            if let look = WeekLookBack.make(entries, now: now, weekStart: weekStart) { sheet = .lookBack(look) }
+        case "futureSelf": sheet = .futureSelf
+        case "tipjar": sheet = .support
+        case "addHours": sheet = .addHours
+        case "pace": sheet = .editPace
+        case "settings": showSettings = true
+        case "history.calendar": historyRoute = .day(now)
+        case "history.growth": historyRoute = .growth
+        case "milestone": celebrating = 1_000
+        case "timer.running":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
+            totalBeforeTimer = total; showTimer = true
+        case "timer.paused":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60)); timer.pause()
+            totalBeforeTimer = total; showTimer = true
+        case "timer.finish":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
+            totalBeforeTimer = total; showTimer = true; timer.finishRequested = true
+        case "timer.long":
+            timer.start(craft: craft, now: now.addingTimeInterval(-(3 * 3600 + 12 * 60)))
+            totalBeforeTimer = total; showTimer = true; timer.finishRequested = true
+        default: break
+        }
+    }
+
+    private static var usedUITestRoute = false
+    #endif
 
     private func openTimer(total: Double) {
         totalBeforeTimer = total

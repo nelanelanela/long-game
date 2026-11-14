@@ -29,7 +29,12 @@ struct AppRoot: View {
     /// The opening sunrise (spec section 21). On a cold start the very first frame is the night frame; the decision
     /// about which version plays is made right after, and never waits for the database or iCloud.
     @State private var opening = OpeningCenter()
-    @State private var openingUndecided = OpeningCenter.consumeColdStart()
+    @State private var openingUndecided: Bool = {
+        #if DEBUG
+        if UITestLaunch.disableAnimations { _ = OpeningCenter.consumeColdStart(); return false }
+        #endif
+        return OpeningCenter.consumeColdStart()
+    }()
 
     private var active: Craft? { crafts.first(where: \.isActive) }
 

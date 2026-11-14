@@ -15,6 +15,7 @@ struct LongGameApp: App {
         do {
             let host = try StoreHost()
             #if DEBUG
+            UITestLaunch.prepare(ModelContext(host.container))
             DemoData.seedIfRequested(ModelContext(host.container))
             #endif
             _store = State(initialValue: host)
@@ -25,7 +26,7 @@ struct LongGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DebugWindowSize { AppearanceRoot { AppRoot() } }
+            DebugWindowSize { AppearanceRoot { AppRoot() }.lgUITestEnvironment() }
                 .modelContainer(store.container)
                 .environment(store)
                 .environment(timerStore)

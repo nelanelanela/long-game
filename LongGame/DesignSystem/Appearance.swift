@@ -42,7 +42,14 @@ struct AppearanceRoot<Content: View>: View {
 
     var body: some View {
         LookReader { content }
-            .preferredColorScheme(settingsRows.first?.appearance.colorScheme)
+            .preferredColorScheme(chosen)
+    }
+
+    private var chosen: ColorScheme? {
+        #if DEBUG
+        if let forced = UITestLaunch.appearance { return forced.colorScheme }
+        #endif
+        return settingsRows.first?.appearance.colorScheme
     }
 }
 

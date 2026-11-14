@@ -35,6 +35,20 @@
                ReferencedContainer = "container:LongGame.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AA5CF7653060057660B8D026"
+               BuildableName = "LongGameUITests.xctest"
+               BlueprintName = "LongGameUITests"
+               ReferencedContainer = "container:LongGame.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -61,6 +75,17 @@
                BlueprintIdentifier = "BA2571B621A2BD6EF264FCC7"
                BuildableName = "LongGameTests.xctest"
                BlueprintName = "LongGameTests"
+               ReferencedContainer = "container:LongGame.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AA5CF7653060057660B8D026"
+               BuildableName = "LongGameUITests.xctest"
+               BlueprintName = "LongGameUITests"
                ReferencedContainer = "container:LongGame.xcodeproj">
             </BuildableReference>
          </TestableReference>

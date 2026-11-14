@@ -188,6 +188,7 @@
 		3D6175F38A81E5965A8E0F59 /* TimerActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6966438B9164B8F428CF4A3 /* TimerActivity.swift */; };
 		3DFD13D10B0E772BB036C978 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BAA370AE7B949987519BFA /* WelcomeView.swift */; };
 		3E0D84BDF4B6B95008A6504A /* TodaySessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699FC58C2C9D4C16626A3161 /* TodaySessions.swift */; };
+		3E99775219925A6964C1B15C /* UITestLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807E8A600F0302ECE7E1F4AD /* UITestLaunch.swift */; };
 		3EAB36561DDAE15DA7E9687B /* WatchAddTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B88287EBB843D599FA462AC /* WatchAddTime.swift */; };
 		3EFF865882432D71D9A09F58 /* OpeningSunriseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D708E08EA241D47815A97B /* OpeningSunriseView.swift */; };
 		3F748767E4D2DFAD89741641 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0CE3E9FF87E9165C481A16 /* Typography.swift */; };
@@ -293,6 +294,7 @@
 		65540D39119A2CEFF1C1286E /* ICloudTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638D5D0C78714564A3CF6877 /* ICloudTests.swift */; };
 		657A3890A3144022077D3166 /* SessionPictureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A1D6F0C3642672B3DD62B3 /* SessionPictureTests.swift */; };
 		6595A68E25C0D4D2C111C96F /* PhotoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543F41F73FB01EBACE156CED /* PhotoStorage.swift */; };
+		66625BA6F44EE3AC76BB860E /* KnownFalseAlarms.swift in Sources */ = {isa = PBXBuildFile; fileRef = E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */; };
 		66A337675FB857523898D619 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		66EBD16611A6BD4F641E106C /* NotePhotoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5D9CDB88627C30CEB4CA92 /* NotePhotoTests.swift */; };
 		6746C5DB54C825EBBE2EED02 /* YearCardPhotosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E3F29EA4B55DD9558C18D5 /* YearCardPhotosTests.swift */; };
@@ -514,6 +516,7 @@
 		BC7FC829624BD2AE08DECA98 /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7493CAE826FC661FDE16D /* Summary.swift */; };
 		BD82F9D8C20CEC38D8D099C0 /* OpeningSunriseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D708E08EA241D47815A97B /* OpeningSunriseView.swift */; };
 		BDA75A7F5D5E785D1E4AAF91 /* NotificationAsk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165E9518D1820E1AF41D8D87 /* NotificationAsk.swift */; };
+		BDC569238C1B0C47AB1BB0E7 /* AccessibilityAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3813AEC804D9B235982F322F /* AccessibilityAuditTests.swift */; };
 		BE4E18E19EB382B011E497FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DB48346358AD922DA94D16D /* Assets.xcassets */; };
 		BE521E0837AD57D725691D63 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		BEC11BE7E1D09ED2D7B9A69D /* CalendarLevelMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB07343877285852A456E0 /* CalendarLevelMark.swift */; };
@@ -714,6 +717,13 @@
 			remoteGlobalIDString = 317804FCC8D01836C43556AC;
 			remoteInfo = LongGameWatchWidgets;
 		};
+		C3B06097A3D08C9EDEACEAD3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ECD0A04FA3BD66D9BADBD6C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E2D2278A0CB5BEAE71137C6;
+			remoteInfo = LongGame;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -796,6 +806,7 @@
 		35DBBF9A26035DE803E852B3 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
 		35F0B48FEEC1C9868CA44BFC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Milestones.swift; sourceTree = "<group>"; };
+		3813AEC804D9B235982F322F /* AccessibilityAuditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuditTests.swift; sourceTree = "<group>"; };
 		38D3125885B8A2AC3B3EB399 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		39076BB3A0DE32BAACE608B5 /* PhotoProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoProcessing.swift; sourceTree = "<group>"; };
 		39470712B69AB3ADB8204511 /* giggle-5.m4a */ = {isa = PBXFileReference; path = "giggle-5.m4a"; sourceTree = "<group>"; };
@@ -861,6 +872,7 @@
 		7B984BEBDD108D2E2418F47D /* giggle-6.m4a */ = {isa = PBXFileReference; path = "giggle-6.m4a"; sourceTree = "<group>"; };
 		7BE7493CAE826FC661FDE16D /* Summary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Summary.swift; sourceTree = "<group>"; };
 		7EAF1F301F0E605F61387B5A /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		807E8A600F0302ECE7E1F4AD /* UITestLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestLaunch.swift; sourceTree = "<group>"; };
 		81633F84436832EC1028688A /* LongGameMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LongGameMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		82F4E996AAFB275920272D3B /* WatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTests.swift; sourceTree = "<group>"; };
 		834B45AB23FE46948D78A6DE /* YearScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearScreen.swift; sourceTree = "<group>"; };
@@ -967,6 +979,7 @@
 		DFEB07343877285852A456E0 /* CalendarLevelMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLevelMark.swift; sourceTree = "<group>"; };
 		E073770A2E52D2AE1426405F /* TimerLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerLiveActivity.swift; sourceTree = "<group>"; };
 		E11191B27C8AB9AF4B77C8D4 /* CraftStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftStepView.swift; sourceTree = "<group>"; };
+		E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownFalseAlarms.swift; sourceTree = "<group>"; };
 		E14A91F8986B91CB0FB84BE0 /* TargetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetRow.swift; sourceTree = "<group>"; };
 		E1B8CB7C4D4E00CEE64C06C8 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		E2E02118D713C199DE690AA4 /* TipThanksSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipThanksSheet.swift; sourceTree = "<group>"; };
@@ -994,6 +1007,7 @@
 		FA63E65293528C8217C4B6B0 /* DayBarsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayBarsRow.swift; sourceTree = "<group>"; };
 		FABCB669F894280D7A83F628 /* FocusSettingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSettingsCard.swift; sourceTree = "<group>"; };
 		FB02EF3242425989B20F03EB /* SunWordsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunWordsTests.swift; sourceTree = "<group>"; };
+		FB5E14A181C1861AE1952925 /* LongGameUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LongGameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB747EC1A3E0C365C0F08376 /* TimerCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerCommands.swift; sourceTree = "<group>"; };
 		FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursStepping.swift; sourceTree = "<group>"; };
 		FC0ACDBAE7EDA1386B733483 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -1105,6 +1119,7 @@
 				8618BC939DEAADEC109ABEE2 /* TargetSaving.swift */,
 				1D585F07C0E99A89FD1223DB /* TimerStore.swift */,
 				6022DFF5F6081A955B9C3863 /* TipStore.swift */,
+				807E8A600F0302ECE7E1F4AD /* UITestLaunch.swift */,
 				B9144E2A5C70CA7FB09F5061 /* WatchBridge.swift */,
 				22695377BBCF2B894F838BF6 /* WidgetBridge.swift */,
 			);
@@ -1242,6 +1257,15 @@
 			path = Sounds;
 			sourceTree = "<group>";
 		};
+		7E75814886F2C5FB7547D9CA /* LongGameUITests */ = {
+			isa = PBXGroup;
+			children = (
+				3813AEC804D9B235982F322F /* AccessibilityAuditTests.swift */,
+				E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */,
+			);
+			path = LongGameUITests;
+			sourceTree = "<group>";
+		};
 		7F7FA8B027497C837464D918 /* Logic */ = {
 			isa = PBXGroup;
 			children = (
@@ -1306,6 +1330,7 @@
 				DB54F90C4C35EA3BC0A11B0A /* LongGameMac */,
 				337ACC342AEC04B605093AF0 /* LongGameMacWidgets */,
 				C94BD196D68CFDCB2999B7AF /* LongGameTests */,
+				7E75814886F2C5FB7547D9CA /* LongGameUITests */,
 				1C02CF63422FF895982CFFD9 /* LongGameWatch */,
 				9672DFB04BC26E99C27B002A /* LongGameWatchWidgets */,
 				E9CBFB8E6ED6A185721DC460 /* LongGameWidgets */,
@@ -1391,6 +1416,7 @@
 				0C3555EAD70603C2FAE1FB02 /* LongGameMacTests.xctest */,
 				9B4F46CBD8D25E667402A74D /* LongGameMacWidgets.appex */,
 				E5CFB2506660F0D493155DC2 /* LongGameTests.xctest */,
+				FB5E14A181C1861AE1952925 /* LongGameUITests.xctest */,
 				6E0C7883CE69545EC403CAA3 /* LongGameWatch.app */,
 				27FF9D44FCA8830991811CB2 /* LongGameWatchWidgets.appex */,
 				9C77DA785A7A19F4AEBED239 /* LongGameWidgets.appex */,
@@ -1659,6 +1685,24 @@
 			productReference = 9B4F46CBD8D25E667402A74D /* LongGameMacWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		AA5CF7653060057660B8D026 /* LongGameUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4FCC6FC38568B913E73EC877 /* Build configuration list for PBXNativeTarget "LongGameUITests" */;
+			buildPhases = (
+				96E94FA6E72C84432AEB00F1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				723ED2B4370AF5B3AD4BC3AF /* PBXTargetDependency */,
+			);
+			name = LongGameUITests;
+			packageProductDependencies = (
+			);
+			productName = LongGameUITests;
+			productReference = FB5E14A181C1861AE1952925 /* LongGameUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		BA2571B621A2BD6EF264FCC7 /* LongGameTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0182724AFAE0DBEE5F8B690 /* Build configuration list for PBXNativeTarget "LongGameTests" */;
@@ -1715,6 +1759,11 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					AA5CF7653060057660B8D026 = {
+						DevelopmentTeam = 7DKPSXJRS9;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6E2D2278A0CB5BEAE71137C6;
+					};
 					BA2571B621A2BD6EF264FCC7 = {
 						DevelopmentTeam = 7DKPSXJRS9;
 						ProvisioningStyle = Automatic;
@@ -1742,6 +1791,7 @@
 				7CD0C2A0508BBD91C4A2EE5E /* LongGameMac */,
 				A069B82A7AE69ACAE1504EA0 /* LongGameMacWidgets */,
 				BA2571B621A2BD6EF264FCC7 /* LongGameTests */,
+				AA5CF7653060057660B8D026 /* LongGameUITests */,
 				638C0C5DFDD1C87DA8289D65 /* LongGameMacTests */,
 			);
 		};
@@ -2223,6 +2273,7 @@
 				E040AEDBB1E282CA1EB74727 /* TodaySessionsView.swift in Sources */,
 				3847D6A498A4E3177084CBB9 /* TodayStretch.swift in Sources */,
 				E64DBBAAD642D6A30A83FDB5 /* Typography.swift in Sources */,
+				3E99775219925A6964C1B15C /* UITestLaunch.swift in Sources */,
 				86AB379DB025B7D96EE3D18B /* UndoSave.swift in Sources */,
 				E94EBA1518841010B8731B30 /* UsualSession.swift in Sources */,
 				B90A8EC0B97C40C5086B18FD /* WatchAddTime.swift in Sources */,
@@ -2366,6 +2417,15 @@
 				188901D0989FCD53332D35AC /* WindowShape.swift in Sources */,
 				2DFE6C6B1755FE997FA3F60D /* WriteToUs.swift in Sources */,
 				5E0B1D47BDE16A28AEA6FFA7 /* YearSummary.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96E94FA6E72C84432AEB00F1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDC569238C1B0C47AB1BB0E7 /* AccessibilityAuditTests.swift in Sources */,
+				66625BA6F44EE3AC76BB860E /* KnownFalseAlarms.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2520,6 +2580,11 @@
 			target = 3E5D1F456084D471D7FD4418 /* LongGameWatch */;
 			targetProxy = 2008203A9CB3CA20C3C695ED /* PBXContainerItemProxy */;
 		};
+		723ED2B4370AF5B3AD4BC3AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E2D2278A0CB5BEAE71137C6 /* LongGame */;
+			targetProxy = C3B06097A3D08C9EDEACEAD3 /* PBXContainerItemProxy */;
+		};
 		927396753B16C3D2E1781C92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7CD0C2A0508BBD91C4A2EE5E /* LongGameMac */;
@@ -2566,6 +2631,40 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		40867BEF619B3DE867466CFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wehavesun.LongGameUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LongGame;
+			};
+			name = Debug;
+		};
+		69D2F4238E759B1F4F508FDF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wehavesun.LongGameUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LongGame;
+			};
+			name = Release;
 		};
 		6C59BC5E9B5C5C8045FB5DC8 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3034,6 +3133,15 @@
 			buildConfigurations = (
 				81785FB081071FB5F08A6948 /* Debug */,
 				6C59BC5E9B5C5C8045FB5DC8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4FCC6FC38568B913E73EC877 /* Build configuration list for PBXNativeTarget "LongGameUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40867BEF619B3DE867466CFC /* Debug */,
+				69D2F4238E759B1F4F508FDF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
