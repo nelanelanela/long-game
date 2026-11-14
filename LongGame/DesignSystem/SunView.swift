@@ -142,14 +142,10 @@ struct SunView: View {
             EyeArc(x: 95, y: 118, bend: 2, width: 10).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             // Its "z": 22 pt semibold, #8FA2E0, the baseline's left end at (150, 54).
             // Drawn only while asleep: an invisible "z" was still found by the accessibility audit.
+            // Painted in a Canvas: a Text, even hidden, was still read by the audit as words that ignore the text size.
             if shown == .asleep {
-                Text(verbatim: "z")
-                    .font(.system(size: 22, weight: .semibold))
-                    .foregroundStyle(LGColor.sleepZ)
-                    .fixedSize()
-                    .position(x: 156, y: 47)
+                SunZ(size: 22, weight: .semibold, design: .default, color: LGColor.sleepZ, at: CGPoint(x: 156, y: 47))
                     .transition(.opacity)
-                    .accessibilityHidden(true)
             }
             // winking: right eye open
             OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
@@ -185,12 +181,8 @@ struct SunView: View {
             // Drawn only while sleepy (an invisible "z" was still found by the audit); drawing, not words, so VoiceOver
             // hears the sun's own label.
             if shown == .sleepy {
-                Text(verbatim: "z")
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(ink)
-                    .position(x: 134, y: 78)
+                SunZ(size: 20, weight: .bold, design: .rounded, color: ink, at: CGPoint(x: 134, y: 78))
                     .transition(.opacity)
-                    .accessibilityHidden(true)
             }
         }
         .lgAnimation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
@@ -328,4 +320,22 @@ private struct BigSmile: Shape {
         }
     }
     .padding()
+}
+
+/// The sleeping sun's "z", painted rather than laid out as text: part of the drawing, never read out or resized.
+private struct SunZ: View {
+    let size: CGFloat
+    let weight: Font.Weight
+    let design: Font.Design
+    let color: Color
+    let at: CGPoint
+
+    var body: some View {
+        Canvas { context, _ in
+            context.draw(Text(verbatim: "z").font(.system(size: size, weight: weight, design: design)).foregroundStyle(color),
+                         at: at, anchor: .center)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
 }
