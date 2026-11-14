@@ -42,6 +42,7 @@ struct NotePhotoRow: View {
     @State private var takingPhoto = false
     @State private var pickerItem: PhotosPickerItem?
     @State private var dropping = false
+    @FocusState private var noteFocused: Bool
 
     private let squareSize: CGFloat = 64
 
@@ -163,8 +164,10 @@ struct NotePhotoRow: View {
             if note.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("A note, if you like").lgText(LGTextStyle(size: 15, weight: .medium, relativeTo: .subheadline))
+                        .fixedSize(horizontal: false, vertical: true)
                     Text("What you made, what needs work")
                         .lgText(.caption, color: LGColor.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
@@ -175,6 +178,7 @@ struct NotePhotoRow: View {
                 // The whole box is the field, not just its first line (the audit found the tap area too small).
                 .frame(maxWidth: .infinity, minHeight: 44, alignment: .topLeading)
                 .contentShape(Rectangle())
+                .focused($noteFocused)
                 .accessibilityLabel("A note, if you like")
                 .accessibilityHint("What you made, what needs work")
                 .onChange(of: note) { _, new in
@@ -189,6 +193,9 @@ struct NotePhotoRow: View {
                 .fill(LGColor.surface)
                 .shadow(color: LGColor.navy.opacity(0.05), radius: 9, y: 6)
         }
+        // A tap anywhere in the box (its padding included) starts typing, not only a tap on the first line.
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .onTapGesture { noteFocused = true }
     }
 }
 
