@@ -52,15 +52,24 @@ struct MilestoneCelebration: View {
                     .frame(height: 560 * k)
 
                     VStack(spacing: 14) {
-                        Text(Milestones.message(hours: hours, craft: craftName))
-                            .lgText(LGTextStyle(size: 20, weight: .semibold, relativeTo: .title3))
-                            .multilineTextAlignment(.center)
-                        if iconGrows && Milestones.iconGrows(at: hours) {
-                            Text("Your app icon has grown a little too.")
-                                .lgText(.note, color: LGColor.inkMuted)
-                                .multilineTextAlignment(.center)
+                        // The words scroll if the largest text sizes need more room than is left under the scene
+                        // (they were cut off); at the usual sizes they fit and sit where they always did.
+                        ScrollView {
+                            VStack(spacing: 14) {
+                                Text(Milestones.message(hours: hours, craft: craftName))
+                                    .lgText(LGTextStyle(size: 20, weight: .semibold, relativeTo: .title3))
+                                    .multilineTextAlignment(.center)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if iconGrows && Milestones.iconGrows(at: hours) {
+                                    Text("Your app icon has grown a little too.")
+                                        .lgText(.note, color: LGColor.inkMuted)
+                                        .multilineTextAlignment(.center)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
                         }
-                        Spacer(minLength: 12)
+                        .scrollBounceBehavior(.basedOnSize)
                         Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
                         if offerSupport {
                             Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
