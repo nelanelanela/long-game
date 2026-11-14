@@ -28,10 +28,13 @@ struct GrowthChartView: View {
     var floatingLabel: ScrubReadout?
 
     private var full: Bool { style == .full }
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         let spanYears = data.xEnd.timeIntervalSince(data.xStart) / (365.25 * 86_400)
-        let step = spanYears <= 8 ? 1 : spanYears <= 16 ? 2 : spanYears <= 30 ? 5 : 10
+        // At the largest text sizes each year label is wider, so they are spaced out further (they overlapped).
+        let wideLabels = typeSize.isAccessibilitySize ? 2.0 : 1.0
+        let step = spanYears * wideLabels <= 8 ? 1 : spanYears * wideLabels <= 16 ? 2 : spanYears * wideLabels <= 30 ? 5 : 10
         Chart {
             let past = LineDraw.partial(data.past, fraction: draw.past)
             let chosen = LineDraw.partial(data.chosen, fraction: draw.chosen)

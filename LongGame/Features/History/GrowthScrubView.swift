@@ -18,6 +18,7 @@ struct GrowthScrubView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     @State private var selection: Date?
     /// What the headline and the dot show; it lingers 1.5 s after the finger lifts.
@@ -98,6 +99,18 @@ struct GrowthScrubView: View {
                         .frame(width: min(320, geo.size.width * 0.36))
                         chartArea
                     }
+                } else if typeSize.isAccessibilitySize {
+                    // At the largest text sizes the words need more room than the screen has: the page scrolls and
+                    // the chart keeps a fixed height (the audit found the headline and the key cut off).
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            headline
+                            // The chart draws "Finish line · 10,000 h" above its top edge; at these sizes that
+                            // needs the extra room or it sits on the headline.
+                            chartArea.frame(height: max(320, geo.size.height * 0.55)).padding(.top, 44)
+                            key.padding(.top, 6)
+                        }
+                    }
                 } else {
                     headline
                     chartArea.padding(.top, 14)
@@ -118,6 +131,7 @@ struct GrowthScrubView: View {
     private var top: some View {
         HStack {
             Text("\(craftName) · the long game").lgText(.rowStrong, color: LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
             Button { dismiss() } label: {
                 Image(systemName: "xmark")
@@ -131,7 +145,7 @@ struct GrowthScrubView: View {
             .accessibilityLabel("Close chart")
         }
         .padding(.horizontal, 20)
-        .frame(height: 44)
+        .frame(minHeight: 44)
         .contentShape(Rectangle())
         .gesture(swipeDown)
     }
@@ -145,12 +159,14 @@ struct GrowthScrubView: View {
         let r = readout ?? idleHeadline
         return VStack(alignment: .leading, spacing: 2) {
             Text(verbatim: r.small).lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
             Text(verbatim: r.big)
                 .lgText(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1))
                 .lineLimit(1).minimumScaleFactor(0.5)
             Text(verbatim: r.accent.isEmpty ? " " : r.accent)
                 .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline),
                         color: r.accent.hasPrefix("Milestone") || r.accent == "The finish line" ? LGColor.ember : LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
         .padding(.horizontal, 24).padding(.top, 18)
