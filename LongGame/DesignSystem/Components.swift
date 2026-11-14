@@ -277,6 +277,10 @@ struct LGStepBar: View {
                     .frame(width: 22, height: 4)
             }
         }
+        // Not a control, but its 4 pt frame read to the audit as a too-small target; the element is now the height
+        // of the row it sits in (nothing moves).
+        .frame(minHeight: 44)
+        .contentShape(.accessibility, Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Step \(step) of \(of)")
     }
