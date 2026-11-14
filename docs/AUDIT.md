@@ -17,7 +17,7 @@ Report: `docs/ACCESSIBILITY_REPORT.md`. Done:
 
 Not done or not testable here:
 
-- **Accessibility Inspector audit** (Home three tabs, Timer, History, Finish sheet): it is a Mac app that needs to be driven by hand, so I could not run it. I checked Home and History at AX5 in the Simulator by screenshot and fixed what I saw (tab names cut off, calendar labels overlapping the grid, legend breaking mid-word). Please run the audit once.
+- **Accessibility Inspector audit:** update 47 runs the same audit engine on every screen from the UI tests (below); the Inspector itself still needs hands on a Mac (steps in the report).
 - Real VoiceOver speech, Voice Control and the queued ray announcement: need a real iPhone or hands-on Simulator use.
 - Strings: the spoken sentences are one `String(localized:)` each, with the plural parts ("3 days", "1 hour") taken from the existing pluralised catalog entries rather than new catalog variations. The catalog is English only.
 - Dark appearance: not started (a design job of its own).
@@ -769,3 +769,25 @@ Seen in dark in the Simulator: the opening, Welcome, the intro pages, every setu
 - Not dark mode, but found here: the "added" toast and its Undo never showed after Add past hours (the new total arrives just after the sheet has closed). Fixed on both `redesign` and `dark-mode`.
 
 Seen but not changed (older, not about dark mode): on a first launch the opening sunrise waits on its night frame until it is tapped, in both looks; "Delete session" isn't red, because the text button style overrides its colour.
+
+## Update 47: accessibility check (14 November 2026, branch `accessibility-check`)
+
+Report: `docs/ACCESSIBILITY_REPORT.md` (rewritten). Branch made from `dark-mode`, so both looks were checked.
+
+- ✅ **UI test target** `LongGameUITests` (in `project.yml`, part of the LongGame scheme's tests) with debug-only launch switches in `LongGame/App/UITestLaunch.swift`: `-uitest.screen`, `-uitest.freshInstall`, `-uitest.disableAnimations`, `-uitest.today`, `-uitest.appearance`, and Reduce Motion / Reduce Transparency / Differentiate Without Colour through SwiftUI's own environment values. A test launch also clears any timer left from the previous test (on disk and in the synced record).
+- ✅ **Audit on 36 screens** (`AccessibilityAuditTests`), in four passes (light, AX5, dark, Increase Contrast; the pass comes from `LG_PASS`), a screenshot of every screen kept in the results. Ignored only the measured false alarms in `KnownFalseAlarms.swift`, each with its reason.
+- ✅ **Behaviour tests** (`AccessibilityBehaviourTests`): Reduce Motion (short opening, still Home, the giggle), Reduce Transparency, Differentiate Without Colour, the note box, 44 pt targets on eight screens, VoiceOver order on Home, Timer, Finish sheet, Calendar and Settings (`ExpectedOrder`).
+- ✅ **Fixed (18, one commit each):** the sun's "z" read as text; tab contrast on the dark sky; tabs' Large Content Viewer; intro dots, note box, step bar, Add past hours − / + and tip-jar prices as targets; cut-off words at the largest sizes on the Finish sheet, weekly look-back, Growth full screen, milestone celebration, Add past hours and Timer; the milestone celebration modal for VoiceOver; Home's and the Finish sheet's buttons read last.
+- 🟡 **For Natalia to decide:** calendar day cells (18 pt), the anniversary pill (4.4:1), words inside the gauge and Meet your future self not growing, Home's tabs (36 pt) and This week's bars (42 pt), and the calendar's unnamed "potentially inaccessible text".
+- ❌ **Not done here:** real VoiceOver, Voice Control, Switch Control, haptics, Watch and Live Activity (a 20-minute iPhone checklist is in the report); Accessibility Inspector by hand; iPad and Mac layouts.
+
+
+### The opening "waiting on its night frame" on a first launch (14 November 2026)
+
+Not an app bug: measured with logging on a fresh install. Right after the Simulator boots, iOS keeps a newly launched
+app in a background launch state (UIKit deactivation reason 11) for up to about 30 seconds, until the first touch
+or until it finishes its own start-up. During that time the app's views haven't appeared yet, so what shows is iOS's
+launch screen, which is deliberately the same night picture. The moment iOS lets go, the opening decides and plays
+the full 2.2 s sunrise. Any tap ends the wait, which is why a tap seemed to "start" it. On every fresh install
+without a fresh boot (three in a row) the sunrise started 1.5 s after launch and finished on time. On a real iPhone
+the app is opened by a tap on its icon, so it is already in front. Nothing changed in the code.
