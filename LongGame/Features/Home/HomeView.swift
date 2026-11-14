@@ -100,6 +100,7 @@ struct HomeView: View {
     /// sits on top of the content. Only the title reads it, so scrolling never makes all of Home work itself out again.
     @State private var barFade = BarFade()
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorScheme) private var colorScheme
     /// The sidebar layout's view (the Play views follow `tab`; History and Settings are kept here).
     @SceneStorage("sidebar.section") private var section: SidebarSection = .today
     /// The window's layout, kept for the keyboard commands.
@@ -206,6 +207,10 @@ struct HomeView: View {
             onScreen = true
             if knownSessionIDs == nil { knownSessionIDs = Set(sessions.map(\.id)) }
             refreshAnniversary()
+            #if DEBUG
+            // After the opening tab is chosen below, so the route wins.
+            Task { @MainActor in applyUITestRoute(total: summary(now: Date()).total) }
+            #endif
             chooseOpeningTab()
             fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
@@ -268,6 +273,8 @@ struct HomeView: View {
             refreshAnniversary()
             refreshNotifications()
         }
+        // While the celebration is up, Home underneath is out of VoiceOver's reach (the audit still found its words).
+        .accessibilityHidden(celebrating != nil)
         .overlay {
             if let hours = celebrating {
                 MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
@@ -275,6 +282,8 @@ struct HomeView: View {
                                      onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
                                      onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)
+                    // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
+                    .accessibilityAddTraits(.isModal)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: celebrating)
@@ -508,8 +517,8 @@ struct HomeView: View {
             }
             .padding(.leading, 14).padding(.trailing, toast.undo != nil ? 6 : 14)
             .frame(minHeight: 40)
-            .background(LGColor.ink, in: Capsule())
-            .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+            .background(LGColor.toastFill, in: Capsule())
+            .shadow(color: LGColor.navy.opacity(0.25), radius: 8, y: 6)
             .padding(.top, 12).padding(.trailing, 20)
             .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
             .accessibilityElement(children: .ignore)
@@ -586,7 +595,8 @@ struct HomeView: View {
     /// scrolls under it, and the buttons stay pinned under the page.
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
         // The sky behind the bar is dark on The long game and on the empty day.
-        let darkSky = f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
+        // The dark look's Home is always under the night sky.
+        let darkSky = colorScheme == .dark || f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
         let heroTop: CGFloat = short ? 2 : 8
         let fade = barFade
         return ScrollView {
@@ -1110,6 +1120,11 @@ struct HomeView: View {
     /// and never over a running session or another sheet (it waits for the next open).
     private func checkLookBack(summary s: ProgressSummary) {
         guard let settings = settingsRows.first else { return }
+        #if DEBUG
+        // UI tests: only when asked for (it would cover the screen another test is after).
+        if ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("-uitest.") || $0.hasPrefix("-debug.") }),
+           UITestLaunch.screen != "lookback" { return }
+        #endif
         let now = Date()
         var force = false
         #if DEBUG
@@ -1296,6 +1311,47 @@ struct HomeView: View {
         }
     }
 
+    #if DEBUG
+    /// UI tests (`-uitest.screen <name>`): open one screen straight away, once.
+    private func applyUITestRoute(total: Double) {
+        guard !Self.usedUITestRoute, let screen = UITestLaunch.screen else { return }
+        Self.usedUITestRoute = true
+        let now = Date()
+        switch screen {
+        case "home.today": selectTab(.today)
+        case "home.week": selectTab(.week)
+        case "home.longGame": selectTab(.longGame)
+        case "lookback":
+            let entries = sessions.map { WeekLookBack.Entry(id: $0.id, start: $0.start, seconds: $0.durationSec, hasPhoto: $0.hasPhoto,
+                                                            viewCount: $0.viewCount, note: $0.note) }
+            if let look = WeekLookBack.make(entries, now: now, weekStart: weekStart) { sheet = .lookBack(look) }
+        case "futureSelf": sheet = .futureSelf
+        case "tipjar": sheet = .support
+        case "addHours": sheet = .addHours
+        case "pace": sheet = .editPace
+        case "settings": showSettings = true
+        case "history.calendar": historyRoute = .day(now)
+        case "history.growth": historyRoute = .growth
+        case "milestone": celebrating = 1_000
+        case "timer.running":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
+            totalBeforeTimer = total; showTimer = true
+        case "timer.paused":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60)); timer.pause()
+            totalBeforeTimer = total; showTimer = true
+        case "timer.finish":
+            timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
+            totalBeforeTimer = total; showTimer = true; timer.finishRequested = true
+        case "timer.long":
+            timer.start(craft: craft, now: now.addingTimeInterval(-(3 * 3600 + 12 * 60)))
+            totalBeforeTimer = total; showTimer = true; timer.finishRequested = true
+        default: break
+        }
+    }
+
+    private static var usedUITestRoute = false
+    #endif
+
     private func openTimer(total: Double) {
         totalBeforeTimer = total
         if !timer.isActive { timer.start(craft: craft) }
@@ -1352,6 +1408,9 @@ struct HomeView: View {
         .padding(.top, 12)
         .padding(.bottom, 4)
         .background(LGColor.background.opacity(0.94))
+        // Read after the day's words, not before the tabs: the bar sits at the bottom of the screen.
+        .accessibilityElement(children: .contain)
+        .accessibilitySortPriority(-1)
     }
 
     private var startButton: some View {

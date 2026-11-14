@@ -9,6 +9,7 @@ struct SessionFormView: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var day: Date
     @State private var hours: Int
@@ -76,7 +77,7 @@ struct SessionFormView: View {
                     row("Day") {
                         DatePicker("Day", selection: $day, in: earliestDay...Date(), displayedComponents: .date)
                             .labelsHidden()
-                            .tint(LGColor.ink)
+                            .tint(LGColor.selectedFill)
                     }
                     Divider().overlay(LGColor.divider)
                     stepperRow("Hours", value: $hours, range: 0...12, step: 1, spoken: Labels.hours(hours),
@@ -139,23 +140,42 @@ struct SessionFormView: View {
     }
 
     /// "Cancel" as words on the left, the title in the middle.
+    /// At the largest text sizes the title goes under Cancel instead of on top of it (they overlapped).
     private var header: some View {
-        ZStack {
-            Text(editing == nil ? "Add past hours" : "Edit session")
-                .lgText(LGTextStyle(size: 16, weight: .semibold, relativeTo: .body))
-                .accessibilityAddTraits(.isHeader)
-            HStack {
-                Button { dismiss() } label: {
-                    Text("Cancel").lgText(LGTextStyle(size: 16, weight: .medium, relativeTo: .body))
-                        .frame(minWidth: 44, minHeight: 44)
-                        .contentShape(Rectangle())
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    cancelButton
+                    headerTitle.fixedSize(horizontal: false, vertical: true)
                 }
-                .buttonStyle(.plain)
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                ZStack {
+                    headerTitle
+                    HStack {
+                        cancelButton
+                        Spacer()
+                    }
+                }
             }
         }
         .frame(minHeight: 44)
         .padding(.top, 16)
+    }
+
+    private var headerTitle: some View {
+        Text(editing == nil ? "Add past hours" : "Edit session")
+            .lgText(LGTextStyle(size: 16, weight: .semibold, relativeTo: .body))
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    private var cancelButton: some View {
+        Button { dismiss() } label: {
+            Text("Cancel").lgText(LGTextStyle(size: 16, weight: .medium, relativeTo: .body))
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private func row<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {

@@ -7,7 +7,7 @@ struct FocusSettingsCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Toggle("Practising Focus", isOn: Binding(get: { focus.settings.switchFocus }, set: { focus.setSwitchFocus($0) }))
-                .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                .lgText(.row).tint(LGColor.selectedFill).frame(minHeight: 54)
             Text("When you start a session, Long Game runs a Shortcut of yours that turns on your Practising Focus, and another when you finish. iOS only lets Shortcuts switch a Focus on.")
                 .lgText(.caption, color: LGColor.inkMuted)
                 .padding(.bottom, 10)

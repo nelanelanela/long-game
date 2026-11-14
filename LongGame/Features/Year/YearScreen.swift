@@ -141,7 +141,7 @@ struct YearScreen: View {
                 .scaleEffect(scale, anchor: .center)
                 .frame(width: size.width * scale, height: size.height * scale)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                .shadow(color: LGColor.ink.opacity(0.12), radius: 12, y: 4)
+                .shadow(color: LGColor.navy.opacity(0.12), radius: 12, y: 4)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: style)
         }
@@ -158,7 +158,7 @@ struct YearScreen: View {
                 Text("Off shows days and percent instead").lgText(.caption, color: LGColor.inkMuted)
             }
         }
-        .tint(LGColor.ink)
+        .tint(LGColor.selectedFill)
         // Straight on the page, as on the board: no card around it.
         .frame(minHeight: 44)
     }

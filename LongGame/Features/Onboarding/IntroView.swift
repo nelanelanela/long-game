@@ -107,6 +107,10 @@ struct IntroView: View {
                     .frame(width: index == shown ? 18 : 6, height: 6)
             }
         }
+        // The dots are 6 pt tall; the element they make (adjustable: swipe up or down to change page) gets a 44 pt
+        // target, as the audit asked.
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
         .accessibilityAdjustableAction { direction in
@@ -180,11 +184,11 @@ private struct IntroIllustration: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         case 1:
             chip(Text("Your starting score · \(DurationFormat.grouped(startingScore ?? Self.exampleScore)) h"),
-                 background: .white, foreground: LGColor.ink)
+                 background: .white, foreground: LGColor.navy)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top, 120)
         default:
-            chip(Text("+1 h today"), background: LGColor.ink, foreground: .white)
+            chip(Text("+1 h today"), background: LGColor.navy, foreground: .white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top, 62)
         }

@@ -112,8 +112,8 @@ struct HistoryView: View {
                         .background {
                             if tab == item {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(.white)
-                                    .shadow(color: LGColor.ink.opacity(0.1), radius: 1.5, y: 1)
+                                    .fill(LGColor.surface)
+                                    .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
                             }
                         }
                         .contentShape(Rectangle())

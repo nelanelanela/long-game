@@ -141,12 +141,12 @@ struct SunView: View {
             EyeArc(x: 109, y: 101, bend: 4, width: 14).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             EyeArc(x: 95, y: 118, bend: 2, width: 10).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             // Its "z": 22 pt semibold, #8FA2E0, the baseline's left end at (150, 54).
-            Text(verbatim: "z")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(LGColor.sleepZ)
-                .fixedSize()
-                .position(x: 156, y: 47)
-                .opacity(shown == .asleep ? 1 : 0)
+            // Drawn only while asleep: an invisible "z" was still found by the accessibility audit.
+            // Painted in a Canvas: a Text, even hidden, was still read by the audit as words that ignore the text size.
+            if shown == .asleep {
+                SunZ(size: 22, weight: .semibold, design: .default, color: LGColor.sleepZ, at: CGPoint(x: 156, y: 47))
+                    .transition(.opacity)
+            }
             // winking: right eye open
             OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
             // celebrating: both eyes open
@@ -178,11 +178,12 @@ struct SunView: View {
                 Circle().fill(LGColor.sunCheeksDeep).frame(width: 22, height: 22).position(x: 130, y: 114)
             }
             .opacity(giggle.blush)
-            Text("z")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(ink)
-                .position(x: 134, y: 78)
-                .opacity(shown == .sleepy ? 1 : 0)
+            // Drawn only while sleepy (an invisible "z" was still found by the audit); drawing, not words, so VoiceOver
+            // hears the sun's own label.
+            if shown == .sleepy {
+                SunZ(size: 20, weight: .bold, design: .rounded, color: ink, at: CGPoint(x: 134, y: 78))
+                    .transition(.opacity)
+            }
         }
         .lgAnimation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
     }
@@ -204,7 +205,7 @@ struct SunView: View {
         .frame(width: 200, height: 200)
     }
 
-    private var ink: Color { LGColor.ink }
+    private var ink: Color { LGColor.navy }
     private var line: StrokeStyle { StrokeStyle(lineWidth: 4.5, lineCap: .round) }
 }
 
@@ -261,7 +262,7 @@ private struct OpenEye: View {
     var size: CGFloat = 12
     var body: some View {
         ZStack {
-            Circle().fill(LGColor.ink).frame(width: size, height: size).position(x: cx, y: 96)
+            Circle().fill(LGColor.navy).frame(width: size, height: size).position(x: cx, y: 96)
             Circle().fill(.white).frame(width: size / 3, height: size / 3).position(x: cx + size / 6, y: 96 - size / 6)
         }
     }
@@ -319,4 +320,22 @@ private struct BigSmile: Shape {
         }
     }
     .padding()
+}
+
+/// The sleeping sun's "z", painted rather than laid out as text: part of the drawing, never read out or resized.
+private struct SunZ: View {
+    let size: CGFloat
+    let weight: Font.Weight
+    let design: Font.Design
+    let color: Color
+    let at: CGPoint
+
+    var body: some View {
+        Canvas { context, _ in
+            context.draw(Text(verbatim: "z").font(.system(size: size, weight: weight, design: design)).foregroundStyle(color),
+                         at: at, anchor: .center)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
 }

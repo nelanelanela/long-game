@@ -258,6 +258,19 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameTests
+  # Accessibility UI tests (update 47): opens each screen with debug launch switches and runs Apple's audit.
+  LongGameUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - LongGameUITests
+    dependencies:
+      - target: LongGame
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGameUITests
+        TEST_TARGET_NAME: LongGame
   # The same Logic tests, run against the Mac app ("LongGame Mac" scheme, Test).
   LongGameMacTests:
     type: bundle.unit-test
@@ -290,9 +303,11 @@ schemes:
       targets:
         LongGame: all
         LongGameTests: [test]
+        LongGameUITests: [test]
     test:
       targets:
         - LongGameTests
+        - LongGameUITests
   "LongGame Mac":
     build:
       targets:

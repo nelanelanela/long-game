@@ -95,6 +95,9 @@ struct TipJarView: View {
                 .padding(.horizontal, 12)
                 .background(LGColor.stepperButton, in: Capsule())
                 .frame(minHeight: 44)
+                // The 34 pt pill is drawn; the whole 44 pt row height is the target (it read as 64 × 34).
+                .contentShape(Rectangle())
+                .contentShape(.accessibility, Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(price == nil || tips.isPurchasing)

@@ -28,7 +28,7 @@ struct LongGameMacApp: App {
 
     var body: some Scene {
         Window("Long Game", id: "main") {
-            AppRoot()
+            AppearanceRoot { AppRoot() }
                 .modelContainer(store.container)
                 .environment(store)
                 .environment(timerStore)
@@ -46,7 +46,6 @@ struct LongGameMacApp: App {
                     let rows = (try? store.container.mainContext.fetch(FetchDescriptor<AppSettings>())) ?? []
                     if let settings = rows.first, settings.iconGrows { AppIconManager.setDockIcon(settings.appliedIconStage ?? .start) }
                 }
-                .preferredColorScheme(.light)
         }
         .defaultSize(width: 1180, height: 740)
         .windowResizability(.contentMinSize)

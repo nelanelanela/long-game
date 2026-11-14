@@ -80,6 +80,7 @@ enum OpeningAccessibility {
 /// The night frame, the sunrise and the glide to Home, drawn from the pure timeline in `Logic/OpeningSunrise.swift`.
 /// Its first frame is the same picture as the launch screen storyboard (same proportions), so the hand-over can't be seen.
 struct OpeningSunriseView: View {
+    @Environment(\.lgNightLook) private var nightLook
     var plan: OpeningPlan
     var start: Date
     /// Home's sun, in screen coordinates (nil: nothing to glide to, e.g. Welcome).
@@ -122,7 +123,8 @@ struct OpeningSunriseView: View {
             let goalSize = target?.width ?? sunSize
             let centre = CGPoint(x: base.x + (goal.x - base.x) * glide, y: base.y + (goal.y - base.y) * glide)
             let size = sunSize + (goalSize - sunSize) * glide
-            let night = 1 - f.sky
+            // In the dark look Home is under the night sky, so the opening stays night and hands over to it.
+            let night = nightLook ? 1 : 1 - f.sky
 
             ZStack(alignment: .topLeading) {
                 // Sky: the board's two full-screen skies (horizon at 60%), dawn underneath and night on top fading
@@ -155,7 +157,7 @@ struct OpeningSunriseView: View {
                 // The sea is always in front of the sun and always opaque: the day land lies underneath and the
                 // night land fades on top of it, never the other way round.
                 ZStack(alignment: .topLeading) {
-                    LGColor.background.frame(width: w, height: max(0, h - (landTop + landHeight)))
+                    LGColor.paper.frame(width: w, height: max(0, h - (landTop + landHeight)))
                         .offset(y: landTop + landHeight)
                     LandView(tone: .day, still: true).frame(width: w, height: landHeight).offset(y: landTop)
                     ZStack(alignment: .topLeading) {

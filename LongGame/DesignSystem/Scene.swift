@@ -21,6 +21,8 @@ struct SkyView: View {
     var moonAt = CGPoint(x: 0.74, y: 0.12)
     /// Where the glow is centred across the width (0...1).
     var glowX: CGFloat = 0.5
+    /// How strong the glow is (1 = as drawn). Home's night sky in the dark look grows it with progress.
+    var glowStrength: Double = 1
 
     var body: some View {
         GeometryReader { geo in
@@ -32,6 +34,7 @@ struct SkyView: View {
                 RadialGradient(gradient: glow, center: .center, startRadius: 0, endRadius: glowSize(w, h) * 0.62 / 2 * 2.0.squareRoot())
                     .frame(width: glowSize(w, h), height: glowSize(w, h))
                     .position(x: glowX * w, y: hy)
+                    .opacity(glowStrength)
                     .frame(width: w, height: hy, alignment: .topLeading)
                     .clipped()
                     // Clipping hides the glow but not its touch area: the full glow circle reaches well above a
@@ -255,7 +258,7 @@ struct LandView: View {
         near.addCurve(to: CGPoint(x: 195, y: 45), control1: CGPoint(x: 70, y: 41), control2: CGPoint(x: 130, y: 42))
         near.addCurve(to: CGPoint(x: 390, y: 44), control1: CGPoint(x: 260, y: 48), control2: CGPoint(x: 330, y: 50))
         near.addLine(to: CGPoint(x: 390, y: 120)); near.addLine(to: CGPoint(x: 0, y: 120)); near.closeSubpath()
-        let seaColours = night ? LGColor.seaNight : [LGColor.sea, LGColor.seaDeep, LGColor.background]
+        let seaColours = night ? LGColor.seaNight : [LGColor.sea, LGColor.seaDeep, LGColor.paper]
         let nearS = scaled(near)
         ctx.fill(nearS, with: .linearGradient(
             Gradient(stops: [.init(color: seaColours[0], location: 0), .init(color: seaColours[1], location: 0.55), .init(color: seaColours[2], location: 1)]),
@@ -287,7 +290,7 @@ struct LandView: View {
         shore.addLine(to: CGPoint(x: 410, y: 44))
         let so = Self.shoreSway.offset(at: time)
         let shoreMoved = scaled(shore).applying(CGAffineTransform(translationX: so.width * sx, y: so.height * sy))
-        ctx.stroke(shoreMoved, with: .color((night ? Color(hex: 0xC9A27A) : LGColor.ink).opacity(night ? 0.6 : 0.55)), lineWidth: 1.2)
+        ctx.stroke(shoreMoved, with: .color((night ? Color(hex: 0xC9A27A) : LGColor.navy).opacity(night ? 0.6 : 0.55)), lineWidth: 1.2)
     }
 }
 

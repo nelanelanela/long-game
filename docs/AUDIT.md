@@ -17,7 +17,7 @@ Report: `docs/ACCESSIBILITY_REPORT.md`. Done:
 
 Not done or not testable here:
 
-- **Accessibility Inspector audit** (Home three tabs, Timer, History, Finish sheet): it is a Mac app that needs to be driven by hand, so I could not run it. I checked Home and History at AX5 in the Simulator by screenshot and fixed what I saw (tab names cut off, calendar labels overlapping the grid, legend breaking mid-word). Please run the audit once.
+- **Accessibility Inspector audit:** update 47 runs the same audit engine on every screen from the UI tests (below); the Inspector itself still needs hands on a Mac (steps in the report).
 - Real VoiceOver speech, Voice Control and the queued ray announcement: need a real iPhone or hands-on Simulator use.
 - Strings: the spoken sentences are one `String(localized:)` each, with the plural parts ("3 days", "1 hour") taken from the existing pluralised catalog entries rather than new catalog variations. The catalog is English only.
 - Dark appearance: not started (a design job of its own).
@@ -735,3 +735,59 @@ All 691 tests pass on the iPhone 18 Pro Simulator.
 | Tests | ✅ | `LongGameTests/WriteToUsTests.swift` | Footer line, body, the link, and each step of the order with a fake |
 
 Checked in the iPhone 18 Pro Simulator (no Mail account): the tap copies yes@wehavesun.com to the clipboard and shows "Email address copied". All 697 tests pass. The Mail sheet itself was not seen (it needs a device with Mail set up).
+
+## Update 45: dark mode, the night look (14 November 2026, branch `dark-mode`)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Every token has a dark value (the board's table) | ✅ | `DesignSystem/Colors.swift` (`Color(light:dark:)`) | Light values are exactly the old ones. Tokens the board doesn't give were chosen to match (listed in the spec's Visual system) |
+| Cards: no shadow, 0.5 pt white 8% hairline | ✅ | `LGCardModifier` | |
+| Sun, calendar levels, session pictures unchanged | ✅ | `LGColor.navy`, `LGColor.paper` in `SunView` and `Scene` | Checked by test (`DarkModeTests.theColourTable`) and in the Simulator |
+| Colours in feature views that weren't tokens | ✅ | | Found: white words on navy fills (toasts, chosen pills and day chips, the sidebar's navy capsule, the photo badge), white card fills (milestone card, Growth's info card and scrub button, History's chosen tab, onboarding bubbles), the dashed #CFC6B6 outlines, and navy text on white chips (intro page, gauge pill). Each now uses a token; the ones on fixed light or picture backgrounds use the fixed navy. Left as they are: the Timer's own palette (already moves from white to navy), the photo viewer (already dark), the year cards and session pictures (their own look), the gold and amber of bars and medals |
+| Home: night sky and land on every tab, glow 35–100% with progress | ✅ | `GaugeHero` (`nightLook`, `glowStrength`), `SkyView.glowStrength` | Checked in the Simulator (Today, empty day). iPad/Mac windows that draw the sky inside the scene get the night sky at full glow |
+| Timer stops at dawn, white words throughout; Paused and Saved follow | ✅ | `TimerSunrise.sceneProgress`, `TimerView` | Tests: p = 1 → 0.55, words white at every p |
+| Onboarding, sheets, future self, tip jar: dawn sky, night land | ✅ | `SceneHero`, `PaceScene` | Finish sheet checked in the Simulator |
+| Opening sunrise ends on the dark Home | ✅ | `OpeningSunriseView` | Stays night; checked in the Simulator |
+| Appearance › Look (Automatic, Light, Dark), stored, applied at the root | ✅ | `AppearanceRoot`, `Settings.appearanceRaw`, `appearanceCard` | Top of Settings. Test for the setting |
+| Year cards and the milestone card keep their own look | ✅ | `YearCardView` forces light | The milestone card (update 42) isn't built yet |
+| Widgets follow the system | ✅ | `WidgetScene`, `whiteCard` | Not seen on a Home Screen yet |
+| Contrast 4.5:1 | ⚠️ | | The board's pairs pass (cream on #0B1029 and #172044, #A9B1C9 on #172044 is about 7:1, navy on gold about 11:1). Not measured screen by screen |
+| Previews of every screen in both looks; a walk through the whole app | ⚠️ | | Seen in dark in the Simulator: the opening, Home (empty day), History (Calendar, Growth), the Timer, the Finish sheet. Not yet seen: onboarding, Home in progress and covered, Your year, Settings, Catch up, the tip jar. No new previews were added |
+| Light look unchanged | ✅ | | All 701 tests pass (including the iOS render tests); Home in light compared in the Simulator before and after |
+
+Open questions for you: the toast colour in dark (#2B3566), the chosen-pill colour in dark (gold, like the primary button), and whether the night Home's arc and moon on Today should change at all.
+
+### Update 45: the walk-through in dark (14 November 2026)
+
+Seen in dark in the Simulator: the opening, Welcome, the intro pages, every setup step, Meet your future self, Home (empty day, in progress, covered, The long game), the "added" toast with Undo and "Removed.", History (Calendar, Growth), Your year, the Timer and the Finish sheet, Add past hours, Edit session, Catch up (Welcome back and the adding step), Settings and the tip jar. Fixed on the way:
+
+- The dawn sky's area below the horizon was a fixed cream, which showed as a cream band under the sea on Welcome in dark. It is the page colour again (still cream in light).
+- A hard edge where the sheets' and Your weekly pace's dawn sky starts under a header (the tip jar): the top of the sky now fades into the page in dark.
+- The disabled main button turned olive in dark (faded gold over navy): it is a quiet night blue with muted words instead.
+- The Your year "Show hours" and iCloud switches still used the text colour when on (cream in dark): they use the gold chosen colour.
+- The cloud and bell bubbles on the setup steps stay white in both looks, like the moon: they're part of the picture.
+- Not dark mode, but found here: the "added" toast and its Undo never showed after Add past hours (the new total arrives just after the sheet has closed). Fixed on both `redesign` and `dark-mode`.
+
+Seen but not changed (older, not about dark mode): on a first launch the opening sunrise waits on its night frame until it is tapped, in both looks; "Delete session" isn't red, because the text button style overrides its colour.
+
+## Update 47: accessibility check (14 November 2026, branch `accessibility-check`)
+
+Report: `docs/ACCESSIBILITY_REPORT.md` (rewritten). Branch made from `dark-mode`, so both looks were checked.
+
+- ✅ **UI test target** `LongGameUITests` (in `project.yml`, part of the LongGame scheme's tests) with debug-only launch switches in `LongGame/App/UITestLaunch.swift`: `-uitest.screen`, `-uitest.freshInstall`, `-uitest.disableAnimations`, `-uitest.today`, `-uitest.appearance`, and Reduce Motion / Reduce Transparency / Differentiate Without Colour through SwiftUI's own environment values. A test launch also clears any timer left from the previous test (on disk and in the synced record).
+- ✅ **Audit on 36 screens** (`AccessibilityAuditTests`), in four passes (light, AX5, dark, Increase Contrast; the pass comes from `LG_PASS`), a screenshot of every screen kept in the results. Ignored only the measured false alarms in `KnownFalseAlarms.swift`, each with its reason.
+- ✅ **Behaviour tests** (`AccessibilityBehaviourTests`): Reduce Motion (short opening, still Home, the giggle), Reduce Transparency, Differentiate Without Colour, the note box, 44 pt targets on eight screens, VoiceOver order on Home, Timer, Finish sheet, Calendar and Settings (`ExpectedOrder`).
+- ✅ **Fixed (18, one commit each):** the sun's "z" read as text; tab contrast on the dark sky; tabs' Large Content Viewer; intro dots, note box, step bar, Add past hours − / + and tip-jar prices as targets; cut-off words at the largest sizes on the Finish sheet, weekly look-back, Growth full screen, milestone celebration, Add past hours and Timer; the milestone celebration modal for VoiceOver; Home's and the Finish sheet's buttons read last.
+- 🟡 **For Natalia to decide:** calendar day cells (18 pt), the anniversary pill (4.4:1), words inside the gauge and Meet your future self not growing, Home's tabs (36 pt) and This week's bars (42 pt), and the calendar's unnamed "potentially inaccessible text".
+- ❌ **Not done here:** real VoiceOver, Voice Control, Switch Control, haptics, Watch and Live Activity (a 20-minute iPhone checklist is in the report); Accessibility Inspector by hand; iPad and Mac layouts.
+
+
+### The opening "waiting on its night frame" on a first launch (14 November 2026)
+
+Not an app bug: measured with logging on a fresh install. Right after the Simulator boots, iOS keeps a newly launched
+app in a background launch state (UIKit deactivation reason 11) for up to about 30 seconds, until the first touch
+or until it finishes its own start-up. During that time the app's views haven't appeared yet, so what shows is iOS's
+launch screen, which is deliberately the same night picture. The moment iOS lets go, the opening decides and plays
+the full 2.2 s sunrise. Any tap ends the wait, which is why a tap seemed to "start" it. On every fresh install
+without a fresh boot (three in a row) the sunrise started 1.5 s after launch and finished on time. On a real iPhone
+the app is opened by a tap on its icon, so it is already in front. Nothing changed in the code.

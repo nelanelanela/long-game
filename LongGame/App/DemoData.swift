@@ -37,6 +37,15 @@ enum DemoData {
         // A believable pattern: most days, a little more at weekends, a few rest days.
         for offset in 0..<119 {
             guard let day = calendar.date(byAdding: .day, value: -offset, to: now) else { continue }
+            // UI tests: today's state (`-uitest.today empty|progress|covered`).
+            if offset == 0, let today = UITestLaunch.today {
+                let hours: Double = today == "covered" ? 2 : today == "progress" ? 0.75 : 0
+                if hours > 0 {
+                    context.insert(Session(craftId: craft.id, start: SessionRules.manualStart(on: day), durationSec: hours * 3600,
+                                           source: .manual, note: "Scales and arpeggios"))
+                }
+                continue
+            }
             let r = abs(sin(Double(offset + 7) * 12.9898) * 43758.5453).truncatingRemainder(dividingBy: 1)
             if r < 0.2 { continue }
             let weekend = calendar.isDateInWeekend(day)
@@ -45,6 +54,14 @@ enum DemoData {
             let start = SessionRules.manualStart(on: day)
             let note = offset == 3 ? "Slow practice on the hardest passage." : nil
             context.insert(Session(craftId: craft.id, start: start, durationSec: min(h, 5) * 3600, source: .manual, note: note))
+        }
+        // UI tests: five timer sessions of 45 m, so the Finish sheet has a usual length ("Forgot to stop?").
+        if UITestLaunch.screen == "timer.long" {
+            for daysAgo in 1...5 {
+                guard let day = calendar.date(byAdding: .day, value: -daysAgo, to: now),
+                      let start = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: day) else { continue }
+                context.insert(Session(craftId: craft.id, start: start, durationSec: 45 * 60, source: .timer))
+            }
         }
         try? context.save()
     }

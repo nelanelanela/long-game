@@ -22,7 +22,7 @@ struct TimerPalette: Equatable {
         let l = TimerSunrise.lightness(p: p)
         isLight = l > 0.5
         ink = Color(hex: TimerSunrise.inkHex(p: p))
-        muted = isLight ? LGColor.inkMuted : Color.white.opacity(0.72)
+        muted = isLight ? Color(hex: 0x5E6782) : Color.white.opacity(0.72)
         gold = Color(hex: TimerSunrise.goldHex(p: p))
         covered = Color(hex: mixHex(0xFFE08A, TimerSunrise.ember, l))
         buttonFill = isLight ? Color(hex: 0x16244A, opacity: 0.06) : Color.white.opacity(0.14)
@@ -113,7 +113,7 @@ struct TimerSunriseLand: View {
             ZStack(alignment: .topLeading) {
                 LGColor.night.frame(width: w, height: max(0, h - fillTop)).offset(y: fillTop)
                 LandView(tone: .night).frame(width: w, height: landHeight).offset(y: landTop)
-                LGColor.background.frame(width: w, height: max(0, h - fillTop)).offset(y: fillTop).opacity(day)
+                LGColor.paper.frame(width: w, height: max(0, h - fillTop)).offset(y: fillTop).opacity(day)
                 LandView(tone: .day).frame(width: w, height: landHeight).offset(y: landTop).opacity(day)
             }
             .frame(width: w, height: h, alignment: .topLeading)
@@ -146,8 +146,8 @@ struct TimerPillStyle: ButtonStyle {
     private var foreground: Color {
         switch look {
         case .quiet: palette.ink
-        case .gold: LGColor.ink
-        case .solid: palette.isLight ? .white : LGColor.ink
+        case .gold: LGColor.navy
+        case .solid: palette.isLight ? .white : LGColor.navy
         }
     }
 
@@ -155,7 +155,7 @@ struct TimerPillStyle: ButtonStyle {
         switch look {
         case .quiet: AnyShapeStyle(palette.buttonFill)
         case .gold: AnyShapeStyle(LinearGradient(colors: [Color(hex: 0xFFE7A0), Color(hex: 0xFFC94A)], startPoint: .top, endPoint: .bottom))
-        case .solid: AnyShapeStyle(palette.isLight ? LGColor.ink : Color.white)
+        case .solid: AnyShapeStyle(palette.isLight ? LGColor.navy : Color.white)
         }
     }
 }

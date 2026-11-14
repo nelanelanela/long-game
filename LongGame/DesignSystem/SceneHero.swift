@@ -25,15 +25,29 @@ struct SceneHero: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.giggleSoundOn) private var soundOn
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// The dark look (update 45): onboarding and the sheets' small scenes use the dawn sky over the night land.
+    private var skyTone: SceneTone { colorScheme == .dark && tone == .day ? .dawn : tone }
+    private var landTone: SceneTone { colorScheme == .dark || tone == .night ? .night : .day }
     @State private var giggle = GiggleController()
 
     private var shoreY: CGFloat { landTop + 46 }
 
     var body: some View {
         ZStack(alignment: .top) {
-            SkyView(tone: tone, horizon: horizon, moon: moon)
+            SkyView(tone: skyTone, horizon: horizon, moon: moon)
                 .frame(height: skyHeight)
                 .frame(maxHeight: .infinity, alignment: .top)
+                // In the dark look the dawn sky's top melts into the page, so there is no edge where a header or the
+                // sheet's top meets it (the day sky is see-through, so the light look never has one).
+                .overlay(alignment: .top) {
+                    if colorScheme == .dark && tone == .day {
+                        LinearGradient(colors: [LGColor.background, LGColor.background.opacity(0)], startPoint: .top, endPoint: .bottom)
+                            .frame(height: skyHeight * 0.35)
+                            .allowsHitTesting(false)
+                    }
+                }
 
             GeometryReader { geo in
                 GigglingSun(run: giggle.run) { pose in
@@ -44,7 +58,7 @@ struct SceneHero: View {
             }
 
             // The land and sea come after the sun, so nothing of the sun shows below the shoreline.
-            LandView(tone: tone == .night ? .night : .day)
+            LandView(tone: landTone)
                 .frame(height: 120)
                 .frame(maxHeight: .infinity, alignment: .top)
                 .offset(y: landTop)

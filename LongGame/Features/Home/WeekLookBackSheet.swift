@@ -21,8 +21,16 @@ struct WeekLookBackSheet: View {
     var scrolls = true
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var viewing: Session?
     @State private var editing: Session?
+
+    /// At the largest text sizes the side-by-side rows stack, so nothing is cut off (the accessibility audit).
+    private var stacks: Bool { dynamicTypeSize.isAccessibilitySize }
+    private func row(spacing: CGFloat = 4) -> AnyLayout {
+        stacks ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
+               : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 10))
+    }
 
     private var momentSession: Session? {
         guard let id = look.moment?.sessionId else { return nil }
@@ -50,10 +58,10 @@ struct WeekLookBackSheet: View {
                           face: .happy, hidden: true)
                     .padding(.horizontal, -24)
 
-                HStack(alignment: .firstTextBaseline) {
+                row().callAsFunction {
                     Text("LAST WEEK")
                         .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption, tracking: 1.7), color: LGColor.finishLabel)
-                    Spacer()
+                    if !stacks { Spacer() }
                     Text(verbatim: look.dates()).lgText(.caption, color: LGColor.inkMuted)
                 }
                 .accessibilityElement(children: .combine)
@@ -63,6 +71,7 @@ struct WeekLookBackSheet: View {
                 if let more = look.moreThanBefore {
                     Text("\(StretchText.clock(seconds: more)) more than the week before.")
                         .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: LGColor.ember)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 6)
                 }
 
@@ -96,12 +105,13 @@ struct WeekLookBackSheet: View {
     // MARK: Pieces
 
     private var headline: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 10) {
+        row(spacing: 0).callAsFunction {
             Text(verbatim: StretchText.clock(seconds: (look.hours * 3600).rounded()))
                 .lgNumber(LGTextStyle(size: 48, weight: .bold, relativeTo: .largeTitle, tracking: -2.2))
             if let pace = lastWeekPace, pace > 0 {
                 Text("of your \(WeeklyTarget.number(pace)) h pace")
                     .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .body), color: LGColor.inkMuted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .accessibilityElement(children: .combine)
@@ -116,10 +126,15 @@ struct WeekLookBackSheet: View {
             ForEach(look.days.indices, id: \.self) { i in
                 let longest = i == look.longestDay
                 VStack(spacing: 6) {
-                    Text(verbatim: longest ? StretchText.clock(seconds: (look.dayHours[i] * 3600).rounded()) : " ")
-                        .lgText(LGTextStyle(size: 11, weight: .bold, relativeTo: .caption2), color: LGColor.ember)
-                        .lineLimit(1).minimumScaleFactor(0.6)
-                        .frame(height: 14)
+                    // Every column keeps a label's room (so the bars line up); only the longest day's shows. It grows
+                    // with the text size instead of sitting in a fixed 14 pt box.
+                    // At the largest sizes it no longer fits a column; Longest day below says it in full.
+                    if !stacks {
+                        Text(verbatim: StretchText.clock(seconds: (look.dayHours[i] * 3600).rounded()))
+                            .lgText(LGTextStyle(size: 11, weight: .bold, relativeTo: .caption2), color: LGColor.ember)
+                            .lineLimit(1).minimumScaleFactor(0.6)
+                            .opacity(longest ? 1 : 0)
+                    }
                     ZStack(alignment: .bottom) {
                         Color.clear.frame(width: 22, height: 64)
                         if look.dayHours[i] > 0 {
@@ -144,11 +159,12 @@ struct WeekLookBackSheet: View {
     }
 
     private var figures: some View {
-        HStack(spacing: 0) {
+        let layout = stacks ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12)) : AnyLayout(HStackLayout(spacing: 0))
+        return layout {
             figure("Days played", String(localized: "\(look.daysPlayed) of 7"))
-            Rectangle().fill(LGColor.hairline).frame(width: 1)
+            if !stacks { Rectangle().fill(LGColor.hairline).frame(width: 1) }
             figure("Longest day", look.longestDayText() ?? "–")
-            Rectangle().fill(LGColor.hairline).frame(width: 1)
+            if !stacks { Rectangle().fill(LGColor.hairline).frame(width: 1) }
             figure("Mostly", look.mostly?.plural ?? "–")
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -158,13 +174,15 @@ struct WeekLookBackSheet: View {
     }
 
     private func figure(_ title: LocalizedStringKey, _ value: String) -> some View {
-        VStack(spacing: 2) {
+        VStack(alignment: stacks ? .leading : .center, spacing: 2) {
             Text(title).lgText(.caption, color: LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
             Text(verbatim: value)
                 .lgText(LGTextStyle(size: 17, weight: .bold, relativeTo: .headline))
-                .lineLimit(1).minimumScaleFactor(0.7)
+                .lineLimit(stacks ? nil : 1).minimumScaleFactor(stacks ? 1 : 0.7)
+                .fixedSize(horizontal: false, vertical: stacks)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: stacks ? .leading : .center)
         .accessibilityElement(children: .combine)
     }
 
@@ -187,7 +205,7 @@ struct WeekLookBackSheet: View {
                     Text(verbatim: look.momentWhen() ?? "").lgText(.caption, color: LGColor.inkMuted)
                     Text(verbatim: look.momentLine() ?? "")
                         .lgText(LGTextStyle(size: 15, weight: .semibold, relativeTo: .body))
-                        .lineLimit(1)
+                        .lineLimit(stacks ? nil : 1)
                 }
                 Spacer(minLength: 0)
             }
@@ -206,9 +224,9 @@ struct WeekLookBackSheet: View {
         let endOfWeek = max(0, total - thisWeekSoFar)
         let before = max(0, endOfWeek - look.hours)
         return VStack(spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
+            row().callAsFunction {
                 Text("The long game").lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote), color: LGColor.inkMuted)
-                Spacer()
+                if !stacks { Spacer() }
                 Text("\(DurationFormat.grouped(Int(endOfWeek.rounded(.down)))) h · finish line \(finish)")
                     .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote))
             }

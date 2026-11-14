@@ -42,6 +42,7 @@ struct NotePhotoRow: View {
     @State private var takingPhoto = false
     @State private var pickerItem: PhotosPickerItem?
     @State private var dropping = false
+    @FocusState private var noteFocused: Bool
 
     private let squareSize: CGFloat = 64
 
@@ -108,7 +109,7 @@ struct NotePhotoRow: View {
                             .fill(LGColor.surface)
                             .overlay {
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .strokeBorder(Color(hex: 0xCFC6B6), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                                    .strokeBorder(LGColor.dashedOutline, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
                             }
                             .frame(width: squareSize, height: squareSize)
                             .overlay {
@@ -137,7 +138,7 @@ struct NotePhotoRow: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 20, height: 20)
-                        .background(LGColor.ink, in: Circle())
+                        .background(LGColor.navy, in: Circle())
                         .frame(width: 44, height: 44, alignment: .topTrailing)
                         .contentShape(Rectangle())
                 }
@@ -163,8 +164,10 @@ struct NotePhotoRow: View {
             if note.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("A note, if you like").lgText(LGTextStyle(size: 15, weight: .medium, relativeTo: .subheadline))
+                        .fixedSize(horizontal: false, vertical: true)
                     Text("What you made, what needs work")
                         .lgText(.caption, color: LGColor.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
@@ -172,6 +175,10 @@ struct NotePhotoRow: View {
             TextField("", text: $note, axis: .vertical)
                 .lineLimit(1...4)
                 .lgText(.row)
+                // The whole box is the field, not just its first line (the audit found the tap area too small).
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .topLeading)
+                .contentShape(Rectangle())
+                .focused($noteFocused)
                 .accessibilityLabel("A note, if you like")
                 .accessibilityHint("What you made, what needs work")
                 .onChange(of: note) { _, new in
@@ -184,8 +191,11 @@ struct NotePhotoRow: View {
         .background {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(LGColor.surface)
-                .shadow(color: LGColor.ink.opacity(0.05), radius: 9, y: 6)
+                .shadow(color: LGColor.navy.opacity(0.05), radius: 9, y: 6)
         }
+        // A tap anywhere in the box (its padding included) starts typing, not only a tap on the first line.
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .onTapGesture { noteFocused = true }
     }
 }
 

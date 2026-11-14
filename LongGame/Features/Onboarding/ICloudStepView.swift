@@ -17,7 +17,7 @@ struct ICloudIllustration: View {
                         Circle()
                             .fill(RadialGradient(colors: [.white, Color(hex: 0xEEF2FB)], center: UnitPoint(x: 0.35, y: 0.3),
                                                  startRadius: 0, endRadius: 42))
-                            .shadow(color: LGColor.ink.opacity(0.16), radius: 12, y: 10)
+                            .shadow(color: LGColor.navy.opacity(0.16), radius: 12, y: 10)
                     }
                     .position(x: geo.size.width / 2 + 76, y: 60)
                     .accessibilityHidden(true)
@@ -95,7 +95,7 @@ struct ICloudStepView: View {
             Spacer(minLength: 8)
             Toggle("Save to iCloud", isOn: Binding(get: { state.isOn }, set: { model.saveToICloud = $0 }))
                 .labelsHidden()
-                .tint(LGColor.ink)
+                .tint(LGColor.selectedFill)
                 .disabled(!state.isEnabled)
         }
         .padding(16)

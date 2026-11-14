@@ -37,8 +37,8 @@ struct GrowthKey: View {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 swatch(sample)
                 VStack(alignment: .leading, spacing: 2) {
-                    nameText
-                    numberText
+                    nameText.fixedSize(horizontal: false, vertical: true)
+                    numberText.fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 0)
             }

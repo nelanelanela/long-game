@@ -123,6 +123,13 @@ final class AppSettings {
     var lastCatchUpPromptAt: Date?
     /// The start of the week whose first open last showed the weekly look-back (once per week).
     var lastLookBackWeek: Date?
+    /// Settings › Appearance › Look (`AppAppearance` raw value). Automatic follows the device.
+    var appearanceRaw: String = AppAppearance.automatic.rawValue
+
+    var appearance: AppAppearance {
+        get { AppAppearance(rawValue: appearanceRaw) ?? .automatic }
+        set { appearanceRaw = newValue.rawValue }
+    }
     /// "Meet your future self" opens once on its own, the first time Home appears after onboarding.
     var futureSelfShown: Bool = false
     /// Tips unlock nothing; these only decide whether to say thank you and when to stop asking.

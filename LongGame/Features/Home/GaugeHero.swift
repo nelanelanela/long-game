@@ -49,8 +49,25 @@ struct GaugeHero: View, Animatable {
     /// How far the sky reaches above the hero, to sit behind the status bar, title and tabs.
     static let skyExtension: CGFloat = 340
 
-    /// The long game is the dark one: dawn sky, white scale and a white pill.
-    private var onDark: Bool { gauge.tab == .longGame }
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// The dark look (update 45): the night sky and night land on every tab, whatever the progress. The sun's height,
+    /// its glow and the lit arc carry the progress.
+    private var nightLook: Bool { colorScheme == .dark }
+
+    /// The long game is the dark one: dawn sky, white scale and a white pill. In the dark look every tab is.
+    private var onDark: Bool { nightLook || gauge.tab == .longGame }
+
+    /// The sky behind the sun: night in the dark look, otherwise dawn on The long game and the empty day, else day.
+    private var skyTone: SceneTone { nightLook ? .night : (onDark || dawnSky ? .dawn : .day) }
+
+    /// The night sky's glow grows with progress, from 35% to 100%.
+    private func glowStrength(_ place: Place) -> Double {
+        guard nightLook else { return 1 }
+        let mix = GaugeGeometry.clamped(place.arcMix)
+        let progress = GaugeGeometry.clamped(place.fraction) * (1 - mix) + GaugeGeometry.clamped(place.arcFraction) * mix
+        return 0.35 + 0.65 * progress
+    }
 
     private var shown: Place {
         if !glides, let final { return final }
@@ -74,8 +91,9 @@ struct GaugeHero: View, Animatable {
                 // arc, so the dotted arc and its moon show on it.
                 if extendsSky {
                     let ext = Self.skyExtension
-                    SkyView(tone: onDark || dawnSky ? .dawn : .day, horizon: (ext + metrics.waterY) / (ext + metrics.height),
-                            moon: onDark, glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1))
+                    SkyView(tone: skyTone, horizon: (ext + metrics.waterY) / (ext + metrics.height),
+                            moon: gauge.tab == .longGame, glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1),
+                            glowStrength: glowStrength(place))
                         .frame(width: width, height: ext + metrics.height)
                         .offset(y: -ext)
                 } else if dawnSky && !onDark {
@@ -89,8 +107,8 @@ struct GaugeHero: View, Animatable {
                 StretchArcLayer(geometry: arc, fraction: place.arcFraction)
                     .opacity(Double(mix))
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
-                                            scene: onDark || dawnSky ? .dawn : .day, drawsSky: !extendsSky && !(dawnSky && !onDark),
-                                            skyMoon: onDark),
+                                            scene: skyTone, drawsSky: !extendsSky && !(dawnSky && !onDark),
+                                            skyMoon: gauge.tab == .longGame),
                             label: gauge.spoken.label, value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning,
                             behindLand: AnyView(scale(fraction: place.fraction)),
@@ -201,12 +219,12 @@ struct GaugeMarker: View {
                         Text(pill)
                             .id(tab)
                             .transition(.opacity)
-                            .lgText(LGTextStyle(size: 13, weight: .bold, relativeTo: .caption), color: onDark ? LGColor.ink : .white)
+                            .lgText(LGTextStyle(size: 13, weight: .bold, relativeTo: .caption), color: onDark ? LGColor.navy : .white)
                             .monospacedDigit()
                             .lineLimit(1)
                             .fixedSize()
                             .padding(.horizontal, 9).padding(.vertical, 4)
-                            .background(onDark ? Color.white : LGColor.ink, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .background(onDark ? Color.white : LGColor.navy, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .shadow(color: Color(hex: onDark ? 0x0B1029 : 0x16244A, opacity: onDark ? 0.3 : 0.25), radius: 6, y: 4)
                     }
                     .offset(x: metrics.pillX, y: y)

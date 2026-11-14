@@ -789,6 +789,34 @@ Simple, flat and calm: warm-white background, flat white cards only where conten
 
 Build the sun as one vector view (circle, 12 rays, face layers) so every state animates between the others; export the same drawing for the app icon. Exact geometry (200×200 viewBox): body circle r 56 at (100,100); 12 rays every 30° from r 66 to r 92 (long) / r 82 (short), alternating, stroke 9, round caps; cheeks r 7 at (72,113) and (128,113); happy eyes `M76 98 q8 -9 16 0` and `M108 98 q8 -9 16 0`; smile `M88 114 q12 11 24 0`; stroke 4.5 navy, round caps. See any design file for the SVG.
 
+### The dark look (update 45, `design/redesign/DarkMode.dc.html`)
+
+**Settings › Appearance › Look**: Automatic (the default, follows the device), Light or Dark, stored in `Settings.appearance` and applied at the root with `preferredColorScheme`, so sheets and full-screen covers follow.
+
+| Token | Light | Dark |
+| --- | --- | --- |
+| background | #FAF7F1 | #0B1029 |
+| card (`surface`) | #FFFFFF | #172044 |
+| ink (text) | #16244A | #F4EFE6 |
+| inkMuted | #5E6782 | #A9B1C9 |
+| primary button fill / label | #16244A / white | #FFD66B / #16244A |
+| accent text (ember) | #B4561A | #FFB877 |
+| segmentTrack, tabTrack | #EFE2CF | #262F57 |
+| hairline, divider | #ECE7DE, #F0ECE5 | #222B52 |
+| rest dot | #C5D0EC | #3D4D93 |
+| peach washes and tiles | #FFF1DA | #2A2440 |
+
+Also given a dark value (not on the board): toasts #16244A → #2B3566 (white words in both); a chosen pill or switch #16244A → #FFD66B with navy words; chip fill and clock tile → #1E2750; chip border → #2E3866; stepper buttons → #262F57 / #1E2750; the dashed outlines #CFC6B6 → #3A4470; danger and delete text → #FF8A73; forecast and chosen-pace words → #FFB877; gauge labels → #A9B1C9; last week's faint bars → white 10%; the iPad/Mac sidebar → #10163A.
+
+- Cards lose their shadow in the dark look and get a 0.5 pt inner hairline (white 8%).
+- Never change: the sun (its face uses a fixed navy, `LGColor.navy`), the scenes' own colours (`LGColor.paper` under the day land), the calendar's four level colours, the session pictures, the year cards (always drawn light), the app icon and its variants, the launch screen.
+- **Home, all tabs:** the night sky and night land whatever the progress. The sun's height, its glow (35% to 100% with progress) and the lit arc carry the progress; an empty day is the sun resting on the horizon. The header, tabs, scale and pill use their on-dark colours.
+- **Timer:** the same sunrise, stopping at the dawn colours: today's progress p is drawn at 0.55 × p (`TimerSunrise.sceneProgress`), so p = 1 looks like p = 0.55 in the light look and the words stay white throughout. Paused and Saved follow. The Timer forces a dark status bar in both looks, so the Finish sheet re-applies the app's look (`lgAppLook()`); so does the photo viewer's note sheet.
+- **Onboarding, the sheets' small scenes, Your weekly pace:** the dawn sky over the night land.
+- **The opening sunrise** stays at night in the dark look and hands over to the night Home.
+- **Widgets** follow the system: the night sky and land, and the card colour, in the dark look. The Live Activity and the Watch are already dark.
+- Liquid Glass picks up the dark material by itself; the primary button's glass is tinted gold.
+
 ### Liquid Glass (iOS 26 and later) (`design/LiquidGlass.dc.html`)
 
 On iOS 26 and later, the tabs and buttons use Apple's Liquid Glass. On iOS 17–25 the app looks exactly as described above (flat). Only the system glass APIs are used, never a hand-made blur.

@@ -4,13 +4,21 @@ import SwiftUI
 
 struct LGCardModifier: ViewModifier {
     var radius: CGFloat = 20
+    @Environment(\.colorScheme) private var scheme
+
     func body(content: Content) -> some View {
-        // White, with the redesign's soft shadow (0 8 24, navy at 6%).
+        // White, with the redesign's soft shadow (0 8 24, navy at 6%). In the dark look: no shadow, and a 0.5 pt
+        // inner hairline (white 8%) instead.
         content
             .background {
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(LGColor.surface)
-                    .shadow(color: LGColor.ink.opacity(0.06), radius: 12, y: 8)
+                let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+                if scheme == .dark {
+                    shape.fill(LGColor.surface)
+                        .overlay(shape.strokeBorder(LGColor.cardEdge, lineWidth: 0.5))
+                } else {
+                    shape.fill(LGColor.surface)
+                        .shadow(color: LGColor.navy.opacity(0.06), radius: 12, y: 8)
+                }
             }
     }
 }
@@ -65,9 +73,9 @@ struct LGStepCircle: View {
             glyph.background {
                 Circle()
                     .fill(dimmed ? AnyShapeStyle(LGColor.stepperButtonLimit)
-                                 : AnyShapeStyle(RadialGradient(colors: [.white, LGColor.stepperFace],
+                                 : AnyShapeStyle(RadialGradient(colors: [LGColor.stepperFaceTop, LGColor.stepperFace],
                                                                 center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: diameter * 0.7)))
-                    .shadow(color: LGColor.ink.opacity(dimmed ? 0 : 0.1), radius: diameter > 40 ? 8 : 4, y: diameter > 40 ? 6 : 3)
+                    .shadow(color: LGColor.navy.opacity(dimmed ? 0 : 0.1), radius: diameter > 40 ? 8 : 4, y: diameter > 40 ? 6 : 3)
             }
         }
     }
@@ -85,6 +93,11 @@ struct LGButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.accessibilityShowButtonShapes) private var showButtonShapes
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// The dark look's disabled primary button: faded gold over navy turns olive, so it is a quiet night blue with
+    /// muted words instead (the light look keeps its faded navy).
+    private var darkDisabledPrimary: Bool { kind == .primary && !isEnabled && colorScheme == .dark }
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
@@ -104,15 +117,15 @@ struct LGButtonStyle: ButtonStyle {
             .lgText(.button, color: foreground)
             .frame(maxWidth: .infinity)
             .frame(minHeight: height)
-            .glassEffect(glass, in: .capsule)
-            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
+            .glassEffect(darkDisabledPrimary ? .regular.tint(LGColor.segmentTrack) : glass, in: .capsule)
+            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : (darkDisabledPrimary ? 1 : 0.4))
             .contentShape(Capsule())
     }
 
     @available(iOS 26, macOS 26, *)
     private var glass: Glass {
         switch kind {
-        case .primary: .regular.tint(LGColor.ink).interactive()
+        case .primary: .regular.tint(LGColor.primaryFill).interactive()
         case .light: .regular.tint(.white).interactive()
         case .translucent: .clear.interactive()
         default: .regular.interactive()
@@ -136,13 +149,13 @@ struct LGButtonStyle: ButtonStyle {
                 label.background(background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         }
-        .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.4)
+        .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : (darkDisabledPrimary ? 1 : 0.4))
         .contentShape(Rectangle())
     }
 
     private var foreground: Color {
         switch kind {
-        case .primary: .white
+        case .primary: darkDisabledPrimary ? LGColor.inkMuted : LGColor.primaryLabel
         case .translucent: .white
         default: LGColor.ink
         }
@@ -150,7 +163,7 @@ struct LGButtonStyle: ButtonStyle {
 
     private var background: Color {
         switch kind {
-        case .primary: LGColor.ink
+        case .primary: darkDisabledPrimary ? LGColor.segmentTrack : LGColor.primaryFill
         case .light: .white
         case .translucent: .white.opacity(reduceTransparency || contrast == .increased ? 0.28 : 0.12)
         default: .clear
@@ -190,6 +203,7 @@ struct LGIconButton: View {
     let action: () -> Void
     @Environment(\.lgFlat) private var flat
     @Environment(\.lgOnDark) private var onDark
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Button(action: action) {
@@ -209,6 +223,9 @@ struct LGIconButton: View {
     @ViewBuilder private var icon: some View {
         if #available(iOS 26, macOS 26, *), !flat {
             image.glassEffect(.regular.interactive(), in: .circle).contentShape(Circle())
+                // On a dark sky the glass takes its dark material, so the white icon keeps its contrast (the light
+                // material there made a pale lavender circle behind a white icon).
+                .environment(\.colorScheme, onDark ? .dark : colorScheme)
         } else {
             image.contentShape(Rectangle())
         }
@@ -234,10 +251,10 @@ struct LGPill: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .lgText(.row, color: selected ? .white : LGColor.ink)
+                .lgText(.row, color: selected ? LGColor.selectedLabel : LGColor.ink)
                 .padding(.horizontal, 16)
                 .frame(minHeight: 40)
-                .background(selected ? LGColor.ink : LGColor.surface, in: Capsule())
+                .background(selected ? LGColor.selectedFill : LGColor.surface, in: Capsule())
                 .overlay(Capsule().stroke(selected ? Color.clear : LGColor.chipBorder, lineWidth: 1))
                 .frame(minHeight: 44)
         }
@@ -260,6 +277,10 @@ struct LGStepBar: View {
                     .frame(width: 22, height: 4)
             }
         }
+        // Not a control, but its 4 pt frame read to the audit as a too-small target; the element is now the height
+        // of the row it sits in (nothing moves).
+        .frame(minHeight: 44)
+        .contentShape(.accessibility, Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Step \(step) of \(of)")
     }
@@ -280,6 +301,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
 
     @Environment(\.lgFlat) private var flat
     @Environment(\.lgOnDark) private var onDark
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.lgOverSky) private var overSky
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -326,13 +348,14 @@ struct LGSegmentedControl<Item: Hashable>: View {
                         .background {
                             if selected {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(.white)
-                                    .shadow(color: LGColor.ink.opacity(0.1), radius: 1.5, y: 1)
+                                    .fill(LGColor.surface)
+                                    .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
                             }
                         }
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityShowsLargeContentViewer { Text(title(item)) }
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
@@ -366,12 +389,19 @@ struct LGSegmentedControl<Item: Hashable>: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityAddTraits(selected ? [.isSelected] : [])
+                    // The names stop growing at the largest sizes so they stay whole; a long press shows them big,
+                    // as the system's own tab bars do.
+                    .accessibilityShowsLargeContentViewer { Text(title(item)) }
                 }
             }
             .padding(3)
             // On the day sky a very light warm tint keeps the track from disappearing.
-            .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35)) : .regular, in: .capsule)
+            .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35))
+                          : onDark ? .regular.tint(LGColor.navy.opacity(0.4)) : .regular, in: .capsule)
         }
+        // White tab names on a dark sky need the glass's dark material: with the light one the track and the chosen
+        // lens were pale lavender behind white words (about 1.5–2:1, found by the accessibility audit).
+        .environment(\.colorScheme, onDark ? .dark : colorScheme)
     }
 
     /// The lens: with Reduce Motion it just appears under the chosen tab instead of stretching across.
@@ -400,9 +430,14 @@ struct LGRepeatButton: View {
     @State private var pressed = false
 
     var body: some View {
+        // Smaller circles (Add past hours draws 36 pt) still get a 44 pt target; the extra is taken back from the
+        // layout, so nothing moves.
+        let target = max(44, diameter)
         LGStepCircle(systemName: systemName, diameter: diameter, dimmed: !enabled)
             .scaleEffect(pressed ? 0.92 : 1)
+            .frame(width: target, height: target)
             .contentShape(Circle())
+            .contentShape(.accessibility, Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in if !pressed { begin() } }
@@ -414,6 +449,7 @@ struct LGRepeatButton: View {
             .accessibilityLabel(label)
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { if enabled { action() } }
+            .padding(-(target - diameter) / 2)
     }
 
     private func begin() {

@@ -12,6 +12,14 @@ enum TimerSunrise {
 
     static func clamp(_ x: Double) -> Double { min(1, max(0, x)) }
 
+    /// The dark look (update 45): the same sunrise, but it stops at the dawn colours, so the screen never glares at
+    /// night. Today's progress is mapped so p = 1 shows what p = 0.55 shows in the light look; up to there the words
+    /// stay white (`lightness` is 0 until 0.55).
+    static let darkCeiling = 0.55
+
+    /// The progress the picture and its colours are drawn at.
+    static func sceneProgress(_ p: Double, dark: Bool) -> Double { dark ? clamp(p) * darkCeiling : p }
+
     /// Today's progress, 0...1: (saved today + the running session) ÷ today's stretch.
     static func progress(doneSaved: TimeInterval, running: TimeInterval, target: TimeInterval?) -> Double {
         let stretch = (target ?? fallbackStretch)
