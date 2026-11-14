@@ -203,6 +203,7 @@ struct LGIconButton: View {
     let action: () -> Void
     @Environment(\.lgFlat) private var flat
     @Environment(\.lgOnDark) private var onDark
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         Button(action: action) {
@@ -222,6 +223,9 @@ struct LGIconButton: View {
     @ViewBuilder private var icon: some View {
         if #available(iOS 26, macOS 26, *), !flat {
             image.glassEffect(.regular.interactive(), in: .circle).contentShape(Circle())
+                // On a dark sky the glass takes its dark material, so the white icon keeps its contrast (the light
+                // material there made a pale lavender circle behind a white icon).
+                .environment(\.colorScheme, onDark ? .dark : colorScheme)
         } else {
             image.contentShape(Rectangle())
         }
@@ -293,6 +297,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
 
     @Environment(\.lgFlat) private var flat
     @Environment(\.lgOnDark) private var onDark
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.lgOverSky) private var overSky
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -346,6 +351,7 @@ struct LGSegmentedControl<Item: Hashable>: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityShowsLargeContentViewer { Text(title(item)) }
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
@@ -379,12 +385,19 @@ struct LGSegmentedControl<Item: Hashable>: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityAddTraits(selected ? [.isSelected] : [])
+                    // The names stop growing at the largest sizes so they stay whole; a long press shows them big,
+                    // as the system's own tab bars do.
+                    .accessibilityShowsLargeContentViewer { Text(title(item)) }
                 }
             }
             .padding(3)
             // On the day sky a very light warm tint keeps the track from disappearing.
-            .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35)) : .regular, in: .capsule)
+            .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35))
+                          : onDark ? .regular.tint(LGColor.navy.opacity(0.4)) : .regular, in: .capsule)
         }
+        // White tab names on a dark sky need the glass's dark material: with the light one the track and the chosen
+        // lens were pale lavender behind white words (about 1.5–2:1, found by the accessibility audit).
+        .environment(\.colorScheme, onDark ? .dark : colorScheme)
     }
 
     /// The lens: with Reduce Motion it just appears under the chosen tab instead of stretching across.
