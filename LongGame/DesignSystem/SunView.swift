@@ -141,12 +141,16 @@ struct SunView: View {
             EyeArc(x: 109, y: 101, bend: 4, width: 14).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             EyeArc(x: 95, y: 118, bend: 2, width: 10).stroke(ink, style: line).opacity(shown == .asleep ? 1 : 0)
             // Its "z": 22 pt semibold, #8FA2E0, the baseline's left end at (150, 54).
-            Text(verbatim: "z")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(LGColor.sleepZ)
-                .fixedSize()
-                .position(x: 156, y: 47)
-                .opacity(shown == .asleep ? 1 : 0)
+            // Drawn only while asleep: an invisible "z" was still found by the accessibility audit.
+            if shown == .asleep {
+                Text(verbatim: "z")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(LGColor.sleepZ)
+                    .fixedSize()
+                    .position(x: 156, y: 47)
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+            }
             // winking: right eye open
             OpenEye(cx: 116).opacity(shown == .wink ? 1 : 0)
             // celebrating: both eyes open
@@ -178,11 +182,16 @@ struct SunView: View {
                 Circle().fill(LGColor.sunCheeksDeep).frame(width: 22, height: 22).position(x: 130, y: 114)
             }
             .opacity(giggle.blush)
-            Text("z")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(ink)
-                .position(x: 134, y: 78)
-                .opacity(shown == .sleepy ? 1 : 0)
+            // Drawn only while sleepy (an invisible "z" was still found by the audit); drawing, not words, so VoiceOver
+            // hears the sun's own label.
+            if shown == .sleepy {
+                Text(verbatim: "z")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(ink)
+                    .position(x: 134, y: 78)
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+            }
         }
         .lgAnimation(giggle.face == nil ? .easeInOut(duration: 0.18) : nil, value: shown)
     }
