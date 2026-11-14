@@ -60,6 +60,10 @@ struct HomeView: View {
     @State private var toast: HomeToast?
     /// The sessions Home has already seen, so a save's new ones are known (what its Undo removes).
     @State private var knownSessionIDs: Set<UUID>?
+    /// True from when Add past hours, Catch up or the Timer opens until 2 s after it closes: a rise in the total in
+    /// that time is that save (the new total can arrive just after the sheet has gone).
+    @State private var justClosedAdding = false
+    @State private var addingFlowToken = 0
     @AccessibilityFocusState private var toastFocused: Bool
     /// Today's small anniversary ("A year since you started."), if any.
     @State private var anniversary: Anniversary?
@@ -237,7 +241,7 @@ struct HomeView: View {
             let celebrates = checkMilestones(total: total)
             let before = knownSessionIDs ?? []
             knownSessionIDs = Set(sessions.map(\.id))
-            if total > old, showTimer || sheet != nil || catchUpGap != nil {
+            if total > old, showTimer || sheet != nil || catchUpGap != nil || justClosedAdding {
                 let undo = UndoSave.offer(before: before, after: sessions.map(\.id), celebrates: celebrates)
                 showToast(addedHours: total - old, undo: undo)
                 // The timer plays its own save feeling; Add past hours and Catch up play theirs here.
@@ -250,6 +254,11 @@ struct HomeView: View {
             refreshAnniversary()
             Task { try? await Task.sleep(for: .seconds(0.6)); checkLookBack(summary: summary(now: Date())) }
         }
+        // The new total can arrive just after Add past hours, Catch up or the Timer has closed: keep the "added"
+        // toast's door open for a moment after each.
+        .onChange(of: sheet?.id) { _, new in addingFlow(open: new == "add") }
+        .onChange(of: catchUpGap == nil) { _, closed in addingFlow(open: !closed) }
+        .onChange(of: showTimer) { _, shown in addingFlow(open: shown) }
         .onChange(of: toastFocused) { was, now in
             // With VoiceOver the toast stays until focus moves away from it.
             if was && !now, toast?.undo != nil { toast = nil }
@@ -418,6 +427,16 @@ struct HomeView: View {
         let paceReached = figures.weekTarget > 0 && addedThisWeek > 0
             && figures.summary.thisWeek >= figures.weekTarget && figures.summary.thisWeek - addedThisWeek < figures.weekTarget
         Haptics.play(HapticPlan.save(timer: false, coversStretch: covers, reachesMilestone: false, reachesWeeklyPace: paceReached))
+    }
+
+    private func addingFlow(open: Bool) {
+        addingFlowToken += 1
+        if open { justClosedAdding = true; return }
+        let token = addingFlowToken
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            if addingFlowToken == token { justClosedAdding = false }
+        }
     }
 
     /// A plain note in the toast's place for a few seconds ("Rest is part of the craft.").
