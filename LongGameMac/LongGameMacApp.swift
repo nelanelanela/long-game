@@ -8,7 +8,7 @@ import AppKit
 struct LongGameMacApp: App {
     @NSApplicationDelegateAdaptor(MacAppDelegate.self) private var appDelegate
     @State private var store: StoreHost
-    @State private var timerStore = TimerStore()
+    @State private var timerStore = TimerStore.shared
     @State private var iCloud = ICloudMonitor()
     @State private var tips = TipStore()
     @State private var commands = CommandCenter()

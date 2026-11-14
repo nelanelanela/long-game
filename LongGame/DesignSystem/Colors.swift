@@ -52,6 +52,10 @@ enum LGColor {
     static let deleteWash = Color(hex: 0xFDF0EC)
     static let deleteInk = Color(hex: 0xC0392B)
     static let timerGold = Color(hex: 0xFFD66B)
+    /// The Finish sheet's "A long one" card.
+    static let longSessionCard = Color(hex: 0xFFF1DA)
+    /// The Undo pill inside Home's navy toast: a slightly lighter navy.
+    static let toastUndoPill = Color.white.opacity(0.14)
     /// The iPad/Mac sidebar and its quiet capsule button (#EFEBE4), and the chosen row's wash.
     static let sidebar = Color(hex: 0xEFEBE4)
     static let sidebarSelection = Color(hex: 0x16244A).opacity(0.10)

@@ -22,6 +22,8 @@ struct FinishedSession: Codable, Equatable, Sendable, Identifiable {
     var craftId: UUID
     var start: Date
     var durationSec: Double
+    /// Hours added with Add time (saved as manual, at noon today); nil or false for a timer session.
+    var isManual: Bool?
 
     var entry: WidgetSnapshot.Entry { .init(start: start, seconds: durationSec, id: id) }
 }
@@ -30,6 +32,8 @@ struct FinishedSession: Codable, Equatable, Sendable, Identifiable {
 enum WatchMessage {
     static let timerKey = "timer"
     static let sessionKey = "session"
+    /// Undo on the watch: the id of a session it sent that the phone should remove again.
+    static let removeSessionKey = "removeSession"
     /// A file transfer carrying the phone's stored data (the metadata names its kind).
     static let snapshotKind = "snapshot"
     static let kindKey = "kind"
@@ -59,6 +63,12 @@ enum WatchMessage {
 
     static func sessionPayload(_ session: FinishedSession) -> [String: Any] {
         (try? encoder.encode(session)).map { [sessionKey: $0] } ?? [:]
+    }
+
+    static func removePayload(_ id: UUID) -> [String: Any] { [removeSessionKey: id.uuidString] }
+
+    static func removedSession(from payload: [String: Any]) -> UUID? {
+        (payload[removeSessionKey] as? String).flatMap(UUID.init(uuidString:))
     }
 
     static func finishedSession(from payload: [String: Any]) -> FinishedSession? {

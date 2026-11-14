@@ -109,6 +109,8 @@ struct WatchHomePage: View {
     let tab: HomeTab
     let state: WatchHomeState
     var onStart: (() -> Void)?
+    /// The + beside Start: opens Add time.
+    var onAdd: (() -> Void)?
 
     private var gauge: HomeGauge { state.widget.gauge(for: tab) }
 
@@ -139,8 +141,22 @@ struct WatchHomePage: View {
             Spacer(minLength: 4)
 
             if tab != .longGame, let onStart {
-                WatchPill(title: "Start", kind: .gold, action: onStart)
-                    .accessibilityHint("Starts a practice session")
+                HStack(spacing: 6) {
+                    WatchPill(title: "Start", kind: .gold, action: onStart)
+                        .accessibilityHint("Starts a practice session")
+                    if let onAdd {
+                        Button(action: onAdd) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .frame(width: 34, height: 34)
+                                .background(Color.white.opacity(0.16), in: Circle())
+                                .contentShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(Text("Add time"))
+                    }
+                }
             }
         }
         .padding(.horizontal, 8)

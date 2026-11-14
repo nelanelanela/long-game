@@ -18,29 +18,12 @@ struct TimerActivityAttributes: ActivityAttributes {
     var craftName: String
 }
 
-struct ToggleTimerIntent: LiveActivityIntent {
-    static let title: LocalizedStringResource = "Pause or resume"
-
-    func perform() async throws -> some IntentResult {
-        if var state = TimerPersistence.load() {
-            let now = Date()
-            if state.isPaused(at: now) { state.resume(at: now) } else { state.pause(at: now) }
-            TimerPersistence.save(state)
-        }
-        NotificationCenter.default.post(name: .timerChangedExternally, object: nil)
-        return .result()
-    }
-}
-
 struct FinishTimerIntent: LiveActivityIntent {
     static let title: LocalizedStringResource = "Finish session"
     static let openAppWhenRun = true
 
     func perform() async throws -> some IntentResult {
-        if var state = TimerPersistence.load() {
-            state.pause(at: Date())
-            TimerPersistence.save(state)
-        }
+        // Opens the app, which pauses the timer and shows the Finish sheet.
         NotificationCenter.default.post(name: .timerFinishRequested, object: nil)
         return .result()
     }

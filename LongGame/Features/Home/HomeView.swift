@@ -1,6 +1,16 @@
 import SwiftUI
 import SwiftData
 
+/// The small navy note after a save: "40 m added" with Undo, or "Removed.".
+private struct HomeToast: Equatable {
+    let id = UUID()
+    var text: String
+    /// What VoiceOver reads ("40 minutes added").
+    var spoken: String
+    /// The sessions the save created, when Undo is offered.
+    var undo: [UUID]?
+}
+
 private enum HomeSheet: Identifiable {
     case addHours, futureSelf, support
     /// The target screen as a sheet: a new year of pace, or the first target for an older game.
@@ -42,8 +52,12 @@ struct HomeView: View {
     /// While set, Home shows this instead of the real total (the count-up after a save).
     @State private var countingTotal: Double?
     @State private var catchUpGap: CatchUp.Gap?
-    /// "1.5 h added." for a moment after hours are saved (the timer, Add past hours or a catch-up).
-    @State private var toast: String?
+    /// "1.5 h added." for a moment after hours are saved (the timer, Add past hours or a catch-up), with Undo.
+    @State private var toast: HomeToast?
+    /// The sessions Home has already seen, so a save's new ones are known (what its Undo removes).
+    @State private var knownSessionIDs: Set<UUID>?
+    @AccessibilityFocusState private var toastFocused: Bool
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverOn
     @State private var totalBeforeCatchUp = 0.0
     /// Today, This week or The long game. Home opens on Today; right after onboarding it opens on The long game once
     /// (`AppSettings.lastHomeTab` holds the one to open on). Tapping another tab is not remembered for next time.
@@ -175,6 +189,7 @@ struct HomeView: View {
                             everySecond: timer.isActive, winking: $winking, tick: $tick))
         .onAppear {
             onScreen = true
+            if knownSessionIDs == nil { knownSessionIDs = Set(sessions.map(\.id)) }
             chooseOpeningTab()
             fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
@@ -200,8 +215,17 @@ struct HomeView: View {
                 .lgSheetCard()
         }
         .onChange(of: s.total) { old, total in
-            checkMilestones(total: total)
-            if total > old, showTimer || sheet != nil || catchUpGap != nil { showToast(addedHours: total - old) }
+            let celebrates = checkMilestones(total: total)
+            let before = knownSessionIDs ?? []
+            knownSessionIDs = Set(sessions.map(\.id))
+            if total > old, showTimer || sheet != nil || catchUpGap != nil {
+                showToast(addedHours: total - old,
+                          undo: UndoSave.offer(before: before, after: sessions.map(\.id), celebrates: celebrates))
+            }
+        }
+        .onChange(of: toastFocused) { was, now in
+            // With VoiceOver the toast stays until focus moves away from it.
+            if was && !now, toast?.undo != nil { toast = nil }
         }
         .onChange(of: sessions.count) { old, new in
             fillSessionPictures()
@@ -312,16 +336,42 @@ struct HomeView: View {
         SessionPictures.fillMissing(sessions: sessions, settings: settingsRows.first, periods: targetPeriods, context: context)
     }
 
-    private func showToast(addedHours: Double) {
+    private func showToast(addedHours: Double, undo: [UUID]?) {
         let minutes = Int((addedHours * 60).rounded())
         guard minutes > 0 else { return }
         let amount = addedHours < 0.95 ? "\(minutes) m" : DurationFormat.hours(addedHours)
-        let text = String(localized: "\(amount) added.")
-        toast = text
-        AccessibilityNotification.Announcement(text).post()
+        let spokenAmount = addedHours < 0.95 ? Labels.spoken(seconds: minutes * 60, includeSeconds: false)
+                                             : DurationFormat.hours(addedHours)
+        let shown = HomeToast(text: String(localized: "\(amount) added"), spoken: String(localized: "\(spokenAmount) added"),
+                              undo: undo)
+        toast = shown
+        // After the timer, its screen stays up for a moment (the save burst) before Home is back in view.
+        let covered: Double = showTimer ? 1.4 : 0
+        if undo != nil && voiceOverOn {
+            // Focus moves to it ("40 minutes added. Undo, button.") and it stays until focus moves on.
+            Task { try? await Task.sleep(for: .seconds(covered + 0.4)); toastFocused = true }
+            return
+        }
+        AccessibilityNotification.Announcement(shown.spoken).post()
         Task {
-            try? await Task.sleep(for: .seconds(2.6))
-            if toast == text { toast = nil }
+            try? await Task.sleep(for: .seconds(covered + (undo == nil ? 2.6 : UndoSave.showFor)))
+            if toast?.id == shown.id { toast = nil }
+        }
+    }
+
+    /// Undo: deletes exactly what that save created, with its note and photo, then says "Removed." for 2 seconds.
+    /// Totals, the icon stage, widgets and notifications follow as for any deletion.
+    private func undoLastSave() {
+        guard let ids = toast?.undo else { return }
+        for session in UndoSave.toRemove(Array(sessions), id: \.id, offered: ids) { context.delete(session) }
+        try? context.save()
+        countingTotal = nil
+        let removed = HomeToast(text: String(localized: "Removed."), spoken: String(localized: "Removed."), undo: nil)
+        toast = removed
+        AccessibilityNotification.Announcement(removed.spoken).post()
+        Task {
+            try? await Task.sleep(for: .seconds(UndoSave.removedFor))
+            if toast?.id == removed.id { toast = nil }
         }
     }
 
@@ -345,14 +395,35 @@ struct HomeView: View {
     /// The small navy note at the hero's top right.
     @ViewBuilder private var toastView: some View {
         if let toast {
-            Text(toast)
-                .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .subheadline), color: .white)
-                .padding(.horizontal, 12).padding(.vertical, 8)
-                .background(LGColor.ink, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
-                .padding(.top, 12).padding(.trailing, 20)
-                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
-                .accessibilityAddTraits(.updatesFrequently)
+            HStack(spacing: 10) {
+                Text(verbatim: toast.text)
+                    .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: .white)
+                if toast.undo != nil {
+                    Rectangle().fill(.white.opacity(0.25)).frame(width: 1, height: 18)
+                    Button(action: undoLastSave) {
+                        Text("Undo")
+                            .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: LGColor.timerGold)
+                            .padding(.horizontal, 12)
+                            .frame(minHeight: 30)
+                            .background(LGColor.toastUndoPill, in: Capsule())
+                            // A 44 pt target around the 30 pt pill.
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.leading, 14).padding(.trailing, toast.undo != nil ? 6 : 14)
+            .frame(minHeight: 40)
+            .background(LGColor.ink, in: Capsule())
+            .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+            .padding(.top, 12).padding(.trailing, 20)
+            .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(verbatim: toast.undo != nil ? toast.spoken + ". " + String(localized: "Undo") : toast.spoken))
+            .accessibilityAddTraits(toast.undo != nil ? .isButton : .updatesFrequently)
+            .accessibilityAction { if toast.undo != nil { undoLastSave() } }
+            .accessibilityFocused($toastFocused)
         }
     }
 
@@ -962,15 +1033,17 @@ struct HomeView: View {
 
     // MARK: Milestones and reminders
 
-    private func checkMilestones(total: Double) {
+    /// Returns whether a milestone celebration is coming (the "added" toast then has no Undo).
+    @discardableResult
+    private func checkMilestones(total: Double) -> Bool {
         if settingsRows.isEmpty {
             context.insert(AppSettings())
             try? context.save()
-            return
+            return false
         }
-        guard let settings = settingsRows.first else { return }
+        guard let settings = settingsRows.first else { return false }
         let crossed = Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
-        guard let top = crossed.max() else { return }
+        guard let top = crossed.max() else { return false }
         settings.milestonesSeen.append(contentsOf: crossed)
         try? context.save()
         if top >= IconPlan.heldBelow { iconHeld = true }
@@ -980,6 +1053,7 @@ struct HomeView: View {
             offerSupport = shouldOfferSupport(settings)
             celebrating = top
         }
+        return true
     }
 
     /// The celebration's main button: close it, then (only for 1,000 hours and up) let the icon grow. One change,

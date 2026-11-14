@@ -589,6 +589,15 @@ struct SettingsView: View {
                         .lgText(.caption, color: LGColor.inkMuted)
                         .padding(.bottom, 12)
                 }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Start a session that began 3 h 12 m ago") { startLongDebugSession() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                        .disabled(timer.isActive)
+                    Text("For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards).")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
             }
         }
     }
@@ -649,6 +658,22 @@ struct SettingsView: View {
         settings.targetSetAt = calendar.date(byAdding: .month, value: -12, to: ends)
         settings.targetPromptShownAt = nil
         try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    private func startLongDebugSession() {
+        let now = Date()
+        let entries = craftSessions.map { UsualSession.Entry(start: $0.start, seconds: $0.durationSec, isTimer: $0.source == .timer) }
+        if UsualSession.usual(entries) == nil {
+            for daysAgo in 1...5 {
+                let day = Calendar.current.date(byAdding: .day, value: -daysAgo, to: now) ?? now
+                let start = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: day) ?? day
+                context.insert(Session(craftId: craft.id, start: start, durationSec: 45 * 60, source: .timer,
+                                       note: "Debug: usual session"))
+            }
+            try? context.save()
+        }
+        timer.start(craft: craft, now: now.addingTimeInterval(-(3 * 3600 + 12 * 60)))
         (closeAll ?? { dismiss() })()
     }
 

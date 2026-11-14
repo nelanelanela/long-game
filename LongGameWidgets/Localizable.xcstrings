@@ -13,11 +13,24 @@
     "%@ h · %lld%% of the long game" : {
 
     },
+    "%@ hours" : {
+
+    },
     "%@ left" : {
 
     },
     "%@ left of today's stretch" : {
 
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        }
+      }
     },
     "%@ of %@ %@, %@ to go, %@." : {
       "localizations" : {
@@ -84,6 +97,9 @@
     "%@ to go." : {
 
     },
+    "%@ · %@" : {
+
+    },
     "%@, %@ extra today." : {
       "localizations" : {
         "en" : {
@@ -105,6 +121,12 @@
       }
     },
     "%@. Rest day." : {
+
+    },
+    "%@. Sunrise is coming." : {
+
+    },
+    "%@. The sun has fully risen." : {
 
     },
     "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {
@@ -238,6 +260,18 @@
     "Back to %@." : {
 
     },
+    "Begin" : {
+
+    },
+    "Begin a session" : {
+
+    },
+    "Begin a session, or pause the one that's running." : {
+
+    },
+    "Begin or pause a session" : {
+
+    },
     "Choose the view" : {
 
     },
@@ -301,6 +335,9 @@
     "Last synced %@" : {
 
     },
+    "Long Game" : {
+
+    },
     "Long Game session" : {
 
     },
@@ -329,6 +366,9 @@
 
     },
     "Night" : {
+
+    },
+    "No session is running." : {
 
     },
     "No weekly target yet." : {
@@ -373,6 +413,12 @@
     "Open Long Game once to choose your craft, then try again." : {
 
     },
+    "Open Long Game to choose your craft, then try again." : {
+
+    },
+    "Open Long Game to choose your craft." : {
+
+    },
     "Open the app to begin." : {
 
     },
@@ -382,7 +428,19 @@
     "Pause or resume" : {
 
     },
+    "Pause session" : {
+
+    },
     "Paused" : {
+
+    },
+    "Paused · %@" : {
+
+    },
+    "Paused." : {
+
+    },
+    "Pauses the running session, or resumes it if it's paused." : {
 
     },
     "Photo from %@, %@ session" : {
@@ -405,6 +463,9 @@
 
     },
     "played today" : {
+
+    },
+    "Playing" : {
 
     },
     "Ray %lld lit" : {
@@ -462,6 +523,9 @@
     "Start playing a craft" : {
 
     },
+    "Started %@. Enjoy it." : {
+
+    },
     "Started on %@" : {
 
     },
@@ -472,6 +536,9 @@
 
     },
     "Starts a session for your craft." : {
+
+    },
+    "Starts the timer for your craft." : {
 
     },
     "Syncing…" : {
@@ -615,6 +682,9 @@
           }
         }
       }
+    },
+    "Your session is already running." : {
+
     },
     "your weekly target" : {
 

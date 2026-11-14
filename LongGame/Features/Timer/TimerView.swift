@@ -69,7 +69,7 @@ struct TimerView: View {
         }
         .sheet(isPresented: $showFinish) {
             if let state = store.state {
-                FinishSheet(elapsed: state.elapsed(at: Date()),
+                FinishSheet(elapsed: state.elapsed(at: Date()), usual: usualSession,
                             coversStretch: { StretchSource.startedToday(state) && plan.isCovered(byAdding: $0) },
                             onSave: save, onDiscard: discard)
                     .lgSheetCard()
@@ -121,6 +121,11 @@ struct TimerView: View {
     private func openFinishFromActivity() {
         store.finishRequested = false
         showFinish = true
+    }
+
+    /// The person's usual timer session, for the Finish sheet's "A long one" card.
+    private var usualSession: TimeInterval? {
+        UsualSession.usual(sessions.map { UsualSession.Entry(start: $0.start, seconds: $0.durationSec, isTimer: $0.source == .timer) })
     }
 
     private func save(duration: TimeInterval, note: String?, photo: Data?) {

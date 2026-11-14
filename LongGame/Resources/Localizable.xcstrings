@@ -7,6 +7,9 @@
     " " : {
 
     },
+    "%@ added" : {
+
+    },
     "%@ of %@" : {
 
     },
@@ -14,6 +17,144 @@
 
     },
     "%@. The sun has fully risen." : {
+
+    },
+    "%lld%% · phase %lld" : {
+
+    },
+    "A long one. Did the timer keep running?" : {
+
+    },
+    "Add time" : {
+
+    },
+    "Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later." : {
+
+    },
+    "Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions." : {
+
+    },
+    "Back on Home the sheet opens by itself, as it does the first time after onboarding." : {
+
+    },
+    "Before you began. These hours add to your starting score, on top of your estimates." : {
+
+    },
+    "Begin a session" : {
+
+    },
+    "Begin or pause a session" : {
+
+    },
+    "Debug only" : {
+
+    },
+    "Debug only. Your crafts, estimates and sessions are removed from this iPhone." : {
+
+    },
+    "Delete everything and start over" : {
+
+    },
+    "Deletes all data and starts again from Welcome, with the three intro pages." : {
+
+    },
+    "Fill a sample year" : {
+
+    },
+    "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
+
+    },
+    "Jump total to just under a whole hour" : {
+
+    },
+    "Keep %@" : {
+
+    },
+    "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {
+
+    },
+    "No session is running." : {
+
+    },
+    "Not set" : {
+
+    },
+    "Open Long Game to choose your craft, then try again." : {
+
+    },
+    "Open Long Game to choose your craft." : {
+
+    },
+    "Opens the Growth chart" : {
+
+    },
+    "Pause session" : {
+
+    },
+    "Paused." : {
+
+    },
+    "Pauses the running session, or resumes it if it's paused." : {
+
+    },
+    "Play opening sunrise" : {
+
+    },
+    "Playing" : {
+
+    },
+    "Pretend last session was %@ ago" : {
+
+    },
+    "Remove the sample year" : {
+
+    },
+    "Removed." : {
+
+    },
+    "Reset onboarding" : {
+
+    },
+    "Reset onboarding?" : {
+
+    },
+    "Show Meet your future self again" : {
+
+    },
+    "Show Welcome back on Home" : {
+
+    },
+    "Start a session that began 3 h 12 m ago" : {
+
+    },
+    "Started %@. Enjoy it." : {
+
+    },
+    "Starts the timer for your craft." : {
+
+    },
+    "Undo" : {
+
+    },
+    "Use %@" : {
+
+    },
+    "Weekly pace" : {
+
+    },
+    "Year of pace ended yesterday" : {
+
+    },
+    "Year of pace ends in 10 days" : {
+
+    },
+    "Your game" : {
+
+    },
+    "Your session is already running." : {
+
+    },
+    "Your sessions are usually about %@." : {
 
     },
     "“1,000 hours of %@. Sunrise is coming.”" : {

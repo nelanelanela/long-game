@@ -1,11 +1,18 @@
 import Foundation
 import Observation
+#if os(iOS)
+import WidgetKit
+#endif
 
 /// Owns the one running session. All state is timestamps in UserDefaults, so
 /// it survives the app being closed; the screen only ever derives from it.
 @MainActor
 @Observable
 final class TimerStore {
+    /// The app's one timer. The Control, Siri and the Action Button (App Intents run in the app's process) change it
+    /// through here too, so every change is saved, synced and shown the same way.
+    static let shared = TimerStore()
+
     private(set) var state: TimerState?
     /// A Live Activity "Finish" tap asked the timer screen to open its finish sheet.
     var finishRequested = false
@@ -34,6 +41,7 @@ final class TimerStore {
         observers.append(center.addObserver(forName: .timerFinishRequested, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated {
                 self?.reloadFromDisk()
+                self?.pause()
                 self?.finishRequested = true
             }
         })
@@ -44,12 +52,49 @@ final class TimerStore {
 
     func start(craft: Craft, now: Date = Date()) {
         guard state == nil else { return }
-        startedOn = nil
-        state = TimerState(craftId: craft.id, craftName: craft.name, startedAt: now)
+        _ = begin(craftId: craft.id, craftName: craft.name, now: now)
+    }
+
+    /// Begin from anywhere (the app, the Control, Siri, the Action Button): starts a session for the craft, carries on
+    /// with a paused one, or does nothing if one is running. Never asks for a permission: "A gentle nudge" asked during
+    /// setup, and the "still practising?" alert planned by commit() is dropped quietly if notifications are off.
+    @discardableResult
+    func begin(craftId: UUID?, craftName: String, now: Date = Date()) -> TimerCommands.Begin {
+        let result = TimerCommands.begin(state, craftId: craftId, craftName: craftName, now: now)
+        switch result {
+        case .started(let new):
+            startedOn = nil
+            state = new
+            commit()
+            FocusMode.shared.runShortcut(starting: true)
+        case .resumed(let resumed):
+            state = resumed
+            commit()
+        case .alreadyRunning, .noCraft:
+            break
+        }
+        return result
+    }
+
+    /// Pause or resume from anywhere. Nil when nothing is running.
+    @discardableResult
+    func pauseOrResume(now: Date = Date()) -> TimerState? {
+        guard let next = TimerCommands.pauseOrResume(state, now: now) else { return nil }
+        state = next
         commit()
-        FocusMode.shared.runShortcut(starting: true)
-        // No permission prompt here: "A gentle nudge" asked during setup. The "still practising?" alert was planned
-        // by commit(); iOS drops it quietly if notifications are off.
+        return next
+    }
+
+    /// The Control's toggle: on begins or resumes, off pauses.
+    @discardableResult
+    func setPlaying(_ playing: Bool, craftId: UUID?, craftName: String, now: Date = Date()) -> TimerCommands.Toggle {
+        let result = TimerCommands.setPlaying(playing, state, craftId: craftId, craftName: craftName, now: now)
+        switch result {
+        case .begin: _ = begin(craftId: craftId, craftName: craftName, now: now)
+        case .paused(let paused): state = paused; commit()
+        case .nothing: break
+        }
+        return result
     }
 
     func pause(now: Date = Date()) {
@@ -128,6 +173,8 @@ final class TimerStore {
         Notifications.scheduleLongSession(at: state?.longSessionDate(at: now))
         #if os(iOS)
         LiveActivityManager.sync(state, now: now)
+        // The Control in Control Centre and on the Lock Screen shows Begin, or the craft and the clock.
+        if #available(iOS 18.0, *) { ControlCenter.shared.reloadControls(ofKind: SessionControlKind.kind) }
         #endif
     }
 }

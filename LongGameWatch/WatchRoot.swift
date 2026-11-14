@@ -5,6 +5,7 @@ import WatchKit
 /// has been set up, a note saying so.
 struct WatchRoot: View {
     @Environment(WatchStore.self) private var store
+    @State private var addingTime = false
 
     var body: some View {
         Group {
@@ -19,7 +20,8 @@ struct WatchRoot: View {
                 TimelineView(.periodic(from: .now, by: 60)) { context in
                     if let state = store.homeState(now: context.date) {
                         TabView {
-                            WatchHomePage(tab: .week, state: state, onStart: { store.start() })
+                            WatchHomePage(tab: .week, state: state, onStart: { store.start() },
+                                          onAdd: { addingTime = true })
                             WatchHomePage(tab: .longGame, state: state)
                         }
                         .tabViewStyle(.page)
@@ -30,6 +32,15 @@ struct WatchRoot: View {
             }
         }
         .background(Color.black)
+        .sheet(isPresented: $addingTime) {
+            WatchAddTimeView(todaySeconds: store.todaySeconds()) { seconds in
+                addingTime = false
+                store.addTime(seconds)
+            }
+        }
+        .overlay(alignment: .top) { WatchAddedToast() }
+        .animation(.easeInOut(duration: 0.2), value: store.justAdded?.id)
+        .animation(.easeInOut(duration: 0.2), value: store.showsRemoved)
     }
 }
 

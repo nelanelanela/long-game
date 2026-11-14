@@ -84,6 +84,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame.sunwidgets
         SKIP_INSTALL: YES
         CODE_SIGN_ENTITLEMENTS: LongGameWidgets/LongGameWidgets.entitlements
+        # The session intents change the timer through TimerStore in the app; this copy (only there so the Control
+        # can name them) writes the stored timestamps instead.
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) WIDGET_EXTENSION"
   # The Apple Watch app. It can run without the phone once set up, and gets its data from the phone.
   LongGameWatch:
     type: application
@@ -184,7 +187,7 @@ targets:
       - LongGame/App/TipStore.swift
       - LongGame/Features
       - Shared/WidgetSnapshot.swift
-      - Shared/StartPlaying.swift
+      - Shared/SessionIntents.swift
       - Shared/TimerPersistence.swift
       - Shared/WidgetViews.swift
       - WatchShared/WatchSync.swift

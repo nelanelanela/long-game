@@ -676,3 +676,27 @@ Seeing the new launch picture in the Simulator: iOS keeps a snapshot of the laun
 All 646 tests pass on the iPhone 17 Simulator (no iPhone 16 Simulator is installed). One earlier run on the iPhone 18 Pro was stopped by the Simulator before any test started ("Test crashed with signal kill while preparing to run tests"); the run before that passed there too.
 
 Checked on the iPhone 17 Simulator with a cold start from a fresh install: the launch picture and the app's first night frame look the same, the sun rises and wakes, and the opening ends on Home. Not checked on a real iPhone.
+
+## Update 43: quicker logging — Undo, forgot to stop, controls, Watch add (14 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Undo in Home's "added" toast after the timer, Add past hours and Catch up | ✅ | `toastView`, `showToast`, `undoLastSave` in `Features/Home/HomeView.swift`; `Logic/UndoSave.swift` | Home remembers the session ids it has seen; a save's new ones are what Undo deletes (one session, or all of Catch up's), photo and note with them. "Removed." for 2 s |
+| 6 seconds; with VoiceOver until focus moves away; "40 minutes added. Undo, button." | ✅ | same | Focus moves to the toast; leaving it hides the toast. After the timer the 6 s start once the save burst has gone |
+| No Undo after a milestone | ✅ | `checkMilestones` now says whether a celebration is coming | |
+| Usual session (median of the last 20 timer sessions, at least 5) | ✅ | `Logic/UsualSession.swift` | Manual and catch-up sessions ignored |
+| "A long one" card in the Finish sheet (≥ 2 × usual and > 90 min), Keep / Use | ✅ | `LongSessionCard` in `Features/Timer/FinishSheet.swift` | Keep selected by default; the stepper still works after Use. The Keep label uses the sheet's own length format ("Keep 3 h 12 m") so it matches the big number above it |
+| `BeginSessionIntent` (Live Activity intent), `PauseResumeSessionIntent` | ✅ | `Shared/SessionIntents.swift` (was `StartPlaying.swift`) | All changes go through `TimerStore.shared`; the Live Activity's pause button now uses `PauseResumeSessionIntent` (the old `ToggleTimerIntent` is gone). The widget extension's copy is compiled with `WIDGET_EXTENSION` and writes the timestamps directly, in case iOS ever runs it there |
+| Control (iOS 18+): idle Begin, playing craft + clock in gold, tap pauses / resumes | ✅ | `LongGameWidgets/SessionControl.swift`, `Shared/SessionControlIntent.swift` | Replaces the earlier "Start playing" button control. The timer's timestamps moved to the App Group's defaults (moved across once on first launch) so the control can read them |
+| Shortcuts: "Begin a session", "Pause session" and the three phrases | ✅ | `App/AppShortcuts.swift` | "Start playing \(craft)" kept as a third shortcut |
+| No craft → open the app | ⚠️ | `openAppInstead()` | iOS 26 and later continue in the app. iOS 17 to 25 can't do that from a background intent, so Siri says "Open Long Game to choose your craft, then try again." |
+| No permission prompt | ✅ | `TimerStore.begin` | |
+| Tests for begin / already running / pause / resume | ✅ | `TimerCommandTests` in `LongGameTests/QuickerLoggingTests.swift` | Also through `TimerStore` itself |
+| Watch Add time: Crown in 5-min steps (5 m–8 h), picks, Add names the amount, haptics | ✅ | `LongGameWatch/WatchAddTimeView.swift`, `Logic/WatchAddTime.swift` | |
+| Saved as manual for today, same queue, own id; Undo for 6 s | ✅ | `WatchStore.addTime` / `undoAdd`, `FinishedSession.isManual`, `WatchBridge.remove` | Undo cancels the transfer if it hasn't left yet and asks the phone to delete the session if it has |
+| 12-hour daily limit | ⚠️ | `WatchAddTime.maxDaySeconds` | Done as asked (12 h on the Watch). Note the phone's own limit is 24 h a day (`SessionRules.maxDaySeconds`); a single Add past hours entry is capped at 12 h. Say if the Watch should use 24 h too |
+| String Catalogs, spec | ✅ | all four catalogs; `docs/SPEC.md` Home, Timer, "Controls and shortcuts", Apple Watch | |
+
+The project is now regenerated with XcodeGen 2.46.0 (installed from its GitHub release in `~/.local/xcodegen`, run as `~/.local/bin/xcodegen generate`).
+
+Not checked: the Control and the Action Button on a real iPhone, Siri's spoken phrases, the Watch screens on a Watch Simulator (no watchOS Simulator runtime is installed; the Watch app builds).

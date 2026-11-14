@@ -86,17 +86,38 @@ final class WatchBridge: NSObject {
         let crafts = (try? context.fetch(FetchDescriptor<Craft>())) ?? []
         // The craft it was started for, or the active one if that has since been replaced.
         guard let craft = crafts.first(where: { $0.id == finished.craftId }) ?? crafts.first(where: \.isActive) else { return false }
-        let session = Session(craftId: craft.id, start: finished.start, durationSec: finished.durationSec, source: .timer)
+        let session = Session(craftId: craft.id, start: finished.start, durationSec: finished.durationSec,
+                              source: finished.isManual == true ? .manual : .timer)
         session.id = finished.id
         context.insert(session)
         try? context.save()
         return true
     }
 
+    /// Undo on the watch: removes the session it added, if this phone already saved it. Returns whether it did.
+    @discardableResult
+    static func remove(_ id: UUID, in context: ModelContext) -> Bool {
+        let found = (try? context.fetch(FetchDescriptor<Session>(predicate: #Predicate { $0.id == id }))) ?? []
+        guard !found.isEmpty else { return false }
+        for session in found { context.delete(session) }
+        try? context.save()
+        return true
+    }
+
+    private func receiveRemoval(_ id: UUID) {
+        guard let container else { return }
+        guard Self.remove(id, in: container.mainContext) else { return }
+        republish(container.mainContext)
+    }
+
     private func receive(_ finished: FinishedSession) {
         guard let container else { return }
         let context = container.mainContext
         guard Self.save(finished, in: context) else { return }
+        republish(context)
+    }
+
+    private func republish(_ context: ModelContext) {
         // The app may not be on screen (the watch can wake it in the background), so don't wait for the views.
         let crafts = (try? context.fetch(FetchDescriptor<Craft>())) ?? []
         let sessions = (try? context.fetch(FetchDescriptor<Session>())) ?? []
@@ -144,6 +165,10 @@ extension WatchBridge: WCSessionDelegate {
     }
 
     nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        if let removed = WatchMessage.removedSession(from: userInfo) {
+            Task { @MainActor in self.receiveRemoval(removed) }
+            return
+        }
         guard let finished = WatchMessage.finishedSession(from: userInfo) else { return }
         Task { @MainActor in self.receive(finished) }
     }

@@ -10,7 +10,7 @@ struct LongGameWidgetsBundle: WidgetBundle {
         OverviewWidget()
         TimerLiveActivity()
         if #available(iOS 18.0, *) {
-            StartPlayingControl()
+            SessionControl()
         }
     }
 }
@@ -50,7 +50,7 @@ struct TimerLiveActivity: Widget {
                 .accessibilityElement(children: .combine)
                 .accessibilityValue(context.state.pausedElapsed == nil ? Text("Running") : Text("Paused"))
                 Spacer()
-                Button(intent: ToggleTimerIntent()) {
+                Button(intent: PauseResumeSessionIntent()) {
                     Image(systemName: context.state.pausedElapsed == nil ? "pause.fill" : "play.fill")
                         .frame(width: 44, height: 44)
                 }
@@ -88,7 +88,7 @@ struct TimerLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack(spacing: 10) {
-                        Button(intent: ToggleTimerIntent()) {
+                        Button(intent: PauseResumeSessionIntent()) {
                             Label(context.state.pausedElapsed == nil ? "Pause" : "Resume",
                                   systemImage: context.state.pausedElapsed == nil ? "pause.fill" : "play.fill")
                         }

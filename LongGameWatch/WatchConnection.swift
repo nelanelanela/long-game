@@ -31,6 +31,17 @@ final class WatchConnection: NSObject, WCSessionDelegate, @unchecked Sendable {
         WCSession.default.transferUserInfo(WatchMessage.sessionPayload(session))
     }
 
+    /// Undo: drops the session if it is still waiting to be delivered, and asks the phone to remove it if it has it.
+    @MainActor
+    func remove(_ id: UUID) {
+        guard WCSession.isSupported() else { return }
+        for transfer in WCSession.default.outstandingUserInfoTransfers
+        where WatchMessage.finishedSession(from: transfer.userInfo)?.id == id {
+            transfer.cancel()
+        }
+        WCSession.default.transferUserInfo(WatchMessage.removePayload(id))
+    }
+
     // MARK: Receiving
 
     // The timer's update is decoded here, in the callback, so only a plain value crosses to the main actor.
