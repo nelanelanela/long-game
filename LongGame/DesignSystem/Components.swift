@@ -93,6 +93,11 @@ struct LGButtonStyle: ButtonStyle {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.accessibilityShowButtonShapes) private var showButtonShapes
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// The dark look's disabled primary button: faded gold over navy turns olive, so it is a quiet night blue with
+    /// muted words instead (the light look keeps its faded navy).
+    private var darkDisabledPrimary: Bool { kind == .primary && !isEnabled && colorScheme == .dark }
 
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
@@ -112,8 +117,8 @@ struct LGButtonStyle: ButtonStyle {
             .lgText(.button, color: foreground)
             .frame(maxWidth: .infinity)
             .frame(minHeight: height)
-            .glassEffect(glass, in: .capsule)
-            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : 0.4)
+            .glassEffect(darkDisabledPrimary ? .regular.tint(LGColor.segmentTrack) : glass, in: .capsule)
+            .opacity(isEnabled ? (configuration.isPressed ? 0.85 : 1) : (darkDisabledPrimary ? 1 : 0.4))
             .contentShape(Capsule())
     }
 
@@ -144,13 +149,13 @@ struct LGButtonStyle: ButtonStyle {
                 label.background(background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         }
-        .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.4)
+        .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : (darkDisabledPrimary ? 1 : 0.4))
         .contentShape(Rectangle())
     }
 
     private var foreground: Color {
         switch kind {
-        case .primary: LGColor.primaryLabel
+        case .primary: darkDisabledPrimary ? LGColor.inkMuted : LGColor.primaryLabel
         case .translucent: .white
         default: LGColor.ink
         }
@@ -158,7 +163,7 @@ struct LGButtonStyle: ButtonStyle {
 
     private var background: Color {
         switch kind {
-        case .primary: LGColor.primaryFill
+        case .primary: darkDisabledPrimary ? LGColor.segmentTrack : LGColor.primaryFill
         case .light: .white
         case .translucent: .white.opacity(reduceTransparency || contrast == .increased ? 0.28 : 0.12)
         default: .clear

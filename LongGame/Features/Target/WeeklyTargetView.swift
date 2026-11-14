@@ -140,6 +140,13 @@ private struct PaceScene: View {
                 // The dark look: the dawn sky over the night land, as on the other small scenes.
                 SkyView(tone: dark ? .dawn : .day, horizon: 0.62, moon: false, glowX: 0.2)
                     .frame(width: geo.size.width, height: 170)
+                    // The dawn sky's top melts into the page in the dark look, so it has no hard edge.
+                    .overlay(alignment: .top) {
+                        if dark {
+                            LinearGradient(colors: [LGColor.background, LGColor.background.opacity(0)], startPoint: .top, endPoint: .bottom)
+                                .frame(height: 60)
+                        }
+                    }
                 Path { p in
                     p.move(to: CGPoint(x: 60 * k, y: 52))
                     p.addCurve(to: CGPoint(x: 336 * k, y: 72), control1: CGPoint(x: 120 * k, y: 2), control2: CGPoint(x: 280 * k, y: 8))

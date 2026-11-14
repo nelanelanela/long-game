@@ -39,6 +39,15 @@ struct SceneHero: View {
             SkyView(tone: skyTone, horizon: horizon, moon: moon)
                 .frame(height: skyHeight)
                 .frame(maxHeight: .infinity, alignment: .top)
+                // In the dark look the dawn sky's top melts into the page, so there is no edge where a header or the
+                // sheet's top meets it (the day sky is see-through, so the light look never has one).
+                .overlay(alignment: .top) {
+                    if colorScheme == .dark && tone == .day {
+                        LinearGradient(colors: [LGColor.background, LGColor.background.opacity(0)], startPoint: .top, endPoint: .bottom)
+                            .frame(height: skyHeight * 0.35)
+                            .allowsHitTesting(false)
+                    }
+                }
 
             GeometryReader { geo in
                 GigglingSun(run: giggle.run) { pose in

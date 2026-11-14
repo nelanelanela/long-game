@@ -14,7 +14,7 @@ struct NotificationsIllustration: View {
                     .frame(width: 52, height: 52)
                     .background {
                         Circle()
-                            .fill(RadialGradient(colors: [LGColor.surface, LGColor.bellBubble], center: UnitPoint(x: 0.35, y: 0.3),
+                            .fill(RadialGradient(colors: [.white, Color(hex: 0xFFF4E4)], center: UnitPoint(x: 0.35, y: 0.3),
                                                  startRadius: 0, endRadius: 36))
                             .shadow(color: LGColor.navy.opacity(0.16), radius: 12, y: 10)
                     }

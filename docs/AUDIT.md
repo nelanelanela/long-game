@@ -756,3 +756,16 @@ Checked in the iPhone 18 Pro Simulator (no Mail account): the tap copies yes@weh
 | Light look unchanged | ✅ | | All 701 tests pass (including the iOS render tests); Home in light compared in the Simulator before and after |
 
 Open questions for you: the toast colour in dark (#2B3566), the chosen-pill colour in dark (gold, like the primary button), and whether the night Home's arc and moon on Today should change at all.
+
+### Update 45: the walk-through in dark (14 November 2026)
+
+Seen in dark in the Simulator: the opening, Welcome, the intro pages, every setup step, Meet your future self, Home (empty day, in progress, covered, The long game), the "added" toast with Undo and "Removed.", History (Calendar, Growth), Your year, the Timer and the Finish sheet, Add past hours, Edit session, Catch up (Welcome back and the adding step), Settings and the tip jar. Fixed on the way:
+
+- The dawn sky's area below the horizon was a fixed cream, which showed as a cream band under the sea on Welcome in dark. It is the page colour again (still cream in light).
+- A hard edge where the sheets' and Your weekly pace's dawn sky starts under a header (the tip jar): the top of the sky now fades into the page in dark.
+- The disabled main button turned olive in dark (faded gold over navy): it is a quiet night blue with muted words instead.
+- The Your year "Show hours" and iCloud switches still used the text colour when on (cream in dark): they use the gold chosen colour.
+- The cloud and bell bubbles on the setup steps stay white in both looks, like the moon: they're part of the picture.
+- Not dark mode, but found here: the "added" toast and its Undo never showed after Add past hours (the new total arrives just after the sheet has closed). Fixed on both `redesign` and `dark-mode`.
+
+Seen but not changed (older, not about dark mode): on a first launch the opening sunrise waits on its night frame until it is tapped, in both looks; "Delete session" isn't red, because the text button style overrides its colour.

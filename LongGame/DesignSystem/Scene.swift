@@ -74,8 +74,8 @@ struct SkyView: View {
                      .init(color: Color(hex: 0x9A8AA0), location: at(0.8)),
                      .init(color: Color(hex: 0xF2C38E), location: max(p - 0.02, 0)),
                      .init(color: Color(hex: 0xFFE2B0), location: p),
-                     .init(color: LGColor.paper, location: p),
-                     .init(color: LGColor.paper, location: 1)]
+                     .init(color: LGColor.background, location: p),
+                     .init(color: LGColor.background, location: 1)]
         case .day:
             stops = [.init(color: .clear, location: 0), .init(color: .clear, location: 1)]
         }

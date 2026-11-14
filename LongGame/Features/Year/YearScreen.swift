@@ -158,7 +158,7 @@ struct YearScreen: View {
                 Text("Off shows days and percent instead").lgText(.caption, color: LGColor.inkMuted)
             }
         }
-        .tint(LGColor.ink)
+        .tint(LGColor.selectedFill)
         // Straight on the page, as on the board: no card around it.
         .frame(minHeight: 44)
     }
