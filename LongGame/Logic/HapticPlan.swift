@@ -17,7 +17,7 @@ enum HapticPattern: Int, Comparable, Sendable {
 }
 
 enum HapticMoment: Equatable, Sendable {
-    case rayLit, sessionSaved, timeAdded, undo, thanks
+    case rayLit, sessionSaved, timeAdded, undo, thanks, copied
     case stretchCovered
     case hourMilestone, weeklyPaceReached, tenThousand
     case stepper, crown, growthMilestone, tabSwitch, scrub
@@ -25,7 +25,7 @@ enum HapticMoment: Equatable, Sendable {
 
     var pattern: HapticPattern {
         switch self {
-        case .rayLit, .sessionSaved, .timeAdded, .undo, .thanks: .softTap
+        case .rayLit, .sessionSaved, .timeAdded, .undo, .thanks, .copied: .softTap
         case .stretchCovered: .twoTaps
         case .hourMilestone, .weeklyPaceReached, .tenThousand: .risingThree
         case .stepper, .crown, .growthMilestone, .tabSwitch, .scrub: .tick

@@ -721,3 +721,17 @@ Not checked: the Control and the Action Button on a real iPhone, Siri's spoken p
 | Debug | ✅ | Settings → Debug | "Show the weekly look-back", "Fake an anniversary on Home", and the existing "Show Welcome back on Home" |
 
 All 691 tests pass on the iPhone 18 Pro Simulator.
+
+## Update 46: Write to us, in Settings (14 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Help group with the Write to us row, last before the footer | ✅ | `helpCard` in `Features/Settings/SettingsView.swift`, `Features/Settings/WriteToUsRow.swift` | Update 42 (the shorter Settings) hasn't been done yet, so Help sits after the current cards; it moves with them when 42 is done |
+| `Support.email` constant | ✅ | `Logic/WriteToUs.swift` | |
+| Mail sheet → `mailto:` → copy, behind a protocol | ✅ | `WriteToUs.route`, `MailEnvironment`, `SystemMail` | `mailto:` is tried by opening it (iOS answers false when no app takes it), so no extra Info.plist entry is needed |
+| Footer line with the real version, build, system and device | ✅ | `WriteToUs.footerLine`, `SystemMail.footer` | The device is the model code ("iPhone17,3"), not the marketing name ("iPhone 16"): the code is exact and needs no table to keep up to date. Say if you'd rather have names |
+| Mac: `mailto:`, else copy | ✅ | `SystemMail.open` | Same toast |
+| VoiceOver label and the announcement | ✅ | | |
+| Tests | ✅ | `LongGameTests/WriteToUsTests.swift` | Footer line, body, the link, and each step of the order with a fake |
+
+Checked in the iPhone 18 Pro Simulator (no Mail account): the tap copies yes@wehavesun.com to the clipboard and shows "Email address copied". All 697 tests pass. The Mail sheet itself was not seen (it needs a device with Mail set up).

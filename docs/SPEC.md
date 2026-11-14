@@ -588,6 +588,15 @@ Finish date = today + (10,000 − T) ÷ rate weeks. A rate of 0 means "not withi
 - What-if text = difference between the chosen-pace date with and without *e*, in months (under 12) or years to one decimal.
 - Recompute when the chosen pace changes, a session is saved, edited or deleted, and when estimates change.
 
+## Settings · Help (update 46, `design/redesign/Settings.dc.html`)
+
+- A **Help** group last, just above the footer (after Your game, the storage and data cards, and in debug builds the debug card), with one row: an envelope (`envelope`) in ember on a peach tile (#FFF1DA, radius 8, 32 pt), **Write to us**, the subtitle "yes@wehavesun.com · questions, ideas, bugs" and a chevron. The address is one constant, `Support.email`. The Mac and iPad get the same row (the same Settings view).
+- **A tap**, in this order (`WriteToUs.route`, behind the `MailEnvironment` protocol so it is tested without a device):
+  1. iPhone and iPad with a Mail account: the Mail compose sheet, to the address, subject "Long Game", and a body of two empty lines, then "—" and "Long Game 1.0 (42) · iOS 26.1 · iPhone17,3" (the real version, build, system and model code; nothing else). Closing it does nothing more.
+  2. Otherwise a `mailto:` link with the same subject and body, which opens Gmail or another default mail app (the Mac goes straight here).
+  3. If nothing answers: the address is copied, the toast says "Email address copied" with a soft tap, and VoiceOver hears the same.
+- VoiceOver reads the row as "Write to us, yes@wehavesun.com, button".
+
 ## Accounts, sync and notifications
 
 No account and no sign-in: the app uses the iCloud account already on the device. iCloud only adds backup and multi-device sync.

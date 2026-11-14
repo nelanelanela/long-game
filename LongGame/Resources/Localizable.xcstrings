@@ -31,6 +31,9 @@
     "%@ years since you started." : {
 
     },
+    "%@ · questions, ideas, bugs" : {
+
+    },
     "%@, %@. Last %@, %@." : {
 
     },
@@ -115,6 +118,9 @@
     "Deletes all data and starts again from Welcome, with the three intro pages." : {
 
     },
+    "Email address copied" : {
+
+    },
     "evening" : {
 
     },
@@ -128,6 +134,9 @@
 
     },
     "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
+
+    },
+    "Help" : {
 
     },
     "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
@@ -272,6 +281,9 @@
 
     },
     "Welcome back." : {
+
+    },
+    "Write to us" : {
 
     },
     "Year of pace ended yesterday" : {

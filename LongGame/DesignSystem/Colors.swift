@@ -56,6 +56,8 @@ enum LGColor {
     static let dayBarTop = Color(hex: 0xFFD45A)
     /// Last week's faint bar behind This week's day bars: navy at 8%.
     static let lastWeekBar = Color(hex: 0x16244A).opacity(0.08)
+    /// Settings' peach icon tiles (Write to us).
+    static let peachTile = Color(hex: 0xFFF1DA)
     /// The anniversary pill under Home's number.
     static let anniversaryPill = Color(hex: 0xFFF1DA)
     /// The Finish sheet's "A long one" card.

@@ -11,6 +11,8 @@ struct SettingsView: View {
     @Environment(\.lgEmbedded) private var embedded
     @Environment(\.modelContext) private var context
     @Environment(\.openURL) private var openURL
+    /// "Email address copied" for a moment.
+    @State private var toast: String?
     @Environment(TimerStore.self) private var timer
     @Query private var settingsRows: [AppSettings]
     @Query private var allCrafts: [Craft]
@@ -88,11 +90,27 @@ struct SettingsView: View {
                 #if DEBUG
                 debugCard
                 #endif
+                // Help sits last, just above the footer.
+                helpCard
                 footer
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 32)
         }
+        .overlay(alignment: .top) {
+            if let toast {
+                Text(verbatim: toast)
+                    .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: .white)
+                    .padding(.horizontal, 14)
+                    .frame(minHeight: 40)
+                    .background(LGColor.ink, in: Capsule())
+                    .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .accessibilityHidden(true)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: toast)
         .lgScreen()
         .lgHidesNavigationBar()
         .onAppear { ensureSettings(); buildCSV() }
@@ -124,6 +142,23 @@ struct SettingsView: View {
             Button("Delete everything", role: .destructive, action: deleteAll)
         } message: {
             Text("Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone.")
+        }
+    }
+
+    /// Help: "Write to us" (yes@wehavesun.com).
+    private var helpCard: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            groupLabel("Help")
+            card { WriteToUsRow(onCopied: { showToast(String(localized: "Email address copied")) }) }
+        }
+    }
+
+    /// The app's small navy toast, for a moment ("Email address copied").
+    private func showToast(_ text: String) {
+        toast = text
+        Task {
+            try? await Task.sleep(for: .seconds(2.6))
+            if toast == text { toast = nil }
         }
     }
 
