@@ -11,6 +11,7 @@ struct FinishSheet: View {
     let onDiscard: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var duration: TimeInterval
     @State private var note = ""
     @State private var photo: Data?
@@ -33,50 +34,69 @@ struct FinishSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // The day scene with the celebrating sun, edge to edge under the grabber.
-            SceneHero(tone: .day, height: canSave ? 203 : 170, skyHeight: 160, horizon: 0.8, landTop: canSave ? 83 : 70,
-                      sunSize: 120, sunTop: 10, face: canSave ? .celebrate : .sleepy, hidden: true)
-                .padding(.top, 6)
+            // Everything above Save scrolls: at the largest text sizes it no longer fits, and squeezed text was cut off
+            // (the accessibility audit). At the usual sizes it fits and nothing moves.
+            ScrollView {
+                VStack(spacing: 0) {
+                    // The day scene with the celebrating sun, edge to edge under the grabber.
+                    SceneHero(tone: .day, height: canSave ? 203 : 170, skyHeight: 160, horizon: 0.8, landTop: canSave ? 83 : 70,
+                              sunSize: 120, sunTop: 10, face: canSave ? .celebrate : .sleepy, hidden: true)
+                        .padding(.top, 6)
+
+                    VStack(spacing: 0) {
+                        if canSave {
+                            HStack {
+                                LGRepeatButton(systemName: "minus", label: "Less time", enabled: duration > FinishRules.minimumSave) {
+                                    duration = FinishRules.lowered(duration)
+                                }
+                                Spacer()
+                                VStack(spacing: 4) {
+                                    Text(DurationFormat.short(seconds: duration))
+                                        .lgNumber(LGTextStyle(size: 48, weight: .bold, relativeTo: .largeTitle, tracking: -1.9))
+                                    Text("this session").lgText(.note, color: LGColor.inkMuted)
+                                }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(DurationFormat.short(seconds: duration))
+                                .accessibilityHint("You can trim up to what you really practised.")
+                                Spacer()
+                                LGRepeatButton(systemName: "plus", label: "More time", enabled: duration < elapsed) {
+                                    duration = FinishRules.raised(duration, elapsed: elapsed)
+                                }
+                            }
+                            .padding(.top, 6)
+
+                            if let usual, UsualSession.isLong(elapsed: elapsed, usual: usual) {
+                                LongSessionCard(elapsed: elapsed, usual: UsualSession.rounded(usual), choice: choice) { picked in
+                                    choice = picked
+                                    duration = UsualSession.duration(for: picked, elapsed: elapsed, usual: usual)
+                                }
+                                .padding(.top, 16)
+                            }
+
+                            // Optional and quiet: nothing here opens or focuses by itself, and Save works the same without it.
+                            NotePhotoRow(photo: $photo, note: $note)
+                                .padding(.top, 22)
+                        } else {
+                            Text("Sessions under a minute can't be saved.")
+                                .lgText(.body, color: LGColor.inkMuted)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.top, 12)
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                }
+                .padding(.bottom, 12)
+            }
+            .scrollBounceBehavior(.basedOnSize)
 
             VStack(spacing: 0) {
                 if canSave {
-                    HStack {
-                        LGRepeatButton(systemName: "minus", label: "Less time", enabled: duration > FinishRules.minimumSave) {
-                            duration = FinishRules.lowered(duration)
-                        }
-                        Spacer()
-                        VStack(spacing: 4) {
-                            Text(DurationFormat.short(seconds: duration))
-                                .lgNumber(LGTextStyle(size: 48, weight: .bold, relativeTo: .largeTitle, tracking: -1.9))
-                            Text("this session").lgText(.note, color: LGColor.inkMuted)
-                        }
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(DurationFormat.short(seconds: duration))
-                        .accessibilityHint("You can trim up to what you really practised.")
-                        Spacer()
-                        LGRepeatButton(systemName: "plus", label: "More time", enabled: duration < elapsed) {
-                            duration = FinishRules.raised(duration, elapsed: elapsed)
-                        }
-                    }
-                    .padding(.top, 6)
-
-                    if let usual, UsualSession.isLong(elapsed: elapsed, usual: usual) {
-                        LongSessionCard(elapsed: elapsed, usual: UsualSession.rounded(usual), choice: choice) { picked in
-                            choice = picked
-                            duration = UsualSession.duration(for: picked, elapsed: elapsed, usual: usual)
-                        }
-                        .padding(.top, 16)
-                    }
-
-                    // Optional and quiet: nothing here opens or focuses by itself, and Save works the same without it.
-                    NotePhotoRow(photo: $photo, note: $note)
-                        .padding(.top, 22)
-
-                    Spacer(minLength: 12)
-
                     if coversStretch(duration) {
                         Text("Today's stretch covered.")
                             .lgText(.label, color: LGColor.ember)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
                             .padding(.bottom, 12)
                     }
 
@@ -84,12 +104,6 @@ struct FinishSheet: View {
                         onSave(duration, SessionRules.savedNote(note), photo)
                     }
                     .buttonStyle(.lg(.primary))
-                } else {
-                    Text("Sessions under a minute can't be saved.")
-                        .lgText(.body, color: LGColor.inkMuted)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 12)
-                    Spacer(minLength: 12)
                 }
 
                 Button("Discard") { confirmDiscard = true }
@@ -101,7 +115,8 @@ struct FinishSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(LGColor.background)
-        .presentationDetents([.height(canSave ? (showsLongCard ? 760 : 600) : 340), .large])
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize
+                                 ? [.large] : [.height(canSave ? (showsLongCard ? 760 : 600) : 340), .large])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(30)
         .confirmationDialog("Discard this session?", isPresented: $confirmDiscard, titleVisibility: .visible) {
@@ -115,6 +130,7 @@ struct FinishSheet: View {
 /// "A long one. Did the timer keep running?": a quiet card with Keep (the measured time) and Use (the usual length).
 /// Nothing changes unless a choice is tapped; the stepper still adjusts the length afterwards.
 private struct LongSessionCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let elapsed: TimeInterval
     /// Already rounded to 5 minutes.
     let usual: TimeInterval
@@ -126,13 +142,17 @@ private struct LongSessionCard: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("A long one. Did the timer keep running?")
                     .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline))
+                    .fixedSize(horizontal: false, vertical: true)
                 Text("Your sessions are usually about \(DurationFormat.short(seconds: usual)).")
                     .lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote), color: LGColor.inkMuted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
 
-            HStack(spacing: 8) {
+            // Side by side as on the board; one above the other at the largest text sizes, so neither is cut off.
+            let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout(spacing: 8))
+            layout {
                 option(String(localized: "Keep \(DurationFormat.short(seconds: elapsed))"), .keep)
                 option(String(localized: "Use \(DurationFormat.short(seconds: usual))"), .useUsual)
             }
@@ -146,7 +166,9 @@ private struct LongSessionCard: View {
         return Button { onChoose(value) } label: {
             Text(verbatim: title)
                 .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: selected ? LGColor.selectedLabel : LGColor.ink)
-                .lineLimit(2).minimumScaleFactor(0.8)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2).minimumScaleFactor(0.8)
+                .multilineTextAlignment(.center)
+                .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 8 : 0)
                 .frame(maxWidth: .infinity, minHeight: 44)
                 .background(selected ? LGColor.selectedFill : LGColor.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .contentShape(Rectangle())
