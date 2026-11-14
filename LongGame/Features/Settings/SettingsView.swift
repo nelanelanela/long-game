@@ -24,6 +24,10 @@ struct SettingsView: View {
     @AppStorage(DockVisibility.defaultsKey) private var showInDock = true
     #endif
     @State private var csvURL: URL?
+    /// The letters' file, shared with the sessions when there are any.
+    @State private var lettersURL: URL?
+    @Query private var allLetters: [Letter]
+    @State private var showSamplePoster = false
     @State private var confirmDelete = false
     @State private var pickingCSV = false
     @State private var importMessage: String?
@@ -117,6 +121,11 @@ struct SettingsView: View {
         .onAppear { ensureSettings(); buildCSV() }
         .task { notificationsDenied = await Notifications.permission() == .denied }
         .onChange(of: allSessions.count) { _, _ in buildCSV() }
+        #if DEBUG
+        .sheet(isPresented: $showSamplePoster) {
+            KeepsakeSheet(content: DebugOptions.samplePoster(craft: craft.name)).lgSheetCard()
+        }
+        #endif
         .sheet(isPresented: $showOneCraft) {
             OneCraftSheet(craft: craft, totalHours: oneCraftHours)
                 .lgSheetCard()
@@ -443,7 +452,7 @@ struct SettingsView: View {
         card {
             VStack(spacing: 0) {
                 if let csvURL {
-                    ShareLink(item: csvURL) { row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up") }
+                    ShareLink(items: [csvURL] + (lettersURL.map { [$0] } ?? [])) { row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up") }
                 } else {
                     row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up").opacity(0.4)
                 }
@@ -639,6 +648,22 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
+                    Button("Reach a milestone with a letter waiting") { reachLetterMilestone() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Seals a sample letter to the next milestone (written 300 hours ago), then adds a session (note \"Debug: letter\") that reaches it. Back on Home the letter arrives, after the celebration if that milestone has one.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Open the poster with a three-year sample") { showSamplePoster = true }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("The keepsake poster sheet with three years of sample days (nothing is saved), to try the paper sizes, the night look and the PDF.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
                     Button("Add sample photos two years apart") { addThenAndNowPhotos() }
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
                     Text("Two sessions with a photo and a note: one 2 years 8 months ago, one yesterday. History → Growth → Then and now then appears. Remove the sample year deletes them too.")
@@ -770,6 +795,22 @@ struct SettingsView: View {
         (closeAll ?? { dismiss() })()
     }
 
+    /// A sealed sample letter to the next milestone, and a session that reaches it.
+    private func reachLetterMilestone() {
+        let total = ProgressSummary.make(estimates: craftEstimates.map(\.rate), sessions: craftSessions.map(\.record),
+                                         onboardingDate: craft.createdAt, weekStart: .localeDefault, now: Date()).total
+        guard let next = Letters.next(after: total) else { return }
+        let written = Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
+        context.insert(Letter(craftId: craft.id,
+                              text: "Dear me at \(DurationFormat.grouped(next)) hours, today the hard passage still falls apart. I hope it sings by now. Whatever happened, I'm glad you kept going.",
+                              writtenAt: written, totalWhenWritten: max(0, Double(next) - 300), milestone: next))
+        let hours = Double(next) - total + 0.2
+        let start = Date().addingTimeInterval(-hours * 3600 - 60)
+        context.insert(Session(craftId: craft.id, start: start, durationSec: hours * 3600, source: .manual, note: "Debug: letter"))
+        try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
     private func forceMemory(_ kind: String?) {
         DebugOptions.forcedMemoryKind = kind
         (closeAll ?? { dismiss() })()
@@ -895,6 +936,17 @@ struct SettingsView: View {
         do {
             try CSVExport.sessions(rows).write(to: url, atomically: true, encoding: .utf8)
             csvURL = url
+            if allLetters.isEmpty {
+                lettersURL = nil
+            } else {
+                let letterRows = allLetters.map {
+                    CSVExport.LetterRow(craft: names[$0.craftId] ?? "", written: $0.writtenAt, milestone: $0.milestone,
+                                        opened: $0.openedAt, text: $0.text)
+                }
+                let letters = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-letters.csv")
+                try CSVExport.letters(letterRows).write(to: letters, atomically: true, encoding: .utf8)
+                lettersURL = letters
+            }
         } catch {
             csvURL = nil
         }

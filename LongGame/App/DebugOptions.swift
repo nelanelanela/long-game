@@ -75,6 +75,25 @@ enum DebugOptions {
         }
     }
 
+    /// Three years of sample days for the keepsake poster (nothing is saved): busier weekdays, the odd week off.
+    static func samplePoster(craft: String) -> KeepsakePoster.Content {
+        let cal = Calendar.current
+        let last = cal.startOfDay(for: Date())
+        let first = cal.date(byAdding: .year, value: -3, to: last) ?? last
+        var days: [CalendarLevel] = []
+        var seed: UInt64 = 0x5EED
+        var day = first
+        while day <= last {
+            seed = seed &* 6364136223846793005 &+ 1442695040888963407
+            let r = Double(seed >> 33) / Double(1 << 31)
+            let weekend = cal.isDateInWeekend(day)
+            let hours = r < (weekend ? 0.45 : 0.18) ? 0 : r * (weekend ? 2.5 : 4)
+            days.append(CalendarLevel.level(hours: hours))
+            day = cal.date(byAdding: .day, value: 1, to: day) ?? last.addingTimeInterval(86_400)
+        }
+        return KeepsakePoster.Content(hours: 3_000, craft: craft, days: days, firstDay: first, lastDay: last, baseline: 2_190)
+    }
+
     /// Settings button: Home opens the weekly look-back on its next appearance, whatever the week (once).
     static func requestLookBack() { UserDefaults.standard.set(true, forKey: "debug.showLookBack") }
 

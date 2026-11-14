@@ -780,6 +780,24 @@ A small, rare line on Home from the person's own history (`Memories.today(...)`,
 - **Home:** one card under Today's number and quiet line: peach (`anniversaryPill`), radius 14, opening words in ember bold, optional 40 pt photo, small chevron. The sun winks once on the first open that day. A tap opens that day in History (or the photo). No notification, sound or haptic.
 - **Settings:** in Sounds, under Giggle sound, **The sun remembers** (on by default), "Now and then, a memory from your own history".
 
+## A letter to your future self (update 49, `design/redesign/LetterToFutureSelf.dc.html`)
+
+- **Model:** `Letter` (SwiftData): id, craftId, text, writtenAt, totalWhenWritten, milestone (hours), openedAt (nil while sealed). Same store as the sessions, so in iCloud only when sync is on. Exported as a second file, `LongGame-letters.csv` (a sealed letter's text stays sealed there: "(sealed until 4000 h)").
+- **Milestones:** 100, 500, 1,000, then every 1,000 to 10,000; one letter per milestone per craft; never for a milestone already passed (`Letters` in `Logic/`).
+- **Offered:** on each milestone celebration ("Write to yourself at 4,000 hours", secondary); a row on The long game ("A letter to your future self · For you at 4,000 hours"); at the end of setup ("Write to yourself at 100 hours", or the next milestone past the setup total; Home opens the letter sheet; on A gentle nudge it leaves notifications undecided, like Not now).
+- **Writing (sheet):** Not now · "112 / 1,000"; the sun with open eyes; "A letter to you at 4,000 hours"; the invitation with "around January 2028 at your pace" (the chosen weekly pace; without one it ends "until you get there."); lined paper, up to 1,000 characters; the hint; Seal the letter (primary, disabled while empty). Leaving with text asks "Throw this letter away?" (Keep writing / Throw away).
+- **Sealed:** envelope with an amber seal carrying the sun, "Sealed.", "The sun will bring it back at 4,000 hours. 1,000 hours to go.", Done; a soft tap. The row becomes "A letter is waiting · Opens at 4,000 h · written 3 June 2026"; it opens the envelope with Rewrite (replaces the old letter only when the new one is sealed) and Throw away (confirmed). A sealed letter's text is never shown in the app.
+- **Delivered:** right after the milestone's celebration closes (or, for milestones without a celebration, once the save has settled), once: the celebrate face, "A letter from you", the navy pill "You wrote this 1,000 hours ago", the letter on its paper, "3 June 2026 · at 3,000 h", Write to you at 5,000 hours / Keep it and close; rising three. Two at once: the earlier first. At 10,000 hours: "All your letters", first to last, on one screen.
+- **Your letters:** from The long game, opened letters oldest first, each with Delete (confirmed). Letters of an archived craft stay with it; its sealed ones read "Never reached".
+- **Privacy:** never on a share card, widget, notification, Live Activity or the Watch; no reminder to write one.
+
+## Keepsake poster (update 49, `design/redesign/Keepsake.dc.html`)
+
+- **Offered:** "Make a keepsake poster" (secondary) on the celebration at every 1,000 hours; a row at the bottom of History › Growth once past 1,000 ("Keepsake poster · Your whole calendar, ready to print"), for the last 1,000 passed.
+- **The poster:** warm paper #FFFDF8: LONG GAME, "3,000 hours", "of piano" in ember, then one calendar mark (`CalendarLevelShape`, the calendar's colours) for every day from the first session to the day the milestone was reached, 28 to a row, shrinking for long histories (never cutting days); dates and "653 days played · each row is four weeks" bottom left, a small less–more legend centre, "2,190 hours came before" (left out when none) and "by We Have Sun" bottom right. No name, photos or notes. Night: navy #0B1029, four gold tints, cream text.
+- **Sheet:** preview, "A keepsake for your wall", Paper (A4, A3, 50 × 70, 18 × 24 in; A3 by default, 18 × 24 in where the region uses inches), Look (Paper, Night), Save the poster (share sheet: Files, AirDrop, Print), Not now.
+- **File:** a one-page vector PDF at the paper size, made on the device from the poster's shapes and text (`ImageRenderer` into a Core Graphics PDF context, fonts embedded), 15 mm margin, title and description in its metadata, named "Long Game – 3,000 hours of piano.pdf". Nothing uploaded.
+
 ## Visual system
 
 Simple, flat and calm: warm-white background, flat white cards only where content needs grouping, navy text, one smiling sun. One primary action per screen; secondary actions are text buttons. No decorative icons next to labels.

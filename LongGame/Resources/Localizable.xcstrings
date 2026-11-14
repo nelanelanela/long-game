@@ -10,7 +10,25 @@
     "%@ are your day." : {
 
     },
+    "%@ days played · each row is four weeks" : {
+
+    },
+    "%@ hours came before" : {
+
+    },
+    "%@ hours of %@" : {
+
+    },
+    "%@ hours to go." : {
+
+    },
+    "%@ of %@ characters" : {
+
+    },
     "%@ years ago today," : {
+
+    },
+    "%@ · at %@ h" : {
 
     },
     "%@, at %@ hours" : {
@@ -29,6 +47,9 @@
 
     },
     "100 days of practice" : {
+
+    },
+    "18 × 24 in" : {
 
     },
     "^[%lld day](inflect: true) later" : {
@@ -52,7 +73,28 @@
     "^[%lld year](inflect: true) later" : {
 
     },
+    "A keepsake for your wall" : {
+
+    },
+    "A keepsake poster from Long Game: every day as a small sun." : {
+
+    },
     "A later photo than Then." : {
+
+    },
+    "A letter from you" : {
+
+    },
+    "A letter is waiting" : {
+
+    },
+    "A letter to %@" : {
+
+    },
+    "A letter to you at %@" : {
+
+    },
+    "A letter to your future self" : {
 
     },
     "A month since you started" : {
@@ -77,6 +119,9 @@
 
     },
     "Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions." : {
+
+    },
+    "All your letters" : {
 
     },
     "An early photo." : {
@@ -109,7 +154,16 @@
     "Delete everything and start over" : {
 
     },
+    "Delete this letter" : {
+
+    },
+    "Delete this letter?" : {
+
+    },
     "Deletes all data and starts again from Welcome, with the three intro pages." : {
+
+    },
+    "Every day of your %@ hours as a small sun. Print it at home or at any print shop." : {
 
     },
     "Fake an anniversary on Home" : {
@@ -121,25 +175,64 @@
     "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
 
     },
+    "For you at %@" : {
+
+    },
     "Force a memory on Home" : {
 
     },
     "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
 
     },
+    "It can't be brought back." : {
+
+    },
+    "It hasn't been opened yet, and it can't be brought back." : {
+
+    },
     "Jump total to just under a whole hour" : {
+
+    },
+    "Keep it and close" : {
+
+    },
+    "Keep writing" : {
+
+    },
+    "Keepsake poster" : {
 
     },
     "Last %@:" : {
 
     },
+    "less" : {
+
+    },
+    "LONG GAME" : {
+
+    },
     "Look how far." : {
+
+    },
+    "Make a keepsake poster" : {
+
+    },
+    "more" : {
 
     },
     "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {
 
     },
+    "Never reached" : {
+
+    },
+    "No peeking. A sealed letter can't be opened early." : {
+
+    },
     "None (the real one)" : {
+
+    },
+    "Not sure what to say? What's hard right now. What you hope to be able to do." : {
 
     },
     "Now" : {
@@ -148,13 +241,31 @@
     "Now and then, a memory from your own history" : {
 
     },
+    "of %@" : {
+
+    },
+    "Open the poster with a three-year sample" : {
+
+    },
+    "Opens at %@ h · written %@" : {
+
+    },
     "Opens that day in History" : {
+
+    },
+    "Paper" : {
 
     },
     "Play opening sunrise" : {
 
     },
+    "Poster: %@ hours of %@, %@ days played." : {
+
+    },
     "Pretend last session was %@ ago" : {
+
+    },
+    "Reach a milestone with a letter waiting" : {
 
     },
     "Remove the sample year" : {
@@ -164,6 +275,21 @@
 
     },
     "Reset onboarding?" : {
+
+    },
+    "Rewrite" : {
+
+    },
+    "Save the poster" : {
+
+    },
+    "Seal the letter" : {
+
+    },
+    "Sealed." : {
+
+    },
+    "Seals a sample letter to the next milestone (written 300 hours ago), then adds a session (note \"Debug: letter\") that reaches it. Back on Home the letter arrives, after the celebration if that milestone has one." : {
 
     },
     "See then and now" : {
@@ -181,6 +307,9 @@
     "Start a session that began 3 h 12 m ago" : {
 
     },
+    "The keepsake poster sheet with three years of sample days (nothing is saved), to try the paper sizes, the night look and the PDF." : {
+
+    },
     "The same month, a year on" : {
 
     },
@@ -188,6 +317,9 @@
 
     },
     "The sun remembers: Home shows this memory today, ignoring the once-a-week rule. A photo's anniversary uses one of your photos." : {
+
+    },
+    "The sun will bring it back at %@. %@" : {
 
     },
     "Then" : {
@@ -199,10 +331,28 @@
     "Then and now · %@" : {
 
     },
+    "Throw away" : {
+
+    },
+    "Throw this letter away?" : {
+
+    },
     "Two sessions with a photo and a note: one 2 years 8 months ago, one yesterday. History → Growth → Then and now then appears. Remove the sample year deletes them too." : {
 
     },
     "Two years since you started" : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there, around %@ at your pace." : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there." : {
+
+    },
+    "Write to you at %@" : {
+
+    },
+    "Write to yourself at %@" : {
 
     },
     "Year of pace ended yesterday" : {
@@ -223,6 +373,9 @@
     "you took this photo." : {
 
     },
+    "You wrote this %@ hours ago" : {
+
+    },
     "Your 100th session" : {
 
     },
@@ -233,6 +386,15 @@
 
     },
     "Your first photo next to your latest" : {
+
+    },
+    "Your letter" : {
+
+    },
+    "Your letters" : {
+
+    },
+    "Your whole calendar, ready to print" : {
 
     },
     "–" : {
