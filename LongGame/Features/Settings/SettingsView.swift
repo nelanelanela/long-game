@@ -264,7 +264,7 @@ struct SettingsView: View {
     private func soundsCard(_ settings: AppSettings) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             groupLabel("Sounds")
-            card {
+            card { VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 2) {
                     Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
                         .lgText(.row).tint(LGColor.selectedFill)
@@ -272,7 +272,15 @@ struct SettingsView: View {
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
                 .padding(.vertical, 10)
-            }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("The sun remembers", isOn: Binding(get: { settings.sunRemembers }, set: { settings.sunRemembers = $0; save() }))
+                        .lgText(.row).tint(LGColor.selectedFill)
+                    Text("Now and then, a memory from your own history")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                }
+                .padding(.vertical, 10)
+            } }
         }
     }
 
@@ -615,6 +623,30 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
+                    Menu {
+                        Button("Your first day") { forceMemory("firstDay") }
+                        Button("A photo's anniversary") { forceMemory("photo") }
+                        Button("A year ago today") { forceMemory("yearAgo") }
+                        Button("The same month, a year on") { forceMemory("sameMonth") }
+                        Button("Your day of the week") { forceMemory("weekday") }
+                        Button("None (the real one)") { forceMemory(nil) }
+                    } label: {
+                        Text("Force a memory on Home").lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    }
+                    Text("The sun remembers: Home shows this memory today, ignoring the once-a-week rule. A photo's anniversary uses one of your photos.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Button("Add sample photos two years apart") { addThenAndNowPhotos() }
+                        .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("Two sessions with a photo and a note: one 2 years 8 months ago, one yesterday. History → Growth → Then and now then appears. Remove the sample year deletes them too.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
                     Button("Fill a sample year") { fillSampleYear() }
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
                     Button("Remove the sample year") { removeSampleYear() }
@@ -734,6 +766,27 @@ struct SettingsView: View {
         settings.targetEndsAt = ends
         settings.targetSetAt = calendar.date(byAdding: .month, value: -12, to: ends)
         settings.targetPromptShownAt = nil
+        try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    private func forceMemory(_ kind: String?) {
+        DebugOptions.forcedMemoryKind = kind
+        (closeAll ?? { dismiss() })()
+    }
+
+    /// Then and now's sample: an early session and a recent one, each with a sample photo.
+    private func addThenAndNowPhotos() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let dates = [cal.date(byAdding: DateComponents(year: -2, month: -8), to: today),
+                     cal.date(byAdding: .day, value: -1, to: today)].compactMap { $0 }
+        for (i, day) in dates.enumerated() {
+            let session = Session(craftId: craft.id, start: SessionRules.manualStart(on: day), durationSec: 45 * 60,
+                                  source: .manual, note: Self.sampleNote)
+            context.insert(session)
+            if let data = Self.samplePhoto(seed: 40 + i) { session.setPhoto(data) }
+        }
         try? context.save()
         (closeAll ?? { dismiss() })()
     }

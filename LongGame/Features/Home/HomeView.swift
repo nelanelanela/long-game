@@ -79,6 +79,11 @@ struct HomeView: View {
     @State private var lastScaleTab: HomeTab = .week
     /// Today's sun winks for a moment when the stretch is covered.
     @State private var winking = false
+    /// The sun remembers: today's memory, the sun's wink on the first open of that day, and its photo when opened.
+    @State private var memory: Memory?
+    @State private var memoryWink = false
+    @State private var viewingMemoryPhoto: Session?
+    @AppStorage("memory.winkDay") private var memoryWinkDay: Double = 0
     /// Bumped by a timer loop so Today's numbers follow the clock (every second while a session runs).
     @State private var tick = Date()
     /// The opening tab is chosen once, the first time this Home appears, not each time it comes back from History.
@@ -171,10 +176,14 @@ struct HomeView: View {
         .onChange(of: commands?.issued) { _, issued in
             if let command = issued?.command { handle(command, total: s.total) }
         }
+        .fullScreenCover(item: $viewingMemoryPhoto) { session in
+            PhotoViewer(sessions: sessions.filter(\.hasPhoto).sorted { $0.start < $1.start }, startAt: session)
+        }
         .navigationDestination(item: $historyRoute) { route in
             switch route {
             case .day(let day): HistoryView(craft: craft, day: day)
             case .growth: HistoryView(craft: craft, opensOnGrowth: true)
+            case .thenAndNow: ThenAndNowView(craft: craft)
             }
         }
         // A widget opens Home on its tab: back out of History and any sheet first.
@@ -280,6 +289,7 @@ struct HomeView: View {
                 MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
                                      iconGrows: settingsRows.first?.iconGrows ?? true,
                                      onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
+                                     onThenAndNow: thenAndNowAction(hours: hours),
                                      onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)
                     // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
@@ -484,7 +494,7 @@ struct HomeView: View {
         let g = onToday ? HomeGauge.today(f.stretch) : scale
         let place = GaugeHero.Place(fraction: scale.fraction, arcFraction: f.stretch.fraction, arcMix: onToday ? 1 : 0)
         let face: SunFace = anniversaryFace ? .celebrate
-            : onToday ? (winking ? .wink : .happy)
+            : onToday ? (winking || memoryWink ? .wink : .happy)
                       : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
@@ -581,6 +591,7 @@ struct HomeView: View {
         #endif
         // The sun celebrates on the first open of the day that has one.
         let today = calendar.startOfDay(for: now).timeIntervalSince1970
+        refreshMemory(now: now, hourMilestoneToday: Anniversary.hourMilestoneToday(totalAtStartOfToday: total - loggedToday, total: total))
         if anniversary != nil, anniversaryFaceDay != today {
             anniversaryFaceDay = today
             anniversaryFace = true
@@ -588,6 +599,61 @@ struct HomeView: View {
                 try? await Task.sleep(for: .seconds(4))
                 anniversaryFace = false
             }
+        }
+    }
+
+    /// "See then and now" on the celebration: closes it and opens Then and now; nil when there is no pair.
+    private func thenAndNowAction(hours: Int) -> (() -> Void)? {
+        guard hasThenAndNow else { return nil }
+        return {
+            celebrationDone(hours: hours)
+            historyRoute = .thenAndNow
+        }
+    }
+
+    /// Whether Then and now has a pair of photos to show (for the milestone celebration's button).
+    private var hasThenAndNow: Bool {
+        let photos = sessions.filter(\.hasPhoto).map { ThenAndNow.Photo(sessionId: $0.id, start: $0.start) }
+        return ThenAndNow.pair(photos: photos, chosen: settingsRows.first?.thenAndNowChoice) != nil
+    }
+
+    /// The sun remembers: at most one memory, at most one day in seven, never beside an anniversary or a milestone.
+    private func refreshMemory(now: Date, hourMilestoneToday: Bool) {
+        let settings = settingsRows.first
+        let items = sessions.map { Memories.Item(id: $0.id, start: $0.start, durationSec: $0.durationSec,
+                                                 hasPhoto: $0.hasPhoto, loggedAt: $0.createdAt) }
+        var found = Memories.today(.init(sessions: items, enabled: settings?.sunRemembers ?? true,
+                                         lastShownDay: settings?.lastMemoryDay, anniversaryToday: anniversary != nil,
+                                         milestoneToday: hourMilestoneToday), now: now)
+        #if DEBUG
+        if let forced = DebugOptions.forcedMemory(sessions: items, now: now) { found = forced }
+        #endif
+        memory = found
+        let today = Calendar.current.startOfDay(for: now)
+        if found != nil, let settings, settings.lastMemoryDay.map({ Calendar.current.startOfDay(for: $0) }) != today {
+            settings.lastMemoryDay = today
+            try? context.save()
+        }
+        // The sun winks once, on the first open of the day that has one.
+        if found != nil, memoryWinkDay != today.timeIntervalSince1970 {
+            memoryWinkDay = today.timeIntervalSince1970
+            memoryWink = true
+            Task {
+                try? await Task.sleep(for: .seconds(1.2))
+                memoryWink = false
+            }
+        }
+    }
+
+    /// The memory card under Today's number and quiet line.
+    @ViewBuilder private var memoryCard: some View {
+        if let memory {
+            let photoSession: Session? = if case .photo(_, let id, _) = memory { sessions.first { $0.id == id } } else { nil }
+            MemoryCard(memory: memory, photo: photoSession.flatMap { s in s.photo.map { (s.id, $0) } }) {
+                if let photoSession { viewingMemoryPhoto = photoSession }
+                else { historyDay = memory.day ?? Calendar.current.startOfDay(for: Date()) }
+            }
+            .transition(.opacity)
         }
     }
 
@@ -614,6 +680,7 @@ struct HomeView: View {
                     case .today:
                         VStack(spacing: short ? 12 : 18) {
                             if !isEmptyDay(f.stretch) { TodayQuietLine(state: f.stretch) }
+                            memoryCard.padding(.horizontal, 24)
                             todaySessions(f)
                         }
                         .padding(.top, short ? 6 : 14)
@@ -649,6 +716,8 @@ struct HomeView: View {
             .environment(\.lgOnDark, darkSky)
             .environment(\.lgOverSky, true)
             .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { fade.barBottom = $0 }
+            // The bar lives outside the page (iOS 26 puts it in its own layer), so it is hidden on its own too.
+            .accessibilityHidden(celebrating != nil)
         }
         .safeAreaInset(edge: .bottom) { actionBar(sideBySide: short, inset: EdgeInsets()) }
     }
@@ -681,6 +750,7 @@ struct HomeView: View {
                         case .today:
                             TodayQuietLine(state: f.stretch, leading: true)
                                 .padding(.top, 6)
+                            memoryCard.padding(.top, 14)
                             todaySessions(f)
                                 .padding(.top, 18)
                         case .week:
@@ -776,6 +846,7 @@ struct HomeView: View {
                         .lgText(.caption, color: LGColor.inkMuted)
                         .multilineTextAlignment(.trailing)
                 }
+                memoryCard
                 todaySessions(f)
             }
         }
@@ -912,6 +983,7 @@ struct HomeView: View {
                 .frame(maxWidth: 520)
                 .padding(.top, 12).padding(.bottom, 4)
                 .frame(maxWidth: .infinity)
+                .accessibilityHidden(celebrating != nil)
         }
         .safeAreaInset(edge: .bottom) {
             HStack(spacing: 16) {
@@ -1478,5 +1550,7 @@ private struct BarTitle<Content: View>: View {
 enum HistoryRoute: Hashable, Identifiable {
     case day(Date)
     case growth
+    /// Then and now, from the milestone celebration.
+    case thenAndNow
     var id: Self { self }
 }
