@@ -100,7 +100,7 @@ struct HoursEntrySheet: View {
                 .focused($focused)
                 .multilineTextAlignment(.center)
                 .lgNumber(.yearNumber)
-                .tint(LGColor.ink)
+                .tint(LGColor.selectedFill)
                 .accessibilityLabel(label)
             Text("\(HoursStepping.text(spec.range.lowerBound)) to \(HoursStepping.text(spec.range.upperBound))")
                 .lgText(.caption, color: LGColor.inkMuted)
@@ -288,11 +288,11 @@ struct HoursBigStepper: View {
                 Button { value = HoursStepping.clamped(pick.value, spec) } label: {
                     Text(pick.title)
                         .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
-                                color: selected ? .white : LGColor.ink)
+                                color: selected ? LGColor.selectedLabel : LGColor.ink)
                         .padding(.horizontal, 16).frame(minHeight: 40)
                         .background {
-                            Capsule().fill(selected ? LGColor.ink : LGColor.surface)
-                                .shadow(color: LGColor.ink.opacity(selected ? 0 : 0.06), radius: 5, y: 3)
+                            Capsule().fill(selected ? LGColor.selectedFill : LGColor.surface)
+                                .shadow(color: LGColor.navy.opacity(selected ? 0 : 0.06), radius: 5, y: 3)
                         }
                         .frame(minHeight: 44)
                 }

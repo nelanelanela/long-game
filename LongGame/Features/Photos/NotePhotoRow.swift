@@ -108,7 +108,7 @@ struct NotePhotoRow: View {
                             .fill(LGColor.surface)
                             .overlay {
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .strokeBorder(Color(hex: 0xCFC6B6), style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                                    .strokeBorder(LGColor.dashedOutline, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
                             }
                             .frame(width: squareSize, height: squareSize)
                             .overlay {
@@ -137,7 +137,7 @@ struct NotePhotoRow: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 20, height: 20)
-                        .background(LGColor.ink, in: Circle())
+                        .background(LGColor.navy, in: Circle())
                         .frame(width: 44, height: 44, alignment: .topTrailing)
                         .contentShape(Rectangle())
                 }
@@ -184,7 +184,7 @@ struct NotePhotoRow: View {
         .background {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(LGColor.surface)
-                .shadow(color: LGColor.ink.opacity(0.05), radius: 9, y: 6)
+                .shadow(color: LGColor.navy.opacity(0.05), radius: 9, y: 6)
         }
     }
 }

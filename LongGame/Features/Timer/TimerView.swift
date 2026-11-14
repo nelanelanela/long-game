@@ -72,6 +72,8 @@ struct TimerView: View {
                             coversStretch: { StretchSource.startedToday(state) && plan.isCovered(byAdding: $0) },
                             onSave: save, onDiscard: discard)
                     .lgSheetCard()
+                    // The Timer forces a dark status bar; the sheet keeps the app's own look.
+                    .lgAppLook()
             }
         }
         // ⌘N finishes the session; Space (below) pauses or resumes it. Neither while the Finish sheet is up.
@@ -187,6 +189,8 @@ private struct RunningScene: View {
     let onFinish: () -> Void
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    /// The app's own look (the Timer forces a dark status bar, so `colorScheme` is always dark here).
+    @Environment(\.lgNightLook) private var nightLook
     /// A tap on the sun gets a soft wink here: no sound, no wiggle, so a session is never disturbed.
     @State private var tapWink = GiggleController()
 
@@ -215,7 +219,9 @@ private struct RunningScene: View {
         let running = startedToday ? elapsed : 0
         let stretch = stretchPlan.state(running: running)
         let p = TimerSunrise.progress(doneSaved: stretchPlan.doneSaved + Self.debugDayHead(stretchPlan), running: running, target: stretchPlan.target)
-        let palette = TimerPalette(p: p)
+        // The picture and its colours; in the dark look it stops at dawn. The sun's face and rays still use `p`.
+        let sceneP = TimerSunrise.sceneProgress(p, dark: nightLook)
+        let palette = TimerPalette(p: sceneP)
         let sinceCovered = startedToday ? stretchPlan.coveredAfter().map { elapsed - $0 } : nil
         let celebrating = !paused && TimerSunrise.isCelebrating(sinceCovered: sinceCovered)
         let justCovered = sinceCovered.map { $0 >= 0 } ?? false
@@ -251,14 +257,14 @@ private struct RunningScene: View {
             let rise = geo.size.height * TimerSunrise.riseFraction
             let centreX = wide ? geo.size.width * 0.28 : geo.size.width / 2
             // The sun sinks 24 pt when paused through its own animated offset below, so the glow follows it there.
-            let centre = CGPoint(x: centreX, y: TimerSunrise.sunCentreY(p: p, horizonY: horizonY, rise: rise))
+            let centre = CGPoint(x: centreX, y: TimerSunrise.sunCentreY(p: sceneP, horizonY: horizonY, rise: rise))
             ZStack(alignment: .topLeading) {
-                TimerSunriseSky(p: p, paused: paused, horizonY: horizonY,
+                TimerSunriseSky(p: sceneP, paused: paused, horizonY: horizonY,
                                 sunCentre: CGPoint(x: centre.x, y: centre.y + (paused ? 24 : 0)),
                                 topInset: safe.top)
                     .frame(width: geo.size.width, height: geo.size.height)
 
-                if !reduceMotion && !paused && p < 0.7 {
+                if !reduceMotion && !paused && sceneP < 0.7 {
                     ForEach(Array(Self.motes.enumerated()), id: \.offset) { _, m in
                         mote(m, t: t, in: geo.size)
                     }
@@ -301,7 +307,7 @@ private struct RunningScene: View {
                     .onTapGesture { tapWink.tap(soundOn: false, reduceMotion: reduceMotion, winkOnly: true) }
 
                 // The sea is drawn after the sun: always in front of it, at every height.
-                TimerSunriseLand(p: p, horizonY: horizonY)
+                TimerSunriseLand(p: sceneP, horizonY: horizonY)
                     .frame(width: geo.size.width, height: geo.size.height)
 
                 if wide {
@@ -641,6 +647,7 @@ private struct SavedScene: View {
     let since: Date
     let moment: SavedMoment
     let reduceMotion: Bool
+    @Environment(\.lgNightLook) private var nightLook
 
     var body: some View {
         let t = now.timeIntervalSince(since)
@@ -649,7 +656,7 @@ private struct SavedScene: View {
         let motion = reduceMotion ? 0.0 : 1.0
         let jump = sin(q * .pi)
         let textOpacity = reduceMotion ? min(1, t / 0.3) : min(1, max(0, (t - 0.3) / 0.5))
-        let p = moment.p
+        let p = TimerSunrise.sceneProgress(moment.p, dark: nightLook)
         let palette = TimerPalette(p: p)
         // The outer reader only reads the status bar's height, so the moon sits where the Timer had it.
         GeometryReader { safeProxy in

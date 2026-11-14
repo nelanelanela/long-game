@@ -25,7 +25,7 @@ struct LongGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DebugWindowSize { AppRoot() }
+            DebugWindowSize { AppearanceRoot { AppRoot() } }
                 .modelContainer(store.container)
                 .environment(store)
                 .environment(timerStore)
@@ -38,7 +38,6 @@ struct LongGameApp: App {
                 .task(id: store.generation) { WatchBridge.shared.start(timer: timerStore, container: store.container) }
                 // The running session follows you between your devices when Save to iCloud is on.
                 .task(id: store.generation) { sessionSync.start(timer: timerStore, container: store.container) }
-                .preferredColorScheme(.light)
                 .dynamicTypeSize(...DynamicTypeSize.accessibility5)
         }
         // Hold ⌘ on an iPad with a keyboard to see these.

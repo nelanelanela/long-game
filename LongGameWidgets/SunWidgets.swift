@@ -81,7 +81,8 @@ struct OverviewProvider: TimelineProvider {
 
 // MARK: Widgets
 
-private let whiteCard = Color.white
+/// The widget card: white, or the night card colour in the dark look (widgets follow the system).
+private let whiteCard = LGColor.surface
 
 /// Small: the sun over the sea, for this week or the long game (Edit Widget).
 struct SunWidget: Widget {

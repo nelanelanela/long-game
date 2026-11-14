@@ -88,6 +88,12 @@
     "Afternoons" : {
 
     },
+    "Appearance" : {
+
+    },
+    "Automatic" : {
+
+    },
     "Back on Home the sheet opens by itself, as it does the first time after onboarding." : {
 
     },
@@ -101,6 +107,9 @@
 
     },
     "Change my pace" : {
+
+    },
+    "Dark" : {
 
     },
     "Days played" : {
@@ -163,7 +172,13 @@
     "Last week, day by day: %@." : {
 
     },
+    "Light" : {
+
+    },
     "Longest day" : {
+
+    },
+    "Look" : {
 
     },
     "morning" : {

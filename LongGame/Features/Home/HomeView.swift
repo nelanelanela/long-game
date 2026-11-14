@@ -96,6 +96,7 @@ struct HomeView: View {
     /// sits on top of the content. Only the title reads it, so scrolling never makes all of Home work itself out again.
     @State private var barFade = BarFade()
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorScheme) private var colorScheme
     /// The sidebar layout's view (the Play views follow `tab`; History and Settings are kept here).
     @SceneStorage("sidebar.section") private var section: SidebarSection = .today
     /// The window's layout, kept for the keyboard commands.
@@ -489,8 +490,8 @@ struct HomeView: View {
             }
             .padding(.leading, 14).padding(.trailing, toast.undo != nil ? 6 : 14)
             .frame(minHeight: 40)
-            .background(LGColor.ink, in: Capsule())
-            .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+            .background(LGColor.toastFill, in: Capsule())
+            .shadow(color: LGColor.navy.opacity(0.25), radius: 8, y: 6)
             .padding(.top, 12).padding(.trailing, 20)
             .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
             .accessibilityElement(children: .ignore)
@@ -567,7 +568,8 @@ struct HomeView: View {
     /// scrolls under it, and the buttons stay pinned under the page.
     private func columnPage(_ f: HomeFigures, short: Bool) -> some View {
         // The sky behind the bar is dark on The long game and on the empty day.
-        let darkSky = f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
+        // The dark look's Home is always under the night sky.
+        let darkSky = colorScheme == .dark || f.shown == .longGame || (f.shown == .today && isEmptyDay(f.stretch))
         let heroTop: CGFloat = short ? 2 : 8
         let fade = barFade
         return ScrollView {

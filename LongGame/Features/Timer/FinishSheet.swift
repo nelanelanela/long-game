@@ -145,10 +145,10 @@ private struct LongSessionCard: View {
         let selected = choice == value
         return Button { onChoose(value) } label: {
             Text(verbatim: title)
-                .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: selected ? .white : LGColor.ink)
+                .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: selected ? LGColor.selectedLabel : LGColor.ink)
                 .lineLimit(2).minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity, minHeight: 44)
-                .background(selected ? LGColor.ink : LGColor.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(selected ? LGColor.selectedFill : LGColor.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

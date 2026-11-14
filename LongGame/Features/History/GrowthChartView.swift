@@ -184,8 +184,8 @@ struct GrowthChartView: View {
         }
         .padding(10)
         .frame(width: width, alignment: .leading)
-        .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .shadow(color: LGColor.ink.opacity(0.14), radius: 10, y: 3)
+        .background(LGColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .shadow(color: LGColor.navy.opacity(0.14), radius: 10, y: 3)
         .position(x: x, y: y)
     }
 }

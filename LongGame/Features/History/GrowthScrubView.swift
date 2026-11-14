@@ -124,7 +124,7 @@ struct GrowthScrubView: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(LGColor.ink)
                     .frame(width: 40, height: 40)
-                    .background { Circle().fill(.white).shadow(color: LGColor.ink.opacity(0.1), radius: 6, y: 4) }
+                    .background { Circle().fill(LGColor.surface).shadow(color: LGColor.navy.opacity(0.1), radius: 6, y: 4) }
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }

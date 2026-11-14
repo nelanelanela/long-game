@@ -113,12 +113,12 @@ struct CraftStepView: View {
         } label: {
             Text(verbatim: craft)
                 .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
-                        color: selected ? Color.white : LGColor.ink)
+                        color: selected ? LGColor.selectedLabel : LGColor.ink)
                 .padding(.horizontal, 13)
                 .padding(.vertical, 8)
                 .frame(maxWidth: dynamicTypeSize.isAccessibilitySize ? .infinity : nil, alignment: .leading)
-                .background(selected ? LGColor.ink : LGColor.surface, in: Capsule())
-                .shadow(color: LGColor.ink.opacity(selected ? 0.2 : 0), radius: 6, y: 4)
+                .background(selected ? LGColor.selectedFill : LGColor.surface, in: Capsule())
+                .shadow(color: LGColor.navy.opacity(selected ? 0.2 : 0), radius: 6, y: 4)
                 // The pills are 6 pt apart as on the board; the touch area reaches into the gaps.
                 .contentShape(Rectangle().inset(by: -3))
         }

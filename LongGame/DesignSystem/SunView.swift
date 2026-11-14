@@ -204,7 +204,7 @@ struct SunView: View {
         .frame(width: 200, height: 200)
     }
 
-    private var ink: Color { LGColor.ink }
+    private var ink: Color { LGColor.navy }
     private var line: StrokeStyle { StrokeStyle(lineWidth: 4.5, lineCap: .round) }
 }
 
@@ -261,7 +261,7 @@ private struct OpenEye: View {
     var size: CGFloat = 12
     var body: some View {
         ZStack {
-            Circle().fill(LGColor.ink).frame(width: size, height: size).position(x: cx, y: 96)
+            Circle().fill(LGColor.navy).frame(width: size, height: size).position(x: cx, y: 96)
             Circle().fill(.white).frame(width: size / 3, height: size / 3).position(x: cx + size / 6, y: 96 - size / 6)
         }
     }

@@ -735,3 +735,24 @@ All 691 tests pass on the iPhone 18 Pro Simulator.
 | Tests | ✅ | `LongGameTests/WriteToUsTests.swift` | Footer line, body, the link, and each step of the order with a fake |
 
 Checked in the iPhone 18 Pro Simulator (no Mail account): the tap copies yes@wehavesun.com to the clipboard and shows "Email address copied". All 697 tests pass. The Mail sheet itself was not seen (it needs a device with Mail set up).
+
+## Update 45: dark mode, the night look (14 November 2026, branch `dark-mode`)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Every token has a dark value (the board's table) | ✅ | `DesignSystem/Colors.swift` (`Color(light:dark:)`) | Light values are exactly the old ones. Tokens the board doesn't give were chosen to match (listed in the spec's Visual system) |
+| Cards: no shadow, 0.5 pt white 8% hairline | ✅ | `LGCardModifier` | |
+| Sun, calendar levels, session pictures unchanged | ✅ | `LGColor.navy`, `LGColor.paper` in `SunView` and `Scene` | Checked by test (`DarkModeTests.theColourTable`) and in the Simulator |
+| Colours in feature views that weren't tokens | ✅ | | Found: white words on navy fills (toasts, chosen pills and day chips, the sidebar's navy capsule, the photo badge), white card fills (milestone card, Growth's info card and scrub button, History's chosen tab, onboarding bubbles), the dashed #CFC6B6 outlines, and navy text on white chips (intro page, gauge pill). Each now uses a token; the ones on fixed light or picture backgrounds use the fixed navy. Left as they are: the Timer's own palette (already moves from white to navy), the photo viewer (already dark), the year cards and session pictures (their own look), the gold and amber of bars and medals |
+| Home: night sky and land on every tab, glow 35–100% with progress | ✅ | `GaugeHero` (`nightLook`, `glowStrength`), `SkyView.glowStrength` | Checked in the Simulator (Today, empty day). iPad/Mac windows that draw the sky inside the scene get the night sky at full glow |
+| Timer stops at dawn, white words throughout; Paused and Saved follow | ✅ | `TimerSunrise.sceneProgress`, `TimerView` | Tests: p = 1 → 0.55, words white at every p |
+| Onboarding, sheets, future self, tip jar: dawn sky, night land | ✅ | `SceneHero`, `PaceScene` | Finish sheet checked in the Simulator |
+| Opening sunrise ends on the dark Home | ✅ | `OpeningSunriseView` | Stays night; checked in the Simulator |
+| Appearance › Look (Automatic, Light, Dark), stored, applied at the root | ✅ | `AppearanceRoot`, `Settings.appearanceRaw`, `appearanceCard` | Top of Settings. Test for the setting |
+| Year cards and the milestone card keep their own look | ✅ | `YearCardView` forces light | The milestone card (update 42) isn't built yet |
+| Widgets follow the system | ✅ | `WidgetScene`, `whiteCard` | Not seen on a Home Screen yet |
+| Contrast 4.5:1 | ⚠️ | | The board's pairs pass (cream on #0B1029 and #172044, #A9B1C9 on #172044 is about 7:1, navy on gold about 11:1). Not measured screen by screen |
+| Previews of every screen in both looks; a walk through the whole app | ⚠️ | | Seen in dark in the Simulator: the opening, Home (empty day), History (Calendar, Growth), the Timer, the Finish sheet. Not yet seen: onboarding, Home in progress and covered, Your year, Settings, Catch up, the tip jar. No new previews were added |
+| Light look unchanged | ✅ | | All 701 tests pass (including the iOS render tests); Home in light compared in the Simulator before and after |
+
+Open questions for you: the toast colour in dark (#2B3566), the chosen-pill colour in dark (gold, like the primary button), and whether the night Home's arc and moon on Today should change at all.

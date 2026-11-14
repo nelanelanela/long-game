@@ -134,7 +134,7 @@ struct MilestoneCelebration: View {
             .frame(maxWidth: isMastery ? .infinity : 340)
             .background {
                 if !isMastery {
-                    RoundedRectangle(cornerRadius: 28, style: .continuous).fill(.white)
+                    RoundedRectangle(cornerRadius: 28, style: .continuous).fill(LGColor.surface)
                 }
             }
             .padding(.horizontal, isMastery ? 0 : 24)

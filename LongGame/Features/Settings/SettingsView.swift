@@ -72,6 +72,7 @@ struct SettingsView: View {
                         .accessibilityAddTraits(.isHeader)
                 }
 
+                if let settings { appearanceCard(settings) }
                 supportCard
                 if let settings {
                     weekCard(settings)
@@ -103,8 +104,8 @@ struct SettingsView: View {
                     .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: .white)
                     .padding(.horizontal, 14)
                     .frame(minHeight: 40)
-                    .background(LGColor.ink, in: Capsule())
-                    .shadow(color: LGColor.ink.opacity(0.25), radius: 8, y: 6)
+                    .background(LGColor.toastFill, in: Capsule())
+                    .shadow(color: LGColor.navy.opacity(0.25), radius: 8, y: 6)
                     .padding(.top, 8)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .accessibilityHidden(true)
@@ -210,6 +211,25 @@ struct SettingsView: View {
         }
     }
 
+    /// Appearance · Look: Automatic (follows the device, the default), Light or Dark.
+    private func appearanceCard(_ settings: AppSettings) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            groupLabel("Appearance")
+            card {
+                HStack {
+                    Text("Look").lgText(.row)
+                    Spacer()
+                    Picker("Look", selection: Binding(get: { settings.appearance }, set: { settings.appearance = $0; save() })) {
+                        ForEach(AppAppearance.allCases, id: \.self) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: 240)
+                }
+                .frame(minHeight: 54)
+            }
+        }
+    }
+
     private func weekCard(_ settings: AppSettings) -> some View {
         card {
             HStack {
@@ -231,7 +251,7 @@ struct SettingsView: View {
     private var dockCard: some View {
         card {
             VStack(alignment: .leading, spacing: 2) {
-                Toggle("Show in Dock", isOn: $showInDock).lgText(.row).tint(LGColor.ink)
+                Toggle("Show in Dock", isOn: $showInDock).lgText(.row).tint(LGColor.selectedFill)
                 Text("Off keeps only the sun in the menu bar.")
                     .lgText(.caption, color: LGColor.inkMuted)
             }
@@ -247,7 +267,7 @@ struct SettingsView: View {
             card {
                 VStack(alignment: .leading, spacing: 2) {
                     Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
-                        .lgText(.row).tint(LGColor.ink)
+                        .lgText(.row).tint(LGColor.selectedFill)
                     Text("When you tickle the sun. Silent in silent mode")
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
@@ -282,7 +302,7 @@ struct SettingsView: View {
                     weeklyPaceRow(settings)
                     Divider().overlay(LGColor.divider)
                     VStack(alignment: .leading, spacing: 2) {
-                        Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.ink)
+                        Toggle("App icon grows with you", isOn: on).lgText(.row).tint(LGColor.selectedFill)
                         Text("Grows every 1,000 hours")
                             .lgText(.caption, color: LGColor.inkMuted)
                     }
@@ -327,7 +347,7 @@ struct SettingsView: View {
             })
         return card {
             VStack(spacing: 0) {
-                Toggle("Daily reminder", isOn: dailyOn).lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                Toggle("Daily reminder", isOn: dailyOn).lgText(.row).tint(LGColor.selectedFill).frame(minHeight: 54)
                 if let time = settings.reminderTime {
                     Divider().overlay(LGColor.divider)
                     HStack {
@@ -343,7 +363,7 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Rhythm nudge", isOn: nudgeOn).lgText(.row).tint(LGColor.ink)
+                    Toggle("Rhythm nudge", isOn: nudgeOn).lgText(.row).tint(LGColor.selectedFill)
                     Text("At 7 pm on a day you usually practise, if you haven't yet. At most twice a week.")
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
@@ -375,9 +395,9 @@ struct SettingsView: View {
                     save()
                 } label: {
                     Text(symbols[weekday - 1])
-                        .lgText(.rowStrong, color: selected ? .white : LGColor.ink)
+                        .lgText(.rowStrong, color: selected ? LGColor.selectedLabel : LGColor.ink)
                         .frame(maxWidth: .infinity, minHeight: 40)
-                        .background(selected ? LGColor.ink : LGColor.chipFill, in: Circle())
+                        .background(selected ? LGColor.selectedFill : LGColor.chipFill, in: Circle())
                         .frame(minHeight: 44)
                 }
                 .buttonStyle(.plain)
@@ -448,7 +468,7 @@ struct SettingsView: View {
             card {
                 VStack(alignment: .leading, spacing: 0) {
                     Toggle("Save to iCloud", isOn: Binding(get: { switchState.isOn }, set: setICloud))
-                        .lgText(.row).tint(LGColor.ink).frame(minHeight: 54)
+                        .lgText(.row).tint(LGColor.selectedFill).frame(minHeight: 54)
                         .disabled(!switchState.isEnabled)
                     Text(status.text(now: Date()))
                         .lgText(.caption, color: LGColor.inkMuted)

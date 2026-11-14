@@ -180,11 +180,11 @@ private struct IntroIllustration: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         case 1:
             chip(Text("Your starting score · \(DurationFormat.grouped(startingScore ?? Self.exampleScore)) h"),
-                 background: .white, foreground: LGColor.ink)
+                 background: .white, foreground: LGColor.navy)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top, 120)
         default:
-            chip(Text("+1 h today"), background: LGColor.ink, foreground: .white)
+            chip(Text("+1 h today"), background: LGColor.navy, foreground: .white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top, 62)
         }

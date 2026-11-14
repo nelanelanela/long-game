@@ -68,7 +68,7 @@ struct DayBarsRow: View {
                         .frame(width: 30, height: CGFloat(WeekBars.barHeight(hours: last)))
                 }
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .strokeBorder(Color(hex: 0xCFC6B6), style: StrokeStyle(lineWidth: 1.2, dash: [3, 3]))
+                    .strokeBorder(LGColor.dashedOutline, style: StrokeStyle(lineWidth: 1.2, dash: [3, 3]))
                     .frame(width: 22, height: 44)
                 mark(bar)
             }

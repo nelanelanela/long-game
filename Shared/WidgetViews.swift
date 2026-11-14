@@ -40,6 +40,8 @@ struct WidgetScene: View {
     let spec: SceneSpec
     /// Real widget height ÷ 170.
     let scale: CGFloat
+    /// Widgets follow the system: the night sky and land in the dark look.
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         GeometryReader { geo in
@@ -52,7 +54,8 @@ struct WidgetScene: View {
             // The land box is stretched so its shoreline (46 of 120 down) lands on the water line and it fills the rest.
             let landHeight = (h - waterY) / (1 - 46.0 / 120)
             let landTop = waterY - landHeight * 46 / 120
-            let tone: SceneTone = fraction >= 0.5 ? .day : .dawn
+            let night = colorScheme == .dark
+            let tone: SceneTone = night ? .night : (fraction >= 0.5 ? .day : .dawn)
             ZStack(alignment: .topLeading) {
                 SkyView(tone: tone, horizon: waterY / h, moon: false)
                     .frame(width: w, height: h)
@@ -60,7 +63,7 @@ struct WidgetScene: View {
                     .frame(width: sun, height: sun)
                     .offset(x: (w - sun) / 2, y: centre - sun / 2)
                 // The sea comes after the sun and is opaque, so nothing of the sun shows below the shoreline.
-                LandView(tone: .day, still: true)
+                LandView(tone: night ? .night : .day, still: true)
                     .frame(width: w, height: landHeight)
                     .offset(y: landTop)
             }

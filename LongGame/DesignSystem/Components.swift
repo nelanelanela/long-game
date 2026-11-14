@@ -4,13 +4,21 @@ import SwiftUI
 
 struct LGCardModifier: ViewModifier {
     var radius: CGFloat = 20
+    @Environment(\.colorScheme) private var scheme
+
     func body(content: Content) -> some View {
-        // White, with the redesign's soft shadow (0 8 24, navy at 6%).
+        // White, with the redesign's soft shadow (0 8 24, navy at 6%). In the dark look: no shadow, and a 0.5 pt
+        // inner hairline (white 8%) instead.
         content
             .background {
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(LGColor.surface)
-                    .shadow(color: LGColor.ink.opacity(0.06), radius: 12, y: 8)
+                let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+                if scheme == .dark {
+                    shape.fill(LGColor.surface)
+                        .overlay(shape.strokeBorder(LGColor.cardEdge, lineWidth: 0.5))
+                } else {
+                    shape.fill(LGColor.surface)
+                        .shadow(color: LGColor.navy.opacity(0.06), radius: 12, y: 8)
+                }
             }
     }
 }
@@ -65,9 +73,9 @@ struct LGStepCircle: View {
             glyph.background {
                 Circle()
                     .fill(dimmed ? AnyShapeStyle(LGColor.stepperButtonLimit)
-                                 : AnyShapeStyle(RadialGradient(colors: [.white, LGColor.stepperFace],
+                                 : AnyShapeStyle(RadialGradient(colors: [LGColor.stepperFaceTop, LGColor.stepperFace],
                                                                 center: UnitPoint(x: 0.35, y: 0.3), startRadius: 0, endRadius: diameter * 0.7)))
-                    .shadow(color: LGColor.ink.opacity(dimmed ? 0 : 0.1), radius: diameter > 40 ? 8 : 4, y: diameter > 40 ? 6 : 3)
+                    .shadow(color: LGColor.navy.opacity(dimmed ? 0 : 0.1), radius: diameter > 40 ? 8 : 4, y: diameter > 40 ? 6 : 3)
             }
         }
     }
@@ -112,7 +120,7 @@ struct LGButtonStyle: ButtonStyle {
     @available(iOS 26, macOS 26, *)
     private var glass: Glass {
         switch kind {
-        case .primary: .regular.tint(LGColor.ink).interactive()
+        case .primary: .regular.tint(LGColor.primaryFill).interactive()
         case .light: .regular.tint(.white).interactive()
         case .translucent: .clear.interactive()
         default: .regular.interactive()
@@ -142,7 +150,7 @@ struct LGButtonStyle: ButtonStyle {
 
     private var foreground: Color {
         switch kind {
-        case .primary: .white
+        case .primary: LGColor.primaryLabel
         case .translucent: .white
         default: LGColor.ink
         }
@@ -150,7 +158,7 @@ struct LGButtonStyle: ButtonStyle {
 
     private var background: Color {
         switch kind {
-        case .primary: LGColor.ink
+        case .primary: LGColor.primaryFill
         case .light: .white
         case .translucent: .white.opacity(reduceTransparency || contrast == .increased ? 0.28 : 0.12)
         default: .clear
@@ -234,10 +242,10 @@ struct LGPill: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .lgText(.row, color: selected ? .white : LGColor.ink)
+                .lgText(.row, color: selected ? LGColor.selectedLabel : LGColor.ink)
                 .padding(.horizontal, 16)
                 .frame(minHeight: 40)
-                .background(selected ? LGColor.ink : LGColor.surface, in: Capsule())
+                .background(selected ? LGColor.selectedFill : LGColor.surface, in: Capsule())
                 .overlay(Capsule().stroke(selected ? Color.clear : LGColor.chipBorder, lineWidth: 1))
                 .frame(minHeight: 44)
         }
@@ -326,8 +334,8 @@ struct LGSegmentedControl<Item: Hashable>: View {
                         .background {
                             if selected {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(.white)
-                                    .shadow(color: LGColor.ink.opacity(0.1), radius: 1.5, y: 1)
+                                    .fill(LGColor.surface)
+                                    .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
                             }
                         }
                         .contentShape(Rectangle())

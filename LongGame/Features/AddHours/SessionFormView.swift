@@ -76,7 +76,7 @@ struct SessionFormView: View {
                     row("Day") {
                         DatePicker("Day", selection: $day, in: earliestDay...Date(), displayedComponents: .date)
                             .labelsHidden()
-                            .tint(LGColor.ink)
+                            .tint(LGColor.selectedFill)
                     }
                     Divider().overlay(LGColor.divider)
                     stepperRow("Hours", value: $hours, range: 0...12, step: 1, spoken: Labels.hours(hours),

@@ -90,7 +90,7 @@ struct PhotoViewer: View {
             }
         }
         .sheet(isPresented: $editingNote) {
-            if let session = current { NoteEditor(session: session).lgSheetCard() }
+            if let session = current { NoteEditor(session: session).lgSheetCard().lgAppLook() }
         }
         .onChange(of: sessions.count) { _, _ in
             if index == nil { dismiss() }

@@ -122,11 +122,11 @@ private struct BarCapsule: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .lgText(LGTextStyle(size: 15, weight: .semibold, relativeTo: .subheadline), color: navy ? .white : LGColor.ink)
+            .lgText(LGTextStyle(size: 15, weight: .semibold, relativeTo: .subheadline), color: navy ? LGColor.primaryLabel : LGColor.ink)
             .lineLimit(1)
             .padding(.horizontal, navy ? 18 : 16)
             .frame(minHeight: 40)
-            .background(navy ? LGColor.ink : LGColor.sidebar, in: Capsule())
+            .background(navy ? LGColor.primaryFill : LGColor.sidebar, in: Capsule())
             .opacity(configuration.isPressed ? 0.85 : 1)
             .contentShape(Capsule())
             .lgPointerLift()
