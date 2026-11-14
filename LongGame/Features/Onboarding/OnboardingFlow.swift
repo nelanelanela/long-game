@@ -133,11 +133,13 @@ struct OnboardingFlow: View {
                         push(after: .pace)
                     }
                 case .keepSafe:
-                    ICloudStepView(model: model, finishes: OnboardingSteps.next(after: .keepSafe, permission: permission) == nil) {
+                    ICloudStepView(model: model, finishes: OnboardingSteps.next(after: .keepSafe, permission: permission) == nil,
+                                   letterTotal: model.estimatedSoFar()) {
                         push(after: .keepSafe)
                     }
                 case .notifications:
-                    NotificationsStepView(craftName: model.craftName, onAnswer: answerNotifications)
+                    NotificationsStepView(craftName: model.craftName, letterTotal: model.estimatedSoFar(),
+                                          onAnswer: answerNotifications)
                 }
             }
             .lgHidesNavigationBar()

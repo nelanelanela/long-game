@@ -11,6 +11,11 @@ struct MilestoneCelebration: View {
     var onSupport: () -> Void = {}
     /// "See then and now": only when there is a pair of photos to show (nil hides the button).
     var onThenAndNow: (() -> Void)?
+    /// "Write to yourself at 4,000 hours": the next letter milestone (nil past 10,000 or with nothing to offer).
+    var letterTo: Int?
+    /// "Make a keepsake poster", at every 1,000 hours (nil hides it).
+    var onKeepsake: (() -> Void)?
+    var onWriteLetter: (Int) -> Void = { _ in }
     let onDone: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -73,6 +78,13 @@ struct MilestoneCelebration: View {
                         }
                         .scrollBounceBehavior(.basedOnSize)
                         Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
+                        if let letterTo {
+                            Button("Write to yourself at \(Letters.hoursName(letterTo))") { onWriteLetter(letterTo) }
+                                .buttonStyle(.lg(.secondary))
+                        }
+                        if let onKeepsake, hours % 1_000 == 0 {
+                            Button("Make a keepsake poster", action: onKeepsake).buttonStyle(.lg(.secondary))
+                        }
                         if let onThenAndNow {
                             Button("See then and now", action: onThenAndNow).buttonStyle(.lg(.secondary))
                         }

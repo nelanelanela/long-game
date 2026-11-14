@@ -33,6 +33,8 @@ struct ICloudStepView: View {
     @Bindable var model: OnboardingModel
     /// True when this step finishes onboarding.
     var finishes = false
+    /// The total setup has worked out, for "Write to yourself at 100 hours" on the last step.
+    var letterTotal: Double = 0
     /// Goes to step 6, or saves everything and opens Home when `finishes`.
     let onContinue: () -> Void
 
@@ -68,7 +70,16 @@ struct ICloudStepView: View {
             .padding(.horizontal, -24)
             Button(finishes ? "Start playing" : "Continue", action: onContinue).buttonStyle(.lg(.primary))
                 .padding(.top, 8)
-            LGBrandLine().padding(.top, 12)
+            // The last step offers the first letter: Home opens it after setup.
+            if finishes, let title = LetterOffer.title(total: letterTotal) {
+                Button(title) {
+                    UserDefaults.standard.set(true, forKey: LetterOffer.afterSetupKey)
+                    onContinue()
+                }
+                .buttonStyle(.lg(.text))
+                .padding(.top, 2)
+            }
+            LGBrandLine().padding(.top, finishes ? 4 : 12)
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 10)

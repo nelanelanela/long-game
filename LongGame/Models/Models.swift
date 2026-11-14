@@ -248,3 +248,30 @@ final class ActiveSession {
         return r
     }
 }
+
+/// A letter to your future self (update 49): written to the next milestone, sealed until the total gets there.
+/// Lives in the same store as the sessions, so it reaches iCloud only when sync is on. All values have defaults.
+@Model
+final class Letter {
+    var id: UUID = UUID()
+    var craftId: UUID = UUID()
+    var text: String = ""
+    var writtenAt: Date = Date()
+    /// The overall total when it was sealed.
+    var totalWhenWritten: Double = 0
+    /// The milestone it is for, in hours.
+    var milestone: Int = 0
+    /// When it was delivered; nil while sealed.
+    var openedAt: Date?
+
+    init(craftId: UUID, text: String, writtenAt: Date = Date(), totalWhenWritten: Double, milestone: Int) {
+        self.craftId = craftId
+        self.text = text
+        self.writtenAt = writtenAt
+        self.totalWhenWritten = totalWhenWritten
+        self.milestone = milestone
+    }
+
+    var isSealed: Bool { openedAt == nil }
+    var item: Letters.Item { Letters.Item(id: id, milestone: milestone, totalWhenWritten: totalWhenWritten, openedAt: openedAt) }
+}

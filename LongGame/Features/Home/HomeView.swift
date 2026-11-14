@@ -17,6 +17,11 @@ private enum HomeSheet: Identifiable {
     case lookBack(WeekLookBack), editPace
     /// The target screen as a sheet: a new year of pace, or the first target for an older game.
     case target(first: Bool)
+    /// A letter to your future self, to this milestone; and a sealed one, from The long game.
+    case writeLetter(Int)
+    case sealedLetter
+    /// The keepsake poster for these hours.
+    case keepsake(Int)
 
     var id: String {
         switch self {
@@ -26,6 +31,9 @@ private enum HomeSheet: Identifiable {
         case .lookBack: "lookBack"
         case .editPace: "editPace"
         case .target: "target"
+        case .writeLetter(let m): "letter-\(m)"
+        case .sealedLetter: "sealedLetter"
+        case .keepsake(let h): "keepsake-\(h)"
         }
     }
 }
@@ -37,6 +45,12 @@ struct HomeView: View {
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
     @Query private var targetPeriods: [TargetPeriod]
+    @Query private var letters: [Letter]
+    /// A letter brought back at its milestone, and at 10,000 hours all of them together.
+    @State private var deliveringLetter: Letter?
+    @State private var showAllLetters = false
+    /// Rewrite: the sealed letter the new one replaces once it is sealed.
+    @State private var letterReplacing: Letter?
     @Environment(\.modelContext) private var context
     @Environment(TimerStore.self) private var timer
     @Environment(\.scenePhase) private var scenePhase
@@ -118,6 +132,7 @@ struct HomeView: View {
         let id = craft.id
         _sessions = Query(filter: #Predicate<Session> { $0.craftId == id }, sort: \Session.start, order: .reverse)
         _estimates = Query(filter: #Predicate<YearEstimate> { $0.craftId == id })
+        _letters = Query(filter: #Predicate<Letter> { $0.craftId == id }, sort: \Letter.milestone)
     }
 
     private var weekStart: WeekStart { settingsRows.first?.weekStart ?? .localeDefault }
@@ -227,7 +242,8 @@ struct HomeView: View {
             showFutureSelfOnce()
             showTargetSheetOnce()
             syncIconQuietly(total: s.total)
-            checkMilestones(total: s.total)
+            if !checkMilestones(total: s.total) { checkLetters(total: s.total) }
+            openLetterAfterSetup(total: s.total)
             refreshNotifications()
             scheduleMilestoneNotification()
             checkCatchUp(summary: s)
@@ -261,12 +277,20 @@ struct HomeView: View {
                 // The timer plays its own save feeling; Add past hours and Catch up play theirs here.
                 if !showTimer && !celebrates { playAddedHaptic(created: undo ?? [], figures: figures) }
             }
+            // A letter reached without a celebration (2,000, 3,000 …) arrives once the save has settled.
+            if !celebrates && total > old {
+                Task { try? await Task.sleep(for: .seconds(2)); checkLetters(total: summary(now: Date()).total) }
+            }
         }
         // Back from Settings (the debug buttons there can ask for the look-back or an anniversary).
         .onChange(of: showSettings) { _, open in
             guard !open else { return }
             refreshAnniversary()
-            Task { try? await Task.sleep(for: .seconds(0.6)); checkLookBack(summary: summary(now: Date())) }
+            Task {
+                try? await Task.sleep(for: .seconds(0.6))
+                checkLookBack(summary: summary(now: Date()))
+                if !checkMilestones(total: summary(now: Date()).total) { checkLetters(total: summary(now: Date()).total) }
+            }
         }
         // The new total can arrive just after Add past hours, Catch up or the Timer has closed: keep the "added"
         // toast's door open for a moment after each.
@@ -290,6 +314,15 @@ struct HomeView: View {
                                      iconGrows: settingsRows.first?.iconGrows ?? true,
                                      onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
                                      onThenAndNow: thenAndNowAction(hours: hours),
+                                     letterTo: Letters.next(after: summary(now: Date()).total),
+                                     onKeepsake: {
+                                         celebrationDone(hours: hours)
+                                         Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .keepsake(hours) }
+                                     },
+                                     onWriteLetter: { next in
+                                         celebrationDone(hours: hours)
+                                         Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .writeLetter(next) }
+                                     },
                                      onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)
                     // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
@@ -298,6 +331,19 @@ struct HomeView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: celebrating)
         .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.25), value: toast)
+        .fullScreenCover(item: $deliveringLetter, onDismiss: { checkLetters(total: summary(now: Date()).total) }) { letter in
+            LetterDeliveredView(letter: letter, next: Letters.next(after: Double(letter.milestone)),
+                                onWriteNext: {
+                                    deliveringLetter = nil
+                                    if let next = Letters.next(after: summary(now: Date()).total) {
+                                        Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .writeLetter(next) }
+                                    }
+                                },
+                                onClose: { deliveringLetter = nil })
+        }
+        .fullScreenCover(isPresented: $showAllLetters) {
+            YourLettersView(title: "All your letters", showsClose: true)
+        }
         .sheet(item: $editingSession, onDismiss: sheetClosed) { session in
             SessionFormView(craft: craft, sessions: sessions, editing: session)
                 .lgSheetCard()
@@ -329,6 +375,20 @@ struct HomeView: View {
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
                                  initial: first ? nil : target?.hoursPerWeek,
                                  actualPace: s.pace, onSave: saveTarget)
+            case .writeLetter(let milestone):
+                LetterWriteSheet(craft: craft, milestone: milestone, total: s.total, weeklyHours: target?.hoursPerWeek,
+                                 replacing: letterReplacing, onDone: { letterReplacing = nil })
+            case .keepsake(let hours):
+                if let content = KeepsakePoster.Content.make(hours: hours, craft: craft, sessions: Array(sessions), estimates: Array(estimates)) {
+                    KeepsakeSheet(content: content)
+                }
+            case .sealedLetter:
+                if let sealed = sealedLetter {
+                    SealedLetterSheet(letter: sealed) {
+                        letterReplacing = sealed
+                        Task { try? await Task.sleep(for: .seconds(0.5)); sheet = .writeLetter(sealed.milestone) }
+                    }
+                }
             }
             }
             .lgSheetCard()
@@ -1006,6 +1066,8 @@ struct HomeView: View {
                 Text(craft.name).lgText(.screenTitle, color: dark ? .white : LGColor.ink)
                     .lineLimit(1).minimumScaleFactor(0.6)
                     .accessibilityAddTraits(.isHeader)
+                    // Under the milestone celebration the title is out of reach too (it sits in iOS 26's bar layer).
+                    .accessibilityHidden(celebrating != nil)
             }
             Spacer()
             headerButtons(paired: paired)
@@ -1096,7 +1158,98 @@ struct HomeView: View {
                 .padding(.top, 16)
             yearRow(f)
             futureSelfRow
+            letterRow(total: f.total)
+            yourLettersRow
         }
+    }
+
+    /// The sealed letter for this craft, if one is waiting.
+    private var sealedLetter: Letter? { letters.first(where: \.isSealed) }
+
+    /// "A letter to your future self · For you at 4,000 hours", or once sealed "A letter is waiting · Opens at …".
+    @ViewBuilder
+    private func letterRow(total: Double) -> some View {
+        let sealed = sealedLetter
+        let next = Letters.next(after: total)
+        if sealed != nil || next != nil {
+            Button {
+                if sealed != nil { sheet = .sealedLetter } else if let next { sheet = .writeLetter(next) }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: sealed != nil ? "envelope.fill" : "envelope")
+                        .lgIcon(18, weight: .regular)
+                        .foregroundStyle(LGColor.amber)
+                        .frame(width: 40, height: 40)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let sealed {
+                            Text("A letter is waiting").lgText(.rowStrong)
+                            Text(verbatim: LetterText.waitingLine(sealed)).lgText(.caption, color: LGColor.inkMuted)
+                        } else if let next {
+                            Text("A letter to your future self").lgText(.rowStrong)
+                            Text("For you at \(Letters.hoursName(next))").lgText(.caption, color: LGColor.inkMuted)
+                        }
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
+                        .foregroundStyle(LGColor.inkMuted).accessibilityHidden(true)
+                }
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        }
+    }
+
+    /// "Your letters", once one has been opened.
+    @ViewBuilder
+    private var yourLettersRow: some View {
+        let opened = letters.filter { !$0.isSealed }.count
+        if opened > 0 {
+            NavigationLink { YourLettersView() } label: {
+                HStack {
+                    Text("Your letters").lgText(.rowStrong)
+                    Spacer()
+                    Text(verbatim: DurationFormat.grouped(opened)).lgText(.row, color: LGColor.inkMuted)
+                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
+                        .foregroundStyle(LGColor.inkMuted).accessibilityHidden(true)
+                }
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        }
+    }
+
+    /// A sealed letter whose milestone has been reached: delivered once, right after any celebration. At 10,000 hours
+    /// every letter is shown together instead.
+    private func checkLetters(total: Double) {
+        guard celebrating == nil, sheet == nil, !showTimer, deliveringLetter == nil, !showAllLetters,
+              editingSession == nil, catchUpGap == nil else { return }
+        let due = Letters.due(letters.map(\.item), total: total)
+        guard let first = due.first, let letter = letters.first(where: { $0.id == first.id }) else { return }
+        let now = Date()
+        if due.contains(where: { $0.milestone >= 10_000 }) {
+            for d in due { letters.first { $0.id == d.id }?.openedAt = now }
+            try? context.save()
+            Haptics.play(.letterDelivered)
+            showAllLetters = true
+        } else {
+            letter.openedAt = now
+            try? context.save()
+            deliveringLetter = letter
+        }
+    }
+
+    /// "Write to yourself at 100 hours" at the end of setup: the letter sheet opens on Home, once.
+    private func openLetterAfterSetup(total: Double) {
+        guard UserDefaults.standard.bool(forKey: LetterOffer.afterSetupKey) else { return }
+        UserDefaults.standard.removeObject(forKey: LetterOffer.afterSetupKey)
+        guard let next = Letters.next(after: total) else { return }
+        Task { try? await Task.sleep(for: .seconds(0.8)); if sheet == nil { sheet = .writeLetter(next) } }
     }
 
     /// From 1 December to 15 January only: the year card, under "Meet your future self". No notification.
@@ -1316,6 +1469,11 @@ struct HomeView: View {
     private func celebrationDone(hours: Int) {
         celebrating = nil
         iconHeld = false
+        // A letter waiting at this milestone comes right after the celebration.
+        Task {
+            try? await Task.sleep(for: .seconds(0.5))
+            checkLetters(total: summary(now: Date()).total)
+        }
         guard let settings = settingsRows.first else { return }
         let total = summary(now: Date()).total
         if let stage = IconPlan.afterCelebration(hours: hours, totalHours: total, growsWithYou: settings.iconGrows,
@@ -1328,6 +1486,7 @@ struct HomeView: View {
     /// the saved session crossed, and that has no celebration, changes the icon now, over Home.
     private func sheetClosed() {
         syncIconQuietly(total: summary(now: Date()).total)
+        if celebrating == nil { checkLetters(total: summary(now: Date()).total) }
     }
 
     /// On launch, on return to the foreground and when Home first appears: set the right icon once, quietly.

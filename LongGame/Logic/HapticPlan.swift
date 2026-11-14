@@ -17,17 +17,17 @@ enum HapticPattern: Int, Comparable, Sendable {
 }
 
 enum HapticMoment: Equatable, Sendable {
-    case rayLit, sessionSaved, timeAdded, undo, thanks, copied
+    case rayLit, sessionSaved, timeAdded, undo, thanks, copied, letterSealed
     case stretchCovered
-    case hourMilestone, weeklyPaceReached, tenThousand
+    case hourMilestone, weeklyPaceReached, tenThousand, letterDelivered
     case stepper, crown, growthMilestone, tabSwitch, scrub
     case error, deleted, paused, stepperLimit
 
     var pattern: HapticPattern {
         switch self {
-        case .rayLit, .sessionSaved, .timeAdded, .undo, .thanks, .copied: .softTap
+        case .rayLit, .sessionSaved, .timeAdded, .undo, .thanks, .copied, .letterSealed: .softTap
         case .stretchCovered: .twoTaps
-        case .hourMilestone, .weeklyPaceReached, .tenThousand: .risingThree
+        case .hourMilestone, .weeklyPaceReached, .tenThousand, .letterDelivered: .risingThree
         case .stepper, .crown, .growthMilestone, .tabSwitch, .scrub: .tick
         case .error, .deleted, .paused, .stepperLimit: .none
         }

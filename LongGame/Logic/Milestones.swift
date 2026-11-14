@@ -98,6 +98,31 @@ enum CSVExport {
         var note: String
     }
 
+    /// A letter in the export. A sealed letter's text stays sealed here too.
+    struct LetterRow {
+        var craft: String
+        var written: Date
+        var milestone: Int
+        var opened: Date?
+        var text: String
+    }
+
+    /// `Craft,Written,For,Opened,Letter`: the letters, a second file next to the sessions.
+    static func letters(_ rows: [LetterRow], calendar: Calendar = .current) -> String {
+        let day = DateFormatter()
+        day.calendar = calendar
+        day.timeZone = calendar.timeZone
+        day.locale = Locale(identifier: "en_GB")
+        day.dateFormat = "yyyy-MM-dd"
+        var lines = ["Craft,Written,For,Opened,Letter"]
+        for r in rows.sorted(by: { $0.written < $1.written }) {
+            let text = r.opened == nil ? "(sealed until \(r.milestone) h)" : r.text
+            lines.append([escape(r.craft), day.string(from: r.written), "\(r.milestone) h",
+                          r.opened.map { day.string(from: $0) } ?? "", escape(text)].joined(separator: ","))
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
+
     static func escape(_ field: String) -> String {
         guard field.contains(where: { [",", "\"", "\n", "\r"].contains($0) }) else { return field }
         return "\"" + field.replacingOccurrences(of: "\"", with: "\"\"") + "\""

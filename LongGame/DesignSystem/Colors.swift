@@ -115,6 +115,8 @@ enum LGColor {
     static let peachTile = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// The anniversary pill under Home's number.
     static let anniversaryPill = Color(light: 0xFFF1DA, dark: 0x2A2440)
+    /// A letter's paper and the sealed envelope (update 49).
+    static let letterPaper = Color(light: 0xFFFDF8, dark: 0x1C2446)
     /// The Finish sheet's "A long one" card.
     static let longSessionCard = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// The Undo pill inside Home's navy toast: a slightly lighter navy.
