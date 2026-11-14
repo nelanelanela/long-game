@@ -47,7 +47,7 @@ enum KnownFalseAlarms {
         // 6. Words scrolled under the pinned buttons at the bottom of Home, the intro pages, Welcome and setup steps
         //    1 and 3. Those pages scroll and the buttons sit on a soft fade on purpose; scrolled into view, the same
         //    words measure 5:1 or more.
-        let pinned = ["Home ·", "Intro", "Welcome", "Setup 1", "Setup 3"].contains(where: screen.hasPrefix)
+        let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 3"].contains(where: screen.hasPrefix)
         if issue.auditType == .contrast || issue.auditType == .textClipped, pinned, element.elementType == .staticText,
            frame.minY >= 700 {
             return true
@@ -76,6 +76,12 @@ enum KnownFalseAlarms {
         // 10. "BY WE HAVE SUN" under the buttons. It does grow with the text size (it is set relative to Caption 2;
         //     see the AX XXXL screenshots); the audit expects it to grow as fast as body text.
         if issue.auditType == .dynamicType, label.uppercased() == "BY WE HAVE SUN" {
+            return true
+        }
+
+        // 11. Undo in the "added" toast: gold #FFD66B on the navy pill measures 7.2:1. The audit samples the pill's
+        //     translucent layer.
+        if issue.auditType == .contrast, label == "Undo" {
             return true
         }
 
