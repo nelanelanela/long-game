@@ -109,9 +109,6 @@
     "%@ years since you started." : {
 
     },
-    "%@ · %@" : {
-
-    },
     "%@, %@ extra today." : {
       "localizations" : {
         "en" : {
@@ -260,10 +257,10 @@
     "Add hours" : {
 
     },
-    "Afternoon" : {
+    "afternoon" : {
 
     },
-    "afternoon" : {
+    "Afternoon" : {
 
     },
     "Afternoons" : {
@@ -317,10 +314,10 @@
     "Estimate" : {
 
     },
-    "Evening" : {
+    "evening" : {
 
     },
-    "evening" : {
+    "Evening" : {
 
     },
     "Evenings" : {
@@ -401,19 +398,19 @@
     "Milestone reached · estimate" : {
 
     },
-    "Morning" : {
+    "morning" : {
 
     },
-    "morning" : {
+    "Morning" : {
 
     },
     "Mornings" : {
 
     },
-    "Night" : {
+    "night" : {
 
     },
-    "night" : {
+    "Night" : {
 
     },
     "Nights" : {
@@ -461,9 +458,6 @@
     "On top of your chosen pace of %@ h a week." : {
 
     },
-    "Open Long Game once to choose your craft, then try again." : {
-
-    },
     "Open Long Game to choose your craft, then try again." : {
 
     },
@@ -474,9 +468,6 @@
 
     },
     "Pause" : {
-
-    },
-    "Pause or resume" : {
 
     },
     "Pause session" : {
@@ -568,9 +559,6 @@
     "some" : {
 
     },
-    "Start playing" : {
-
-    },
     "Start playing a craft" : {
 
     },
@@ -580,13 +568,7 @@
     "Started on %@" : {
 
     },
-    "Started playing %@." : {
-
-    },
     "Starts a session for your craft by name." : {
-
-    },
-    "Starts a session for your craft." : {
 
     },
     "Starts the timer for your craft." : {
@@ -705,9 +687,6 @@
     "View" : {
 
     },
-    "You are already playing %@." : {
-
-    },
     "You crossed the finish line on %@" : {
 
     },
@@ -741,9 +720,6 @@
 
     },
     "your weekly target" : {
-
-    },
-    "z" : {
 
     }
   },

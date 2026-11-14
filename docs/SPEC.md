@@ -754,6 +754,32 @@ One language, played through `Haptics` (DesignSystem) with each moment named by 
 - Never two at once: moments within 0.04 s of each other play only the strongest (risingThree, then twoTaps, then softTap, then tick). A save that reaches an hour milestone stays quiet itself: the celebration on Home plays risingThree.
 - iOS plays nothing when System Haptics is off. The Watch plays on the wrist while its own screens are up (its timer, Add time). Widgets and the Live Activity stay silent.
 
+## Then and now (update 48, `design/redesign/ThenAndNow.dc.html`)
+
+An early session photo next to a recent one, made only from sessions already saved.
+
+- **When:** at least two session photos 90 days or more apart. Then is the earliest photo, Now the latest (`ThenAndNow.pair(photos:chosen:)`). A pair chosen with Choose other photos (two session ids in `AppSettings`) is kept until one of them is deleted, then it falls back to earliest and latest.
+- **Where:** History › Growth, a row above "Your 2026" ("Then and now · Your first photo next to your latest"), hidden without a pair; and **See then and now** (secondary) on the milestone celebration when a pair exists. (The celebration has no Share this moment yet: update 42 is not built, so the button sits under Keep playing.)
+- **Screen:** back chevron, "Then and now"; a small sun with open eyes, **Look how far.**, "984 hours of piano between these two." (the difference between the overall totals at the end of the two sessions, craft in lower case). Two white cards tilted −1.5° and +1.2° (still, whatever Reduce Motion): photo (aspect fill, radius 10) with a Then / Now pill, the date in the person's format and "at 2,310 h", the note on one line. Between them a navy pill in gold: "2 years 8 months later" (under a year months, under two months weeks, under a week days). Share (primary) makes a 1080 × 1920 image with the year card's rendering and footer, no notes. Choose other photos (text button) opens a grid by year: pick Then, then a later Now. Tapping a photo opens the photo viewer.
+- **Accessibility:** each card is one element ("Then. 12 March 2024, at 2,310 hours. First try at the nocturne. Photo."); the pill reads as its words; at the accessibility sizes the page scrolls and the date and hours stack.
+
+## The sun remembers (update 48, `design/redesign/SunRemembers.dc.html`)
+
+A small, rare line on Home from the person's own history (`Memories.today(...)`, at most one).
+
+| Memory | Text | When |
+|---|---|---|
+| Your first day | "Three years ago today, you played your first session here." | Anniversary of the first session logged in the app |
+| A photo's anniversary | "Two years ago today, you took this photo." (with its thumbnail) | A session photo on this date in an earlier year (most recent) |
+| A year ago today | "A year ago today, you played 20 m." · after today's first session "… Today, 1 h 05." | Sessions on this date in an earlier year (most recent); after today's first session only when today is equal or more |
+| The same month, a year on | "Last November: 18 h. This November so far: 22 h." | From the 10th, when this month already beats all of last year's (at least 1 h last year) |
+| Your day of the week | "Thursdays are your day. 31 of them so far." | Today's weekday has the most days played, at least 10, at least 2 ahead |
+
+- Preference in that order. A 29 February is remembered on 28 February in other years. Days use the person's calendar and time zone.
+- **How often:** at most one memory day in any 7 (`AppSettings.lastMemoryDay`; the day it shows keeps it all day). Never with an anniversary pill or an hour milestone that day, never in the first month after the first session, never a comparison where today is lower.
+- **Home:** one card under Today's number and quiet line: peach (`anniversaryPill`), radius 14, opening words in ember bold, optional 40 pt photo, small chevron. The sun winks once on the first open that day. A tap opens that day in History (or the photo). No notification, sound or haptic.
+- **Settings:** in Sounds, under Giggle sound, **The sun remembers** (on by default), "Now and then, a memory from your own history".
+
 ## Visual system
 
 Simple, flat and calm: warm-white background, flat white cards only where content needs grouping, navy text, one smiling sun. One primary action per screen; secondary actions are text buttons. No decorative icons next to labels.

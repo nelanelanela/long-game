@@ -7,46 +7,22 @@
     " " : {
 
     },
-    "%@ %@, the longest day" : {
+    "%@ are your day." : {
 
     },
-    "%@ added" : {
+    "%@ years ago today," : {
 
     },
-    "%@ h · finish line %@" : {
+    "%@, at %@ hours" : {
 
     },
-    "%@ months since you started." : {
+    "%@. This %@ so far: %@." : {
 
     },
-    "%@ more than the week before." : {
+    "%@s" : {
 
     },
-    "%@ of %@" : {
-
-    },
-    "%@ rest" : {
-
-    },
-    "%@ years since you started." : {
-
-    },
-    "%@ · questions, ideas, bugs" : {
-
-    },
-    "%@, %@. Last %@, %@." : {
-
-    },
-    "%@. Sunrise is coming." : {
-
-    },
-    "%@. The sun has fully risen." : {
-
-    },
-    "%lld days of practice." : {
-
-    },
-    "%lld of 7" : {
+    "%lld of them so far." : {
 
     },
     "%lld%% · phase %lld" : {
@@ -55,25 +31,46 @@
     "100 days of practice" : {
 
     },
-    "A long one. Did the timer keep running?" : {
+    "^[%lld day](inflect: true) later" : {
 
     },
-    "A moment from %@ %@" : {
+    "^[%lld hour](inflect: true) between these two" : {
+
+    },
+    "^[%lld hour](inflect: true) of %@ between these two." : {
+
+    },
+    "^[%lld month](inflect: true) later" : {
+
+    },
+    "^[%lld week](inflect: true) later" : {
+
+    },
+    "^[%lld year](inflect: true) ^[%lld month](inflect: true) later" : {
+
+    },
+    "^[%lld year](inflect: true) later" : {
+
+    },
+    "A later photo than Then." : {
 
     },
     "A month since you started" : {
 
     },
-    "A month since you started." : {
+    "A photo's anniversary" : {
+
+    },
+    "A year ago today" : {
+
+    },
+    "A year ago today," : {
 
     },
     "A year since you started" : {
 
     },
-    "A year since you started." : {
-
-    },
-    "Add time" : {
+    "Add sample photos two years apart" : {
 
     },
     "Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later." : {
@@ -82,37 +79,25 @@
     "Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions." : {
 
     },
-    "afternoon" : {
+    "An early photo." : {
 
     },
-    "Afternoons" : {
+    "at %@ h" : {
 
     },
-    "Appearance" : {
-
-    },
-    "Automatic" : {
+    "Back" : {
 
     },
     "Back on Home the sheet opens by itself, as it does the first time after onboarding." : {
 
     },
-    "Before you began. These hours add to your starting score, on top of your estimates." : {
+    "Choose Now" : {
 
     },
-    "Begin a session" : {
+    "Choose other photos" : {
 
     },
-    "Begin or pause a session" : {
-
-    },
-    "Change my pace" : {
-
-    },
-    "Dark" : {
-
-    },
-    "Days played" : {
+    "Choose Then" : {
 
     },
     "Debug only" : {
@@ -127,15 +112,6 @@
     "Deletes all data and starts again from Welcome, with the three intro pages." : {
 
     },
-    "Email address copied" : {
-
-    },
-    "evening" : {
-
-    },
-    "Evenings" : {
-
-    },
     "Fake an anniversary on Home" : {
 
     },
@@ -145,100 +121,37 @@
     "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
 
     },
-    "Help" : {
+    "Force a memory on Home" : {
 
     },
     "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
 
     },
-    "I practised, let me add it" : {
-
-    },
-    "I took a break" : {
-
-    },
     "Jump total to just under a whole hour" : {
 
     },
-    "Keep %@" : {
+    "Last %@:" : {
 
     },
-    "LAST WEEK" : {
-
-    },
-    "Last week" : {
-
-    },
-    "Last week, day by day: %@." : {
-
-    },
-    "Light" : {
-
-    },
-    "Longest day" : {
-
-    },
-    "Look" : {
-
-    },
-    "morning" : {
-
-    },
-    "Mornings" : {
-
-    },
-    "Mostly" : {
+    "Look how far." : {
 
     },
     "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {
 
     },
-    "night" : {
-
-    },
-    "Nights" : {
-
-    },
-    "No session is running." : {
-
-    },
     "None (the real one)" : {
 
     },
-    "Not set" : {
+    "Now" : {
 
     },
-    "not yet" : {
+    "Now and then, a memory from your own history" : {
 
     },
-    "of your %@ h pace" : {
-
-    },
-    "Open Long Game to choose your craft, then try again." : {
-
-    },
-    "Open Long Game to choose your craft." : {
-
-    },
-    "Opens the Growth chart" : {
-
-    },
-    "Opens the session" : {
-
-    },
-    "Pause session" : {
-
-    },
-    "Paused." : {
-
-    },
-    "Pauses the running session, or resumes it if it's paused." : {
+    "Opens that day in History" : {
 
     },
     "Play opening sunrise" : {
-
-    },
-    "Playing" : {
 
     },
     "Pretend last session was %@ ago" : {
@@ -247,13 +160,13 @@
     "Remove the sample year" : {
 
     },
-    "Removed." : {
-
-    },
     "Reset onboarding" : {
 
     },
     "Reset onboarding?" : {
+
+    },
+    "See then and now" : {
 
     },
     "Show Meet your future self again" : {
@@ -268,37 +181,28 @@
     "Start a session that began 3 h 12 m ago" : {
 
     },
-    "Start the week" : {
+    "The same month, a year on" : {
 
     },
-    "Started %@. Enjoy it." : {
+    "The sun remembers" : {
 
     },
-    "Starts the timer for your craft." : {
+    "The sun remembers: Home shows this memory today, ignoring the once-a-week rule. A photo's anniversary uses one of your photos." : {
 
     },
-    "The sun waited for you. Your %@ hours are all here." : {
+    "Then" : {
 
     },
-    "This week: %@ h, about %@ a day." : {
+    "Then and now" : {
+
+    },
+    "Then and now · %@" : {
+
+    },
+    "Two sessions with a photo and a note: one 2 years 8 months ago, one yesterday. History → Growth → Then and now then appears. Remove the sample year deletes them too." : {
 
     },
     "Two years since you started" : {
-
-    },
-    "Undo" : {
-
-    },
-    "Use %@" : {
-
-    },
-    "Weekly pace" : {
-
-    },
-    "Welcome back." : {
-
-    },
-    "Write to us" : {
 
     },
     "Year of pace ended yesterday" : {
@@ -307,61 +211,40 @@
     "Year of pace ends in 10 days" : {
 
     },
-    "You started on %@, %@." : {
+    "you played %@." : {
 
     },
-    "Your %@th session." : {
+    "you played %@. Today, %@." : {
+
+    },
+    "you played your first session here." : {
+
+    },
+    "you took this photo." : {
 
     },
     "Your 100th session" : {
 
     },
-    "Your game" : {
+    "Your day of the week" : {
 
     },
-    "Your last session was on %@, %@." : {
+    "Your first day" : {
 
     },
-    "Your session is already running." : {
-
-    },
-    "Your sessions are usually about %@." : {
-
-    },
-    "“1,000 hours of %@. Sunrise is coming.”" : {
-
-    },
-    "A gentle nudge" : {
-
-    },
-    "A long-session check" : {
-
-    },
-    "Allow notifications" : {
-
-    },
-    "Long Game can send you a few quiet notifications. Never ads, never streaks." : {
-
-    },
-    "Milestones" : {
-
-    },
-    "Notifications are off for Long Game in iPhone Settings" : {
-
-    },
-    "Open Settings" : {
-
-    },
-    "“Still practising?” after 4 hours, so a forgotten timer doesn’t count." : {
-
-    },
-    "Your session on the Lock Screen shows either way. Change your mind any time in Settings." : {
+    "Your first photo next to your latest" : {
 
     },
     "–" : {
 
     },
     "“%@” will be your craft." : {
+
+    },
+    "“1,000 hours of %@. Sunrise is coming.”" : {
+
+    },
+    "“Still practising?” after 4 hours, so a forgotten timer doesn’t count." : {
 
     },
     "%@" : {
@@ -383,6 +266,9 @@
     "%@ · milestone" : {
 
     },
+    "%@ · questions, ideas, bugs" : {
+
+    },
     "%@ · the long game" : {
 
     },
@@ -399,10 +285,19 @@
         }
       }
     },
-    "%@ added." : {
+    "%@ %@, the longest day" : {
+
+    },
+    "%@ added" : {
 
     },
     "%@ cache · never your photos" : {
+
+    },
+    "%@ extra" : {
+
+    },
+    "%@ extra today" : {
 
     },
     "%@ h" : {
@@ -418,6 +313,9 @@
         }
       }
     },
+    "%@ h · finish line %@" : {
+
+    },
     "%@ hours" : {
 
     },
@@ -428,6 +326,15 @@
 
     },
     "%@ left of today's stretch" : {
+
+    },
+    "%@ months since you started." : {
+
+    },
+    "%@ more than the week before." : {
+
+    },
+    "%@ of %@" : {
 
     },
     "%@ of %@ %@, %@ to go, %@." : {
@@ -480,7 +387,20 @@
         }
       }
     },
+    "%@ of %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@."
+          }
+        }
+      }
+    },
     "%@ of 10,000 h" : {
+
+    },
+    "%@ rest" : {
 
     },
     "%@ this session. %@." : {
@@ -513,6 +433,28 @@
         }
       }
     },
+    "%@ to go" : {
+
+    },
+    "%@ to go." : {
+
+    },
+    "%@ years since you started." : {
+
+    },
+    "%@, %@ extra today." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ extra today."
+          }
+        }
+      }
+    },
+    "%@, %@. Last %@, %@." : {
+
+    },
     "%@, not yet" : {
 
     },
@@ -530,6 +472,12 @@
       }
     },
     "%@. Rest day." : {
+
+    },
+    "%@. Sunrise is coming." : {
+
+    },
+    "%@. The sun has fully risen." : {
 
     },
     "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {
@@ -568,6 +516,9 @@
       }
     },
     "%lld days of practice" : {
+
+    },
+    "%lld days of practice." : {
 
     },
     "%lld days/wk" : {
@@ -685,6 +636,9 @@
           }
         }
       }
+    },
+    "%lld of 7" : {
+
     },
     "%lld photos · %@" : {
 
@@ -854,6 +808,9 @@
     "a full day" : {
 
     },
+    "A gentle nudge" : {
+
+    },
     "A golden hour" : {
 
     },
@@ -864,6 +821,18 @@
 
     },
     "A little, most days, beats a lot once in a while. That’s how hours turn into mastery." : {
+
+    },
+    "A long one. Did the timer keep running?" : {
+
+    },
+    "A long-session check" : {
+
+    },
+    "A moment from %@ %@" : {
+
+    },
+    "A month since you started." : {
 
     },
     "A new year of pace" : {
@@ -897,6 +866,9 @@
 
     },
     "A whole sunrise" : {
+
+    },
+    "A year since you started." : {
 
     },
     "about %@" : {
@@ -967,6 +939,9 @@
     "Add past hours" : {
 
     },
+    "Add time" : {
+
+    },
     "Added after a break" : {
 
     },
@@ -976,13 +951,25 @@
     "Adding" : {
 
     },
+    "afternoon" : {
+
+    },
     "Afternoon" : {
+
+    },
+    "Afternoons" : {
+
+    },
+    "Allow notifications" : {
 
     },
     "almost there" : {
 
     },
     "App icon grows with you" : {
+
+    },
+    "Appearance" : {
 
     },
     "Archive and replace" : {
@@ -1018,6 +1005,9 @@
     "At your chosen pace, you'll finish around" : {
 
     },
+    "Automatic" : {
+
+    },
     "Average hours per week" : {
 
     },
@@ -1030,7 +1020,16 @@
     "Back to Settings" : {
 
     },
+    "Before you began. These hours add to your starting score, on top of your estimates." : {
+
+    },
     "Begin" : {
+
+    },
+    "Begin a session" : {
+
+    },
+    "Begin or pause a session" : {
 
     },
     "By %@" : {
@@ -1046,6 +1045,9 @@
 
     },
     "Catch up" : {
+
+    },
+    "Change my pace" : {
 
     },
     "Change photo" : {
@@ -1099,10 +1101,16 @@
     "Daily reminder" : {
 
     },
+    "Dark" : {
+
+    },
     "Date" : {
 
     },
     "Day" : {
+
+    },
+    "Days played" : {
 
     },
     "Default pictures" : {
@@ -1156,7 +1164,13 @@
     "Discard this session?" : {
 
     },
+    "done" : {
+
+    },
     "Done" : {
+
+    },
+    "Done for today" : {
 
     },
     "Drag along the line" : {
@@ -1177,10 +1191,19 @@
     "Edit session" : {
 
     },
+    "Email address copied" : {
+
+    },
     "Estimate" : {
 
     },
+    "evening" : {
+
+    },
     "Evening" : {
+
+    },
+    "Evenings" : {
 
     },
     "Every hour you play shapes the person you’ll be at 10,000." : {
@@ -1264,6 +1287,9 @@
     "Has a photo." : {
 
     },
+    "Help" : {
+
+    },
     "History" : {
 
     },
@@ -1315,6 +1341,12 @@
     "How much did you play each week?" : {
 
     },
+    "I practised, let me add it" : {
+
+    },
+    "I took a break" : {
+
+    },
     "iCloud" : {
 
     },
@@ -1342,6 +1374,9 @@
     "just under %@" : {
 
     },
+    "Keep %@" : {
+
+    },
     "Keep going" : {
 
     },
@@ -1360,7 +1395,19 @@
     "Last synced %@" : {
 
     },
+    "Last week" : {
+
+    },
+    "LAST WEEK" : {
+
+    },
+    "Last week, day by day: %@." : {
+
+    },
     "Less" : {
+
+    },
+    "Light" : {
 
     },
     "Like buying a coffee" : {
@@ -1373,6 +1420,9 @@
 
     },
     "Long Game · the longest game, played in real life" : {
+
+    },
+    "Long Game can send you a few quiet notifications. Never ads, never streaks." : {
 
     },
     "Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with %@." : {
@@ -1391,6 +1441,12 @@
 
     },
     "Long-press a photo to swap it" : {
+
+    },
+    "Longest day" : {
+
+    },
+    "Look" : {
 
     },
     "Look of the card" : {
@@ -1412,6 +1468,9 @@
 
     },
     "Milestone reached · estimate" : {
+
+    },
+    "Milestones" : {
 
     },
     "Minimise" : {
@@ -1438,10 +1497,19 @@
     "More minutes" : {
 
     },
+    "morning" : {
+
+    },
     "Morning" : {
 
     },
+    "Mornings" : {
+
+    },
     "Most played" : {
+
+    },
+    "Mostly" : {
 
     },
     "My %@ · %@" : {
@@ -1459,10 +1527,19 @@
     "Next ray in %@" : {
 
     },
+    "night" : {
+
+    },
     "Night" : {
 
     },
+    "Nights" : {
+
+    },
     "No note" : {
+
+    },
+    "No session is running." : {
 
     },
     "No weekly pace yet" : {
@@ -1471,13 +1548,19 @@
     "No weekly target yet." : {
 
     },
-    "No, I took a break" : {
-
-    },
     "Not now" : {
 
     },
+    "Not set" : {
+
+    },
+    "not yet" : {
+
+    },
     "Nothing here. Crafts you replace are kept here to look back on." : {
+
+    },
+    "Notifications are off for Long Game in iPhone Settings" : {
 
     },
     "Now · %@" : {
@@ -1529,6 +1612,9 @@
     "of today's %@" : {
 
     },
+    "of your %@ h pace" : {
+
+    },
     "Off shows days and percent instead" : {
 
     },
@@ -1562,7 +1648,13 @@
     "Open full screen" : {
 
     },
-    "Open Long Game once to choose your craft, then try again." : {
+    "Open Long Game to choose your craft, then try again." : {
+
+    },
+    "Open Long Game to choose your craft." : {
+
+    },
+    "Open Settings" : {
 
     },
     "Open the app to begin." : {
@@ -1571,7 +1663,13 @@
     "Opens a short note about where your hours are heading" : {
 
     },
+    "Opens the Growth chart" : {
+
+    },
     "Opens the photo" : {
+
+    },
+    "Opens the session" : {
 
     },
     "Opens this day in History" : {
@@ -1612,10 +1710,19 @@
     "Pause or resume" : {
 
     },
+    "Pause session" : {
+
+    },
     "Paused" : {
 
     },
+    "Paused." : {
+
+    },
     "Paused. The sun is resting." : {
+
+    },
+    "Pauses the running session, or resumes it if it's paused." : {
 
     },
     "Photo" : {
@@ -1654,6 +1761,9 @@
     "played today" : {
 
     },
+    "Playing" : {
+
+    },
     "Plus" : {
 
     },
@@ -1682,6 +1792,9 @@
 
     },
     "Remove this picture?" : {
+
+    },
+    "Removed." : {
 
     },
     "Replace %@?" : {
@@ -1821,13 +1934,16 @@
     "Start the timer, or add your hours later. Each hour is a step. What matters most is to keep walking." : {
 
     },
+    "Start the week" : {
+
+    },
     "Started %@" : {
 
     },
-    "Started on %@" : {
+    "Started %@. Enjoy it." : {
 
     },
-    "Started playing %@." : {
+    "Started on %@" : {
 
     },
     "Starts a practice session" : {
@@ -1836,7 +1952,7 @@
     "Starts a session for your craft by name." : {
 
     },
-    "Starts a session for your craft." : {
+    "Starts the timer for your craft." : {
 
     },
     "Step %lld of %lld" : {
@@ -1949,6 +2065,9 @@
     "The sun over the sea" : {
 
     },
+    "The sun waited for you. Your %@ hours are all here." : {
+
+    },
     "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
 
     },
@@ -1993,6 +2112,9 @@
         }
       }
     },
+    "This week: %@ h, about %@ a day." : {
+
+    },
     "three quarters of the way" : {
 
     },
@@ -2036,6 +2158,9 @@
         }
       }
     },
+    "today's %@" : {
+
+    },
     "today's %@ · covered" : {
 
     },
@@ -2043,6 +2168,19 @@
 
     },
     "Today's stretch covered." : {
+
+    },
+    "Today's stretch, %@ of %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today's stretch, %1$@ of %2$@."
+          }
+        }
+      }
+    },
+    "Today's stretch, done for today." : {
 
     },
     "Total with your sessions" : {
@@ -2054,7 +2192,13 @@
     "Type a number" : {
 
     },
+    "Undo" : {
+
+    },
     "Up to date" : {
+
+    },
+    "Use %@" : {
 
     },
     "Use %lld h for the years after %@" : {
@@ -2079,10 +2223,13 @@
     "Week starts on" : {
 
     },
+    "Weekly pace" : {
+
+    },
     "Welcome back" : {
 
     },
-    "Welcome back!" : {
+    "Welcome back." : {
 
     },
     "What if I practise more?" : {
@@ -2121,16 +2268,13 @@
     "Why steady matters." : {
 
     },
+    "Write to us" : {
+
+    },
     "Year" : {
 
     },
     "Year of pace" : {
-
-    },
-    "Yes, let me add it" : {
-
-    },
-    "You are already playing %@." : {
 
     },
     "You can trim up to what you really practised." : {
@@ -2145,7 +2289,7 @@
     "You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone." : {
 
     },
-    "You started on %@ — that's %@. Did you practise since then?" : {
+    "You started on %@, %@." : {
 
     },
     "You're already playing at this pace" : {
@@ -2173,6 +2317,9 @@
         }
       }
     },
+    "Your %@th session." : {
+
+    },
     "Your actual pace" : {
 
     },
@@ -2188,13 +2335,25 @@
     "Your estimates" : {
 
     },
-    "Your last session was on %@ — that's %@. Did you practise since then?" : {
+    "Your game" : {
+
+    },
+    "Your last session was on %@, %@." : {
 
     },
     "Your pace for the year" : {
 
     },
     "Your photos" : {
+
+    },
+    "Your session is already running." : {
+
+    },
+    "Your session on the Lock Screen shows either way. Change your mind any time in Settings." : {
+
+    },
+    "Your sessions are usually about %@." : {
 
     },
     "Your starting score" : {
@@ -2212,65 +2371,8 @@
     "Your year" : {
 
     },
-    "z" : {
-
-    },
     "Zoom in or out" : {
 
-    },
-    "%@ to go" : {
-
-    },
-    "Done for today" : {
-
-    },
-    "%@ extra today" : {
-
-    },
-    "%@ extra" : {
-
-    },
-    "done" : {
-
-    },
-    "today's %@" : {
-
-    },
-    "Today's stretch, %@ of %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Today's stretch, %1$@ of %2$@."
-          }
-        }
-      }
-    },
-    "%@ to go." : {
-
-    },
-    "Today's stretch, done for today." : {
-
-    },
-    "%@, %@ extra today." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ extra today."
-          }
-        }
-      }
-    },
-    "%@ of %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ of %2$@."
-          }
-        }
-      }
     }
   },
   "version" : "1.0"

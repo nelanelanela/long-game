@@ -56,6 +56,8 @@
 		1070C32EAC7315141426FABD /* SessionIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B0C4A6E7B8367E5493C1AB /* SessionIntents.swift */; };
 		1071A11CBB2E41FB39600CD4 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAF1F301F0E605F61387B5A /* Haptics.swift */; };
 		1097655DAA6B394B63A6BE5D /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DBBF9A26035DE803E852B3 /* Format.swift */; };
+		10D39B707D6F50796C277556 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
+		10EA2E9A8D753F4BB51910F5 /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		110C760E6B26DEC4A379FE23 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC77651FD0C1022D8DFF364 /* Glass.swift */; };
 		129EB30777EB15BB46CCB827 /* GrowthScrubTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117B59E0BD5EA0B22FC03820 /* GrowthScrubTests.swift */; };
 		12AF84D308DE6EDFB4582F46 /* CatchUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAEF98F67F59C06E0E96E03 /* CatchUp.swift */; };
@@ -88,6 +90,7 @@
 		1BE4E24C9D3FF749583C2933 /* GrowthTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F02415FFF373AF9A128FD79 /* GrowthTab.swift */; };
 		1BF7E7F2921AD8AE82E546B9 /* WatchComplications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7196709448B98041C06A1C92 /* WatchComplications.swift */; };
 		1C4FEF36D8D1E29132B8EAA2 /* HomeGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC7B97C2565533549273A31 /* HomeGauge.swift */; };
+		1D02A32074736DA6A044E1D9 /* ThenAndNowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B9F0923041C639C78F490B /* ThenAndNowView.swift */; };
 		1D08E12FCB0845E8B4F6B363 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C6B8F89138DDBD022A383C /* WidgetSnapshot.swift */; };
 		1D1BDA8D49AAB29549568B2A /* giggle-2.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 3E3068FB7FCD1326469E3EDF /* giggle-2.m4a */; };
 		1D7878B32F8C63CC7D19A582 /* Water.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43824C0EB89F2251259C11A0 /* Water.swift */; };
@@ -118,6 +121,7 @@
 		245962C9BBBD3FCBE27AC54B /* DarkModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A08848A21739EB2B3A603A3 /* DarkModeTests.swift */; };
 		24B3803D732650187832ACD7 /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDF76B9E1AFBEE132791920 /* AppIconManager.swift */; };
 		25E56FE1D09B58B47A10EA10 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD91377C2AA549FCB27CEBFC /* AppAppearance.swift */; };
+		26187DFCD935A9A92CA64542 /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		266BA052AA591D2B25B749EF /* TimerMoments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FADE04FC791931D0B34E177 /* TimerMoments.swift */; };
 		267281AE5574996082B7D8FF /* IconStage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30276116E077074A11BE563 /* IconStage.swift */; };
 		2792C7D3066EF1251791816D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E89768B8727BAB49EB071EF /* Assets.xcassets */; };
@@ -183,6 +187,7 @@
 		3BFFAC51A64F381933378A73 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		3C934555B8D1C10B9CAF7277 /* SunriseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9BC38483A67A9DF4536A26 /* SunriseTests.swift */; };
 		3C9E5541EA64DA857DC806BB /* FutureSelfSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034BFFFAA734EDD10E76FAC6 /* FutureSelfSheet.swift */; };
+		3CF8B0FD64A11ACB7FC96607 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
 		3D18CCDFA08C4088362138B5 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12A984DCEDA178DE7119B40 /* SettingsView.swift */; };
 		3D20175905899F88B3E64D36 /* TimerCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB747EC1A3E0C365C0F08376 /* TimerCommands.swift */; };
 		3D6175F38A81E5965A8E0F59 /* TimerActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6966438B9164B8F428CF4A3 /* TimerActivity.swift */; };
@@ -220,6 +225,7 @@
 		48814BCE80D7FEFA43191717 /* NotePhotoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A030DB232D4E1D4BA81A2D /* NotePhotoRow.swift */; };
 		48E79BCD1AA62D193759F45B /* SessionPicture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4E77FE3BD0216875F7EB7B /* SessionPicture.swift */; };
 		49F6F0A327348EC3DD052743 /* SunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C376529B80B4C903039F615E /* SunView.swift */; };
+		4A1E98E73699BF644C48E42F /* StoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AAA00F6728C81706E18E47 /* StoryTests.swift */; };
 		4A2F11EE0B1633C4C7BA5303 /* TimerActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6966438B9164B8F428CF4A3 /* TimerActivity.swift */; };
 		4A529A993A5931197805C01A /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86E06BDBC8507B3E32237F2 /* LiveActivityManager.swift */; };
 		4A8FEE5C39FC74241C8948A1 /* GlassPreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */; };
@@ -266,6 +272,7 @@
 		5B9FC10EBF7B87078D027601 /* Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */; };
 		5BD7B92437662FBE7FCB6559 /* AppRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180144944789A61E483B9BA6 /* AppRoot.swift */; };
 		5BFBD6E409ACF81C0CC90E66 /* IPadFigures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3454BF5BCB5C6C1D2C09A56B /* IPadFigures.swift */; };
+		5C9F3F0AE0828250F311888C /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
 		5CCBF070E702CC5C4F2B2FA7 /* Anniversaries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957B30F47FB156B11E7457E2 /* Anniversaries.swift */; };
 		5CFE716122EABE14BBBE2929 /* FocusSettingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABCB669F894280D7A83F628 /* FocusSettingsCard.swift */; };
 		5CFF784D9CB37C484937BB30 /* SunriseMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */; };
@@ -284,6 +291,7 @@
 		6102802029A1783DC166F560 /* MenuBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6D54237CD97D56B76C4ED3 /* MenuBarTests.swift */; };
 		61B1D36484BDC0A2BA2B7E26 /* WatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E53F81FC9E8C23ED679BC8 /* WatchViews.swift */; };
 		61EA82FD2384B3AD59C78C19 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
+		6263620058084CFC2B1949B6 /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		6271FB6FF1B267FA1392DD78 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB10F8E126C34BEC2850AFA /* HistoryView.swift */; };
 		628C030E7C16F4CC3CFC221A /* WriteToUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC1E3992BC4F7FCDFB34EE3 /* WriteToUs.swift */; };
 		6321597323A6CB2CE1CAB4A1 /* Growth.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EC9E004501C0C951AEF83A /* Growth.swift */; };
@@ -294,6 +302,7 @@
 		65540D39119A2CEFF1C1286E /* ICloudTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638D5D0C78714564A3CF6877 /* ICloudTests.swift */; };
 		657A3890A3144022077D3166 /* SessionPictureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A1D6F0C3642672B3DD62B3 /* SessionPictureTests.swift */; };
 		6595A68E25C0D4D2C111C96F /* PhotoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543F41F73FB01EBACE156CED /* PhotoStorage.swift */; };
+		65BEFC4B23D4881EE54A6AC9 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
 		66625BA6F44EE3AC76BB860E /* KnownFalseAlarms.swift in Sources */ = {isa = PBXBuildFile; fileRef = E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */; };
 		66A337675FB857523898D619 /* FocusPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFFFAE7C5CB32584850AD4 /* FocusPlan.swift */; };
 		66EBD16611A6BD4F641E106C /* NotePhotoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D5D9CDB88627C30CEB4CA92 /* NotePhotoTests.swift */; };
@@ -332,6 +341,7 @@
 		72730E0B411E9CE3EABD9968 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD91377C2AA549FCB27CEBFC /* AppAppearance.swift */; };
 		72D5F0E7A07A9858CE7916FD /* SessionIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B0C4A6E7B8367E5493C1AB /* SessionIntents.swift */; };
 		72DAE160A53F0CBF981933F3 /* ActiveSessionLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6821D9F46CA004E80AC4ED28 /* ActiveSessionLogic.swift */; };
+		736DC139E033CEBF6CDA4236 /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		737D515CA75C613BB0EB8E93 /* ICloudLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D0475BCB8B474C298A86DA /* ICloudLogic.swift */; };
 		73E78ED0C562732863D96222 /* DarkModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A08848A21739EB2B3A603A3 /* DarkModeTests.swift */; };
 		740749A0B5E0D55050E198B7 /* WidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DBC944F7A3152CAA65BFB2 /* WidgetModel.swift */; };
@@ -351,6 +361,7 @@
 		7A81A02EA603613C1474C80A /* PhotoLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33715E74E177EF34031B5EC /* PhotoLibrary.swift */; };
 		7AF71E236C6E53A9AA78A49F /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */; };
 		7B149BA392D9933612B6DEEC /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAF1F301F0E605F61387B5A /* Haptics.swift */; };
+		7B350A634C6728905E394BB2 /* ThenAndNowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B9F0923041C639C78F490B /* ThenAndNowView.swift */; };
 		7B91EEF9CEE40725A7FC002C /* Water.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43824C0EB89F2251259C11A0 /* Water.swift */; };
 		7C561D55D488BD04586A042D /* WriteToUsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0238E72C408592D1F6CAD320 /* WriteToUsTests.swift */; };
 		7D5DFF86E17C29AC3413A486 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB675DC2617545CB3E70BFF /* Colors.swift */; };
@@ -368,6 +379,7 @@
 		83475DB7DACF922AC5CF9EC9 /* IconStage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30276116E077074A11BE563 /* IconStage.swift */; };
 		849BC284A3DC003612381364 /* YearCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369ABA0B3545E896705EE57 /* YearCardView.swift */; };
 		85404C22B095EDA4F9FD8CC6 /* WindowShapeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1756324EE988E1FC93CF1D7 /* WindowShapeTests.swift */; };
+		8655E3DA0D6E3506A452A3C2 /* MemoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F677F6802D4FED717F4D531 /* MemoryCard.swift */; };
 		86AB379DB025B7D96EE3D18B /* UndoSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = D105ACBA5F7E0ED5370C4FD3 /* UndoSave.swift */; };
 		86F11C0DA23FBB7B1068C18F /* YearScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 834B45AB23FE46948D78A6DE /* YearScreen.swift */; };
 		871718155AFCA7C6AAD56585 /* PhotoProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39076BB3A0DE32BAACE608B5 /* PhotoProcessing.swift */; };
@@ -411,6 +423,7 @@
 		93E9640D0E8517B3C4FF2CAD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2428438CD0D1453BADF1C087 /* Localizable.xcstrings */; };
 		940014BEF220642781BC7189 /* giggle-4.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F89D9922FAC602685500D771 /* giggle-4.m4a */; };
 		942A613EA4F9ABF961A16CFB /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25C749C7D371B6DF1E10DD /* LogicTests.swift */; };
+		946427BEB0F4313D04EB1DD2 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
 		951ADFF42830DE274CE27330 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		95E19996DA7D79BC0F4D5159 /* WriteToUsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CB79861B994E9CC67F7131 /* WriteToUsRow.swift */; };
 		96221B3C203620E0A3455769 /* HapticPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B6388CC8CF5632366662D /* HapticPlan.swift */; };
@@ -459,6 +472,7 @@
 		A7F1A8D78477D6DE26D47783 /* WeeklyTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00D5764DAEC9966CA01FB8A /* WeeklyTargetTests.swift */; };
 		A8327A107ACF8921EE6CEE6D /* TimerSunriseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9B1CB2CC13815622006555 /* TimerSunriseTests.swift */; };
 		A844C68C14700570E179CE41 /* TimerCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB747EC1A3E0C365C0F08376 /* TimerCommands.swift */; };
+		A88B8DD07556741F5DD1257A /* MemoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F677F6802D4FED717F4D531 /* MemoryCard.swift */; };
 		A8A8513B5E81CB2561BBB1E3 /* StartYearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108877712C3CCCFBF80126E2 /* StartYearView.swift */; };
 		A8CE563DF8B26807DBC24657 /* WriteToUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC1E3992BC4F7FCDFB34EE3 /* WriteToUs.swift */; };
 		A90CE9510937E7176D12B238 /* NotificationAskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A628F8E3D15524B3C44041DF /* NotificationAskTests.swift */; };
@@ -524,6 +538,7 @@
 		BFA72A5DC4256AC2F6F55F16 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22695377BBCF2B894F838BF6 /* WidgetBridge.swift */; };
 		BFDC9F91652C5220709FF05B /* TimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5773F1E7DF81F13522180A4F /* TimerTests.swift */; };
 		C0AE1728D50B1A2D80408148 /* ICloudStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8429316F295D4BF7263F4C /* ICloudStepView.swift */; };
+		C127F2ABEB6562E487615334 /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		C1856AEA17FECBD81FDEF352 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C52F8EC2F6DCB75E8DC2C2 /* HomeView.swift */; };
 		C1F5D92BB261CB90AA5C223C /* OpeningSunriseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC13482FBA76045F9C413945 /* OpeningSunriseTests.swift */; };
 		C2080C2B2261032E0F1513C9 /* Growth.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4EC9E004501C0C951AEF83A /* Growth.swift */; };
@@ -581,7 +596,9 @@
 		D6817691B4FC6FCDFA84AD8B /* TargetSaving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8618BC939DEAADEC109ABEE2 /* TargetSaving.swift */; };
 		D697FD375AF7807ACFD57D86 /* TipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8F3E10C8F5F08639D282458 /* TipTests.swift */; };
 		D6F4F2554D5E9952CC22283C /* WriteToUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC1E3992BC4F7FCDFB34EE3 /* WriteToUs.swift */; };
+		D726083BBAEB9406EE68291C /* Memories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498B58A725CCFCDA4FC52EDE /* Memories.swift */; };
 		D7C3C49D9401495231B21BA2 /* TodayStretch.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFFB6B3391DA3CC30262F77 /* TodayStretch.swift */; };
+		D85898C284D4AE39AA343DD8 /* StoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AAA00F6728C81706E18E47 /* StoryTests.swift */; };
 		D895F7D357058369F6332AFB /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137080755F58FBE8663118CC /* FlowLayout.swift */; };
 		D9B0F9D12B80412045715595 /* TodaySessionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77F4DD3099C67D39537C888 /* TodaySessionsTests.swift */; };
 		D9C6CF7B844085E90A93F676 /* PolishTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0DA036E644F90279B0F39B /* PolishTests.swift */; };
@@ -626,6 +643,7 @@
 		ED20E6ECBB9DA66988B9C521 /* DuoPreviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF45215EAA92228AC729A7C /* DuoPreviews.swift */; };
 		ED2727FEBC2E3A7B5B8BF1FF /* SessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADE0A24B1CD339FF51F1046 /* SessionFormView.swift */; };
 		ED2DCD1AAEC8C14E3AC63058 /* GrowthScrubTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117B59E0BD5EA0B22FC03820 /* GrowthScrubTests.swift */; };
+		ED83A7499C09E244E39D3432 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
 		EE3BC77BEEBA4E95036EFDC1 /* TimerSunriseLayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049B3A0A4B1E9A1976B3BA41 /* TimerSunriseLayers.swift */; };
 		EEE58C1833DC63C9E1A5A1AA /* TodayStretchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704AB4FF32AFDD1C4BBC8D17 /* TodayStretchTests.swift */; };
 		EF2AE4CE531CBB367404240C /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB10F8E126C34BEC2850AFA /* HistoryView.swift */; };
@@ -826,12 +844,14 @@
 		44D0CF1CDABEA1F2BC3196AA /* UsualSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsualSession.swift; sourceTree = "<group>"; };
 		4542D5F18123672681E86568 /* HoursSteppingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursSteppingTests.swift; sourceTree = "<group>"; };
 		4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunriseMotion.swift; sourceTree = "<group>"; };
+		46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThenAndNow.swift; sourceTree = "<group>"; };
 		46A1D6F0C3642672B3DD62B3 /* SessionPictureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPictureTests.swift; sourceTree = "<group>"; };
 		46A2C62FBAD6F6AB1933FF9D /* Forecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forecast.swift; sourceTree = "<group>"; };
 		46B97B0E389ECC0050CBBF09 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
 		47D8FAA37F0A651882F1D77B /* CSVImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVImport.swift; sourceTree = "<group>"; };
 		480213F17CA1F530062D7B2E /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 		48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassPreviews.swift; sourceTree = "<group>"; };
+		498B58A725CCFCDA4FC52EDE /* Memories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memories.swift; sourceTree = "<group>"; };
 		4FADE04FC791931D0B34E177 /* TimerMoments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerMoments.swift; sourceTree = "<group>"; };
 		50FF530C05A78ABB8CA96C97 /* QuickerLoggingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickerLoggingTests.swift; sourceTree = "<group>"; };
 		533A6C340A10D0233C361798 /* PhotoViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViews.swift; sourceTree = "<group>"; };
@@ -911,6 +931,7 @@
 		9DB48346358AD922DA94D16D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9F4999DC1C22FCC8CF3B000F /* CountingTotal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountingTotal.swift; sourceTree = "<group>"; };
 		9F5C93503A04583AD8A77E27 /* FeelingProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelingProgressTests.swift; sourceTree = "<group>"; };
+		9F677F6802D4FED717F4D531 /* MemoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCard.swift; sourceTree = "<group>"; };
 		A002D092B46E53CEBDF5D3D2 /* CatchUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpTests.swift; sourceTree = "<group>"; };
 		A12A984DCEDA178DE7119B40 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A1756324EE988E1FC93CF1D7 /* WindowShapeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowShapeTests.swift; sourceTree = "<group>"; };
@@ -918,6 +939,7 @@
 		A33715E74E177EF34031B5EC /* PhotoLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibrary.swift; sourceTree = "<group>"; };
 		A4BDE149BC4487BFB450B912 /* StretchArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchArt.swift; sourceTree = "<group>"; };
 		A628F8E3D15524B3C44041DF /* NotificationAskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAskTests.swift; sourceTree = "<group>"; };
+		A6AAA00F6728C81706E18E47 /* StoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryTests.swift; sourceTree = "<group>"; };
 		A86E06BDBC8507B3E32237F2 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		AC36B0373131290A5FF6B14A /* FinishSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishSheet.swift; sourceTree = "<group>"; };
 		AC484720140DD69A63BDED2F /* LongGameWatchWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LongGameWatchWidgets.entitlements; sourceTree = "<group>"; };
@@ -945,6 +967,7 @@
 		C770FF544849BEAC65E4607E /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		C77F4DD3099C67D39537C888 /* TodaySessionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySessionsTests.swift; sourceTree = "<group>"; };
 		C7A3A328EE0B79EF01565BFC /* OrientationLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationLock.swift; sourceTree = "<group>"; };
+		C7B9F0923041C639C78F490B /* ThenAndNowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThenAndNowView.swift; sourceTree = "<group>"; };
 		C959578556E103EF105C91D6 /* FocusMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusMode.swift; sourceTree = "<group>"; };
 		C96AF671CB1AD559EB5E0AE8 /* CraftSuggestionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftSuggestionsTests.swift; sourceTree = "<group>"; };
 		CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Labels.swift; sourceTree = "<group>"; };
@@ -1195,6 +1218,7 @@
 				8ACCEF59807F2D278DA4098D /* GrowthScrubView.swift */,
 				8F02415FFF373AF9A128FD79 /* GrowthTab.swift */,
 				2DB10F8E126C34BEC2850AFA /* HistoryView.swift */,
+				C7B9F0923041C639C78F490B /* ThenAndNowView.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -1291,6 +1315,7 @@
 				D30276116E077074A11BE563 /* IconStage.swift */,
 				3454BF5BCB5C6C1D2C09A56B /* IPadFigures.swift */,
 				CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */,
+				498B58A725CCFCDA4FC52EDE /* Memories.swift */,
 				62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */,
 				36FA7EAB3DDFF122B1D90C9B /* Milestones.swift */,
 				165E9518D1820E1AF41D8D87 /* NotificationAsk.swift */,
@@ -1305,6 +1330,7 @@
 				8923CA416B60E47B20009872 /* SunGiggle.swift */,
 				4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */,
 				2AC62C9206943FB7C8E407B4 /* SunWords.swift */,
+				46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */,
 				FB747EC1A3E0C365C0F08376 /* TimerCommands.swift */,
 				B4C9DE464C0FF4C3D233638F /* TimerLogic.swift */,
 				4FADE04FC791931D0B34E177 /* TimerMoments.swift */,
@@ -1472,6 +1498,7 @@
 				46A1D6F0C3642672B3DD62B3 /* SessionPictureTests.swift */,
 				3B48DE43B2B7F9FE6A6F8858 /* StarFieldTests.swift */,
 				A2E145E52BAAAD03ECC3BD17 /* StoreLocationTests.swift */,
+				A6AAA00F6728C81706E18E47 /* StoryTests.swift */,
 				94C69AC77D52205982CB5DD6 /* SummaryTests.swift */,
 				83D9D3BC538EA9CADD45AF4F /* SunGiggleTests.swift */,
 				9A9BC38483A67A9DF4536A26 /* SunriseTests.swift */,
@@ -1500,6 +1527,7 @@
 				034BFFFAA734EDD10E76FAC6 /* FutureSelfSheet.swift */,
 				6FCC544F9830366BF50EAB12 /* GaugeHero.swift */,
 				91C52F8EC2F6DCB75E8DC2C2 /* HomeView.swift */,
+				9F677F6802D4FED717F4D531 /* MemoryCard.swift */,
 				54D4D158B97B67F3305FD164 /* MilestoneCelebration.swift */,
 				71F3044A6A68F733B316517A /* SidebarLayout.swift */,
 				A4BDE149BC4487BFB450B912 /* StretchArt.swift */,
@@ -1931,6 +1959,8 @@
 				36908513E8891E2FE1863C00 /* Labels.swift in Sources */,
 				E62134053F90E3E39650839E /* LongGameMacApp.swift in Sources */,
 				C64F6BBE3E4A886B99B79E58 /* LongGameMacCommands.swift in Sources */,
+				C127F2ABEB6562E487615334 /* Memories.swift in Sources */,
+				A88B8DD07556741F5DD1257A /* MemoryCard.swift in Sources */,
 				F5F91B37477183A22420EFDD /* MenuBarSun.swift in Sources */,
 				951ADFF42830DE274CE27330 /* MenuBarText.swift in Sources */,
 				88C949E1B159752E4F5DD6E7 /* MilestoneCelebration.swift in Sources */,
@@ -1979,6 +2009,8 @@
 				5CFF784D9CB37C484937BB30 /* SunriseMotion.swift in Sources */,
 				E86EB6238FA2708CEA88BE48 /* TargetRow.swift in Sources */,
 				D6817691B4FC6FCDFA84AD8B /* TargetSaving.swift in Sources */,
+				ED83A7499C09E244E39D3432 /* ThenAndNow.swift in Sources */,
+				7B350A634C6728905E394BB2 /* ThenAndNowView.swift in Sources */,
 				A844C68C14700570E179CE41 /* TimerCommands.swift in Sources */,
 				6C6865F9ECFAB09EEA70CE88 /* TimerLogic.swift in Sources */,
 				A5EF559368B8A41E8CBFB18E /* TimerMoments.swift in Sources */,
@@ -2053,6 +2085,7 @@
 				3510910756FFDB4339D23C68 /* SessionPictureTests.swift in Sources */,
 				EF7092BD48A31CA2D0C507F6 /* StarFieldTests.swift in Sources */,
 				0DD59B97D866F7714E43EB2A /* StoreLocationTests.swift in Sources */,
+				4A1E98E73699BF644C48E42F /* StoryTests.swift in Sources */,
 				FBBCCDFF41E5CEA5D3751EE8 /* SummaryTests.swift in Sources */,
 				E63E053BCB2743B893CFC695 /* SunGiggleTests.swift in Sources */,
 				238EC2412D801882E7E67708 /* SunWordsTests.swift in Sources */,
@@ -2096,6 +2129,7 @@
 				6A548EC5F0BD94F14EA53811 /* IPadFigures.swift in Sources */,
 				3485EBAE99BE3027D2939A5A /* IconStage.swift in Sources */,
 				A5877BDC330DCD4F2365013B /* Labels.swift in Sources */,
+				10EA2E9A8D753F4BB51910F5 /* Memories.swift in Sources */,
 				D334634C36FDA0BA010119F6 /* MenuBarText.swift in Sources */,
 				426E3652743877A611C58660 /* Milestones.swift in Sources */,
 				8BF88406D4CD38580642C893 /* Motion.swift in Sources */,
@@ -2113,6 +2147,7 @@
 				FDBE162571BE21F11740E52B /* SunView.swift in Sources */,
 				0F65CC0C7C101C238D1E43F8 /* SunWords.swift in Sources */,
 				1FAC132D7039093E3C71FE40 /* SunriseMotion.swift in Sources */,
+				5C9F3F0AE0828250F311888C /* ThenAndNow.swift in Sources */,
 				965D3EAAAF1DB5126613D4C9 /* TimerCommands.swift in Sources */,
 				40BA7A3522C2BAF3E06148D4 /* TimerLogic.swift in Sources */,
 				05554E05364DBB5D23151B9C /* TimerMoments.swift in Sources */,
@@ -2209,6 +2244,8 @@
 				F2889BAC8FDEDBB30F3B954D /* LiveActivityManager.swift in Sources */,
 				0946525560E687FBE3838907 /* LongGameApp.swift in Sources */,
 				18B44BDDA5D013B7590B9FF9 /* LongGameCommands.swift in Sources */,
+				6263620058084CFC2B1949B6 /* Memories.swift in Sources */,
+				8655E3DA0D6E3506A452A3C2 /* MemoryCard.swift in Sources */,
 				1E43DF966B03EE35905E4968 /* MenuBarText.swift in Sources */,
 				027234BACA73E0A6465457FB /* MilestoneCelebration.swift in Sources */,
 				C9951326B05452D88021B2A3 /* Milestones.swift in Sources */,
@@ -2257,6 +2294,8 @@
 				A20EF96157E594B468756BFA /* SunriseMotion.swift in Sources */,
 				1F7EDE246BF3489C16F03547 /* TargetRow.swift in Sources */,
 				4B291A2AE178A493A94E69A9 /* TargetSaving.swift in Sources */,
+				946427BEB0F4313D04EB1DD2 /* ThenAndNow.swift in Sources */,
+				1D02A32074736DA6A044E1D9 /* ThenAndNowView.swift in Sources */,
 				3D6175F38A81E5965A8E0F59 /* TimerActivity.swift in Sources */,
 				3D20175905899F88B3E64D36 /* TimerCommands.swift in Sources */,
 				B635D0C92067D8F98D514863 /* TimerLogic.swift in Sources */,
@@ -2334,6 +2373,7 @@
 				A3ECD47A33A03DC1984C4A37 /* RhythmTests.swift in Sources */,
 				657A3890A3144022077D3166 /* SessionPictureTests.swift in Sources */,
 				B06448BEF3FA150DEEB5E919 /* StarFieldTests.swift in Sources */,
+				D85898C284D4AE39AA343DD8 /* StoryTests.swift in Sources */,
 				34DA62FF8792601EA1FD7E82 /* SummaryTests.swift in Sources */,
 				C28C96C488B70A512FCAA5F5 /* SunGiggleTests.swift in Sources */,
 				CB13B4200F25C1E8442FD01F /* SunWordsTests.swift in Sources */,
@@ -2377,6 +2417,7 @@
 				F26DF7A52E9193B42FE46A01 /* IconStage.swift in Sources */,
 				5805FA289CDEA494F8087025 /* Labels.swift in Sources */,
 				B57856D06F9F0439BC97A6F6 /* LongGameWatchApp.swift in Sources */,
+				26187DFCD935A9A92CA64542 /* Memories.swift in Sources */,
 				69E9CABFFAD48EFFE85F7994 /* MenuBarText.swift in Sources */,
 				F6D1214A09E11C848F4B45D3 /* Milestones.swift in Sources */,
 				4B6F13EADD49389731EADA50 /* Motion.swift in Sources */,
@@ -2394,6 +2435,7 @@
 				49F6F0A327348EC3DD052743 /* SunView.swift in Sources */,
 				39C8F38E108765990EBA3EAA /* SunWords.swift in Sources */,
 				98C8FCDB1FD0D5AF96CF666B /* SunriseMotion.swift in Sources */,
+				3CF8B0FD64A11ACB7FC96607 /* ThenAndNow.swift in Sources */,
 				A3586F62B3F54A183B4E4FDB /* TimerCommands.swift in Sources */,
 				64764DC89253F6EC32FDF177 /* TimerLogic.swift in Sources */,
 				266BA052AA591D2B25B749EF /* TimerMoments.swift in Sources */,
@@ -2458,6 +2500,7 @@
 				267281AE5574996082B7D8FF /* IconStage.swift in Sources */,
 				5B9FC10EBF7B87078D027601 /* Labels.swift in Sources */,
 				4A529A993A5931197805C01A /* LiveActivityManager.swift in Sources */,
+				D726083BBAEB9406EE68291C /* Memories.swift in Sources */,
 				090B928D03FF2AE69CF7CD72 /* MenuBarText.swift in Sources */,
 				ABB8237CECE68FEAFCD93FE0 /* Milestones.swift in Sources */,
 				BA074A6EA7D1DD2A64F5B124 /* Motion.swift in Sources */,
@@ -2479,6 +2522,7 @@
 				2E257B512E1E5F17B6EB4483 /* SunWidgets.swift in Sources */,
 				A076BDED917DF71FBF0392BD /* SunWords.swift in Sources */,
 				6492BF94C59B185C11BE87EA /* SunriseMotion.swift in Sources */,
+				65BEFC4B23D4881EE54A6AC9 /* ThenAndNow.swift in Sources */,
 				4A2F11EE0B1633C4C7BA5303 /* TimerActivity.swift in Sources */,
 				20824237B6752D4ACA00FE28 /* TimerCommands.swift in Sources */,
 				20D35DEEF31B1FF2349E2E37 /* TimerLiveActivity.swift in Sources */,
@@ -2530,6 +2574,7 @@
 				242AE8605C85A2F97F08EF1D /* IconStage.swift in Sources */,
 				F37E52DB07875F9CB146CE9C /* Labels.swift in Sources */,
 				B0E204A996A4ABC2CEB077D0 /* MacWidgetsBundle.swift in Sources */,
+				736DC139E033CEBF6CDA4236 /* Memories.swift in Sources */,
 				B88749D6ABAB3A6F835BD63A /* MenuBarText.swift in Sources */,
 				398118BB26B2A8B95DA0A99E /* Milestones.swift in Sources */,
 				6893BC6648DC878548643918 /* Motion.swift in Sources */,
@@ -2548,6 +2593,7 @@
 				C914E6F29E609FDFA727ED48 /* SunWidgets.swift in Sources */,
 				9363C934DACDA6C793CBD89B /* SunWords.swift in Sources */,
 				5D6CAF50B36DE0893E8A20CA /* SunriseMotion.swift in Sources */,
+				10D39B707D6F50796C277556 /* ThenAndNow.swift in Sources */,
 				5E63D2E87FF68D354F4A749A /* TimerCommands.swift in Sources */,
 				5246DA9F71FCB42A11CE5863 /* TimerLogic.swift in Sources */,
 				2DF58D03D1F7801730DE2E8F /* TimerMoments.swift in Sources */,

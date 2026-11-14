@@ -47,6 +47,34 @@ enum DebugOptions {
         }
     }
 
+    /// Settings button: Home shows this memory today (firstDay, photo, yearAgo, sameMonth, weekday), nil for the real one.
+    static var forcedMemoryKind: String? {
+        get { UserDefaults.standard.string(forKey: "debug.forceMemory") }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "debug.forceMemory")
+            UserDefaults.standard.removeObject(forKey: "memory.winkDay")
+        }
+    }
+
+    /// The forced memory, with sample numbers (a photo's anniversary uses a real photo when there is one).
+    static func forcedMemory(sessions: [Memories.Item], now: Date) -> Memory? {
+        let cal = Calendar.current
+        let lastYear = cal.date(byAdding: .year, value: -1, to: cal.startOfDay(for: now)) ?? now
+        let today = sessions.filter { cal.isDate($0.start, inSameDayAs: now) }.reduce(0) { $0 + $1.durationSec }
+        switch forcedMemoryKind {
+        case "firstDay": return .firstDay(years: 3)
+        case "photo":
+            guard let photo = sessions.first(where: \.hasPhoto) else { return .yearAgo(years: 1, seconds: 1_200, today: nil, day: lastYear) }
+            return .photo(years: 2, sessionId: photo.id, day: cal.startOfDay(for: photo.start))
+        case "yearAgo": return .yearAgo(years: 1, seconds: 1_200, today: today >= 1_200 ? today : nil, day: lastYear)
+        case "sameMonth":
+            let month = cal.dateInterval(of: .month, for: now)?.start ?? now
+            return .sameMonth(month: month, lastYear: 18 * 3600, thisYear: 22 * 3600)
+        case "weekday": return .weekday(weekday: cal.component(.weekday, from: now), count: 31)
+        default: return nil
+        }
+    }
+
     /// Settings button: Home opens the weekly look-back on its next appearance, whatever the week (once).
     static func requestLookBack() { UserDefaults.standard.set(true, forKey: "debug.showLookBack") }
 

@@ -791,3 +791,17 @@ launch screen, which is deliberately the same night picture. The moment iOS lets
 the full 2.2 s sunrise. Any tap ends the wait, which is why a tap seemed to "start" it. On every fresh install
 without a fresh boot (three in a row) the sunrise started 1.5 s after launch and finished on time. On a real iPhone
 the app is opened by a tap on its icon, so it is already in front. Nothing changed in the code.
+
+## Update 48: Then and now, and The sun remembers (14 November 2026, branch `redesign`)
+
+Built on `redesign` after merging `dark-mode` and `accessibility-check` into it.
+
+- ✅ **Then and now:** `Logic/ThenAndNow.swift` (pair, chosen pair, total at a session, gap words), `Features/History/ThenAndNowView.swift` (screen, share card through `YearCardRender.png(_:name:)`, photo picker). Row on Growth above Your year; See then and now on the milestone celebration (through Home's one History route, not a second navigation destination). The chosen pair is stored as two optional ids on `AppSettings` (a small helper extension outside the model class).
+- ✅ **The sun remembers:** `Logic/Memories.swift`, `Features/Home/MemoryCard.swift`, Home card in every Home layout (phone, wide, sidebar), the wink, the Settings switch, `lastMemoryDay`.
+- ✅ **Tests:** `LongGameTests/StoryTests.swift`, 24 tests: fewer than two photos, under 90 days, deleted photos, a chosen pair valid and not, gap words, totals, spoken card; each memory, order of preference, 29 February, time zones around midnight, the 7-day rule, anniversaries and milestones, nothing that stings, the first month and the switch. All 725 unit tests pass.
+- ✅ **Debug (Settings › Debug only):** "Force a memory on Home" (each memory, or None) and "Add sample photos two years apart" (two sessions with photos, 2 years 8 months apart; "Remove the sample year" deletes them).
+- 🟡 **Milestone button place:** the spec puts See then and now above Share this moment, which doesn't exist yet (update 42); it sits under Keep playing for now.
+- 🟡 **Not yet checked:** the UI audit passes and VoiceOver on the two new screens; the Then and now screen at the accessibility sizes.
+
+**See it in the Simulator:** run with `-demoData`. Then and now: Settings › Debug only › Add sample photos two years apart, then History › Growth › Then and now (or Fill a sample year, which also has photos months apart). The sun remembers: Settings › Debug only › Force a memory on Home, pick one; back on Home it is under Today's number. Choose None to go back to the real rule.
+

@@ -1,10 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ %@, the longest day" : {
+    "%@ / %@ h this week" : {
 
     },
-    "%@ / %@ h this week" : {
+    "%@ %@, the longest day" : {
 
     },
     "%@ extra" : {
@@ -104,9 +104,6 @@
 
     },
     "%@ years since you started." : {
-
-    },
-    "%@ · %@" : {
 
     },
     "%@, %@ extra today." : {
@@ -257,10 +254,10 @@
     "Add time" : {
 
     },
-    "Afternoon" : {
+    "afternoon" : {
 
     },
-    "afternoon" : {
+    "Afternoon" : {
 
     },
     "Afternoons" : {
@@ -296,10 +293,10 @@
     "Estimate" : {
 
     },
-    "Evening" : {
+    "evening" : {
 
     },
-    "evening" : {
+    "Evening" : {
 
     },
     "Evenings" : {
@@ -371,19 +368,19 @@
     "Milestone reached · estimate" : {
 
     },
-    "Morning" : {
+    "morning" : {
 
     },
-    "morning" : {
+    "Morning" : {
 
     },
     "Mornings" : {
 
     },
-    "Night" : {
+    "night" : {
 
     },
-    "night" : {
+    "Night" : {
 
     },
     "Nights" : {
@@ -621,9 +618,6 @@
 
     },
     "your weekly target" : {
-
-    },
-    "z" : {
 
     }
   },
