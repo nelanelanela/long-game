@@ -94,6 +94,19 @@ final class AccessibilityBehaviourTests: XCTestCase {
         }
     }
 
+    /// The note box on the Finish sheet: a tap near its bottom edge (below the text view's first line) starts typing.
+    func testNoteBoxStartsTyping() {
+        launch(["-uitest.screen", "timer.finish"])
+        let field = app.textViews["A note, if you like"].exists ? app.textViews["A note, if you like"] : app.textFields["A note, if you like"]
+        XCTAssertTrue(field.waitForExistence(timeout: 8), "no note field")
+        field.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.95)).tap()
+        sleep(1)
+        // The Simulator may use the Mac's keyboard, so check the field's focus rather than the on-screen keyboard.
+        let focused = (field.value(forKey: "hasKeyboardFocus") as? Bool) == true || app.keyboards.firstMatch.exists
+        XCTAssertTrue(focused, "a tap at the bottom of the note box didn't start typing")
+        shot("Note box · typing after a tap near its bottom edge")
+    }
+
     // MARK: VoiceOver order
 
     /// What VoiceOver walks through, in order: the elements with a label, top to bottom as the app exposes them.

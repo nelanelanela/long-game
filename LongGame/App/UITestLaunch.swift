@@ -33,6 +33,13 @@ enum UITestLaunch {
     @MainActor
     static func prepare(_ context: ModelContext) {
         if disableAnimations { UIView.setAnimationsEnabled(false) }
+        // The timer lives on disk between launches: one test's paused session must not open the next test's screen.
+        // (It also comes back through the synced ActiveSession record, so that goes too.)
+        if screen != nil || freshInstall {
+            for row in (try? context.fetch(FetchDescriptor<ActiveSession>())) ?? [] { context.delete(row) }
+            try? context.save()
+            TimerStore.shared.clear()
+        }
         guard freshInstall else { return }
         for craft in (try? context.fetch(FetchDescriptor<Craft>())) ?? [] { context.delete(craft) }
         for e in (try? context.fetch(FetchDescriptor<YearEstimate>())) ?? [] { context.delete(e) }
