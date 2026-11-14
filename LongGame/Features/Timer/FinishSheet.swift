@@ -112,6 +112,9 @@ struct FinishSheet: View {
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
+            // Save and Discard are heard after the time and the note, as they are drawn.
+            .accessibilityElement(children: .contain)
+            .accessibilitySortPriority(-1)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(LGColor.background)
