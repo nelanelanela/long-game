@@ -700,3 +700,24 @@ Checked on the iPhone 17 Simulator with a cold start from a fresh install: the l
 The project is now regenerated with XcodeGen 2.46.0 (installed from its GitHub release in `~/.local/xcodegen`, run as `~/.local/bin/xcodegen generate`).
 
 Not checked: the Control and the Action Button on a real iPhone, Siri's spoken phrases, the Watch screens on a Watch Simulator (no watchOS Simulator runtime is installed; the Watch app builds).
+
+## Update 44: feeling progress — look-back, anniversaries, last week's bars, a kinder return, haptics (14 November 2026)
+
+| Requirement | Status | Where | Note |
+| --- | --- | --- | --- |
+| Weekly look-back: when, once per week, never in the first week, waits for sheets and a running session | ✅ | `WeekLookBack.shouldShow`, `checkLookBack` in `Features/Home/HomeView.swift`, `AppSettings.lastLookBackWeek` | "Never on the very first week" is read as: not in the week of onboarding, so past hours added during setup don't open it on the first day |
+| The sheet, top to bottom | ✅ | `Features/Home/WeekLookBackSheet.swift` | Checked by rendering it at 390 pt against the board. "Change my pace" opens Your weekly pace as its own sheet |
+| Numbers from pure functions, with tests | ✅ | `Logic/WeekLookBack.swift`, `WeekLookBackTests` | Boundaries (Monday and Sunday starts), longest day and ties, days played, part of the day and ties, comparison only when up, the moment, once per week, the spoken bars |
+| "Mostly": the session pictures' hours | ✅ | `WeekLookBack.Part` | The pictures have five parts (night, morning, midday, afternoon, evening); the figure has four words, so midday is split at noon. Say if midday should count wholly as afternoon |
+| Anniversaries: kinds, one a day, priority, no sheet/sound/haptic/notification | ✅ | `Logic/Anniversaries.swift`, pill in `HomeView.number` | "Since you started" counts from the first session *logged in the app* (`createdAt`), so hours added for past years don't move it. Session counts use the order sessions were logged |
+| Celebrate face on the first open that day | ✅ | `anniversaryFace` in `HomeView` | Four seconds |
+| Tests for each kind, priority, leap years | ✅ | `AnniversaryTests` | |
+| Last week's faint bars, key, hidden in the first week and after an empty week, VoiceOver | ✅ | `DayBarsRow`, `WeekBars.lastWeek` | Phone and the iPad/Duo cards |
+| A kinder return | ✅ | `CatchUpSheet` | The gap rule and the adding steps are unchanged; the last-session sentence is now at the top of the adding step |
+| Haptics: the list of what played before | ✅ | | iPhone: stepper selection + rigid at the limit; giggle; milestone celebration success (never actually fired: its trigger never changed); timer save success; stretch covered success; ray light impact; full hour success; total passing a whole hour light impact; tip thanks success (also never fired); Growth scrub selection + light impact on a milestone. Watch: ray click, full hour success, stretch covered notification, Add time clicks and success |
+| One `Haptics` helper, the table, strongest wins, Watch mapping | ✅ | `DesignSystem/Haptics.swift`, `Logic/HapticPlan.swift` | Moments arriving within 0.04 s are merged. The tip thank-you and the total passing a whole hour weren't in the table: they use softTap. The stepper's limit bump is now nothing (like an error) |
+| Watch plays on the wrist when the iPhone is locked | ⚠️ | | The Watch plays its own patterns while its timer or Add time is on screen. It can't be woken to play a haptic for something that happens on the phone without a notification, which the prompt rules out |
+| Tests for the patterns and strongest-wins | ✅ | `HapticPlanTests` | |
+| Debug | ✅ | Settings → Debug | "Show the weekly look-back", "Fake an anniversary on Home", and the existing "Show Welcome back on Home" |
+
+All 691 tests pass on the iPhone 18 Pro Simulator.

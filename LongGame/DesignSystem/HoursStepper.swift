@@ -42,8 +42,8 @@ private struct StepButton: View {
         .buttonStyle(PressReportingStyle { pressed in pressed ? beginHold() : endHold() })
         .accessibilityHidden(true)
         .accessibilityInputLabels([direction < 0 ? "Minus" : "Plus"])
-        .sensoryFeedback(.selection, trigger: stepTick)
-        .sensoryFeedback(.impact(flexibility: .rigid), trigger: limitTick)
+        // A tick per step; nothing at the limit (the button dims instead).
+        .onChange(of: stepTick) { _, _ in Haptics.play(.stepper) }
         .onDisappear { endHold() }
     }
 

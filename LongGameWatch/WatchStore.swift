@@ -107,6 +107,7 @@ final class WatchStore {
     /// Undo: removes what Add time just added, here and on the phone.
     func undoAdd() {
         guard let session = justAdded else { return }
+        Haptics.play(.undo)
         justAdded = nil
         pending.removeAll { $0.id == session.id }
         PendingSessions.store(pending)

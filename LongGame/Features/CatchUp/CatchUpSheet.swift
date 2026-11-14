@@ -7,8 +7,12 @@ struct CatchUpSheet: View {
     let craft: Craft
     let gap: CatchUp.Gap
     let pace: Double
+    /// The long game's total, for "Your 3,294 hours are all here."
+    var total: Double = 0
     /// Called when the sheet closes; the number of hours added (0 if none).
     let onFinish: (Double) -> Void
+    /// "I took a break": Home opens on Today with "Rest is part of the craft."
+    var onBreak: () -> Void = {}
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -20,12 +24,17 @@ struct CatchUpSheet: View {
     @State private var blockHours: [Int]
     @State private var average: Int
     @State private var finished = false
+    /// The sun opens its eyes over the dawn sea.
+    @State private var eyesOpen: Double = 0
 
-    init(craft: Craft, gap: CatchUp.Gap, pace: Double, onFinish: @escaping (Double) -> Void) {
+    init(craft: Craft, gap: CatchUp.Gap, pace: Double, total: Double = 0, onFinish: @escaping (Double) -> Void,
+         onBreak: @escaping () -> Void = {}) {
         self.craft = craft
         self.gap = gap
         self.pace = pace
+        self.total = total
         self.onFinish = onFinish
+        self.onBreak = onBreak
         let start = CatchUp.defaultHours(pace: pace)
         _blockHours = State(initialValue: Array(repeating: start, count: max(1, gap.days / 7)))
         _average = State(initialValue: start)
@@ -73,15 +82,20 @@ struct CatchUpSheet: View {
 
     private var ask: some View {
         VStack(spacing: 0) {
-            // The day scene with the sun open-eyed, edge to edge under the grabber.
-            SceneHero(tone: .day, height: 211, skyHeight: 170, horizon: 0.8, landTop: 91, sunSize: 120, sunTop: 14,
-                      eyesOpen: 1, hidden: true)
+            // A dawn sky, the sun opening its eyes over the sea, edge to edge under the grabber.
+            SceneHero(tone: .dawn, height: 211, skyHeight: 170, horizon: 0.8, landTop: 91, sunSize: 120, sunTop: 14,
+                      eyesOpen: eyesOpen, moon: false, hidden: true)
                 .padding(.top, 6)
+                .onAppear {
+                    if reduceMotion { eyesOpen = 1 } else {
+                        withAnimation(.easeOut(duration: 0.6).delay(0.5)) { eyesOpen = 1 }
+                    }
+                }
             VStack(spacing: 10) {
-                Text("Welcome back!")
+                Text("Welcome back.")
                     .lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
                     .accessibilityAddTraits(.isHeader)
-                Text(question)
+                Text("The sun waited for you. Your \(DurationFormat.grouped(Int(total.rounded(.down)))) hours are all here.")
                     .lgText(.body, color: LGColor.inkMuted)
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
@@ -91,25 +105,36 @@ struct CatchUpSheet: View {
             .padding(.top, 10)
             Spacer(minLength: 16)
             VStack(spacing: 2) {
-                Button("Yes, let me add it") {
+                Button("I practised, let me add it") {
                     withAnimation(reduceMotion ? nil : .default) { step = .adding; detent = .large }
                 }
                 .buttonStyle(.lg(.primary))
-                Button("No, I took a break") { dismiss() }.buttonStyle(.lg(.text))
-                Text("Rest is part of the craft.").lgText(.caption, color: LGColor.inkMuted)
-                    .padding(.top, 4)
+                Button("I took a break") {
+                    onBreak()
+                    dismiss()
+                }
+                .buttonStyle(.lg(.text))
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 12)
         }
     }
 
-    private var question: String {
+    /// At the top of the adding step: the date of the last session and the length of the gap.
+    private var lastSessionLine: String {
         let day = RelativeDay.full(gap.anchor, calendar: calendar)
         let weeks = Labels.weeksAgo(gap.weeks)
         return gap.hasSessions
-            ? String(localized: "Your last session was on \(day) — that's \(weeks). Did you practise since then?")
-            : String(localized: "You started on \(day) — that's \(weeks). Did you practise since then?")
+            ? String(localized: "Your last session was on \(day), \(weeks).")
+            : String(localized: "You started on \(day), \(weeks).")
+    }
+
+    private var lastSessionText: some View {
+        Text(verbatim: lastSessionLine)
+            .lgText(.caption, color: LGColor.inkMuted)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 4)
     }
 
     // MARK: Weeks (7–27 days)
@@ -118,6 +143,7 @@ struct CatchUpSheet: View {
         let blocks = blocks
         return VStack(spacing: 0) {
             addingBar
+            lastSessionText
             stepHeader(title: String(localized: "How much did you play each week?"),
                        subtitle: String(localized: "A rough guess is fine. The hours are spread across the days."))
             VStack(spacing: 0) {
@@ -149,6 +175,7 @@ struct CatchUpSheet: View {
         let perDay = CatchUp.minutesPerDay(totalHours: totalHours, days: gap.days)
         return VStack(spacing: 0) {
             addingBar
+            lastSessionText
             stepHeader(title: Labels.weeksHavePassed(gap.weeks) + ".",
                        subtitle: String(localized: "Since \(CatchUp.longDay(gap.anchor, calendar: calendar)). On average, how many hours a week did you practise?"))
             // No card: the big number sits straight on the wash, the quick picks under it.

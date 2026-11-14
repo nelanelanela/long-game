@@ -103,6 +103,7 @@ targets:
       - LongGame/DesignSystem/Water.swift
       - LongGame/DesignSystem/Scene.swift
       - LongGame/Features/Timer/TimerSunriseLayers.swift
+      - LongGame/DesignSystem/Haptics.swift
       - LongGame/Logic
     dependencies:
       - target: LongGameWatchWidgets

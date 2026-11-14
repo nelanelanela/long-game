@@ -537,6 +537,28 @@ struct SettingsView: View {
                 }
                 .lgText(.rowStrong).frame(minHeight: 54)
                 Divider().overlay(LGColor.divider)
+                Button("Show the weekly look-back") {
+                    DebugOptions.requestLookBack()
+                    (closeAll ?? { dismiss() })()
+                }
+                .lgText(.rowStrong).frame(minHeight: 54)
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Menu {
+                        Button("A year since you started") { fakeAnniversary(.years(1)) }
+                        Button("Two years since you started") { fakeAnniversary(.years(2)) }
+                        Button("Your 100th session") { fakeAnniversary(.session(100)) }
+                        Button("100 days of practice") { fakeAnniversary(.practiceDays(100)) }
+                        Button("A month since you started") { fakeAnniversary(.months(1)) }
+                        Button("None (the real one)") { fakeAnniversary(nil) }
+                    } label: {
+                        Text("Fake an anniversary on Home").lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    }
+                    Text("Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
                     Button("Fill a sample year") { fillSampleYear() }
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
@@ -658,6 +680,11 @@ struct SettingsView: View {
         settings.targetSetAt = calendar.date(byAdding: .month, value: -12, to: ends)
         settings.targetPromptShownAt = nil
         try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    private func fakeAnniversary(_ value: Anniversary?) {
+        DebugOptions.fakeAnniversary = value
         (closeAll ?? { dismiss() })()
     }
 

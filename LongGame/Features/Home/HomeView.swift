@@ -13,6 +13,8 @@ private struct HomeToast: Equatable {
 
 private enum HomeSheet: Identifiable {
     case addHours, futureSelf, support
+    /// The weekly look-back, and Your weekly pace opened from it.
+    case lookBack(WeekLookBack), editPace
     /// The target screen as a sheet: a new year of pace, or the first target for an older game.
     case target(first: Bool)
 
@@ -21,6 +23,8 @@ private enum HomeSheet: Identifiable {
         case .addHours: "add"
         case .futureSelf: "future"
         case .support: "support"
+        case .lookBack: "lookBack"
+        case .editPace: "editPace"
         case .target: "target"
         }
     }
@@ -57,6 +61,11 @@ struct HomeView: View {
     /// The sessions Home has already seen, so a save's new ones are known (what its Undo removes).
     @State private var knownSessionIDs: Set<UUID>?
     @AccessibilityFocusState private var toastFocused: Bool
+    /// Today's small anniversary ("A year since you started."), if any.
+    @State private var anniversary: Anniversary?
+    /// The sun's celebrate face for a moment on the first open of an anniversary day.
+    @State private var anniversaryFace = false
+    @AppStorage("anniversary.faceDay") private var anniversaryFaceDay: Double = 0
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverOn
     @State private var totalBeforeCatchUp = 0.0
     /// Today, This week or The long game. Home opens on Today; right after onboarding it opens on The long game once
@@ -124,7 +133,9 @@ struct HomeView: View {
         let figures = HomeFigures(now: now, summary: s, week: shownWeek, total: shownTotal, weekTarget: weekTarget,
                                   stretch: stretch, shown: tab == .today && stretch == .noTarget ? .week : tab,
                                   records: records,
-                                  bars: WeekBars.make(sessions: records, now: now, weekStart: weekStart))
+                                  bars: WeekBars.make(sessions: records, now: now, weekStart: weekStart),
+                                  lastWeek: WeekBars.lastWeek(sessions: records, now: now, weekStart: weekStart,
+                                                              onboardingDate: craft.createdAt))
         let _ = tick
         let page = AdaptiveLayout { window in
             Group {
@@ -190,6 +201,7 @@ struct HomeView: View {
         .onAppear {
             onScreen = true
             if knownSessionIDs == nil { knownSessionIDs = Set(sessions.map(\.id)) }
+            refreshAnniversary()
             chooseOpeningTab()
             fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
@@ -201,17 +213,24 @@ struct HomeView: View {
             refreshNotifications()
             scheduleMilestoneNotification()
             checkCatchUp(summary: s)
+            checkLookBack(summary: s)
         }
         .onChange(of: timer.state) { _, _ in scheduleMilestoneNotification() }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                refreshAnniversary()
                 let now = summary(now: Date())
                 syncIconQuietly(total: now.total)
                 checkCatchUp(summary: now)
+                checkLookBack(summary: now)
             }
         }
         .sheet(item: $catchUpGap, onDismiss: sheetClosed) { gap in
-            CatchUpSheet(craft: craft, gap: gap, pace: totalPace, onFinish: catchUpFinished)
+            CatchUpSheet(craft: craft, gap: gap, pace: totalPace, total: s.total, onFinish: catchUpFinished,
+                         onBreak: {
+                             selectTab(.today)
+                             showMessage(String(localized: "Rest is part of the craft."))
+                         })
                 .lgSheetCard()
         }
         .onChange(of: s.total) { old, total in
@@ -219,9 +238,17 @@ struct HomeView: View {
             let before = knownSessionIDs ?? []
             knownSessionIDs = Set(sessions.map(\.id))
             if total > old, showTimer || sheet != nil || catchUpGap != nil {
-                showToast(addedHours: total - old,
-                          undo: UndoSave.offer(before: before, after: sessions.map(\.id), celebrates: celebrates))
+                let undo = UndoSave.offer(before: before, after: sessions.map(\.id), celebrates: celebrates)
+                showToast(addedHours: total - old, undo: undo)
+                // The timer plays its own save feeling; Add past hours and Catch up play theirs here.
+                if !showTimer && !celebrates { playAddedHaptic(created: undo ?? [], figures: figures) }
             }
+        }
+        // Back from Settings (the debug buttons there can ask for the look-back or an anniversary).
+        .onChange(of: showSettings) { _, open in
+            guard !open else { return }
+            refreshAnniversary()
+            Task { try? await Task.sleep(for: .seconds(0.6)); checkLookBack(summary: summary(now: Date())) }
         }
         .onChange(of: toastFocused) { was, now in
             // With VoiceOver the toast stays until focus moves away from it.
@@ -229,6 +256,7 @@ struct HomeView: View {
         }
         .onChange(of: sessions.count) { old, new in
             fillSessionPictures()
+            refreshAnniversary()
             refreshNotifications()
         }
         .overlay {
@@ -255,6 +283,20 @@ struct HomeView: View {
                 FutureSelfSheet(total: s.total, forecast: s.forecast.chosen)
             case .support:
                 TipJarView(isSheet: true)
+            case .lookBack(let look):
+                WeekLookBackSheet(craft: craft, look: look,
+                                  lastWeekPace: paceFor(day: look.weekStart),
+                                  thisWeekPace: target?.hoursPerWeek,
+                                  total: s.total, thisWeekSoFar: s.thisWeek,
+                                  finish: String(ForecastText.shortFinish(s.forecast.chosen, now: Date()).drop { $0 == "~" }),
+                                  sessions: Array(sessions),
+                                  onChangePace: {
+                                      Task { try? await Task.sleep(for: .seconds(0.5)); sheet = .editPace }
+                                  })
+            case .editPace:
+                NavigationStack {
+                    WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, onSave: saveTarget)
+                }
             case .target(let first):
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
                                  initial: first ? nil : target?.hoursPerWeek,
@@ -281,6 +323,8 @@ struct HomeView: View {
         var records: [SessionRecord]
         /// This week's day bars.
         var bars: [DayBar]
+        /// Last week's hours per weekday, faint behind the bars (nil in the first week or after an empty week).
+        var lastWeek: [Double]?
     }
 
     private enum ScrollSpot: Hashable { case top, details }
@@ -359,10 +403,39 @@ struct HomeView: View {
         }
     }
 
+    /// "Time is added": a soft tap, two taps if it covered today's stretch, rising three if it reached the weekly pace.
+    private func playAddedHaptic(created: [UUID], figures: HomeFigures) {
+        let ids = Set(created)
+        let new = sessions.filter { ids.contains($0.id) }
+        let calendar = Calendar.current
+        let addedToday = new.filter { calendar.isDate($0.start, inSameDayAs: figures.now) }.reduce(0) { $0 + $1.durationSec }
+        let weekStartDate = WeekMath.startOfWeek(figures.now, weekStart: weekStart)
+        let addedThisWeek = new.filter { $0.start >= weekStartDate }.reduce(0) { $0 + $1.durationSec } / 3600
+        let covers: Bool = {
+            guard let t = figures.stretch.target, addedToday > 0 else { return false }
+            return figures.stretch.done >= t && figures.stretch.done - addedToday < t
+        }()
+        let paceReached = figures.weekTarget > 0 && addedThisWeek > 0
+            && figures.summary.thisWeek >= figures.weekTarget && figures.summary.thisWeek - addedThisWeek < figures.weekTarget
+        Haptics.play(HapticPlan.save(timer: false, coversStretch: covers, reachesMilestone: false, reachesWeeklyPace: paceReached))
+    }
+
+    /// A plain note in the toast's place for a few seconds ("Rest is part of the craft.").
+    private func showMessage(_ text: String) {
+        let shown = HomeToast(text: text, spoken: text, undo: nil)
+        toast = shown
+        AccessibilityNotification.Announcement(text).post()
+        Task {
+            try? await Task.sleep(for: .seconds(3))
+            if toast?.id == shown.id { toast = nil }
+        }
+    }
+
     /// Undo: deletes exactly what that save created, with its note and photo, then says "Removed." for 2 seconds.
     /// Totals, the icon stage, widgets and notifications follow as for any deletion.
     private func undoLastSave() {
         guard let ids = toast?.undo else { return }
+        Haptics.play(.undo)
         for session in UndoSave.toRemove(Array(sessions), id: \.id, offered: ids) { context.delete(session) }
         try? context.save()
         countingTotal = nil
@@ -382,8 +455,9 @@ struct HomeView: View {
         let onToday = f.shown == .today
         let g = onToday ? HomeGauge.today(f.stretch) : scale
         let place = GaugeHero.Place(fraction: scale.fraction, arcFraction: f.stretch.fraction, arcMix: onToday ? 1 : 0)
-        let face: SunFace = onToday ? (winking ? .wink : .happy)
-                                    : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
+        let face: SunFace = anniversaryFace ? .celebrate
+            : onToday ? (winking ? .wink : .happy)
+                      : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
                          extendsSky: extendsSky, dawnSky: onToday && isEmptyDay(f.stretch), metrics: metrics, final: place,
@@ -429,25 +503,64 @@ struct HomeView: View {
 
     /// The big number; each tab's replaces the other's with a cross-fade, stacked so the page doesn't jump.
     private func number(_ f: HomeFigures, style: NumberLayout) -> some View {
-        ZStack(alignment: style.isLeading ? .topLeading : .top) {
-            switch f.shown {
-            case .today:
-                if isEmptyDay(f.stretch) {
-                    EmptyDayHeading().transition(.opacity)
-                } else {
-                    TodayNumber(state: f.stretch, style: style)
+        VStack(alignment: style.isLeading ? .leading : .center, spacing: 8) {
+            ZStack(alignment: style.isLeading ? .topLeading : .top) {
+                switch f.shown {
+                case .today:
+                    if isEmptyDay(f.stretch) {
+                        EmptyDayHeading().transition(.opacity)
+                    } else {
+                        TodayNumber(state: f.stretch, style: style)
+                            .transition(.opacity)
+                    }
+                case .week:
+                    CountingWeek(hours: f.week, target: f.weekTarget, style: style)
+                        .transition(.opacity)
+                case .longGame:
+                    CountingTotal(value: f.total, style: style)
                         .transition(.opacity)
                 }
-            case .week:
-                CountingWeek(hours: f.week, target: f.weekTarget, style: style)
-                    .transition(.opacity)
-            case .longGame:
-                CountingTotal(value: f.total, style: style)
+            }
+            .frame(maxWidth: .infinity, alignment: style.isLeading ? .leading : .center)
+            .accessibilityElement(children: .combine)
+
+            // Today's small anniversary: one line under the number, for that calendar day only.
+            if let anniversary {
+                Text(verbatim: anniversary.line)
+                    .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.ember)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12).padding(.vertical, 5)
+                    .frame(minHeight: 28)
+                    .background(LGColor.anniversaryPill, in: Capsule())
                     .transition(.opacity)
             }
         }
-        .frame(maxWidth: .infinity, alignment: style.isLeading ? .leading : .center)
-        .accessibilityElement(children: .combine)
+    }
+
+    /// Today's anniversary (nil on most days), worked out when sessions change or the app comes back.
+    private func refreshAnniversary() {
+        let now = Date()
+        let calendar = Calendar.current
+        let loggedToday = sessions.filter { calendar.isDate($0.createdAt, inSameDayAs: now) }.reduce(0) { $0 + $1.durationSec } / 3600
+        let total = summary(now: now).total
+        let found = Anniversary.today(.init(loggedAt: sessions.map(\.createdAt), starts: sessions.map(\.start),
+                                            hourMilestoneToday: Anniversary.hourMilestoneToday(totalAtStartOfToday: total - loggedToday, total: total)),
+                                      now: now, calendar: calendar)
+        #if DEBUG
+        anniversary = DebugOptions.fakeAnniversary ?? found
+        #else
+        anniversary = found
+        #endif
+        // The sun celebrates on the first open of the day that has one.
+        let today = calendar.startOfDay(for: now).timeIntervalSince1970
+        if anniversary != nil, anniversaryFaceDay != today {
+            anniversaryFaceDay = today
+            anniversaryFace = true
+            Task {
+                try? await Task.sleep(for: .seconds(4))
+                anniversaryFace = false
+            }
+        }
     }
 
     /// Phone and short window: one column. The craft name with History and + stays on top as a bar while the page
@@ -499,7 +612,7 @@ struct HomeView: View {
                 header(dark: darkSky, paired: true, fade: reduceTransparency ? nil : fade)
                     .padding(.top, short ? 0 : 8)
                 // The tabs stay pinned under the craft name; only the page below them scrolls.
-                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: tapTab)
                     .padding(.top, short ? 4 : 10).padding(.bottom, 4)
             }
             .padding(.horizontal, 24)
@@ -522,7 +635,7 @@ struct HomeView: View {
         return HStack(spacing: 0) {
             VStack(spacing: 0) {
                 header().padding(.leading, inset.leading + 24).padding(.trailing, 12)
-                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+                LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: tapTab)
                     .padding(.leading, inset.leading + 24).padding(.trailing, 12).padding(.top, 8)
                 Spacer(minLength: 0)
                 hero(f, metrics: metrics)
@@ -649,7 +762,7 @@ struct HomeView: View {
         if f.shown == .week {
             IPadCard {
                 VStack(spacing: 0) {
-                    DayBarsRow(bars: f.bars) { day in historyDay = day }
+                    DayBarsRow(bars: f.bars, lastWeek: f.lastWeek) { day in historyDay = day }
                     targetRow(f.summary, now: f.now)
                 }
             }
@@ -766,7 +879,7 @@ struct HomeView: View {
         .scrollPosition(id: $scrollSpot)
         .lgTopBar {
             // Pinned: the tabs never scroll away.
-            LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: selectTab)
+            LGSegmentedControl(items: HomeTab.allCases, selection: tab, label: "Home view", title: Self.title, onSelect: tapTab)
                 .frame(maxWidth: 520)
                 .padding(.top, 12).padding(.bottom, 4)
                 .frame(maxWidth: .infinity)
@@ -822,6 +935,12 @@ struct HomeView: View {
         }
     }
 
+    /// A tab tapped on the switcher: the tick, then the switch.
+    private func tapTab(_ new: HomeTab) {
+        if new != tab { Haptics.play(.tabSwitch) }
+        selectTab(new)
+    }
+
     private func selectTab(_ new: HomeTab) {
         guard new != tab else { return }
         if new.hasScale { lastScaleTab = new }
@@ -848,7 +967,7 @@ struct HomeView: View {
     private func weekContent(_ f: HomeFigures, showBars: Bool) -> some View {
         VStack(spacing: 0) {
             if showBars {
-                DayBarsRow(bars: f.bars) { day in
+                DayBarsRow(bars: f.bars, lastWeek: f.lastWeek) { day in
                     historyDay = day
                 }
                 .padding(.top, 18)
@@ -960,6 +1079,36 @@ struct HomeView: View {
     }
 
     /// Once, when the year of pace is over (the old value filled in) or a game has never had a target.
+    /// The weekly pace that applied on a day (from the stored target periods), nil when there was none.
+    private func paceFor(day: Date) -> Double? {
+        let records = targetPeriods.map { TargetRecord(hoursPerWeek: $0.hoursPerWeek, start: $0.start, end: $0.end) }
+        let current = target
+        if let current, day >= current.start, day < current.end { return current.hoursPerWeek }
+        return records.first { day >= $0.start && day < $0.end }?.hoursPerWeek ?? current?.hoursPerWeek
+    }
+
+    /// The weekly look-back: the first open in a new week, once, if last week had a session; never in the first week,
+    /// and never over a running session or another sheet (it waits for the next open).
+    private func checkLookBack(summary s: ProgressSummary) {
+        guard let settings = settingsRows.first else { return }
+        let now = Date()
+        var force = false
+        #if DEBUG
+        force = DebugOptions.takeLookBackRequest()
+        #endif
+        let entries = sessions.map { WeekLookBack.Entry(id: $0.id, start: $0.start, seconds: $0.durationSec, hasPhoto: $0.hasPhoto,
+                                                        viewCount: $0.viewCount, note: $0.note) }
+        let look = WeekLookBack.make(entries, now: now, weekStart: weekStart)
+        let busy = sheet != nil || catchUpGap != nil || celebrating != nil || showTimer || editingSession != nil || showSettings
+        guard let look else { return }
+        guard force && !busy || WeekLookBack.shouldShow(now: now, weekStart: weekStart, onboardingDate: craft.createdAt,
+                                                         lastShownWeek: settings.lastLookBackWeek, lastWeekHadSession: true,
+                                                         sessionRunning: timer.isActive, sheetOpen: busy) else { return }
+        settings.lastLookBackWeek = WeekMath.startOfWeek(now, weekStart: weekStart)
+        try? context.save()
+        sheet = .lookBack(look)
+    }
+
     private func showTargetSheetOnce() {
         guard let settings = settingsRows.first, sheet == nil, catchUpGap == nil, !showTimer,
               TargetCycle.shouldOpenSheet(settings.currentTarget, promptShownAt: settings.targetPromptShownAt, now: Date())

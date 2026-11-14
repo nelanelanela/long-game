@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ %@, the longest day" : {
+
+    },
     "%@ / %@ h this week" : {
 
     },
@@ -23,6 +26,9 @@
 
     },
     "%@ left of today's stretch" : {
+
+    },
+    "%@ months since you started." : {
 
     },
     "%@ of %@" : {
@@ -78,6 +84,9 @@
     "%@ of 10,000 h" : {
 
     },
+    "%@ rest" : {
+
+    },
     "%@ this session. %@." : {
 
     },
@@ -95,6 +104,9 @@
 
     },
     "%@ to go." : {
+
+    },
+    "%@ years since you started." : {
 
     },
     "%@ · %@" : {
@@ -133,6 +145,9 @@
 
     },
     "%lld days of practice" : {
+
+    },
+    "%lld days of practice." : {
 
     },
     "%lld days/wk" : {
@@ -189,6 +204,12 @@
     "a little" : {
 
     },
+    "A moment from %@ %@" : {
+
+    },
+    "A month since you started." : {
+
+    },
     "a quarter of the way" : {
 
     },
@@ -196,6 +217,9 @@
 
     },
     "a third of the way" : {
+
+    },
+    "A year since you started." : {
 
     },
     "about %@" : {
@@ -242,6 +266,12 @@
     "Afternoon" : {
 
     },
+    "afternoon" : {
+
+    },
+    "Afternoons" : {
+
+    },
     "almost there" : {
 
     },
@@ -273,6 +303,12 @@
 
     },
     "Evening" : {
+
+    },
+    "evening" : {
+
+    },
+    "Evenings" : {
 
     },
     "Finish" : {
@@ -317,6 +353,9 @@
     "Last synced %@" : {
 
     },
+    "Last week, day by day: %@." : {
+
+    },
     "Long Game, %@ played today" : {
 
     },
@@ -341,7 +380,19 @@
     "Morning" : {
 
     },
+    "morning" : {
+
+    },
+    "Mornings" : {
+
+    },
     "Night" : {
+
+    },
+    "night" : {
+
+    },
+    "Nights" : {
 
     },
     "No weekly target yet." : {
@@ -580,6 +631,9 @@
           }
         }
       }
+    },
+    "Your %@th session." : {
+
     },
     "your weekly target" : {
 

@@ -109,8 +109,8 @@ struct GrowthScrubView: View {
             .padding(.top, 8)
         }
         .lgSetupScreen(fadeBy: 0.3)
-        .sensoryFeedback(trigger: activeMilestone) { _, new in new == nil ? nil : .impact(weight: .light) }
-        .sensoryFeedback(.selection, trigger: ticks)
+        .onChange(of: activeMilestone) { _, new in if new != nil { Haptics.play(.growthMilestone) } }
+        .onChange(of: ticks) { _, _ in Haptics.play(.scrub) }
         .onChange(of: selection) { _, new in scrub(to: new) }
         .task { await drawIn() }
     }

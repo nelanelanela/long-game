@@ -7,10 +7,31 @@
     " " : {
 
     },
+    "%@ %@, the longest day" : {
+
+    },
     "%@ added" : {
 
     },
+    "%@ h · finish line %@" : {
+
+    },
+    "%@ months since you started." : {
+
+    },
+    "%@ more than the week before." : {
+
+    },
     "%@ of %@" : {
+
+    },
+    "%@ rest" : {
+
+    },
+    "%@ years since you started." : {
+
+    },
+    "%@, %@. Last %@, %@." : {
 
     },
     "%@. Sunrise is coming." : {
@@ -19,10 +40,34 @@
     "%@. The sun has fully risen." : {
 
     },
+    "%lld days of practice." : {
+
+    },
+    "%lld of 7" : {
+
+    },
     "%lld%% · phase %lld" : {
 
     },
+    "100 days of practice" : {
+
+    },
     "A long one. Did the timer keep running?" : {
+
+    },
+    "A moment from %@ %@" : {
+
+    },
+    "A month since you started" : {
+
+    },
+    "A month since you started." : {
+
+    },
+    "A year since you started" : {
+
+    },
+    "A year since you started." : {
 
     },
     "Add time" : {
@@ -32,6 +77,12 @@
 
     },
     "Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions." : {
+
+    },
+    "afternoon" : {
+
+    },
+    "Afternoons" : {
 
     },
     "Back on Home the sheet opens by itself, as it does the first time after onboarding." : {
@@ -46,6 +97,12 @@
     "Begin or pause a session" : {
 
     },
+    "Change my pace" : {
+
+    },
+    "Days played" : {
+
+    },
     "Debug only" : {
 
     },
@@ -58,10 +115,28 @@
     "Deletes all data and starts again from Welcome, with the three intro pages." : {
 
     },
+    "evening" : {
+
+    },
+    "Evenings" : {
+
+    },
+    "Fake an anniversary on Home" : {
+
+    },
     "Fill a sample year" : {
 
     },
     "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
+
+    },
+    "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
+
+    },
+    "I practised, let me add it" : {
+
+    },
+    "I took a break" : {
 
     },
     "Jump total to just under a whole hour" : {
@@ -70,13 +145,49 @@
     "Keep %@" : {
 
     },
+    "LAST WEEK" : {
+
+    },
+    "Last week" : {
+
+    },
+    "Last week, day by day: %@." : {
+
+    },
+    "Longest day" : {
+
+    },
+    "morning" : {
+
+    },
+    "Mornings" : {
+
+    },
+    "Mostly" : {
+
+    },
     "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {
+
+    },
+    "night" : {
+
+    },
+    "Nights" : {
 
     },
     "No session is running." : {
 
     },
+    "None (the real one)" : {
+
+    },
     "Not set" : {
+
+    },
+    "not yet" : {
+
+    },
+    "of your %@ h pace" : {
 
     },
     "Open Long Game to choose your craft, then try again." : {
@@ -86,6 +197,9 @@
 
     },
     "Opens the Growth chart" : {
+
+    },
+    "Opens the session" : {
 
     },
     "Pause session" : {
@@ -121,16 +235,31 @@
     "Show Meet your future self again" : {
 
     },
+    "Show the weekly look-back" : {
+
+    },
     "Show Welcome back on Home" : {
 
     },
     "Start a session that began 3 h 12 m ago" : {
 
     },
+    "Start the week" : {
+
+    },
     "Started %@. Enjoy it." : {
 
     },
     "Starts the timer for your craft." : {
+
+    },
+    "The sun waited for you. Your %@ hours are all here." : {
+
+    },
+    "This week: %@ h, about %@ a day." : {
+
+    },
+    "Two years since you started" : {
 
     },
     "Undo" : {
@@ -142,13 +271,28 @@
     "Weekly pace" : {
 
     },
+    "Welcome back." : {
+
+    },
     "Year of pace ended yesterday" : {
 
     },
     "Year of pace ends in 10 days" : {
 
     },
+    "You started on %@, %@." : {
+
+    },
+    "Your %@th session." : {
+
+    },
+    "Your 100th session" : {
+
+    },
     "Your game" : {
+
+    },
+    "Your last session was on %@, %@." : {
 
     },
     "Your session is already running." : {

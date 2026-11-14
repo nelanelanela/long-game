@@ -63,7 +63,6 @@ struct TimerView: View {
         }
         .onChange(of: store.state, initial: true) { _, new in if let new { lastState = new } }
         .preferredColorScheme(.dark)
-        .sensoryFeedback(.success, trigger: savedAt)
         .onChange(of: savedAt) { _, new in
             if new != nil { AccessibilityNotification.Announcement(String(localized: "Session saved")).post() }
         }
@@ -138,12 +137,32 @@ struct TimerView: View {
             session.sunriseProgressAtEnd = TimerSunrise.progress(doneSaved: stretchPlan.doneSaved, running: duration,
                                                                  target: stretchPlan.target)
         }
+        // Worked out before the insert, from what was saved until now.
+        playSaveHaptic(duration: duration, startedToday: StretchSource.startedToday(state))
         context.insert(session)
         try? context.save()
         store.savedSession = true
         showFinish = false
         savedAt = Date()
         store.clear()
+    }
+
+    /// The save's feeling: two taps when it covers today's stretch, rising three when it reaches the weekly pace,
+    /// otherwise a soft tap. When it reaches an hour milestone the celebration on Home plays rising three instead.
+    private func playSaveHaptic(duration: TimeInterval, startedToday: Bool) {
+        let seen = settingsRows.first?.milestonesSeen ?? []
+        let reachesMilestone = Milestones.all.contains {
+            !seen.contains($0) && Double($0) > baseTotal && Double($0) <= baseTotal + duration / 3600
+        }
+        guard !reachesMilestone else { return }
+        let weekStart = settingsRows.first?.weekStart ?? .localeDefault
+        let target = settingsRows.first?.weeklyTargetHours ?? 0
+        let before = WeekMath.thisWeekHours(sessions.map(\.record), now: Date(), weekStart: weekStart)
+        let moments = HapticPlan.save(timer: true,
+                                      coversStretch: startedToday && stretchPlan.isCovered(byAdding: duration),
+                                      reachesMilestone: false,
+                                      reachesWeeklyPace: target > 0 && before < target && before + duration / 3600 >= target)
+        Haptics.play(moments)
     }
 
     private func discard() {
@@ -300,18 +319,16 @@ private struct RunningScene: View {
             .frame(width: geo.size.width, height: geo.size.height, alignment: .topLeading)
             .scaleEffect(k, anchor: .topLeading)
             .frame(width: outer.size.width, height: outer.size.height, alignment: .topLeading)
-            .sensoryFeedback(trigger: justCovered) { old, new in !old && new ? .success : nil }
+            .onChange(of: justCovered) { old, new in if !old && new { Haptics.play(.stretchCovered) } }
             .onChange(of: justCovered) { _, new in
                 if new { AccessibilityNotification.Announcement(String(localized: "Today's stretch covered.")).post() }
             }
         }
         .ignoresSafeArea()
         }
-        .sensoryFeedback(trigger: sun.litRays) { old, new in new > old ? .impact(weight: .light) : nil }
-        .sensoryFeedback(.success, trigger: sun.hoursCompleted)
-        .sensoryFeedback(trigger: Int((baseTotal + elapsed / 3600).rounded(.down))) { old, new in
-            new > old ? .impact(weight: .light) : nil
-        }
+        // A soft tap when a ray lights (the full hour is ray 0 lighting again) and when the total passes a whole hour.
+        .onChange(of: sun.litRays) { old, new in if new != old && !paused { Haptics.play(.rayLit) } }
+        .onChange(of: Int((baseTotal + elapsed / 3600).rounded(.down))) { old, new in if new > old { Haptics.play(.rayLit) } }
         .onChange(of: sun.litRays) { _, _ in rayLit(sun: sun, paused: paused) }
         .onChange(of: paused) { _, isPaused in pauseChanged(isPaused) }
         // The lock screen sun lights all its rays and smiles the moment today's stretch is covered, as here.

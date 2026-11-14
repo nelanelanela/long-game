@@ -63,12 +63,12 @@ private struct WatchTimerScreen: View {
                            onPauseOrResume: { store.pauseOrResume() }, onFinish: { store.finish() })
                 .onChange(of: SunHour(elapsed: elapsed).litRays) { _, rays in
                     guard !paused else { return }
-                    // Ray 0 again means a full hour just completed: a golden hour.
-                    WKInterfaceDevice.current().play(rays == 0 ? .success : .click)
+                    // A ray lighting (ray 0 again at each full hour) is the soft tap: a click on the wrist.
+                    Haptics.play(.rayLit)
                 }
                 .onChange(of: covered(elapsed, home)) { was, now in
-                    // A longer haptic when the sun is fully up.
-                    if now && !was { WKInterfaceDevice.current().play(.notification) }
+                    // Today's stretch covered: two taps (directionUp twice).
+                    if now && !was { Haptics.play(.stretchCovered) }
                 }
         }
     }

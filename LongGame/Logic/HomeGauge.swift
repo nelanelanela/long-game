@@ -184,6 +184,26 @@ struct DayBar: Equatable, Sendable {
 }
 
 enum WeekBars {
+    /// Last week's hours for each weekday, in the order of this week's bars, for the faint bars behind them. Nil in the
+    /// first week (the week of onboarding) and when last week had no sessions.
+    static func lastWeek(sessions: [SessionRecord], now: Date, weekStart: WeekStart, onboardingDate: Date,
+                         calendar: Calendar = .current) -> [Double]? {
+        let cal = WeekMath.calendar(calendar, weekStart: weekStart)
+        let thisWeek = WeekMath.startOfWeek(now, weekStart: weekStart, calendar: calendar)
+        guard thisWeek > WeekMath.startOfWeek(onboardingDate, weekStart: weekStart, calendar: calendar),
+              let start = cal.date(byAdding: .day, value: -7, to: thisWeek) else { return nil }
+        let week = sessions.filter { $0.start >= start && $0.start < thisWeek }
+        guard !week.isEmpty else { return nil }
+        let daily = Practice.dailySeconds(week, calendar: cal)
+        return (0..<7).map { offset in
+            guard let day = cal.date(byAdding: .day, value: offset, to: start) else { return 0 }
+            return (daily[day] ?? 0) / 3600
+        }
+    }
+
+    /// The gold bar's (and the faint bar's) height in the 64 pt box: 2.5 hours fills it.
+    static func barHeight(hours: Double, box: Double = 64) -> Double { max(0, min(box, hours / 2.5 * box)) }
+
     /// The days of the current week (Mon–Sun or Sun–Sat), coloured like the calendar levels. Days before today
     /// with nothing logged are rest days; days after today are future days.
     static func make(sessions: [SessionRecord], now: Date, weekStart: WeekStart, calendar: Calendar = .current) -> [DayBar] {

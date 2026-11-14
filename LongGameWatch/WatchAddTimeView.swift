@@ -42,7 +42,7 @@ struct WatchAddTimeView: View {
                         let chosen = amount == pick
                         Button {
                             crown = pick
-                            WKInterfaceDevice.current().play(.click)
+                            Haptics.play(.crown)
                         } label: {
                             Text(verbatim: WatchAddTime.amount(pick))
                                 .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: chosen ? LGColor.ink : .white)
@@ -57,7 +57,7 @@ struct WatchAddTimeView: View {
                 }
 
                 Button {
-                    WKInterfaceDevice.current().play(.success)
+                    Haptics.play(.timeAdded)
                     onAdd(amount)
                 } label: {
                     Text(verbatim: fits ? String(localized: "Add \(WatchAddTime.amount(amount))")

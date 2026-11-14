@@ -39,7 +39,7 @@ struct TipThanksSheet: View {
         .padding(.bottom, 16)
         .frame(maxWidth: .infinity)
         .background(LGColor.background.ignoresSafeArea())
-        .sensoryFeedback(.success, trigger: startedAt)
+        .onAppear { Haptics.play(.thanks) }
     }
 
     private func motes(_ t: Double) -> some View {

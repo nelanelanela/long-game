@@ -72,7 +72,8 @@ struct MilestoneCelebration: View {
                 }
             }
         }
-        .sensoryFeedback(.success, trigger: startedAt)
+        // Rising three, the hour-milestone feeling (also 10,000 hours).
+        .onAppear { Haptics.play(hours >= 10_000 ? .tenThousand : .hourMilestone) }
         .onAppear {
             let spoken = String(localized: "\(DurationFormat.grouped(hours)) hours") + ". " + Milestones.message(hours: hours, craft: craftName)
             AccessibilityNotification.Announcement(spoken).post()
@@ -138,7 +139,8 @@ struct MilestoneCelebration: View {
             }
             .padding(.horizontal, isMastery ? 0 : 24)
         }
-        .sensoryFeedback(.success, trigger: startedAt)
+        // Rising three, the hour-milestone feeling (also 10,000 hours).
+        .onAppear { Haptics.play(hours >= 10_000 ? .tenThousand : .hourMilestone) }
         .onAppear {
             let spoken = (isMastery ? String(localized: "10,000 hours") : String(localized: "\(DurationFormat.grouped(hours)) hours")) + ". " + Milestones.message(hours: hours, craft: craftName)
             AccessibilityNotification.Announcement(spoken).post()

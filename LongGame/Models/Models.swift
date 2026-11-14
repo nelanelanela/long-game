@@ -121,6 +121,8 @@ final class AppSettings {
     var milestonesSeen: [Int] = []
     /// When Welcome back was last offered; it is asked at most once every 7 days.
     var lastCatchUpPromptAt: Date?
+    /// The start of the week whose first open last showed the weekly look-back (once per week).
+    var lastLookBackWeek: Date?
     /// "Meet your future self" opens once on its own, the first time Home appears after onboarding.
     var futureSelfShown: Bool = false
     /// Tips unlock nothing; these only decide whether to say thank you and when to stop asking.

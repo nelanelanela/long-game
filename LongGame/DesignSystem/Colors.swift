@@ -52,6 +52,12 @@ enum LGColor {
     static let deleteWash = Color(hex: 0xFDF0EC)
     static let deleteInk = Color(hex: 0xC0392B)
     static let timerGold = Color(hex: 0xFFD66B)
+    /// The gold day bar's top colour (it fades to amber).
+    static let dayBarTop = Color(hex: 0xFFD45A)
+    /// Last week's faint bar behind This week's day bars: navy at 8%.
+    static let lastWeekBar = Color(hex: 0x16244A).opacity(0.08)
+    /// The anniversary pill under Home's number.
+    static let anniversaryPill = Color(hex: 0xFFF1DA)
     /// The Finish sheet's "A long one" card.
     static let longSessionCard = Color(hex: 0xFFF1DA)
     /// The Undo pill inside Home's navy toast: a slightly lighter navy.

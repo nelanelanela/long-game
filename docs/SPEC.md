@@ -151,6 +151,9 @@ No cards on Home: everything sits directly on the warm-white background. A segme
 
 - Big number: hours this week with one decimal ("6.5 h") and "of 12 h this week · 54%".
 - A row of 7 small day bars between hairlines (Mon–Sun, or Sun–Sat), coloured like the calendar levels; rest days in the light blue, future days in light grey; today's letter in bold.
+- **Last week behind this week** (update 44): behind each day, a faint bar (navy at 8%, 30 pt wide, radius 7) for the same weekday last week, on the same scale as this week's bars (2.5 h fills the 64 pt box). Under the bars a small key: "Last week" and "This week" with their swatches. Both are hidden in the first week (the week of onboarding) and when last week had no sessions. VoiceOver per day: "Thursday, 1 hour 30 minutes. Last Thursday, 2 hours." The wide layouts that show the day bars do the same (`WeekBars.lastWeek`).
+- **Small anniversaries** (update 44): a one-line pill under the number (peach #FFF1DA, ember text), for that calendar day only, with the sun's celebrate face for a moment on the first open that day. A month, six months and each full year since the first session logged in the app ("A month since you started.", "Six months since you started.", "A year since you started.", "Two years since you started."); the 10th, 50th, 100th, 250th, 500th and 1,000th session on the day it was saved ("Your 100th session."); the 100th and 365th day of practice ("100 days of practice."). One a day at most, in this order: an hour milestone (its own celebration, no pill), years, session counts, days of practice, months. A year from 29 February falls on 28 February in other years. No sheet, sound, haptic or notification (`Logic/Anniversaries.swift`).
+- **The weekly look-back** (update 44, `design/redesign/WeekLookBack.dc.html`): a sheet the first time the app becomes active in a new week, if the week that just ended had a session. Once per week (`Settings.lastLookBackWeek`), never in the week of onboarding, and never over a running session or another sheet (it waits for the next open). Top to bottom: the day sky with one happy sun over the sea; "LAST WEEK" and the dates ("2 – 8 November"); the hours, large ("9 h 30"), with "of your 12 h pace" (the pace that applied last week; the hours alone without one); in ember, only when the week was up, "1 h 15 more than the week before."; the seven gold day bars on a scale where the longest day is the tallest, rest days a small pale dot, and only the longest day (ties: the later day) carrying its hours above the bar in ember with its letter in bold; three figures, **Days played** ("6 of 7"), **Longest day** ("Thu · 2 h 10") and **Mostly** (Mornings, Afternoons, Evenings or Nights by the session pictures' hours, midday split at noon; ties: the later part); **a moment**, the week's most-viewed photo, else its most recent photo, else the longest session's picture, with "A moment from Thursday evening" and the note (or "07:30 · 1 h 10"), opening the photo viewer or the session; **the long game**, "3,294 h · finish line Nov 2035" over a thin bar, navy for the total before the week and a glowing gold tip for the week; "This week: 12 h, about 1 h 45 a day."; **Start the week** (primary) and **Change my pace** (text, opens Your weekly pace). The words are the same whatever the total: never "only", "missed" or "behind". VoiceOver reads the bars as one sentence; the scene is decorative (`Logic/WeekLookBack.swift`).
 - Target row: "5.5 h to go · 3 days left" (or "Target reached · +1.5 h" in gold once passed) and underneath "Your pace for the year: 12 h a week, until 2 Nov 2027", with a chevron. Opens 3b.
 
 **4c · Today: today's stretch**
@@ -245,8 +248,8 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 
 **Screen 10 · Welcome back (sheet)**
 
-- Open-eyed happy sun, "Welcome back!", and "Your last session was on <weekday, date> — that's N weeks ago. Did you practise since then?" (N = whole weeks in the gap).
-- **Yes, let me add it** opens screen 11 or 12. **No, I took a break** closes the sheet; the days stay as rest days.
+- A kinder return (update 44, `design/redesign/FeelingProgress.dc.html`): a small scene with a dawn sky and the sun opening its eyes over the sea (open at once with Reduce Motion); **Welcome back.**; "The sun waited for you. Your 3,294 hours are all here." (the real total).
+- **I practised, let me add it** (primary) opens screen 11 or 12. The sentence with the date of the last session and the gap ("Your last session was on <weekday, date>, N weeks ago.") moves there, under the Catch up title. **I took a break** (text button) closes the sheet; Home opens on Today with the toast "Rest is part of the craft.", and the days stay as rest days.
 
 **Screen 11 · Under 4 weeks (gap of 7–27 days): a stepper per week**
 
@@ -725,6 +728,22 @@ The icon grows with the user: one new icon for every 1,000 hours, using iOS alte
 - When the total goes down (deleted sessions, lowered estimates) the icon is lowered quietly, once, on the next launch or return to the foreground (and whenever Home appears). Replace my craft sets the plain icon at once. A higher stage never jumps ahead of a celebration of 1,000 h or more that is due.
 - New users already past 1,000 h get their stage once, when Home first appears after onboarding.
 - Settings → **App icon grows with you** (on by default, below the reminders): "Grows every 1,000 hours". Off sets the primary icon; on sets the current stage.
+
+## Haptics (update 44, `design/redesign/Haptics.dc.html`)
+
+One language, played through `Haptics` (DesignSystem) with each moment named by its meaning (`Logic/HapticPlan.swift`):
+
+| Name | Feels like | Means | Watch |
+| --- | --- | --- | --- |
+| softTap | one light impact | a ray lights (the full hour too) · the total passes a whole hour · a session is saved · time is added · Undo · the tip thank-you | click |
+| twoTaps | two light impacts, 0.12 s apart | today's stretch is covered (in the timer or by a save) | directionUp twice |
+| risingThree | light, medium, rigid over 0.3 s | an hour milestone · the weekly pace is reached · 10,000 hours | success |
+| tick | the system selection feedback | steppers, the Crown, the Growth chart crossing a milestone and its scrub ticks, switching Home's tabs | click |
+| giggle | as before | the giggle | – |
+| none | nothing | errors, deleting, pausing, a stepper at its limit | – |
+
+- Never two at once: moments within 0.04 s of each other play only the strongest (risingThree, then twoTaps, then softTap, then tick). A save that reaches an hour milestone stays quiet itself: the celebration on Home plays risingThree.
+- iOS plays nothing when System Haptics is off. The Watch plays on the wrist while its own screens are up (its timer, Add time). Widgets and the Live Activity stay silent.
 
 ## Visual system
 
