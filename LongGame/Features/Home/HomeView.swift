@@ -273,6 +273,8 @@ struct HomeView: View {
             refreshAnniversary()
             refreshNotifications()
         }
+        // While the celebration is up, Home underneath is out of VoiceOver's reach (the audit still found its words).
+        .accessibilityHidden(celebrating != nil)
         .overlay {
             if let hours = celebrating {
                 MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
@@ -280,6 +282,8 @@ struct HomeView: View {
                                      onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
                                      onDone: { celebrationDone(hours: hours) })
                     .transition(.opacity)
+                    // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
+                    .accessibilityAddTraits(.isModal)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: celebrating)
@@ -1404,6 +1408,9 @@ struct HomeView: View {
         .padding(.top, 12)
         .padding(.bottom, 4)
         .background(LGColor.background.opacity(0.94))
+        // Read after the day's words, not before the tabs: the bar sits at the bottom of the screen.
+        .accessibilityElement(children: .contain)
+        .accessibilitySortPriority(-1)
     }
 
     private var startButton: some View {
