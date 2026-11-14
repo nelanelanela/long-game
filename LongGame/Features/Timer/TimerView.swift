@@ -383,6 +383,8 @@ private struct RunningScene: View {
         return Text(text)
             .lgText(LGTextStyle(size: 13, weight: weight, relativeTo: .footnote), color: colour)
             .multilineTextAlignment(.center)
+            // Wraps at the largest text sizes instead of ending in "…" (the audit).
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func pauseButton(paused: Bool, palette: TimerPalette) -> some View {
