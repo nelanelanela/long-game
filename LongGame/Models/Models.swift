@@ -148,11 +148,8 @@ final class AppSettings {
     /// Then and now: the two session ids the person chose (nil: the earliest and the latest photo).
     var thenAndNowThenId: UUID?
     var thenAndNowNowId: UUID?
-
-//    var thenAndNowChoice: ThenAndNow.Choice? {
-//        get { thenAndNowThenId.flatMap { t in thenAndNowNowId.map { ThenAndNow.Choice(then: t, now: $0) } } }
-//        set { thenAndNowThenId = newValue?.then; thenAndNowNowId = newValue?.now }
-//    }
+    // `thenAndNowChoice` (the two ids as one value) is in an extension in ThenAndNowView.swift: written here, inside
+    // the @Model class, SwiftData's macro tried to store it and the project didn't compile.
     /// Your pace for the year: hours a week for the 12 months from `targetSetAt`. 0 means none chosen yet
     /// (a game started before this existed); the earlier ones live on as `TargetPeriod` rows.
     var weeklyTargetHours: Double = 0
