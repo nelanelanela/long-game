@@ -36,7 +36,11 @@ struct GrowthTab: View {
             headline(s: s, data: data, now: now)
             forecastCard(s: s, data: data, now: now).padding(.top, 14)
             whatIf(s: s, now: now).padding(.top, 16)
-            yearRow(now: now, records: records).padding(.top, 20)
+            VStack(spacing: 0) {
+                thenAndNowRow
+                yearRow(now: now, records: records)
+            }
+            .padding(.top, 20)
         }
         // Reading the flag here ties this screen to it. Without that the tap set it but the full-screen chart
         // never appeared (seen in the iOS 27 simulator, November 2026).
@@ -55,6 +59,33 @@ struct GrowthTab: View {
         guard let settings = settingsRows.first, !settings.scrubHintSeen else { return }
         settings.scrubHintSeen = true
         try? context.save()
+    }
+
+    /// "Then and now": the first photo next to the latest. Only when a pair exists (two photos 90 days apart).
+    @ViewBuilder
+    private var thenAndNowRow: some View {
+        let photos = sessions.filter(\.hasPhoto).map { ThenAndNow.Photo(sessionId: $0.id, start: $0.start) }
+        if ThenAndNow.pair(photos: photos, chosen: settingsRows.first?.thenAndNowChoice) != nil {
+            NavigationLink {
+                ThenAndNowView(craft: craft)
+            } label: {
+                HStack(spacing: 12) {
+                    SunView(idle: false, face: .happy).frame(width: 34, height: 34).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Then and now").lgText(.rowStrong)
+                        Text("Your first photo next to your latest").lgText(.caption, color: LGColor.inkMuted)
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right").lgIcon(13, weight: .semibold)
+                        .foregroundStyle(LGColor.inkMuted).accessibilityHidden(true)
+                }
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        }
     }
 
     /// A quiet row at the bottom, there all year: opens the year card (the year so far, or last year in early January).

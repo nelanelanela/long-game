@@ -141,6 +141,18 @@ final class AppSettings {
     var scrubHintSeen: Bool = false
     /// Settings → Sounds → Giggle sound: the sun's laugh when it is tapped. On unless turned off.
     var giggleSound: Bool = true
+    /// Settings → The sun remembers: now and then a memory from the person's own history on Home. On unless turned off.
+    var sunRemembers: Bool = true
+    /// The day a memory was last shown on Home (it stays that whole day; the next one waits at least 7 days).
+    var lastMemoryDay: Date?
+    /// Then and now: the two session ids the person chose (nil: the earliest and the latest photo).
+    var thenAndNowThenId: UUID?
+    var thenAndNowNowId: UUID?
+
+//    var thenAndNowChoice: ThenAndNow.Choice? {
+//        get { thenAndNowThenId.flatMap { t in thenAndNowNowId.map { ThenAndNow.Choice(then: t, now: $0) } } }
+//        set { thenAndNowThenId = newValue?.then; thenAndNowNowId = newValue?.now }
+//    }
     /// Your pace for the year: hours a week for the 12 months from `targetSetAt`. 0 means none chosen yet
     /// (a game started before this existed); the earlier ones live on as `TargetPeriod` rows.
     var weeklyTargetHours: Double = 0

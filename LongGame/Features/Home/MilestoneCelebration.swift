@@ -9,6 +9,8 @@ struct MilestoneCelebration: View {
     /// The app icon follows the total: only then does a milestone say it has grown.
     var iconGrows = true
     var onSupport: () -> Void = {}
+    /// "See then and now": only when there is a pair of photos to show (nil hides the button).
+    var onThenAndNow: (() -> Void)?
     let onDone: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -71,6 +73,9 @@ struct MilestoneCelebration: View {
                         }
                         .scrollBounceBehavior(.basedOnSize)
                         Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
+                        if let onThenAndNow {
+                            Button("See then and now", action: onThenAndNow).buttonStyle(.lg(.secondary))
+                        }
                         if offerSupport {
                             Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
                         }

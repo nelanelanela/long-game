@@ -234,6 +234,26 @@ enum YearCardRender {
         #endif
     }
 
+    /// Any 360 pt card (Then and now uses it too) as a PNG at 3x, written to a temporary file.
+    static func png<Card: View>(_ card: Card, name: String) -> URL? {
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = scale
+        renderer.isOpaque = true
+        #if canImport(UIKit)
+        let image = renderer.uiImage
+        #else
+        let image = renderer.nsImage
+        #endif
+        guard let data = image?.pngData() else { return nil }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).png")
+        do {
+            try data.write(to: url, options: .atomic)
+            return url
+        } catch {
+            return nil
+        }
+    }
+
     static func png(summary: YearSummary, craftName: String, style: YearCardStyle, showHours: Bool, now: Date,
                     weekStart: WeekStart, photos: [PlatformImage]) -> URL? {
         guard let image = image(summary: summary, craftName: craftName, style: style, showHours: showHours, now: now,
