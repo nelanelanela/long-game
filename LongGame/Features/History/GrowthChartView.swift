@@ -31,10 +31,10 @@ struct GrowthChartView: View {
     @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        let spanYears = data.xEnd.timeIntervalSince(data.xStart) / (365.25 * 86_400)
-        // At the largest text sizes each year label is wider, so they are spaced out further (they overlapped).
-        let wideLabels = typeSize.isAccessibilitySize ? 2.0 : 1.0
-        let step = spanYears * wideLabels <= 8 ? 1 : spanYears * wideLabels <= 16 ? 2 : spanYears * wideLabels <= 30 ? 5 : 10
+        // Only years with room for their whole label; at the largest text sizes they are spaced further apart
+        // and kept further from the ends.
+        let wide = typeSize.isAccessibilitySize
+        let yearTicks = GrowthSeries.yearTicks(from: data.xStart, to: data.xEnd, wideLabels: wide, edgeMargin: wide ? 0.12 : 0.07)
         Chart {
             let past = LineDraw.partial(data.past, fraction: draw.past)
             let chosen = LineDraw.partial(data.chosen, fraction: draw.chosen)
@@ -114,9 +114,15 @@ struct GrowthChartView: View {
             }
         }
         .chartXAxis {
-            AxisMarks(values: .stride(by: .year, count: step)) { _ in
-                AxisValueLabel(format: .dateTime.year(), anchor: .top)
-                    .foregroundStyle(LGColor.inkMuted)
+            AxisMarks(values: yearTicks) { value in
+                AxisValueLabel(anchor: .top) {
+                    if let date = value.as(Date.self) {
+                        // Never shortened to "2…": the label keeps its full width.
+                        Text(date, format: .dateTime.year())
+                            .fixedSize()
+                            .foregroundStyle(LGColor.inkMuted)
+                    }
+                }
             }
         }
         .modifier(ScrubSelection(binding: full ? selection : nil))

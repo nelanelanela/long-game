@@ -86,6 +86,31 @@ enum GrowthSeries {
     }
 }
 
+extension GrowthSeries {
+    /// The years written under the Growth chart: 1 January of every year, or every 2nd, 5th or 10th year when
+    /// the chart is long (round years, so 2030, 2035, 2040). A year too close to either end of the chart is left out,
+    /// because its label would hang off the edge and be cut short; fewer labels, but every one whole.
+    /// - Parameters:
+    ///   - edgeMargin: how close to an end a year may sit, as a share of the chart's width.
+    ///   - wideLabels: the largest text sizes, where each label is wider, so the years are spread further apart.
+    static func yearTicks(from start: Date, to end: Date, wideLabels: Bool = false,
+                          edgeMargin: Double = 0.07, calendar: Calendar = .current) -> [Date] {
+        let span = end.timeIntervalSince(start)
+        guard span > 0 else { return [] }
+        let years = span / (365.25 * 86_400) * (wideLabels ? 2 : 1)
+        let step = years <= 8 ? 1 : years <= 16 ? 2 : years <= 30 ? 5 : 10
+        let first = calendar.component(.year, from: start)
+        let last = calendar.component(.year, from: end)
+        var ticks: [Date] = []
+        for year in first...last where year % step == 0 {
+            guard let jan1 = calendar.date(from: DateComponents(year: year, month: 1, day: 1)) else { continue }
+            let at = jan1.timeIntervalSince(start) / span
+            if at >= edgeMargin && at <= 1 - edgeMargin { ticks.append(jan1) }
+        }
+        return ticks
+    }
+}
+
 extension ScenarioResult {
     /// Cumulative hours at a point in time; stays at 10,000 once reached.
     func hours(atMonth month: Double) -> Double {

@@ -119,5 +119,24 @@ struct GrowthKeyTests {
         let short = Array(points.prefix(50))
         #expect(GrowthSeries.thinned(short) == short)
     }
-}
 
+    @Test func yearTicksLeaveOutYearsAtTheEdges() {
+        // 2024-11 to 2048-12: every 5th year; none hugging either end.
+        let ticks = GrowthSeries.yearTicks(from: day(2024, 11, 1), to: day(2048, 12, 1), calendar: utc)
+        let years = ticks.map { utc.component(.year, from: $0) }
+        #expect(years == [2030, 2035, 2040, 2045])
+    }
+
+    @Test func yearTicksDropAYearRightAtTheEnd() {
+        // 2048 sits 1 month from the end of the chart: its label would be cut, so it is left out.
+        let ticks = GrowthSeries.yearTicks(from: day(2041, 2, 1), to: day(2048, 2, 1), calendar: utc)
+        let years = ticks.map { utc.component(.year, from: $0) }
+        #expect(years == [2042, 2043, 2044, 2045, 2046, 2047])
+    }
+
+    @Test func yearTicksSpreadOutForLargeText() {
+        let ticks = GrowthSeries.yearTicks(from: day(2024, 6, 1), to: day(2036, 6, 1), wideLabels: true, calendar: utc)
+        let years = ticks.map { utc.component(.year, from: $0) }
+        #expect(years == [2030])
+    }
+}
