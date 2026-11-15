@@ -1,7 +1,15 @@
 import Foundation
 
 enum Milestones {
-    static let all = [100, 500, 1_000, 2_500, 5_000, 7_500, 10_000]
+    /// Update 50: every 1,000 as well, so letters and posters have their moment.
+    static let all = [100, 500, 1_000, 2_000, 2_500, 3_000, 4_000, 5_000, 6_000, 7_000, 7_500, 8_000, 9_000, 10_000]
+    /// The thousands added in update 50. Someone already past them when they arrive isn't shown them late.
+    static let addedThousands = [2_000, 3_000, 4_000, 6_000, 7_000, 8_000, 9_000]
+
+    /// Once, after updating: the added thousands already passed join the seen list.
+    static func adoptingThousands(total: Double, seen: [Int]) -> [Int] {
+        seen + addedThousands.filter { Double($0) <= total && !seen.contains($0) }
+    }
 
     /// Milestones the total has reached that were not celebrated yet.
     static func newlyCrossed(total: Double, seen: [Int]) -> [Int] {
@@ -26,9 +34,16 @@ enum Milestones {
         case 100: return "A hundred hours."
         case 500: return "Five hundred hours."
         case 1_000: return "A thousand hours."
+        case 2_000: return "Two thousand hours."
         case 2_500: return "Two and a half thousand hours."
+        case 3_000: return "Three thousand hours."
+        case 4_000: return "Four thousand hours."
         case 5_000: return "Five thousand hours."
+        case 6_000: return "Six thousand hours."
+        case 7_000: return "Seven thousand hours."
         case 7_500: return "Seven and a half thousand hours."
+        case 8_000: return "Eight thousand hours."
+        case 9_000: return "Nine thousand hours."
         case 10_000...: return "10,000 hours. The sun has fully risen."
         default: return "\(DurationFormat.grouped(hours)) hours."
         }

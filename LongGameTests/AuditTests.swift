@@ -21,7 +21,7 @@ struct MilestoneNotificationTests {
     @Test func skipsMilestonesAlreadyCelebrated() throws {
         let next = try #require(Milestones.nextCrossing(baseTotal: 499.9, state: state(), seen: [100], now: start))
         #expect(next.hours == 500)
-        #expect(Milestones.nextCrossing(baseTotal: 99.9, state: state(), seen: [100, 500, 1_000, 2_500, 5_000, 7_500, 10_000], now: start) == nil)
+        #expect(Milestones.nextCrossing(baseTotal: 99.9, state: state(), seen: Milestones.all, now: start) == nil)
     }
 
     @Test func nothingWhilePausedOrTooFarAway() {

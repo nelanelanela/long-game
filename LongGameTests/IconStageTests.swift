@@ -68,12 +68,13 @@ struct IconPlanTests {
     }
 
     @Test func aBigJumpGoesStraightToTheHighestStageWithOneChange() {
-        // 1,200 → 4,300: crosses 2,000, 3,000, 4,000 and the 2,500 celebration. The change waits for the celebration…
+        // 1,200 → 4,300: crosses the 2,000, 2,500, 3,000 and 4,000 celebrations (Home shows the highest). The change
+        // waits for the celebration…
         let crossed = Milestones.newlyCrossed(total: 4_300, seen: [100, 500, 1_000])
-        #expect(crossed == [2_500])
+        #expect(crossed == [2_000, 2_500, 3_000, 4_000])
         #expect(IconPlan.quietStage(totalHours: 4_300, growsWithYou: g, applied: stage(1), celebrationPending: true) == nil)
         // …and then goes to stage 4, not through 2 and 3.
-        #expect(IconPlan.afterCelebration(hours: 2_500, totalHours: 4_300, growsWithYou: g, applied: stage(1)) == stage(4))
+        #expect(IconPlan.afterCelebration(hours: 4_000, totalHours: 4_300, growsWithYou: g, applied: stage(1)) == stage(4))
         // Without a celebration in the way the same jump is one change on sheet close.
         #expect(IconPlan.quietStage(totalHours: 4_300, growsWithYou: g, applied: stage(1), celebrationPending: false) == stage(4))
     }

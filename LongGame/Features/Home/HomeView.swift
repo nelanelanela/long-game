@@ -1469,6 +1469,12 @@ struct HomeView: View {
             return false
         }
         guard let settings = settingsRows.first else { return false }
+        if !settings.thousandsAdopted {
+            // Updated from before every 1,000 had a celebration: the ones already passed aren't shown late.
+            settings.milestonesSeen = Milestones.adoptingThousands(total: total, seen: settings.milestonesSeen)
+            settings.thousandsAdopted = true
+            try? context.save()
+        }
         let crossed = Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
         guard let top = crossed.max() else { return false }
         settings.milestonesSeen.append(contentsOf: crossed)

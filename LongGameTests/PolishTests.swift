@@ -11,7 +11,7 @@ struct MilestoneTests {
     }
 
     @Test func tenThousandIsLast() {
-        #expect(Milestones.newlyCrossed(total: 12_000, seen: [100, 500, 1000, 2500, 5000, 7500]) == [10_000])
+        #expect(Milestones.newlyCrossed(total: 12_000, seen: Milestones.all.filter { $0 < 10_000 }) == [10_000])
     }
 
     @Test func messages() {

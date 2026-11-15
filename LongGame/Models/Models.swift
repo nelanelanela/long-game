@@ -119,6 +119,8 @@ final class AppSettings {
     /// A gentle 7 pm nudge on days the user usually practises (was the streak reminder).
     @Attribute(originalName: "streakReminder") var rhythmNudge: Bool = false
     var milestonesSeen: [Int] = []
+    /// Update 50 added a celebration at every 1,000 hours; true once the thousands already passed were marked seen.
+    var thousandsAdopted: Bool = false
     /// When Welcome back was last offered; it is asked at most once every 7 days.
     var lastCatchUpPromptAt: Date?
     /// The start of the week whose first open last showed the weekly look-back (once per week).

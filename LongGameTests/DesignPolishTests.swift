@@ -127,3 +127,36 @@ struct EarlyDaysTests {
         #expect(YearSummary.minimumDays == 28)
     }
 }
+
+// Update 50: a celebration at every 1,000 hours.
+struct EveryThousandTests {
+    @Test func everyThousandIsAMilestone() {
+        for n in stride(from: 1_000, through: 10_000, by: 1_000) { #expect(Milestones.all.contains(n)) }
+        #expect(Milestones.all == Milestones.all.sorted())
+        #expect(Milestones.all.contains(2_500) && Milestones.all.contains(7_500))
+    }
+
+    @Test func wordsForTheThousands() {
+        #expect(Milestones.message(hours: 2_000, craft: "Piano") == "Two thousand hours.")
+        #expect(Milestones.message(hours: 9_000, craft: "Piano") == "Nine thousand hours.")
+        #expect(Milestones.words(hours: 6_000) == "Six thousand hours")
+    }
+
+    @Test func crossingTwoThousand() {
+        #expect(Milestones.newlyCrossed(total: 2_000.2, seen: [100, 500, 1_000]) == [2_000])
+    }
+
+    /// Updating at 3,294 hours: 2,000 and 3,000 are marked seen, not celebrated late; 4,000 still comes.
+    @Test func updatingDoesNotCelebrateOldThousands() {
+        let seen = Milestones.adoptingThousands(total: 3_294, seen: [100, 500, 1_000, 2_500])
+        #expect(Milestones.newlyCrossed(total: 3_294, seen: seen).isEmpty)
+        #expect(Milestones.newlyCrossed(total: 4_000.1, seen: seen) == [4_000])
+        // Adopting twice changes nothing.
+        #expect(Milestones.adoptingThousands(total: 3_294, seen: seen) == seen)
+    }
+
+    @Test func iconStillGrowsOnlyAtItsOwnSteps() {
+        #expect(!Milestones.iconGrows(at: 2_000))
+        #expect(Milestones.iconGrows(at: 5_000))
+    }
+}

@@ -58,6 +58,7 @@ final class OnboardingModel {
             context.insert(settings)
         }
         settings.milestonesSeen = seen
+        settings.thousandsAdopted = true
         settings.weatherInScene = weatherInScene
         settings.syncEnabled = saveToICloud
         // The first Home after onboarding opens on The long game; every launch after that opens on This week.
