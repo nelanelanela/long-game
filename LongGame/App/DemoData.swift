@@ -13,6 +13,7 @@ enum DemoData {
         for e in (try? context.fetch(FetchDescriptor<YearEstimate>())) ?? [] { context.delete(e) }
         for s in (try? context.fetch(FetchDescriptor<Session>())) ?? [] { context.delete(s) }
         for t in (try? context.fetch(FetchDescriptor<TargetPeriod>())) ?? [] { context.delete(t) }
+        for l in (try? context.fetch(FetchDescriptor<Letter>())) ?? [] { context.delete(l) }
         TimerPersistence.save(nil)
 
         let calendar = Calendar.current
