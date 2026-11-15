@@ -16,12 +16,20 @@ struct MilestoneCelebration: View {
     /// "Make a keepsake poster", at every 1,000 hours (nil hides it).
     var onKeepsake: (() -> Void)?
     var onWriteLetter: (Int) -> Void = { _ in }
+    /// "Share this moment": the milestone card's words (nil hides the button).
+    var shareCard: MilestoneCardView.Content?
     let onDone: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var startedAt = Date()
 
     private var isMastery: Bool { hours >= 10_000 }
+
+    /// The offers besides Keep playing.
+    private var extraButtons: Int {
+        [onThenAndNow != nil, shareCard != nil, letterTo != nil, onKeepsake != nil && hours % 1_000 == 0]
+            .filter { $0 }.count
+    }
 
     var body: some View {
         if isMastery { masteryBody } else { milestoneBody }
@@ -30,7 +38,8 @@ struct MilestoneCelebration: View {
     /// A thousand hours and the others: the dawn scene, the number in white above it and a short line below.
     private var milestoneBody: some View {
         GeometryReader { geo in
-            let k = min(1, max(0.6, (geo.size.height - 250) / 560))
+            // Each extra offer under the words takes about 62 pt: the scene gives that room up first.
+            let k = min(1, max(0.5, (geo.size.height - max(250, 190 + CGFloat(extraButtons) * 62)) / 560))
             ZStack(alignment: .top) {
                 LGColor.background.ignoresSafeArea()
                 VStack(spacing: 0) {
@@ -58,40 +67,43 @@ struct MilestoneCelebration: View {
                     .ignoresSafeArea(edges: .top)
                     .frame(height: 560 * k)
 
-                    VStack(spacing: 14) {
-                        // The words scroll if the largest text sizes need more room than is left under the scene
-                        // (they were cut off); at the usual sizes they fit and sit where they always did.
-                        ScrollView {
-                            VStack(spacing: 14) {
-                                Text(Milestones.message(hours: hours, craft: craftName))
-                                    .lgText(LGTextStyle(size: 20, weight: .semibold, relativeTo: .title3))
+                    // Everything under the scene scrolls if the largest text sizes need more room than is left
+                    // (at the usual sizes it all fits and nothing moves).
+                    ScrollView {
+                        VStack(spacing: 14) {
+                            Text(Milestones.message(hours: hours, craft: craftName))
+                                .lgText(LGTextStyle(size: 20, weight: .semibold, relativeTo: .title3))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if iconGrows && Milestones.iconGrows(at: hours) {
+                                Text("Your app icon has grown a little too.")
+                                    .lgText(.note, color: LGColor.inkMuted)
                                     .multilineTextAlignment(.center)
                                     .fixedSize(horizontal: false, vertical: true)
-                                if iconGrows && Milestones.iconGrows(at: hours) {
-                                    Text("Your app icon has grown a little too.")
-                                        .lgText(.note, color: LGColor.inkMuted)
-                                        .multilineTextAlignment(.center)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
                             }
-                            .frame(maxWidth: .infinity)
+                            Spacer(minLength: 0)
+                            if let onThenAndNow {
+                                Button("See then and now", action: onThenAndNow).buttonStyle(.lg(.secondary))
+                            }
+                            if let shareCard {
+                                ShareMomentButton(content: shareCard)
+                            }
+                            Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
+                            if let letterTo {
+                                Button("Write to yourself at \(Letters.hoursName(letterTo))") { onWriteLetter(letterTo) }
+                                    .buttonStyle(.lg(.secondary))
+                            }
+                            if let onKeepsake, hours % 1_000 == 0 {
+                                Button("Make a keepsake poster", action: onKeepsake).buttonStyle(.lg(.secondary))
+                            }
+                            if offerSupport {
+                                Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
+                            }
                         }
-                        .scrollBounceBehavior(.basedOnSize)
-                        Button("Keep playing", action: onDone).buttonStyle(.lg(.primary))
-                        if let letterTo {
-                            Button("Write to yourself at \(Letters.hoursName(letterTo))") { onWriteLetter(letterTo) }
-                                .buttonStyle(.lg(.secondary))
-                        }
-                        if let onKeepsake, hours % 1_000 == 0 {
-                            Button("Make a keepsake poster", action: onKeepsake).buttonStyle(.lg(.secondary))
-                        }
-                        if let onThenAndNow {
-                            Button("See then and now", action: onThenAndNow).buttonStyle(.lg(.secondary))
-                        }
-                        if offerSupport {
-                            Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
-                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: max(0, geo.size.height - 560 * k - 30), alignment: .top)
                     }
+                    .scrollBounceBehavior(.basedOnSize)
                     .padding(.horizontal, 24)
                     .padding(.top, 18)
                     .padding(.bottom, 12)

@@ -313,20 +313,7 @@ struct HomeView: View {
         .accessibilityHidden(celebrating != nil)
         .overlay {
             if let hours = celebrating {
-                MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
-                                     iconGrows: settingsRows.first?.iconGrows ?? true,
-                                     onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
-                                     onThenAndNow: thenAndNowAction(hours: hours),
-                                     letterTo: Letters.next(after: summary(now: Date()).total),
-                                     onKeepsake: {
-                                         celebrationDone(hours: hours)
-                                         Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .keepsake(hours) }
-                                     },
-                                     onWriteLetter: { next in
-                                         celebrationDone(hours: hours)
-                                         Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .writeLetter(next) }
-                                     },
-                                     onDone: { celebrationDone(hours: hours) })
+                celebrationView(hours: hours)
                     .transition(.opacity)
                     // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
                     .accessibilityAddTraits(.isModal)
@@ -668,6 +655,25 @@ struct HomeView: View {
         }
     }
 
+    /// The milestone celebration with all its offers (kept out of `body` so the compiler stays quick).
+    private func celebrationView(hours: Int) -> MilestoneCelebration {
+        MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
+                             iconGrows: settingsRows.first?.iconGrows ?? true,
+                             onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
+                             onThenAndNow: thenAndNowAction(hours: hours),
+                             letterTo: Letters.next(after: summary(now: Date()).total),
+                             onKeepsake: {
+                                 celebrationDone(hours: hours)
+                                 Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .keepsake(hours) }
+                             },
+                             onWriteLetter: { next in
+                                 celebrationDone(hours: hours)
+                                 Task { try? await Task.sleep(for: .seconds(0.6)); sheet = .writeLetter(next) }
+                             },
+                             shareCard: milestoneCard(hours: hours),
+                             onDone: { celebrationDone(hours: hours) })
+    }
+
     /// "See then and now" on the celebration: closes it and opens Then and now; nil when there is no pair.
     private func thenAndNowAction(hours: Int) -> (() -> Void)? {
         guard hasThenAndNow else { return nil }
@@ -675,6 +681,13 @@ struct HomeView: View {
             celebrationDone(hours: hours)
             historyRoute = .thenAndNow
         }
+    }
+
+    /// The milestone card's words: the day the total reached it (today when it came with the hours from before the app).
+    private func milestoneCard(hours: Int) -> MilestoneCardView.Content {
+        let baseline = Baseline.hours(estimates: estimates.map(\.rate), onboardingDate: craft.createdAt)
+        let reached = baseline >= Double(hours) ? nil : Keepsake.dayReached(hours, sessions: sessions.map(\.record), baseline: baseline)
+        return .init(hours: hours, craftName: craft.name, reached: reached ?? Date(), startYear: craft.startYear)
     }
 
     /// Whether Then and now has a pair of photos to show (for the milestone celebration's button).

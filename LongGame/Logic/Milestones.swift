@@ -43,8 +43,50 @@ enum Milestones {
         return hours >= 10_000 ? String(localized: "\(of). The sun has fully risen.") : String(localized: "\(of). Sunrise is coming.")
     }
 
+    /// "A thousand hours": the milestone in words, for the share card's VoiceOver label.
+    static func words(hours: Int) -> String {
+        let line = message(hours: hours, craft: "")
+        if hours >= 10_000 { return String(localized: "10,000 hours") }
+        return line.hasSuffix(".") ? String(line.dropLast()) : line
+    }
+
     /// Only the thousands change the app icon, so only they say it has grown.
     static func iconGrows(at hours: Int) -> Bool { [1_000, 5_000, 10_000].contains(hours) }
+}
+
+/// The milestone card to share (update 42, `design/redesign/MilestoneCard.dc.html`): its words.
+enum MilestoneCardText {
+    /// "1,000 h"
+    static func number(_ hours: Int) -> String { "\(DurationFormat.grouped(hours)) h" }
+
+    /// "Reached on 5 November 2026 · started in 2019"; without the start when it's the same year.
+    static func reached(on date: Date, startYear: Int, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let day = longDate(date, calendar: calendar, locale: locale)
+        let year = calendar.component(.year, from: date)
+        let first = String(localized: "Reached on \(day)")
+        guard startYear > 0, startYear < year else { return first }
+        return first + " · " + String(localized: "started in \(String(startYear))")
+    }
+
+    /// "A thousand hours of piano. Reached on 5 November 2026."
+    static func spoken(hours: Int, craft: String, on date: Date, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let name = craft.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let words = Milestones.words(hours: hours)
+        let first = name.isEmpty ? words : String(localized: "\(words) of \(name)")
+        return first + ". " + String(localized: "Reached on \(longDate(date, calendar: calendar, locale: locale)).")
+    }
+
+    /// The file's name in the share sheet.
+    static func fileName(hours: Int, craft: String) -> String {
+        let safe = craft.components(separatedBy: CharacterSet(charactersIn: "/\\:?%*|\"<>")).joined()
+        return "Long Game – \(DurationFormat.grouped(hours)) hours of \(safe.isEmpty ? "practice" : safe)"
+    }
+
+    static func longDate(_ date: Date, calendar: Calendar, locale: Locale) -> String {
+        var style = Date.FormatStyle(date: .long, time: .omitted, locale: locale, calendar: calendar)
+        style.timeZone = calendar.timeZone
+        return date.formatted(style)
+    }
 }
 
 enum ReminderPlanner {

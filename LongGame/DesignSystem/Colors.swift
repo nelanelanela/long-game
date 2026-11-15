@@ -117,6 +117,10 @@ enum LGColor {
     static let anniversaryPill = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
     static let moonCloud = Color(hex: 0xC9D2EC)
+    /// The milestone card's small gold line over the dawn sky.
+    static let milestoneGold = Color(hex: 0xFFE08A)
+    /// Share this moment: translucent white in light, a faint lift in dark.
+    static let shareMomentFill = Color(light: 0xFFFFFF, dark: 0xFFFFFF, lightOpacity: 0.7, darkOpacity: 0.08)
     /// The navy pill with gold words (Then and now's "… later", a letter's "You wrote this …"): lifted on the night
     /// background so it still reads as a pill.
     static let storyPill = Color(light: 0x16244A, dark: 0x2E3C78)
