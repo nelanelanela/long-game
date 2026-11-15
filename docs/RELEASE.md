@@ -57,7 +57,8 @@ One line each: what to do, then what you should see, hear or feel.
 16. **App icon:** Settings › App icon grows with you. If you're past 1,000 hours, iOS says "You have changed the icon" once and the Home Screen icon shows the stage.
 17. **Notifications:** Settings › Daily reminder on, set it 2 minutes ahead, lock the phone. The reminder arrives with the craft's name.
 18. **iPad, landscape:** rotate. The sidebar layout with Home on the right.
-19. **Mac:** open Long Game on the Mac. The sun is in the menu bar, the window opens on the sunrise, then Home with the same total as the phone (if iCloud is on).
+19. **Launch time:** close Long Game fully (swipe it away), then open it. The night sky appears at once and the sunrise plays for about 2 seconds. If it feels slow, tell me: in the Simulator it measured 3.4 s to the first frame, which a phone should beat easily.
+20. **Mac:** open Long Game on the Mac. The sun is in the menu bar, the window opens on the sunrise, then Home with the same total as the phone (if iCloud is on).
 
 ## The calendar (part 6), honestly
 
