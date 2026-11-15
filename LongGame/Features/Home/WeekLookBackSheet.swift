@@ -193,8 +193,8 @@ struct WeekLookBackSheet: View {
         } label: {
             HStack(spacing: 12) {
                 Group {
-                    if moment.kind == .photo, let data = momentSession?.photo {
-                        PhotoThumb(id: moment.sessionId, data: data, side: 56, radius: 12)
+                    if moment.kind == .photo, let session = momentSession, session.hasPhoto {
+                        PhotoThumb(session: session, side: 56, radius: 12)
                     } else {
                         SessionPictureThumb(id: moment.sessionId, start: moment.start, durationSec: moment.seconds,
                                             progress: momentSession?.sunriseProgressAtEnd ?? 0, side: 56, radius: 12)

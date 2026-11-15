@@ -161,11 +161,12 @@ struct PhotoViewer: View {
     private var strip: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                // Lazy, and thumbnails from the cache: opening the viewer must not read every photo's file.
+                LazyHStack(spacing: 8) {
                     ForEach(sessions, id: \.persistentModelID) { s in
-                        if let data = s.photo {
+                        if s.hasPhoto {
                             Button { go(to: s) } label: {
-                                PhotoThumb(id: s.id, data: data, side: 48, radius: 8)
+                                PhotoThumb(session: s, side: 48, radius: 8)
                                     .overlay {
                                         RoundedRectangle(cornerRadius: 8, style: .continuous)
                                             .stroke(.white, lineWidth: s.persistentModelID == currentID ? 2 : 0)

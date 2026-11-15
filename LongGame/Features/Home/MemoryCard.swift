@@ -6,14 +6,14 @@ import SwiftUI
 struct MemoryCard: View {
     let memory: Memory
     /// The photo of a photo's anniversary.
-    var photo: (id: UUID, data: Data)?
+    var photo: Session?
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 10) {
                 if let photo {
-                    PhotoThumb(id: photo.id, data: photo.data, side: 40, radius: 8)
+                    PhotoThumb(session: photo, side: 40, radius: 8)
                         .accessibilityHidden(true)
                 }
                 (Text(verbatim: memory.parts.lead).fontWeight(.bold).foregroundColor(LGColor.anniversaryText)

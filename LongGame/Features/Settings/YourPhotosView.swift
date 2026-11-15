@@ -115,8 +115,8 @@ struct YourPhotosView: View {
     private func tile(_ id: UUID, more: Int?) -> some View {
         GeometryReader { geo in
             Group {
-                if let data = sessions.first(where: { $0.id == id })?.photo {
-                    PhotoThumb(id: id, data: data, side: geo.size.width, radius: 8)
+                if let session = sessions.first(where: { $0.id == id }), session.hasPhoto {
+                    PhotoThumb(session: session, side: geo.size.width, radius: 8)
                 } else {
                     RoundedRectangle(cornerRadius: 8, style: .continuous).fill(LGColor.chipFill)
                 }

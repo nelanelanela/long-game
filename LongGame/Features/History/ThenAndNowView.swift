@@ -385,8 +385,8 @@ struct ThenAndNowPicker: View {
                 then = session
             }
         } label: {
-            if let data = session.photo {
-                PhotoThumb(id: session.id, data: data, side: 76, radius: 10)
+            if session.hasPhoto {
+                PhotoThumb(session: session, side: 76, radius: 10)
             }
         }
         .buttonStyle(.plain)

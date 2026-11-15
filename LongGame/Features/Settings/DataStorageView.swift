@@ -127,8 +127,8 @@ struct DataStorageView: View {
     private var yourPhotosRow: some View {
         HStack(spacing: 12) {
             Group {
-                if let first = allSessions.filter(\.hasPhoto).max(by: { $0.start < $1.start }), let data = first.photo {
-                    PhotoThumb(id: first.id, data: data, side: 32, radius: 8)
+                if let first = allSessions.filter(\.hasPhoto).max(by: { $0.start < $1.start }) {
+                    PhotoThumb(session: first, side: 32, radius: 8)
                 } else {
                     RoundedRectangle(cornerRadius: 8, style: .continuous).fill(LGColor.chipFill).frame(width: 32, height: 32)
                         .overlay { Image(systemName: "photo").lgIcon(14, weight: .regular).foregroundStyle(LGColor.inkMuted) }

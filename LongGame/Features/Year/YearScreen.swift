@@ -289,9 +289,9 @@ private struct PhotoSwapSheet: View {
             ScrollView {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                     ForEach(sessions, id: \.persistentModelID) { s in
-                        if let data = s.photo {
+                        if s.hasPhoto {
                             Button { onPick(s.id) } label: {
-                                PhotoThumb(id: s.id, data: data, side: 100, radius: 10)
+                                PhotoThumb(session: s, side: 100, radius: 10)
                                     .frame(maxWidth: .infinity)
                                     .overlay {
                                         if current.contains(s.id) {

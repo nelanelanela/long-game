@@ -9,13 +9,17 @@ struct TodaySession: Equatable, Identifiable, Sendable {
     var end: Date
     var durationSec: Double
     var note: String?
+    /// A photo in hand (previews and tests). Home leaves it nil and sets `hasSavedPhoto`, so the rows never carry
+    /// (or compare) a photo's bytes; the list fetches the thumbnail itself.
     var photo: Data?
     /// Where today's sunrise stood when the session ended (for its picture, when it has no photo).
     var sunriseProgress: Double = 0
     /// The default picture was removed for this session: the row shows the quiet clock tile instead.
     var hidesDefaultPicture = false
+    /// The saved session has a photo (read lazily for its thumbnail).
+    var hasSavedPhoto = false
 
-    var hasPhoto: Bool { photo != nil }
+    var hasPhoto: Bool { photo != nil || hasSavedPhoto }
 }
 
 enum TodaySessions {

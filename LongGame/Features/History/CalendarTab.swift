@@ -240,9 +240,9 @@ struct CalendarTab: View {
     /// quiet "No note". Tapping the photo opens it full screen; tapping anywhere else edits the session.
     private func sessionRow(_ session: Session) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            if session.hasPhoto, let data = session.photo {
+            if session.hasPhoto {
                 Button { viewing = session } label: {
-                    PhotoThumb(id: session.id, data: data, side: 56, radius: 12)
+                    PhotoThumb(session: session, side: 56, radius: 12)
                         .frame(minWidth: 56, minHeight: 56)
                 }
                 .buttonStyle(.plain)

@@ -23,6 +23,7 @@ enum WidgetBridge {
     /// Writes the data and reloads every widget, but only when something actually changed.
     @MainActor
     static func publish(_ snapshot: WidgetSnapshot?) {
+        Signposts.event("Widget publish")
         if WidgetSnapshot.store(snapshot) {
             WidgetCenter.shared.reloadAllTimelines()
             // Siri learns the craft's name for "Start playing piano".
@@ -45,7 +46,9 @@ private struct WidgetSync: ViewModifier {
     @Environment(\.scenePhase) private var scenePhase
 
     func body(content: Content) -> some View {
-        let snapshot = WidgetBridge.snapshot(crafts: crafts, sessions: sessions, estimates: estimates, settings: settingsRows.first)
+        let snapshot = Signposts.measure("Widget snapshot") {
+            WidgetBridge.snapshot(crafts: crafts, sessions: sessions, estimates: estimates, settings: settingsRows.first)
+        }
         content
             .onAppear { WidgetBridge.publish(snapshot) }
             .onChange(of: snapshot) { _, new in WidgetBridge.publish(new) }

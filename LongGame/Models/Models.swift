@@ -87,10 +87,14 @@ final class Session {
         self.hasPhoto = photo != nil
     }
 
+    /// Posted by `setPhoto` with the session's id under "id", so thumbnails made from the old photo are dropped.
+    static let photoChanged = Notification.Name("LongGame.sessionPhotoChanged")
+
     /// Sets or removes the photo (the data should come from `PhotoProcessing.prepare`).
     func setPhoto(_ data: Data?) {
         photo = data
         hasPhoto = data != nil
+        NotificationCenter.default.post(name: Session.photoChanged, object: nil, userInfo: ["id": id])
         if data == nil { viewCount = 0; lastCountedAt = nil }
     }
 

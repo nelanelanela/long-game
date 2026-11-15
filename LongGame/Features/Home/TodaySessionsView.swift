@@ -9,6 +9,8 @@ struct TodaySessionsList: View {
     var onSelect: (UUID) -> Void = { _ in }
     /// A picture dropped on a row (Photos or Files on an iPad or Mac): attach it to that session.
     var onDropImage: ((UUID, Data) -> Void)?
+    /// The saved session behind a row, for its photo's thumbnail (read from the cache, not while drawing).
+    var session: (UUID) -> Session? = { _ in nil }
     var calendar: Calendar = .current
 
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -26,7 +28,8 @@ struct TodaySessionsList: View {
                 }
                 ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
                     if index > 0 { Divider().overlay(LGColor.divider) }
-                    SessionRow(row: row, calendar: calendar, stacked: typeSize.isAccessibilitySize,
+                    SessionRow(row: row, session: row.hasSavedPhoto ? session(row.id) : nil, calendar: calendar,
+                               stacked: typeSize.isAccessibilitySize,
                                onDrop: onDropImage.map { drop in { data in drop(row.id, data) } }) { onSelect(row.id) }
                 }
             }
@@ -37,6 +40,7 @@ struct TodaySessionsList: View {
 
 private struct SessionRow: View {
     let row: TodaySession
+    let session: Session?
     let calendar: Calendar
     let stacked: Bool
     var onDrop: ((Data) -> Void)?
@@ -82,7 +86,9 @@ private struct SessionRow: View {
 
     @ViewBuilder
     private var thumbnail: some View {
-        if let photo = row.photo {
+        if let session {
+            PhotoThumb(session: session, side: 40, radius: 10)
+        } else if let photo = row.photo {
             PhotoThumb(id: row.id, data: photo, side: 40, radius: 10)
         } else {
             if row.hidesDefaultPicture {

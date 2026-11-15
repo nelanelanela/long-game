@@ -5,7 +5,9 @@ import SwiftData
 /// Debug-only launch switches for the accessibility UI tests (update 47). None of this is in a release build.
 ///
 /// - `-demoData`: the sample Piano game (`DemoData`).
+/// - `-demoData.heavy`: eight years of sessions and 300 photos, for profiling (seeded once, see `DemoData.seedHeavy`).
 /// - `-uitest.freshInstall`: everything deleted, so the app opens on onboarding.
+/// - `-uitest.flat`: the flat tabs (the pre-iOS 26 look); `-uitest.increaseContrast`: Increase Contrast.
 /// - `-uitest.disableAnimations`: no opening sunrise, UIKit animations off.
 /// - `-uitest.screen <name>`: Home opens this screen or sheet (see `HomeView.applyUITestRoute`).
 /// - `-uitest.newGame`: a game set up three days ago, for History's first week.
@@ -33,6 +35,9 @@ enum UITestLaunch {
     static var reduceMotion: Bool { args.contains("-uitest.reduceMotion") }
     static var reduceTransparency: Bool { args.contains("-uitest.reduceTransparency") }
     static var differentiateWithoutColor: Bool { args.contains("-uitest.differentiateWithoutColor") }
+    /// `-uitest.flat`: the flat, pre-iOS 26 look of the tabs and buttons on a newer system (no iOS 17/18 Simulator).
+    static var flat: Bool { args.contains("-uitest.flat") }
+    static var increaseContrast: Bool { args.contains("-uitest.increaseContrast") }
 
     /// Called once at launch, before the first screen.
     @MainActor
@@ -68,12 +73,15 @@ struct UITestEnvironment: ViewModifier {
         @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
         @Environment(\.accessibilityReduceTransparency) private var systemReduceTransparency
         @Environment(\.accessibilityDifferentiateWithoutColor) private var systemDifferentiate
+        @Environment(\.colorSchemeContrast) private var systemContrast
 
         func body(content: Content) -> some View {
             content
                 .environment(\._accessibilityReduceMotion, systemReduceMotion || UITestLaunch.reduceMotion)
                 .environment(\._accessibilityReduceTransparency, systemReduceTransparency || UITestLaunch.reduceTransparency)
                 .environment(\._accessibilityDifferentiateWithoutColor, systemDifferentiate || UITestLaunch.differentiateWithoutColor)
+                .environment(\.lgFlat, UITestLaunch.flat)
+                .environment(\._colorSchemeContrast, UITestLaunch.increaseContrast ? .increased : systemContrast)
         }
     }
 }

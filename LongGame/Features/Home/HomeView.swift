@@ -102,6 +102,8 @@ struct HomeView: View {
     @AppStorage("memory.winkDay") private var memoryWinkDay: Double = 0
     /// Bumped by a timer loop so Today's numbers follow the clock (every second while a session runs).
     @State private var tick = Date()
+    /// The sessions as plain values, read again only when they change, not on every tick.
+    @State private var recordsCache = SessionRecordsCache()
     /// The opening tab is chosen once, the first time this Home appears, not each time it comes back from History.
     @State private var choseOpeningTab = false
     /// Which part of the page is at the top, so a fold, unfold or resize keeps the scroll position.
@@ -143,13 +145,12 @@ struct HomeView: View {
     /// `records` is the sessions already read out of the store this redraw (reading thousands of them is the
     /// slow part, so the body does it once and shares the result).
     private func summary(now: Date, records: [SessionRecord]? = nil) -> ProgressSummary {
-        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: records ?? sessions.map(\.record),
+        ProgressSummary.make(estimates: estimates.map(\.rate), sessions: records ?? recordsCache.records(for: sessions),
                              onboardingDate: craft.createdAt, weekStart: weekStart, now: now, target: target)
     }
 
-    var body: some View {
-        let now = Date()
-        let records = sessions.map(\.record)
+    /// Everything Home shows that comes from the sessions, worked out for `now`.
+    private func makeFigures(now: Date, records: [SessionRecord]) -> HomeFigures {
         let s = summary(now: now, records: records)
         let shownTotal = countingTotal ?? s.total
         // While the total counts up after a saved session, this week's hours count up with it.
@@ -163,6 +164,14 @@ struct HomeView: View {
                                   bars: WeekBars.make(sessions: records, now: now, weekStart: weekStart),
                                   lastWeek: WeekBars.lastWeek(sessions: records, now: now, weekStart: weekStart,
                                                               onboardingDate: craft.createdAt))
+        return figures
+    }
+
+    var body: some View {
+        let now = Date()
+        let records = recordsCache.records(for: sessions)
+        let figures = Signposts.measure("Home figures") { makeFigures(now: now, records: records) }
+        let s = figures.summary
         let _ = tick
         let page = AdaptiveLayout { window in
             Group {
@@ -438,17 +447,20 @@ struct HomeView: View {
     /// Today's sessions: the saved ones that started today, oldest first, and the running timer as the first row.
     /// The rows add up to the big number above.
     private func todaySessions(_ f: HomeFigures) -> some View {
-        let today = TodaySessions.startedToday(sessions, start: \.start, now: f.now)
+        // The query is newest first, so today's sessions are at the front: look only at those, not all of them.
+        let dayStart = Calendar.current.startOfDay(for: f.now)
+        let today = TodaySessions.startedToday(Array(sessions.prefix { $0.start >= dayStart }), start: \.start, now: f.now)
         let rows = today.map { TodaySession(id: $0.id, start: $0.start, end: $0.end, durationSec: $0.durationSec,
-                                            note: $0.note, photo: $0.hasPhoto ? $0.photo : nil,
+                                            note: $0.note, photo: nil,
                                             sunriseProgress: $0.sunriseProgressAtEnd ?? 0,
-                                            hidesDefaultPicture: $0.hidesDefaultPicture) }
+                                            hidesDefaultPicture: $0.hidesDefaultPicture, hasSavedPhoto: $0.hasPhoto) }
         let running = timer.state.flatMap { state -> TimeInterval? in
             state.craftId == craft.id && StretchSource.startedToday(state, now: f.now) ? state.elapsed(at: f.now) : nil
         }
         return TodaySessionsList(rows: rows, running: running, onSelect: { id in
             editingSession = today.first { $0.id == id }
-        }, onDropImage: { id, data in attachDropped(data, to: today.first { $0.id == id }) })
+        }, onDropImage: { id, data in attachDropped(data, to: today.first { $0.id == id }) },
+           session: { id in today.first { $0.id == id } })
     }
 
     /// Gives every session its sunrise number (existing ones once, new manual and catch-up ones as they come).
@@ -726,7 +738,7 @@ struct HomeView: View {
     @ViewBuilder private var memoryCard: some View {
         if let memory {
             let photoSession: Session? = if case .photo(_, let id, _) = memory { sessions.first { $0.id == id } } else { nil }
-            MemoryCard(memory: memory, photo: photoSession.flatMap { s in s.photo.map { (s.id, $0) } }) {
+            MemoryCard(memory: memory, photo: photoSession.flatMap { $0.hasPhoto ? $0 : nil }) {
                 if let photoSession { viewingMemoryPhoto = photoSession }
                 else { historyDay = memory.day ?? Calendar.current.startOfDay(for: Date()) }
             }
