@@ -102,29 +102,12 @@ struct HistoryView: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
+    /// Calendar | Growth: the shared tabs, kept in their flat look on every system as before (so the light look
+    /// does not change); the dark look gets the same solid chosen pill as Home.
     private var picker: some View {
-        HStack(spacing: 0) {
-            ForEach(HistoryTab.allCases, id: \.self) { item in
-                Button { withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) { tab = item } } label: {
-                    Text(item.rawValue)
-                        .lgText(LGTextStyle(size: 14, weight: tab == item ? .semibold : .medium, relativeTo: .subheadline))
-                        .frame(maxWidth: .infinity, minHeight: 36)
-                        .background {
-                            if tab == item {
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(LGColor.surface)
-                                    .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
-                            }
-                        }
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(tab == item ? [.isSelected] : [])
-            }
-        }
-        .padding(3)
-        .background(LGColor.segmentTrack, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("History view")
+        LGSegmentedControl(items: HistoryTab.allCases, selection: tab, label: "History view",
+                           title: { LocalizedStringKey($0.rawValue) },
+                           onSelect: { item in withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) { tab = item } })
+            .environment(\.lgFlat, true)
     }
 }

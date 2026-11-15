@@ -881,3 +881,13 @@ Built as part 1 of update 50 (it had never been built).
 - ✅ **Fixed, a real one:** the gauge's scale words on The long game were white at 85% on the dusk sky, about 2–4:1 where it turns peach. On the dusk and night skies they're now full white on a small soft navy tag (`LGColor.gaugeLabelTag`, navy at 60%): 6.7–8.4:1 measured. Words the "3,257 h" pill covers, and the "0" behind the hills, are no longer drawn at all (they were see-through, and the audit still measured them). Before and after: `design/gauge-tags-1.0.png`.
 - ✅ **Home's six audits** (Today ×3, This week, The long game, the memory card) pass in all four passes. "7.5k" (7.4:1) and the dark "12 h" (14.5:1) are written down as false alarms with those measurements.
 - 🟡 **This week's day letters (M T W …)** in the default pass: on the iPhone 18 Pro they sit under the Begin button's fade until scrolled. Written down with the other words under the pinned buttons; the largest-size pass is clean.
+
+## Update 51: the chosen tab in the dark look (15 November 2026)
+
+- ✅ **The chosen tab** (`LGSegmentedControl`: Home, History, Your year's looks, the poster's Paper and Look): in the dark look and on any dark sky it is now a solid warm light pill (`LGColor.segmentChosen`, #F4EEE4) with navy semibold words and a soft shadow, on glass (iOS 26+) and flat. The other names are white at 78%, medium. It slides between tabs (`matchedGeometryEffect`); with Reduce Motion it just appears. Increase Contrast adds a 1 pt navy outline at 30%. The light look is unchanged.
+- ✅ **History's Calendar | Growth** was its own copy of the flat tabs; it now uses `LGSegmentedControl`, kept flat so the light look is the same.
+- ✅ **Measured on Simulator screenshots** (iPhone 17e, iOS 27.2): navy on the pill 13.1:1. White 78% names: dark look glass 6.4–6.6:1, flat 5.1–5.3:1, History 6.9:1. Pill against track: 6.1:1 or more everywhere.
+- ✅ **Fixed on the way:** in the light look's dusk sky (The long game, an empty Today) the track was so pale that the white names were 3.8:1 on glass and 2.3:1 flat (and about 2.7:1 before, at full white). That track is now darker there (glass: navy tint 65%; flat: navy at 50%): 5.1:1 and 4.6:1. The dark look's track is as before.
+- ✅ **VoiceOver:** `AccessibilityBehaviourTests.testChosenTabInTheDarkLook`: still a tab list with This week selected, glass and flat.
+- ✅ **Dark audit pass:** no tab finding left (they're the glass false alarm, now measured as above). The other findings are on things this update didn't touch.
+- New debug switches for checking: `-uitest.flat` (the pre-iOS 26 look; no iOS 17/18 Simulator is installed) and `-uitest.increaseContrast`.

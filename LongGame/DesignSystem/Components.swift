@@ -291,6 +291,8 @@ struct LGStepBar: View {
 /// Two or more segments on a warm track with a white pill under the chosen one: Home's Today | This week | The long
 /// game, History's Calendar | Growth, Your year's Sunrise | Evening | Photos. From iOS 26 the track is a glass
 /// capsule and the chosen tab a brighter, interactive glass lens that morphs between tabs.
+/// In the dark look and on dark skies the chosen tab is a solid warm light pill (`segmentChosen`) with navy words on
+/// both looks, sliding between tabs; a clear glass lens there was almost the colour of the track.
 struct LGSegmentedControl<Item: Hashable>: View {
     let items: [Item]
     let selection: Item
@@ -305,7 +307,9 @@ struct LGSegmentedControl<Item: Hashable>: View {
     @Environment(\.lgOverSky) private var overSky
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
     @Namespace private var lens
+    @Namespace private var pillSpace
 
     var body: some View {
         Group {
@@ -321,16 +325,18 @@ struct LGSegmentedControl<Item: Hashable>: View {
         .accessibilityAddTraits(.isTabBar)
     }
 
-    /// The flat tabs (before iOS 26) have a white chosen pill, so its title stays navy even on the dark sky.
-    private var isFlat: Bool {
-        if #available(iOS 26, macOS 26, *) { return flat }
-        return true
+    /// The dark look, or a dark sky in either look: the chosen tab is the solid warm light pill.
+    private var solidPill: Bool { onDark || colorScheme == .dark }
+
+    private func titleColor(selected: Bool) -> Color {
+        guard solidPill else { return LGColor.ink }
+        return selected ? LGColor.navy : Color.white.opacity(0.78)
     }
 
     private func segmentTitle(_ item: Item, selected: Bool) -> some View {
         Text(title(item))
             .lgText(LGTextStyle(size: 14, weight: selected ? .semibold : .medium, relativeTo: .subheadline),
-                    color: onDark && !(selected && isFlat) ? .white : LGColor.ink)
+                    color: titleColor(selected: selected))
             .lineLimit(1)
             .minimumScaleFactor(0.8)
             // Like the system's own tab bars, the three tab names stop growing at the largest accessibility sizes so
@@ -347,9 +353,13 @@ struct LGSegmentedControl<Item: Hashable>: View {
                     segmentTitle(item, selected: selected)
                         .background {
                             if selected {
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(LGColor.surface)
-                                    .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
+                                if solidPill {
+                                    slidingPill(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                } else {
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .fill(LGColor.surface)
+                                        .shadow(color: LGColor.navy.opacity(0.1), radius: 1.5, y: 1)
+                                }
                             }
                         }
                         .contentShape(Rectangle())
@@ -367,8 +377,12 @@ struct LGSegmentedControl<Item: Hashable>: View {
     /// with Reduce Transparency it is the solid track.
     @ViewBuilder private var flatTrack: some View {
         let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-        if onDark {
+        if onDark && colorScheme == .dark {
             shape.fill(Color.white.opacity(0.16))
+        } else if onDark {
+            // The light look's dusk sky is paler than the night sky: a white track there left the white names and
+            // the chosen pill at about 2.3:1, so it is navy at half instead (update 51).
+            shape.fill(LGColor.navy.opacity(0.5))
         } else if overSky && !reduceTransparency {
             shape.fill(LGColor.segmentTrack.opacity(0.85)).background(.ultraThinMaterial, in: shape)
         } else {
@@ -384,7 +398,11 @@ struct LGSegmentedControl<Item: Hashable>: View {
                     let selected = item == selection
                     Button { onSelect(item) } label: {
                         segmentTitle(item, selected: selected)
-                            .background { if selected { lensView } }
+                            .background {
+                                if selected {
+                                    if solidPill { slidingPill(Capsule()) } else { lensView }
+                                }
+                            }
                             .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
@@ -395,13 +413,30 @@ struct LGSegmentedControl<Item: Hashable>: View {
                 }
             }
             .padding(3)
-            // On the day sky a very light warm tint keeps the track from disappearing.
+            // On the day sky a very light warm tint keeps the track from disappearing; on the light look's paler
+            // dusk sky a deeper navy tint keeps the white names at 4.5:1.
             .glassEffect(overSky && !onDark ? .regular.tint(LGColor.segmentTrack.opacity(0.35))
-                          : onDark ? .regular.tint(LGColor.navy.opacity(0.4)) : .regular, in: .capsule)
+                          : onDark ? .regular.tint(LGColor.navy.opacity(colorScheme == .dark ? 0.4 : 0.65)) : .regular,
+                          in: .capsule)
         }
         // White tab names on a dark sky need the glass's dark material: with the light one the track and the chosen
         // lens were pale lavender behind white words (about 1.5–2:1, found by the accessibility audit).
         .environment(\.colorScheme, onDark ? .dark : colorScheme)
+    }
+
+    /// The solid chosen pill for the dark look and dark skies: warm light #F4EEE4 with a soft shadow, and a thin navy
+    /// outline with Increase Contrast. It slides between tabs, or just appears with Reduce Motion.
+    @ViewBuilder private func slidingPill<S: InsettableShape>(_ shape: S) -> some View {
+        let pill = shape.fill(LGColor.segmentChosen)
+            .overlay { if contrast == .increased { shape.strokeBorder(LGColor.navy.opacity(0.3), lineWidth: 1) } }
+            .shadow(color: .black.opacity(0.35), radius: 4, y: 1)
+            // The dark value of the colour, also on a dark sky in the light look.
+            .environment(\.colorScheme, .dark)
+        if reduceMotion {
+            pill
+        } else {
+            pill.matchedGeometryEffect(id: "pill", in: pillSpace)
+        }
     }
 
     /// The lens: with Reduce Motion it just appears under the chosen tab instead of stretching across.

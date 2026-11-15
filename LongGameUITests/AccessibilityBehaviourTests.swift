@@ -134,6 +134,27 @@ final class AccessibilityBehaviourTests: XCTestCase {
         shot("Note box · typing after a tap near its bottom edge")
     }
 
+    // MARK: Chosen tab
+
+    /// Update 51: in the dark look (the solid warm pill, on glass and flat) VoiceOver still hears a tab list with the
+    /// chosen tab marked, "This week, tab, 2 of 3, selected".
+    func testChosenTabInTheDarkLook() {
+        for flat in [false, true] {
+            app = XCUIApplication()
+            app.launchArguments = ["-demoData", "-uitest.disableAnimations", "-uitest.appearance", "dark",
+                                   "-uitest.screen", "home.week"] + (flat ? ["-uitest.flat"] : [])
+            app.launch()
+            // The group carries the tab-bar trait (VoiceOver's "tab, 2 of 3"); XCUITest lists it by name.
+            let tabs = app.descendants(matching: .any).matching(identifier: "Home view").firstMatch
+            XCTAssertTrue(tabs.waitForExistence(timeout: 15), "Home's tabs are not a tab list (flat: \(flat))")
+            XCTAssertEqual(tabs.buttons.count, 3)
+            XCTAssertTrue(tabs.buttons["This week"].isSelected, "This week isn't marked selected (flat: \(flat))")
+            XCTAssertFalse(tabs.buttons["Today"].isSelected)
+            XCTAssertFalse(tabs.buttons["The long game"].isSelected)
+            shot("Dark look · chosen tab\(flat ? " · flat" : "")")
+        }
+    }
+
     // MARK: VoiceOver order
 
     /// What VoiceOver walks through, in order: the elements with a label, top to bottom as the app exposes them.

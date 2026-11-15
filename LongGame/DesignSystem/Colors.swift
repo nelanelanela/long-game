@@ -79,6 +79,9 @@ enum LGColor {
     /// The sleeping sun's "z" on the launch screen.
     static let sleepZ = Color(hex: 0x8FA2E0)
     static let segmentTrack = Color(light: 0xEFE2CF, dark: 0x262F57)
+    /// The chosen tab's pill: white in the light look, a solid warm light in the dark look and on dark skies (with
+    /// navy words), so it never melts into the track.
+    static let segmentChosen = Color(light: 0xFFFFFF, dark: 0xF4EEE4)
 
     // We Have Sun redesign (update prompt 32, part 1)
     /// The wash behind Home's top titles; setup steps use `peachWashSetup`.

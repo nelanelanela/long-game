@@ -55,8 +55,9 @@ enum KnownFalseAlarms {
         }
 
         // 4. The glass tab tracks (Home, History, Your year). The same misreading of glass as (1). Measured on the
-        //    screenshots: navy on the light track about 13:1; white on the dark-sky track about 5.5:1 (lens) to
-        //    7:1 (track), after giving it the glass's dark material and a navy tint (this check).
+        //    screenshots: navy on the light track about 13:1. In the dark look and on dark skies (update 51) the
+        //    chosen tab is a solid #F4EEE4 pill with navy words, 13.1:1; the other names, white at 78%, are 5.1:1 or
+        //    more on every track (pill against track 5.5:1 or more), glass and flat.
         if issue.auditType == .contrast, element.elementType == .button, tabs.contains(label) {
             return true
         }
