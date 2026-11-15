@@ -163,6 +163,8 @@ struct LandView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
+    /// 1 as drawn; faster in wind (Home's weather).
+    @Environment(\.landSway) private var sway
 
     private var night: Bool { tone == .night }
 
@@ -171,7 +173,7 @@ struct LandView: View {
             canvas(at: nil)
         } else {
             TimelineView(.animation(minimumInterval: 1.0 / 30, paused: scenePhase != .active)) { timeline in
-                canvas(at: timeline.date.timeIntervalSinceReferenceDate)
+                canvas(at: timeline.date.timeIntervalSinceReferenceDate * sway)
             }
         }
     }
@@ -349,4 +351,13 @@ struct LandView: View {
         }
     }
     .background(LGColor.background)
+}
+
+private struct LandSwayKey: EnvironmentKey { static let defaultValue: Double = 1 }
+extension EnvironmentValues {
+    /// How fast the land's shoreline and contour lines sway (1 as drawn; Home's wind makes it faster).
+    var landSway: Double {
+        get { self[LandSwayKey.self] }
+        set { self[LandSwayKey.self] = newValue }
+    }
 }

@@ -27,6 +27,9 @@ struct WeatherReading: Equatable, Sendable {
 }
 
 enum SceneWeather {
+    /// How much faster the shoreline and the water's lines sway in wind.
+    static let windSway = 2.4
+
     /// The wind that sways the scene.
     static let windyKmh = 40.0
     /// Weather is fetched at most this often.

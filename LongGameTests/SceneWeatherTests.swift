@@ -72,3 +72,10 @@ struct SceneWeatherTests {
         #expect(a == b)
     }
 }
+
+struct WindSwayTests {
+    /// Wind makes the shoreline and the water's lines sway faster, not wildly (update 49's board, finished in 50).
+    @Test func windSwaysFaster() {
+        #expect(SceneWeather.windSway > 1.5 && SceneWeather.windSway < 4)
+    }
+}

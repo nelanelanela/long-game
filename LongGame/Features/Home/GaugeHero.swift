@@ -118,6 +118,8 @@ struct GaugeHero: View, Animatable {
                             // Its moon sits behind the sun, so the sun passes in front of it when the day is covered,
                             // and fades with the tab too.
                             behindSun: AnyView(StretchMoon(geometry: arc).opacity(Double(mix))))
+                // Wind: the shoreline and the water's lines sway faster.
+                .environment(\.landSway, weather == .wind ? SceneWeather.windSway : 1)
                 // The weather passes through the landscape: over the scene, under the pill and Home's text. It never
                 // changes the sky's colour, the sun's height or its rays.
                 if let weather {
