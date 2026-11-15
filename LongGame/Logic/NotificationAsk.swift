@@ -3,6 +3,8 @@ import Foundation
 /// The setup steps pushed after the craft name (step 1), in order.
 enum OnboardingStep: Hashable, CaseIterable, Sendable {
     case start, hours, pace, keepSafe, notifications
+    /// "The weather outside" (update 49): always the last step.
+    case weather
 }
 
 /// What iOS has been told about Long Game's notifications, as far as onboarding cares.

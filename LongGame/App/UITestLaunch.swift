@@ -32,7 +32,9 @@ enum UITestLaunch {
     /// Called once at launch, before the first screen.
     @MainActor
     static func prepare(_ context: ModelContext) {
+        #if canImport(UIKit)
         if disableAnimations { UIView.setAnimationsEnabled(false) }
+        #endif
         // The timer lives on disk between launches: one test's paused session must not open the next test's screen.
         // (It also comes back through the synced ActiveSession record, so that goes too.)
         if screen != nil || freshInstall {

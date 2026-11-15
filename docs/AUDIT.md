@@ -807,7 +807,7 @@ Built on `redesign` after merging `dark-mode` and `accessibility-check` into it.
 
 ## Update 49: a letter to your future self, a keepsake poster (14 November 2026, branch `redesign`)
 
-Parts 1 and 3 are built. Part 2 (weather in the scene) waits for the WeatherKit capability in the Apple Developer account.
+All three parts are built. Part 2 after the WeatherKit capability was switched on (15 November 2026).
 
 - ✅ **Letters:** `Logic/Letters.swift`, `Letter` model (in the store and the iCloud schema), `Features/Letters/LetterViews.swift` (write, sealed, delivered, Your letters / All your letters), the celebration button, the rows on The long game, delivery on Home, the setup button, the letters' export file, the `letterSealed` (soft tap) and `letterDelivered` (rising three) haptics.
 - ✅ **Keepsake poster:** `Logic/Keepsake.swift`, `Features/Keepsake/KeepsakeViews.swift` (poster, PDF, sheet), the Growth row and the celebration button.
@@ -815,4 +815,11 @@ Parts 1 and 3 are built. Part 2 (weather in the scene) waits for the WeatherKit 
 - ✅ **Debug (Settings › Debug only):** "Reach a milestone with a letter waiting" and "Open the poster with a three-year sample".
 - 🟡 **Decisions taken:** the letter offered on A gentle nudge leaves notifications undecided (as Not now); the export carries sealed letters without their text; "every 1,000 hours" celebrations are the ones that exist today at 1,000, 5,000 and 10,000 (2,000, 3,000 … have no celebration, so their poster is reached from Growth).
 - 🟡 **Not checked yet:** the UI audit on the new screens and VoiceOver on a device.
+- ✅ **Weather in the scene (part 2):** `Logic/SceneWeather.swift` (layers, order, the 3-hour rule, seeded clouds that keep clear of the sun), `App/WeatherStore.swift` (WeatherKit, one approximate location, the last layer only), `Features/Home/WeatherLayerView.swift`, the Home scene and its spoken label, `Features/Settings/WeatherSwitchRow.swift` with Apple's attribution, `Features/Onboarding/WeatherStepView.swift` (step 7). Entitlement `com.apple.developer.weatherkit` in `LongGame/LongGame.entitlements`; the location purpose string and reduced accuracy in `project.yml`. `SceneWeatherTests`: each condition, the order, nothing when off, the 3-hour rule, clouds never over the sun along the arc, positions the same every time.
+- ✅ **Debug:** Settings › Debug only › "Force weather in the scene" (each layer, nothing, or the real weather).
+- ✅ **Mac app builds again:** since update 47 it was missing `UITestLaunch.swift`; that file and `WeatherStore.swift` are now in its sources (on the Mac there's no WeatherKit entitlement, so the scene stays as it is).
+- 🟡 **Not done:** in the wind layer the dunes and water don't sway faster (the scene's own sway has no speed setting yet); the real weather has only been tried with forced layers in the Simulator, not with a live WeatherKit call on a device.
+- 🟡 **For Natalia, outside the app:**
+  - **Privacy policy:** add that, only if "Weather in the scene" is turned on, the app uses the device's approximate location to ask Apple Weather (WeatherKit) for the current weather a few times a day; the location isn't stored or shared by the app; Apple's own privacy policy applies to WeatherKit. And that letters stay in the app's data (and iCloud only when sync is on).
+  - **App Store privacy answers:** add **Location › Coarse Location**, used for **App Functionality**, **not linked** to the user, **not used for tracking**. Nothing else changes. (Letters are user content that stays on the device and in the person's own iCloud, not collected by you.)
 

@@ -26,12 +26,10 @@ struct NotificationsIllustration: View {
     }
 }
 
-/// Step 6 of 6, "A gentle nudge": what each notification is, then Allow notifications (iOS's own prompt) or Not now.
+/// Step 6 of 7, "A gentle nudge": what each notification is, then Allow notifications (iOS's own prompt) or Not now.
 /// Shown only while iOS has never asked (`OnboardingSteps.showsNotifications`).
 struct NotificationsStepView: View {
     let craftName: String
-    /// The total setup has worked out, for "Write to yourself at 100 hours".
-    var letterTotal: Double = 0
     /// Called with true for Allow notifications, false for Not now. Asking iOS and finishing happen there.
     let onAnswer: (Bool) -> Void
 
@@ -72,14 +70,7 @@ struct NotificationsStepView: View {
             Button("Not now") { answer(false) }
                 .buttonStyle(.lg(.text))
                 .padding(.top, 4)
-            // The first letter: notifications stay as they are (iOS hasn't asked), and Home opens the letter.
-            if let title = LetterOffer.title(total: letterTotal) {
-                Button(title) {
-                    UserDefaults.standard.set(true, forKey: LetterOffer.afterSetupKey)
-                    answer(false)
-                }
-                .buttonStyle(.lg(.text))
-            }
+
             LGBrandLine().padding(.top, 6)
         }
         .disabled(answering)

@@ -27,7 +27,7 @@ struct ICloudIllustration: View {
     }
 }
 
-/// Step 5 of 6, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Continue to
+/// Step 5 of 7, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Continue to
 /// "A gentle nudge". When that step is left out (notifications already decided) this is the last one: Start playing.
 struct ICloudStepView: View {
     @Bindable var model: OnboardingModel

@@ -13,6 +13,8 @@ final class OnboardingModel {
     var targetHours: Double = 0
     /// Step 5's Save to iCloud switch: on unless the person turns it off (or has no iCloud account).
     var saveToICloud = true
+    /// The last step's "Show the weather": on only once location was allowed.
+    var weatherInScene = false
 
     let currentYear: Int
 
@@ -56,6 +58,7 @@ final class OnboardingModel {
             context.insert(settings)
         }
         settings.milestonesSeen = seen
+        settings.weatherInScene = weatherInScene
         settings.syncEnabled = saveToICloud
         // The first Home after onboarding opens on The long game; every launch after that opens on This week.
         settings.lastHomeTab = .longGame
@@ -64,7 +67,7 @@ final class OnboardingModel {
 }
 
 /// Welcome (first launch, and again after "Switch to a new game"), the three "How the game works" pages (first
-/// onboarding only), then the six setup steps (five when notifications were already decided: see `OnboardingSteps`).
+/// onboarding only), then the seven setup steps (six when notifications were already decided: see `OnboardingSteps`).
 struct OnboardingFlow: View {
     /// False after "Switch to a new game": the user has played before, so the intro pages are skipped.
     let showIntro: Bool
@@ -89,10 +92,10 @@ struct OnboardingFlow: View {
     /// Either way the question has been asked, and onboarding finishes.
     private func answerNotifications(allow: Bool) {
         UserDefaults.standard.set(true, forKey: Notifications.askedKey)
-        guard allow else { startPlaying(); return }
+        guard allow else { push(after: .notifications); return }
         Task {
             _ = await Notifications.requestAuthorization()
-            startPlaying()
+            push(after: .notifications)
         }
     }
 
@@ -138,8 +141,12 @@ struct OnboardingFlow: View {
                         push(after: .keepSafe)
                     }
                 case .notifications:
-                    NotificationsStepView(craftName: model.craftName, letterTotal: model.estimatedSoFar(),
-                                          onAnswer: answerNotifications)
+                    NotificationsStepView(craftName: model.craftName, onAnswer: answerNotifications)
+                case .weather:
+                    WeatherStepView(letterTotal: model.estimatedSoFar()) { show in
+                        model.weatherInScene = show
+                        startPlaying()
+                    }
                 }
             }
             .lgHidesNavigationBar()

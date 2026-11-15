@@ -289,6 +289,8 @@ struct SettingsView: View {
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
                 .padding(.vertical, 10)
+                Divider().overlay(LGColor.divider)
+                WeatherSwitchRow(settings: settings, save: save)
             } }
         }
     }
@@ -633,6 +635,21 @@ struct SettingsView: View {
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
                     Menu {
+                        ForEach(WeatherLayer.allCases, id: \.self) { layer in
+                            Button(layer.spoken.prefix(1).uppercased() + layer.spoken.dropFirst()) { forceWeather(layer) }
+                        }
+                        Button("Clear (nothing)") { UserDefaults.standard.set("none", forKey: "debug.forceWeather"); (closeAll ?? { dismiss() })() }
+                        Button("The real weather") { forceWeather(nil) }
+                    } label: {
+                        Text("Force weather in the scene").lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    }
+                    Text("Home draws this layer whatever the weather and whether or not the switch is on. The real weather needs a device (or a simulated location) with the switch on.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Menu {
                         Button("Your first day") { forceMemory("firstDay") }
                         Button("A photo's anniversary") { forceMemory("photo") }
                         Button("A year ago today") { forceMemory("yearAgo") }
@@ -808,6 +825,11 @@ struct SettingsView: View {
         let start = Date().addingTimeInterval(-hours * 3600 - 60)
         context.insert(Session(craftId: craft.id, start: start, durationSec: hours * 3600, source: .manual, note: "Debug: letter"))
         try? context.save()
+        (closeAll ?? { dismiss() })()
+    }
+
+    private func forceWeather(_ layer: WeatherLayer?) {
+        WeatherStore.force(layer)
         (closeAll ?? { dismiss() })()
     }
 

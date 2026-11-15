@@ -96,6 +96,8 @@ struct HomeView: View {
     /// The sun remembers: today's memory, the sun's wink on the first open of that day, and its photo when opened.
     @State private var memory: Memory?
     @State private var memoryWink = false
+    /// Weather in the scene: the last layer, refreshed at most every 3 hours when Home appears.
+    private let weatherStore = WeatherStore.shared
     @State private var viewingMemoryPhoto: Session?
     @AppStorage("memory.winkDay") private var memoryWinkDay: Double = 0
     /// Bumped by a timer loop so Today's numbers follow the clock (every second while a session runs).
@@ -244,6 +246,7 @@ struct HomeView: View {
             syncIconQuietly(total: s.total)
             if !checkMilestones(total: s.total) { checkLetters(total: s.total) }
             openLetterAfterSetup(total: s.total)
+            Task { await weatherStore.refreshIfDue(enabled: settingsRows.first?.weatherInScene ?? false) }
             refreshNotifications()
             scheduleMilestoneNotification()
             checkCatchUp(summary: s)
@@ -553,13 +556,16 @@ struct HomeView: View {
         let onToday = f.shown == .today
         let g = onToday ? HomeGauge.today(f.stretch) : scale
         let place = GaugeHero.Place(fraction: scale.fraction, arcFraction: f.stretch.fraction, arcMix: onToday ? 1 : 0)
+        let weather = weatherStore.shown(enabled: settingsRows.first?.weatherInScene ?? false)
+        // A celebration, a wink and the giggle win over the weather's resting or open eyes.
+        let weatherFace: SunFace? = weather == .rain ? .focus : weather == .snow ? .celebrate : nil
         let face: SunFace = anniversaryFace ? .celebrate
-            : onToday ? (winking || memoryWink ? .wink : .happy)
-                      : (countingTotal != nil || g.reachedTop ? .celebrate : .happy)
+            : onToday ? (winking || memoryWink ? .wink : weatherFace ?? .happy)
+                      : (countingTotal != nil || g.reachedTop ? .celebrate : weatherFace ?? .happy)
         return GaugeHero(gauge: g, fraction: place.fraction, arcFraction: place.arcFraction, arcMix: place.arcMix,
                          face: face, isRunning: onScreen && scenePhase == .active && !showTimer, glides: false,
                          extendsSky: extendsSky, dawnSky: onToday && isEmptyDay(f.stretch), metrics: metrics, final: place,
-                         dayReadings: dayReadings(f.bars))
+                         dayReadings: dayReadings(f.bars), weather: weather)
             // The sun and sea change tabs with a clean cut: no glide, no cross-fade, so the water never shows through.
             .transaction { $0.animation = nil }
     }

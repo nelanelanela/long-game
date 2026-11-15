@@ -143,6 +143,8 @@ final class AppSettings {
     var giggleSound: Bool = true
     /// Settings → The sun remembers: now and then a memory from the person's own history on Home. On unless turned off.
     var sunRemembers: Bool = true
+    /// Settings → Weather in the scene (update 49). Off unless turned on, and only with location allowed.
+    var weatherInScene: Bool = false
     /// The day a memory was last shown on Home (it stays that whole day; the next one waits at least 7 days).
     var lastMemoryDay: Date?
     /// Then and now: the two session ids the person chose (nil: the earliest and the latest photo).

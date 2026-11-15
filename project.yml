@@ -36,11 +36,14 @@ targets:
             CFBundleURLSchemes: [longgame]
         # CloudKit sync wakes the app with silent pushes when another device saves.
         UIBackgroundModes: [remote-notification]
+        # Weather in the scene (update 49): approximate location is enough, so iOS offers it first.
+        NSLocationDefaultAccuracyReduced: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
         INFOPLIST_KEY_NSCameraUsageDescription: "Take a photo of what you made, if you like."
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Long Game uses your approximate location only to show the weather in its landscape."
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
         INFOPLIST_KEY_CFBundleDisplayName: Long Game
@@ -186,6 +189,9 @@ targets:
       - LongGame/App/FocusMode.swift
       - LongGame/App/WidgetBridge.swift
       - LongGame/App/TipStore.swift
+      # Weather in the scene: on the Mac it has no WeatherKit entitlement, so it quietly shows the scene as it is.
+      - LongGame/App/WeatherStore.swift
+      - LongGame/App/UITestLaunch.swift
       - LongGame/Features
       - Shared/WidgetSnapshot.swift
       - Shared/SessionIntents.swift

@@ -7,11 +7,12 @@ import SwiftData
 struct NotificationAskTests {
     // MARK: Step order
 
-    @Test func theNudgeIsTheLastOfSixSteps() {
-        #expect(OnboardingSteps.order(permission: .notAsked) == [.start, .hours, .pace, .keepSafe, .notifications])
-        #expect(OnboardingSteps.count(permission: .notAsked) == 6)
+    @Test func theNudgeComesBeforeTheWeatherOfSevenSteps() {
+        #expect(OnboardingSteps.order(permission: .notAsked) == [.start, .hours, .pace, .keepSafe, .notifications, .weather])
+        #expect(OnboardingSteps.count(permission: .notAsked) == 7)
         #expect(OnboardingSteps.next(after: .keepSafe, permission: .notAsked) == .notifications)
-        #expect(OnboardingSteps.next(after: .notifications, permission: .notAsked) == nil)
+        #expect(OnboardingSteps.next(after: .notifications, permission: .notAsked) == .weather)
+        #expect(OnboardingSteps.next(after: .weather, permission: .notAsked) == nil)
     }
 
     @Test func stepNumbersFollowTheCraftStep() {
@@ -25,10 +26,10 @@ struct NotificationAskTests {
     @Test(arguments: [NotificationPermission.allowed, .denied])
     func theNudgeIsSkippedOncePermissionIsDecided(_ permission: NotificationPermission) {
         #expect(!OnboardingSteps.showsNotifications(permission))
-        #expect(OnboardingSteps.order(permission: permission) == [.start, .hours, .pace, .keepSafe])
-        #expect(OnboardingSteps.count(permission: permission) == 5)
-        // Keep your game safe finishes onboarding instead.
-        #expect(OnboardingSteps.next(after: .keepSafe, permission: permission) == nil)
+        #expect(OnboardingSteps.order(permission: permission) == [.start, .hours, .pace, .keepSafe, .weather])
+        #expect(OnboardingSteps.count(permission: permission) == 6)
+        // Keep your game safe goes straight on to the weather.
+        #expect(OnboardingSteps.next(after: .keepSafe, permission: permission) == .weather)
     }
 
     // MARK: Allow notifications

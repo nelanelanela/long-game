@@ -28,6 +28,8 @@ struct GaugeHero: View, Animatable {
     var final: Place?
     /// This week only: one line per day, read when VoiceOver users swipe up or down on the sun.
     var dayReadings: [String] = []
+    /// Weather in the scene (update 49): one pale layer over the landscape, or none.
+    var weather: WeatherLayer?
     /// The opening sunrise glides its sun to where Home's sun sits on Today's arc; Home tells it where that is.
     @Environment(OpeningCenter.self) private var opening: OpeningCenter?
 
@@ -109,12 +111,19 @@ struct GaugeHero: View, Animatable {
                 SunriseHero(layout: .placed(centre: centre, width: width, sunSize: size, face: face, metrics: metrics,
                                             scene: skyTone, drawsSky: !extendsSky && !(dawnSky && !onDark),
                                             skyMoon: gauge.tab == .longGame),
-                            label: gauge.spoken.label, value: gauge.spoken.value,
+                            label: weather.map { gauge.spoken.label + ", " + $0.spoken } ?? gauge.spoken.label,
+                            value: gauge.spoken.value,
                             dayReadings: gauge.tab == .week ? dayReadings : [], isRunning: isRunning,
                             behindLand: AnyView(scale(fraction: place.fraction)),
                             // Its moon sits behind the sun, so the sun passes in front of it when the day is covered,
                             // and fades with the tab too.
                             behindSun: AnyView(StretchMoon(geometry: arc).opacity(Double(mix))))
+                // The weather passes through the landscape: over the scene, under the pill and Home's text. It never
+                // changes the sky's colour, the sun's height or its rays.
+                if let weather {
+                    WeatherLayerView(layer: weather, sun: centre, sunRadius: size * 0.3, horizonY: metrics.waterY)
+                        .frame(width: width, height: metrics.height)
+                }
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
                 // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
                 // whole hero as the sun's place.

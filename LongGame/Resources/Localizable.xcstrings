@@ -145,6 +145,12 @@
     "Choose Then" : {
 
     },
+    "Clear (nothing)" : {
+
+    },
+    "cloudy" : {
+
+    },
     "Debug only" : {
 
     },
@@ -181,7 +187,16 @@
     "Force a memory on Home" : {
 
     },
+    "Force weather in the scene" : {
+
+    },
+    "Home draws this layer whatever the weather and whether or not the switch is on. The real weather needs a device (or a simulated location) with the switch on." : {
+
+    },
     "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
+
+    },
+    "iPhone will ask for your location next. Change your mind any time in Settings." : {
 
     },
     "It can't be brought back." : {
@@ -208,6 +223,9 @@
     "less" : {
 
     },
+    "light rain" : {
+
+    },
     "LONG GAME" : {
 
     },
@@ -215,6 +233,9 @@
 
     },
     "Make a keepsake poster" : {
+
+    },
+    "mist" : {
 
     },
     "more" : {
@@ -244,6 +265,9 @@
     "of %@" : {
 
     },
+    "Only in the landscape" : {
+
+    },
     "Open the poster with a three-year sample" : {
 
     },
@@ -251,6 +275,9 @@
 
     },
     "Opens that day in History" : {
+
+    },
+    "Other data sources" : {
 
     },
     "Paper" : {
@@ -263,6 +290,9 @@
 
     },
     "Pretend last session was %@ ago" : {
+
+    },
+    "Rain, mist and snow from outside your window" : {
 
     },
     "Reach a milestone with a letter waiting" : {
@@ -298,16 +328,25 @@
     "Show Meet your future self again" : {
 
     },
+    "Show the weather" : {
+
+    },
     "Show the weekly look-back" : {
 
     },
     "Show Welcome back on Home" : {
 
     },
+    "snow" : {
+
+    },
     "Start a session that began 3 h 12 m ago" : {
 
     },
     "The keepsake poster sheet with three years of sample days (nothing is saved), to try the paper sizes, the night look and the PDF." : {
+
+    },
+    "The real weather" : {
 
     },
     "The same month, a year on" : {
@@ -320,6 +359,12 @@
 
     },
     "The sun will bring it back at %@. %@" : {
+
+    },
+    "The sun's height and the sky still show your progress." : {
+
+    },
+    "The weather outside" : {
 
     },
     "Then" : {
@@ -341,6 +386,21 @@
 
     },
     "Two years since you started" : {
+
+    },
+    "Used to ask Apple Weather a few times a day. Never saved, never shared." : {
+
+    },
+    "Weather in the scene" : {
+
+    },
+    "When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly; on a clear day nothing changes." : {
+
+    },
+    "windy" : {
+
+    },
+    "Without your location the app can't see the weather." : {
 
     },
     "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there, around %@ at your pace." : {
@@ -392,6 +452,9 @@
 
     },
     "Your letters" : {
+
+    },
+    "Your rough area is enough" : {
 
     },
     "Your whole calendar, ready to print" : {
