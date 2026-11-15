@@ -149,6 +149,8 @@ struct KeepsakeSheet: View {
             ScrollView {
                 VStack(spacing: 0) {
                     KeepsakePoster(content: content, look: look, size: CGSize(width: 1000, height: 1000 * paper.size.height / paper.size.width))
+                        // A picture: its words are read once, in the label below, not one by one.
+                        .accessibilityHidden(true)
                         .scaleEffect(150 / 1000, anchor: .topLeading)
                         .frame(width: 150, height: 150 * paper.size.height / paper.size.width, alignment: .topLeading)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
@@ -221,8 +223,10 @@ extension KeepsakePoster.Content {
         let baseline = Baseline.hours(estimates: estimates.map(\.rate), onboardingDate: craft.createdAt)
         guard let reached = Keepsake.dayReached(hours, sessions: records, baseline: baseline),
               let first = records.map(\.start).min() else { return nil }
-        let days = Keepsake.days(sessions: records.filter { $0.start < reached.addingTimeInterval(86_400) }, through: reached)
+        // Reached with the hours from before the app (nothing logged yet to show it): the field runs to today instead.
+        let last = baseline >= Double(hours) ? Calendar.current.startOfDay(for: Date()) : reached
+        let days = Keepsake.days(sessions: records.filter { $0.start < last.addingTimeInterval(86_400) }, through: last)
         return KeepsakePoster.Content(hours: hours, craft: craft.name, days: days, firstDay: Calendar.current.startOfDay(for: first),
-                                      lastDay: reached, baseline: baseline)
+                                      lastDay: last, baseline: baseline)
     }
 }
