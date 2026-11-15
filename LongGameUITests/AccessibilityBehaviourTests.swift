@@ -200,5 +200,5 @@ enum ExpectedOrder {
     /// Back, the title, Settings, the two tabs, then the calendar.
     static let calendar = ["Back", "History", "Settings", "Calendar", "Growth"]
     /// Back and the title first, then the groups in the order they are drawn.
-    static let settings = ["Back", "Settings", "Appearance", "Look", "Week starts on", "Your game", "iCloud & storage"]
+    static let settings = ["Back", "Settings", "Appearance", "Look", "Weather in the scene", "Support Long Game", "Notifications", "Daily reminder"]
 }

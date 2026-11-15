@@ -23,22 +23,12 @@ struct SettingsView: View {
     #if os(macOS)
     @AppStorage(DockVisibility.defaultsKey) private var showInDock = true
     #endif
-    @State private var csvURL: URL?
-    /// The letters' file, shared with the sessions when there are any.
-    @State private var lettersURL: URL?
-    @Query private var allLetters: [Letter]
     @State private var showSamplePoster = false
-    @State private var confirmDelete = false
-    @State private var pickingCSV = false
-    @State private var importMessage: String?
     @State private var notificationsDenied = false
     @Environment(StoreHost.self) private var store
     @Environment(ICloudMonitor.self) private var monitor
-    @State private var confirmDeleteCopy = false
-    @State private var iCloudMessage: String?
     @State private var showOneCraft = false
     @State private var photoStats: [PhotoStat]?
-    @State private var pictureCacheBytes: Int?
 
     init(craft: Craft, closeAll: (() -> Void)? = nil) {
         self.craft = craft
@@ -79,19 +69,11 @@ struct SettingsView: View {
                 if let settings { appearanceCard(settings) }
                 supportCard
                 if let settings {
-                    weekCard(settings)
                     reminderCard(settings)
-                    iconCard(settings)
-                    soundsCard(settings)
+                    whileYouPlayCard(settings)
                 }
-                storageCard
-                #if os(iOS)
-                FocusSettingsCard()
-                #else
-                dockCard
-                #endif
-                practiceCard
-                dataCard
+                dataStorageCard
+                if let settings { iconCard(settings) }
                 #if DEBUG
                 debugCard
                 #endif
@@ -118,9 +100,8 @@ struct SettingsView: View {
         .animation(.easeInOut(duration: 0.25), value: toast)
         .lgScreen()
         .lgHidesNavigationBar()
-        .onAppear { ensureSettings(); buildCSV() }
+        .onAppear { ensureSettings() }
         .task { notificationsDenied = await Notifications.permission() == .denied }
-        .onChange(of: allSessions.count) { _, _ in buildCSV() }
         #if DEBUG
         .sheet(isPresented: $showSamplePoster) {
             KeepsakeSheet(content: DebugOptions.samplePoster(craft: craft.name)).lgSheetCard()
@@ -129,29 +110,6 @@ struct SettingsView: View {
         .sheet(isPresented: $showOneCraft) {
             OneCraftSheet(craft: craft, totalHours: oneCraftHours)
                 .lgSheetCard()
-        }
-        .fileImporter(isPresented: $pickingCSV, allowedContentTypes: [.commaSeparatedText, .plainText]) { result in
-            importCSV(result)
-        }
-        .alert("Import sessions", isPresented: Binding(get: { importMessage != nil }, set: { if !$0 { importMessage = nil } })) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(importMessage ?? "")
-        }
-        .confirmationDialog("Delete iCloud copy?", isPresented: $confirmDeleteCopy, titleVisibility: .visible) {
-            Button("Delete iCloud copy", role: .destructive, action: deleteICloudCopy)
-        } message: {
-            Text("This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays.")
-        }
-        .alert("iCloud", isPresented: Binding(get: { iCloudMessage != nil }, set: { if !$0 { iCloudMessage = nil } })) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(iCloudMessage ?? "")
-        }
-        .confirmationDialog("Delete all data?", isPresented: $confirmDelete, titleVisibility: .visible) {
-            Button("Delete everything", role: .destructive, action: deleteAll)
-        } message: {
-            Text("Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone.")
         }
     }
 
@@ -224,7 +182,7 @@ struct SettingsView: View {
     private func appearanceCard(_ settings: AppSettings) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             groupLabel("Appearance")
-            card {
+            card { VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Look").lgText(.row)
                     Spacer()
@@ -235,13 +193,14 @@ struct SettingsView: View {
                     .frame(maxWidth: 240)
                 }
                 .frame(minHeight: 54)
-            }
+                Divider().overlay(LGColor.divider)
+                WeatherSwitchRow(settings: settings, save: save)
+            } }
         }
     }
 
-    private func weekCard(_ settings: AppSettings) -> some View {
-        card {
-            HStack {
+    private func weekRow(_ settings: AppSettings) -> some View {
+        HStack {
                 Text("Week starts on").lgText(.row)
                 Spacer()
                 Picker("Week starts on", selection: Binding(get: { settings.weekStart }, set: { settings.weekStart = $0; save() })) {
@@ -252,28 +211,32 @@ struct SettingsView: View {
                 .frame(maxWidth: 190)
             }
             .frame(minHeight: 54)
-        }
     }
 
     #if os(macOS)
     /// Mac only, and kept on this Mac (not synced): off leaves only the sun in the menu bar.
-    private var dockCard: some View {
-        card {
-            VStack(alignment: .leading, spacing: 2) {
-                Toggle("Show in Dock", isOn: $showInDock).lgText(.row).tint(LGColor.selectedFill)
-                Text("Off keeps only the sun in the menu bar.")
-                    .lgText(.caption, color: LGColor.inkMuted)
-            }
-            .padding(.vertical, 10)
+    private var dockRow: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Toggle("Show in Dock", isOn: $showInDock).lgText(.row).tint(LGColor.selectedFill)
+            Text("Off keeps only the sun in the menu bar.")
+                .lgText(.caption, color: LGColor.inkMuted)
         }
+        .padding(.vertical, 10)
         .onChange(of: showInDock) { _, show in MacDock.apply(show: show) }
     }
     #endif
 
-    private func soundsCard(_ settings: AppSettings) -> some View {
+    /// While you play: Practising Focus (iPhone) or Show in Dock (Mac), and the Giggle sound.
+    private func whileYouPlayCard(_ settings: AppSettings) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            groupLabel("Sounds")
-            card { VStack(spacing: 0) {
+            groupLabel("While you play")
+            card { VStack(alignment: .leading, spacing: 0) {
+                #if os(iOS)
+                FocusSettingsCard()
+                #else
+                dockRow
+                #endif
+                Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
                     Toggle("Giggle sound", isOn: Binding(get: { settings.giggleSound }, set: { settings.giggleSound = $0; save() }))
                         .lgText(.row).tint(LGColor.selectedFill)
@@ -281,17 +244,44 @@ struct SettingsView: View {
                         .lgText(.caption, color: LGColor.inkMuted)
                 }
                 .padding(.vertical, 10)
-                Divider().overlay(LGColor.divider)
-                VStack(alignment: .leading, spacing: 2) {
-                    Toggle("The sun remembers", isOn: Binding(get: { settings.sunRemembers }, set: { settings.sunRemembers = $0; save() }))
-                        .lgText(.row).tint(LGColor.selectedFill)
-                    Text("Now and then, a memory from your own history")
-                        .lgText(.caption, color: LGColor.inkMuted)
-                }
-                .padding(.vertical, 10)
-                Divider().overlay(LGColor.divider)
-                WeatherSwitchRow(settings: settings, save: save)
             } }
+        }
+    }
+
+    /// Your data: one row to Data & storage, with what iCloud and the photos are doing.
+    private var dataStorageCard: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            groupLabel("Your data")
+            card {
+                NavigationLink { DataStorageView(craft: craft) } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "icloud")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(LGColor.dataTileIcon)
+                            .frame(width: 32, height: 32)
+                            .background(LGColor.dataTile, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Data & storage").lgText(.row)
+                            Text(DataStorageText.summary(iCloudOn: ICloudSwitchState.make(availability: monitor.availability, wantsOn: store.iCloudOn).isOn,
+                                                         photoBytes: photoStats.map(PhotoStorage.totalBytes)))
+                                .lgText(.caption, color: LGColor.inkMuted)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
+                    }
+                    .padding(.vertical, 10)
+                    .frame(minHeight: 54)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .task { photoStats = await PhotoLibrary.loadStats(container: store.container) }
+        .onChange(of: allSessions.filter(\.hasPhoto).count) { _, _ in
+            Task { photoStats = await PhotoLibrary.loadStats(container: store.container) }
         }
     }
 
@@ -326,6 +316,10 @@ struct SettingsView: View {
                             .lgText(.caption, color: LGColor.inkMuted)
                     }
                     .padding(.vertical, 10)
+                    Divider().overlay(LGColor.divider)
+                    weekRow(settings)
+                    Divider().overlay(LGColor.divider)
+                    practiceRows
                 }
             }
         }
@@ -364,7 +358,9 @@ struct SettingsView: View {
                 if on { enableNotifications { settings.rhythmNudge = true; save() } }
                 else { settings.rhythmNudge = false; save() }
             })
-        return card {
+        return VStack(alignment: .leading, spacing: 6) {
+          groupLabel("Notifications")
+          card {
             VStack(spacing: 0) {
                 Toggle("Daily reminder", isOn: dailyOn).lgText(.row).tint(LGColor.selectedFill).frame(minHeight: 54)
                 if let time = settings.reminderTime {
@@ -399,7 +395,17 @@ struct SettingsView: View {
                     .padding(.bottom, 4)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("The sun remembers", isOn: Binding(get: { settings.sunRemembers }, set: { settings.sunRemembers = $0; save() }))
+                        .lgText(.row).tint(LGColor.selectedFill)
+                    Text("Now and then, a memory from your own history. Shown quietly in the app, never pushed")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.vertical, 10)
             }
+          }
         }
     }
 
@@ -426,8 +432,7 @@ struct SettingsView: View {
         }
     }
 
-    private var practiceCard: some View {
-        card {
+    private var practiceRows: some View {
             VStack(spacing: 0) {
                 NavigationLink {
                     EstimatesEditorView(craft: craft)
@@ -447,144 +452,6 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(.isButton)
             }
-        }
-    }
-
-    private var dataCard: some View {
-        card {
-            VStack(spacing: 0) {
-                if let csvURL {
-                    ShareLink(items: [csvURL] + (lettersURL.map { [$0] } ?? [])) { row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up") }
-                } else {
-                    row("Export sessions (CSV)", detail: nil, icon: "square.and.arrow.up").opacity(0.4)
-                }
-                Divider().overlay(LGColor.divider)
-                Button { pickingCSV = true } label: {
-                    row("Import sessions (CSV)", detail: nil, icon: "square.and.arrow.down")
-                }
-                .buttonStyle(.plain)
-                Divider().overlay(LGColor.divider)
-                Button { confirmDelete = true } label: {
-                    HStack {
-                        Text("Delete all data").lgText(.row, color: LGColor.danger)
-                        Spacer()
-                    }
-                    .frame(minHeight: 54)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-            }
-        }
-    }
-
-    /// iCloud & storage: Save to iCloud and how it is going, your photos and what they take up, the default pictures'
-    /// cache with Clear, and Delete iCloud copy (which leaves this iPhone's data alone).
-    private var storageCard: some View {
-        let switchState = ICloudSwitchState.make(availability: monitor.availability, wantsOn: store.iCloudOn)
-        let status = monitor.status(enabled: store.iCloudOn)
-        return VStack(alignment: .leading, spacing: 6) {
-            groupLabel("iCloud & storage")
-            card {
-                VStack(alignment: .leading, spacing: 0) {
-                    Toggle("Save to iCloud", isOn: Binding(get: { switchState.isOn }, set: setICloud))
-                        .lgText(.row).tint(LGColor.selectedFill).frame(minHeight: 54)
-                        .disabled(!switchState.isEnabled)
-                    Text(status.text(now: Date()))
-                        .lgText(.caption, color: LGColor.inkMuted)
-                        .padding(.bottom, 12)
-                    Divider().overlay(LGColor.divider)
-                    NavigationLink { YourPhotosView() } label: { yourPhotosRow }
-                        .buttonStyle(.plain)
-                    Divider().overlay(LGColor.divider)
-                    defaultPicturesRow
-                    Divider().overlay(LGColor.divider)
-                    Button { confirmDeleteCopy = true } label: {
-                        HStack {
-                            Text("Delete iCloud copy").lgText(.row, color: LGColor.danger)
-                            Spacer()
-                        }
-                        .frame(minHeight: 54)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!CloudSync.isAvailable || monitor.availability != .available)
-                }
-            }
-        }
-        .task { await refreshStorage() }
-        .onChange(of: allSessions.filter(\.hasPhoto).count) { _, _ in Task { await refreshStorage() } }
-    }
-
-    private var yourPhotosRow: some View {
-        HStack(spacing: 12) {
-            Group {
-                if let first = allSessions.filter(\.hasPhoto).max(by: { $0.start < $1.start }), let data = first.photo {
-                    PhotoThumb(id: first.id, data: data, side: 32, radius: 8)
-                } else {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous).fill(LGColor.chipFill).frame(width: 32, height: 32)
-                        .overlay { Image(systemName: "photo").lgIcon(14, weight: .regular).foregroundStyle(LGColor.inkMuted) }
-                }
-            }
-            .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Your photos").lgText(.row)
-                Text(photoStats.map { "\($0.count) photos · \(ByteText.size(PhotoStorage.totalBytes($0)))" } ?? " ")
-                    .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
-            }
-            Spacer(minLength: 8)
-            Image(systemName: "chevron.right").lgIcon(13, weight: .semibold).foregroundStyle(LGColor.inkMuted)
-        }
-        .frame(minHeight: 54)
-        .contentShape(Rectangle())
-    }
-
-    private var defaultPicturesRow: some View {
-        HStack(spacing: 12) {
-            // A sample of the pictures the app draws (an evening session).
-            SessionPictureCanvas(layout: SessionPictureLayout.make(seed: 1, startMinute: 18 * 60 + 45, minutes: 65, progress: 0.8))
-                .frame(width: 32, height: 32)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Default pictures").lgText(.row)
-                Text("\(ByteText.size(pictureCacheBytes ?? 0)) cache · never your photos")
-                    .lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
-            }
-            Spacer(minLength: 8)
-            Button {
-                Task {
-                    _ = await Task.detached(priority: .utility) { SessionPictureCache.clear() }.value
-                    await refreshStorage()
-                }
-            } label: {
-                Text("Clear")
-                    .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline), color: LGColor.ember)
-                    .padding(.horizontal, 12)
-                    .frame(minHeight: 44)
-                    .background(LGColor.peachWashSetup, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Clear the default pictures cache. Your photos are not affected.")
-        }
-        .frame(minHeight: 54)
-    }
-
-    /// Both numbers are worked out in the background; the rows say nothing until they arrive.
-    private func refreshStorage() async {
-        pictureCacheBytes = await Task.detached(priority: .utility) { SessionPictureCache.sizeOnDisk() }.value
-        photoStats = await PhotoLibrary.loadStats(container: store.container)
-    }
-
-    private func setICloud(_ on: Bool) {
-        do { try store.setICloud(on) }
-        catch { iCloudMessage = String(localized: "Couldn't change iCloud saving. Nothing was lost.") }
-    }
-
-    private func deleteICloudCopy() {
-        Task {
-            do { try await store.deleteICloudCopy() }
-            catch { iCloudMessage = String(localized: "Couldn't delete the iCloud copy. Check your connection and try again.") }
-        }
     }
 
     #if DEBUG
@@ -948,74 +815,7 @@ struct SettingsView: View {
         #endif
     }
 
-    private func buildCSV() {
-        let names = Dictionary(uniqueKeysWithValues: allCrafts.map { ($0.id, $0.name) })
-        let rows = allSessions.map {
-            CSVExport.Row(craft: names[$0.craftId] ?? "", start: $0.start, durationSec: $0.durationSec,
-                          source: $0.sourceRaw, note: $0.note ?? "")
-        }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-sessions.csv")
-        do {
-            try CSVExport.sessions(rows).write(to: url, atomically: true, encoding: .utf8)
-            csvURL = url
-            if allLetters.isEmpty {
-                lettersURL = nil
-            } else {
-                let letterRows = allLetters.map {
-                    CSVExport.LetterRow(craft: names[$0.craftId] ?? "", written: $0.writtenAt, milestone: $0.milestone,
-                                        opened: $0.openedAt, text: $0.text)
-                }
-                let letters = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-letters.csv")
-                try CSVExport.letters(letterRows).write(to: letters, atomically: true, encoding: .utf8)
-                lettersURL = letters
-            }
-        } catch {
-            csvURL = nil
-        }
-    }
-
-    private func importCSV(_ result: Result<URL, Error>) {
-        guard case .success(let url) = result else { return }
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        guard let data = try? Data(contentsOf: url), let text = String(data: data, encoding: .utf8) else {
-            importMessage = "That file couldn't be read. Choose a CSV exported from Long Game."
-            return
-        }
-        let parsed = CSVImport.sessions(text)
-        guard !parsed.rows.isEmpty else {
-            importMessage = "No sessions found. Choose a CSV exported from Long Game."
-            return
-        }
-        let existing = Set(allSessions.map { CSVImport.key(craftId: $0.craftId, start: $0.start, durationSec: $0.durationSec) })
-        let plan = CSVImport.plan(rows: parsed.rows,
-                                  crafts: allCrafts.map { .init(id: $0.id, name: $0.name) },
-                                  activeId: craft.id, existingKeys: existing)
-        for item in plan.toAdd {
-            let source = SessionSource(rawValue: item.row.source) ?? .manual
-            let note = item.row.note.isEmpty ? nil : item.row.note
-            context.insert(Session(craftId: item.craftId, start: item.row.start, durationSec: item.row.durationSec,
-                                   source: source, note: note))
-        }
-        try? context.save()
-
-        var message = plan.toAdd.count == 1 ? "Added 1 session." : "Added \(plan.toAdd.count) sessions."
-        if plan.duplicates > 0 { message += " \(plan.duplicates) already here, left as they were." }
-        if plan.unmatched > 0 { message += " \(plan.unmatched) belonged to crafts that aren't on this iPhone and were skipped." }
-        if parsed.skipped > 0 { message += " \(parsed.skipped) lines couldn't be read." }
-        importMessage = message
-    }
-
     private func deleteAll() {
-        timer.clear()
-        NotificationPlanner.cancelAll()
-        // One by one (not a batch delete) so every photo's file goes with its session.
-        for session in (try? context.fetch(FetchDescriptor<Session>())) ?? [] { context.delete(session) }
-        try? context.delete(model: YearEstimate.self)
-        try? context.delete(model: Craft.self)
-        try? context.delete(model: AppSettings.self)
-        try? context.delete(model: TargetPeriod.self)
-        try? context.save()
-        UserDefaults.standard.removeObject(forKey: Notifications.askedKey)
+        DataReset.deleteAll(context: context, timer: timer)
     }
 }

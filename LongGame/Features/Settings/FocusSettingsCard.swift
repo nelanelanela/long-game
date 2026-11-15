@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Settings card for the "Practising" Focus: which Shortcuts to run when a session starts and finishes.
+/// The Practising Focus switch and its two Shortcut names: the first rows of Settings › While you play.
 struct FocusSettingsCard: View {
     @State private var focus = FocusMode.shared
 
@@ -21,9 +22,6 @@ struct FocusSettingsCard: View {
                     .padding(.vertical, 10)
             }
         }
-        .padding(.horizontal, 18)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .lgCard()
     }
 
     private func shortcutField(_ title: String, text: Binding<String>) -> some View {

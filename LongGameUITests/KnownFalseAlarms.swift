@@ -46,7 +46,7 @@ enum KnownFalseAlarms {
         //    (on the peach sky of Your weekly pace, 5.2:1 too), above the 4.5:1 that small text needs. The audit
         //    reads the soft edges of thin 13 pt letters as the text colour.
         let captions = ["Private to your Apple Account", "Your session on the Lock Screen", "One-time payments",
-                        "For the next 12 months"]
+                        "For the next 12 months", "Deletes your game, sessions, notes and photos"]
         if issue.auditType == .contrast, element.elementType == .staticText, captions.contains(where: label.hasPrefix) {
             return true
         }
@@ -76,7 +76,9 @@ enum KnownFalseAlarms {
         // 9. The Finish sheet's words. In the usual sizes the sheet is drawn very slightly scaled (its frames are
         //    fractional, about 0.995) and the audit compares that to the unscaled text: the screenshots show every
         //    word whole. At the largest sizes the sheet scrolls, and words half under the Save area are not cut.
-        if issue.auditType == .textClipped, screen.hasPrefix("Finish sheet") {
+        //    The One craft sheet is the same: on iOS 26 a sheet at a height detent floats as an inset card drawn at
+        //    about 0.87, and every word is whole in the screenshot.
+        if issue.auditType == .textClipped, screen.hasPrefix("Finish sheet") || screen.hasPrefix("One craft at a time") {
             return true
         }
 

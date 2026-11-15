@@ -58,7 +58,7 @@ struct YourPhotosView: View {
 
     private var bar: some View {
         HStack {
-            LGIconButton(systemName: "chevron.left", label: "Back to Settings") { dismiss() }
+            LGIconButton(systemName: "chevron.left", label: "Back") { dismiss() }
                 .padding(.leading, -10)
             Spacer()
             Text("Your photos").lgText(.navTitle).accessibilityAddTraits(.isHeader)

@@ -263,20 +263,29 @@ final class AccessibilityAuditTests: XCTestCase {
         launch(["-uitest.screen", "settings"])
         wait("Settings")
         audit("Settings")
-        let photos = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Your photos'")).firstMatch
-        if photos.waitForExistence(timeout: 3) {
-            photos.tap()
-            sleep(1)
-            audit("Your photos")
-            let back = app.buttons["Back"].firstMatch
-            if back.waitForExistence(timeout: 3) { back.tap() }
+        let data = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Data & storage'")).firstMatch
+        for _ in 0..<3 where !data.isHittable { app.swipeUp() }
+        if data.waitForExistence(timeout: 3) {
+            data.tap()
+            wait("Save to iCloud")
+            audit("Data & storage")
+            let photos = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Your photos'")).firstMatch
+            if photos.waitForExistence(timeout: 3) {
+                photos.tap()
+                sleep(1)
+                audit("Your photos")
+                app.buttons["Back"].firstMatch.tap()
+                XCTAssertTrue(app.staticTexts["Data & storage"].waitForExistence(timeout: 3), "Your photos should go back to Data & storage")
+            }
+            app.buttons["Back"].firstMatch.tap()
             sleep(1)
         }
         let newGame = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Switch to a new game'")).firstMatch
         if newGame.waitForExistence(timeout: 3) {
-            newGame.swipeUp()
+            for _ in 0..<4 where !newGame.isHittable { app.swipeUp() }
             newGame.tap()
-            sleep(1)
+            XCTAssertTrue(app.buttons["Keep playing"].waitForExistence(timeout: 4))
+            sleep(2)   // the sheet settles
             audit("One craft at a time")
         }
     }

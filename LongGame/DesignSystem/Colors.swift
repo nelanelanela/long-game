@@ -193,6 +193,9 @@ enum LGColor {
     static let icloud = Color(hex: 0x2F7BF6)
     /// The pale blue tile behind the iCloud symbol on the Keep your game safe card.
     static let icloudTile = Color(hex: 0xEAF2FF)
+    /// Settings › Your data: the pale blue tile behind the cloud on the Data & storage row, in both looks.
+    static let dataTile = Color(light: 0xEAF2FF, dark: 0x1E2A5A)
+    static let dataTileIcon = Color(light: 0x2F7BF6, dark: 0x8FB4FF)
     static let futureSky = Gradient(stops: [
         .init(color: .white, location: 0),
         .init(color: Color(hex: 0xFFF1DA), location: 0.7),
