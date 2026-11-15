@@ -35,6 +35,27 @@ struct KeepsakeTests {
         #expect(Keepsake.dayReached(2_000, sessions: sessions, baseline: 1_000, calendar: kUTC) == nil)
     }
 
+    @Test func spanRightAfterSetupWithNothingLogged() {
+        // All 1,000 hours came before the app, no sessions yet: the poster still has days, from setup to today.
+        let span = Keepsake.span(1_000, sessions: [], baseline: 1_200, began: kDate(2026, 11, 15, 9),
+                                 today: kDate(2026, 11, 15, 14), calendar: kUTC)
+        #expect(span.first == kUTC.startOfDay(for: kDate(2026, 11, 15)))
+        #expect(span.last == kUTC.startOfDay(for: kDate(2026, 11, 15)))
+        #expect(Keepsake.days(sessions: [], through: span.last, calendar: kUTC).isEmpty)
+    }
+
+    @Test func spanFromFirstSessionToDayReached() {
+        let sessions = [s(kDate(2026, 1, 1), 2), s(kDate(2026, 1, 2), 3)]
+        let span = Keepsake.span(1_004, sessions: sessions, baseline: 1_000, began: kDate(2025, 12, 1),
+                                 today: kDate(2026, 3, 1), calendar: kUTC)
+        #expect(span.first == kUTC.startOfDay(for: kDate(2026, 1, 1)))
+        #expect(span.last == kUTC.startOfDay(for: kDate(2026, 1, 2)))
+        // Not reached in the log: runs to today rather than giving up.
+        let open = Keepsake.span(5_000, sessions: sessions, baseline: 1_000, began: kDate(2025, 12, 1),
+                                 today: kDate(2026, 3, 1), calendar: kUTC)
+        #expect(open.last == kUTC.startOfDay(for: kDate(2026, 3, 1)))
+    }
+
     @Test func lastThousand() {
         #expect(Keepsake.lastThousand(total: 999) == nil)
         #expect(Keepsake.lastThousand(total: 1_000) == 1_000)

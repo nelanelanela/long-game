@@ -92,9 +92,8 @@ struct GrowthTab: View {
             .buttonStyle(.plain)
             .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
             .sheet(item: $keepsakeHours) { choice in
-                if let content = KeepsakePoster.Content.make(hours: choice.hours, craft: craft, sessions: sessions, estimates: estimates) {
-                    KeepsakeSheet(content: content).lgSheetCard()
-                }
+                KeepsakeSheet(content: KeepsakePoster.Content.make(hours: choice.hours, craft: craft, sessions: sessions, estimates: estimates))
+                    .lgSheetCard()
             }
         }
     }

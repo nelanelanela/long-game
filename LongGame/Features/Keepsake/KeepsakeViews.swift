@@ -42,7 +42,11 @@ struct KeepsakePoster: View {
                 .foregroundStyle(ember)
                 .padding(.top, 0.4 * u)
             GeometryReader { geo in
-                field(in: geo.size)
+                if Keepsake.daysPlayed(content.days) == 0 {
+                    emptyField(u: u)
+                } else {
+                    field(in: geo.size)
+                }
             }
             .padding(.top, 4 * u).padding(.bottom, 3 * u)
             footer(u: u)
@@ -71,6 +75,24 @@ struct KeepsakePoster: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// Nothing logged yet (the hours all came before the app): one faint row of days to come, a first sun, and a line.
+    private func emptyField(u: CGFloat) -> some View {
+        VStack(spacing: 3 * u) {
+            HStack(spacing: 0.9 * u) {
+                CalendarLevelShape(level: .from1to2).fill(colour(.from1to2)).frame(width: 2.2 * u, height: 2.2 * u)
+                ForEach(1..<Keepsake.perRow / 2, id: \.self) { _ in
+                    CalendarLevelShape(level: .rest).fill(colour(.rest)).frame(width: 2.2 * u, height: 2.2 * u)
+                }
+            }
+            Text("Your days start here. Each day you practise becomes a small sun.")
+                .font(.system(size: 2 * u, weight: .medium))
+                .foregroundStyle(muted)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 60 * u)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private func colour(_ level: CalendarLevel) -> Color {
         guard night else { return LGColor.calendar(level) }   // the light colours: the poster is drawn in the light scheme
         // Gold on navy: four gold tints, the rest dot faint.
@@ -86,8 +108,13 @@ struct KeepsakePoster: View {
     private func footer(u: CGFloat) -> some View {
         HStack(alignment: .bottom, spacing: 2 * u) {
             VStack(alignment: .leading, spacing: 0.4 * u) {
-                Text(verbatim: "\(ThenAndNow.date(content.firstDay)) – \(ThenAndNow.date(content.lastDay))")
-                Text(verbatim: Keepsake.playedLine(Keepsake.daysPlayed(content.days)))
+                if Calendar.current.isDate(content.firstDay, inSameDayAs: content.lastDay) {
+                    Text(verbatim: ThenAndNow.date(content.lastDay))
+                } else {
+                    Text(verbatim: "\(ThenAndNow.date(content.firstDay)) – \(ThenAndNow.date(content.lastDay))")
+                }
+                let played = Keepsake.daysPlayed(content.days)
+                if played > 0 { Text(verbatim: Keepsake.playedLine(played)) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 0.6 * u) {
@@ -216,17 +243,15 @@ struct KeepsakeSheet: View {
 }
 
 extension KeepsakePoster.Content {
-    /// The poster for `hours` from this craft's saved sessions; nil until the total has got there.
+    /// The poster for `hours` from this craft's saved sessions. Always a poster: with nothing logged yet
+    /// (all the hours came before the app) the field is empty and the poster says so.
     @MainActor
-    static func make(hours: Int, craft: Craft, sessions: [Session], estimates: [YearEstimate]) -> KeepsakePoster.Content? {
+    static func make(hours: Int, craft: Craft, sessions: [Session], estimates: [YearEstimate]) -> KeepsakePoster.Content {
         let records = sessions.map(\.record)
         let baseline = Baseline.hours(estimates: estimates.map(\.rate), onboardingDate: craft.createdAt)
-        guard let reached = Keepsake.dayReached(hours, sessions: records, baseline: baseline),
-              let first = records.map(\.start).min() else { return nil }
-        // Reached with the hours from before the app (nothing logged yet to show it): the field runs to today instead.
-        let last = baseline >= Double(hours) ? Calendar.current.startOfDay(for: Date()) : reached
-        let days = Keepsake.days(sessions: records.filter { $0.start < last.addingTimeInterval(86_400) }, through: last)
-        return KeepsakePoster.Content(hours: hours, craft: craft.name, days: days, firstDay: Calendar.current.startOfDay(for: first),
-                                      lastDay: last, baseline: baseline)
+        let span = Keepsake.span(hours, sessions: records, baseline: baseline, began: craft.createdAt, today: Date())
+        let days = Keepsake.days(sessions: records.filter { $0.start < span.last.addingTimeInterval(86_400) }, through: span.last)
+        return KeepsakePoster.Content(hours: hours, craft: craft.name, days: days, firstDay: span.first,
+                                      lastDay: span.last, baseline: baseline)
     }
 }

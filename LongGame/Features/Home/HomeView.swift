@@ -369,9 +369,7 @@ struct HomeView: View {
                 LetterWriteSheet(craft: craft, milestone: milestone, total: s.total, weeklyHours: target?.hoursPerWeek,
                                  replacing: letterReplacing, onDone: { letterReplacing = nil })
             case .keepsake(let hours):
-                if let content = KeepsakePoster.Content.make(hours: hours, craft: craft, sessions: Array(sessions), estimates: Array(estimates)) {
-                    KeepsakeSheet(content: content)
-                }
+                KeepsakeSheet(content: KeepsakePoster.Content.make(hours: hours, craft: craft, sessions: Array(sessions), estimates: Array(estimates)))
             case .sealedLetter:
                 if let sealed = sealedLetter {
                     SealedLetterSheet(letter: sealed) {

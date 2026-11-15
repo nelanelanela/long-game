@@ -57,6 +57,19 @@ enum Keepsake {
         return nil
     }
 
+    /// The days the poster runs between; always an answer, so the poster is never blank.
+    /// From the first session (or the day the craft began, when nothing is logged yet) to the day `hours` was reached.
+    /// Reached with the hours from before the app, or not reached in the log at all: it runs to today.
+    static func span(_ hours: Int, sessions: [SessionRecord], baseline: Double, began: Date, today: Date,
+                     calendar: Calendar = .current) -> (first: Date, last: Date) {
+        let todayStart = calendar.startOfDay(for: today)
+        let last = baseline >= Double(hours)
+            ? todayStart
+            : (dayReached(hours, sessions: sessions, baseline: baseline, calendar: calendar) ?? todayStart)
+        let first = calendar.startOfDay(for: sessions.map(\.start).min() ?? began)
+        return (min(first, last), last)
+    }
+
     /// One level for every day from the first session to `last` (both included), rest days too.
     static func days(sessions: [SessionRecord], through last: Date, calendar: Calendar = .current) -> [CalendarLevel] {
         guard let firstStart = sessions.map(\.start).min() else { return [] }
