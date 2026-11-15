@@ -2,6 +2,7 @@ import Foundation
 import CoreLocation
 import WeatherKit
 import Observation
+import OSLog
 
 /// Weather in the scene (update 49). Asks for the current weather at most once every 3 hours, only when Home appears
 /// and only while the Settings switch is on. Keeps the last layer and when it was fetched; never the location.
@@ -19,6 +20,8 @@ final class WeatherStore {
     /// The layer Home draws (nil: the scene as it is).
     private(set) var layer: WeatherLayer?
     private var fetching = false
+    /// One line per fetch in Xcode's console (Release too): what the sky was, or why it failed. Never the location.
+    private static let log = Logger(subsystem: "com.wehavesun.LongGame", category: "Weather")
 
     init() {
         layer = UserDefaults.standard.string(forKey: Key.layer).flatMap(WeatherLayer.init(rawValue:))
@@ -50,16 +53,21 @@ final class WeatherStore {
               LocationOnce.isAllowed else { return }
         fetching = true
         defer { fetching = false }
-        guard let location = await LocationOnce.current() else { return }
+        guard let location = await LocationOnce.current() else {
+            Self.log.notice("Weather: no location this time")
+            return
+        }
         do {
             let current = try await WeatherService.shared.weather(for: location, including: .current)
             let reading = WeatherReading(sky: Self.sky(current.condition),
                                          windKmh: current.wind.speed.converted(to: .kilometersPerHour).value)
             layer = SceneWeather.current(weather: reading)
+            Self.log.notice("Weather fetched: \(String(describing: reading.sky), privacy: .public), wind \(Int(reading.windKmh), privacy: .public) km/h, layer \(self.layer?.rawValue ?? "none", privacy: .public)")
             UserDefaults.standard.set(layer?.rawValue, forKey: Key.layer)
             UserDefaults.standard.set(Date(), forKey: Key.fetchedAt)
         } catch {
             // No network or no service: keep the scene as it is, quietly.
+            Self.log.error("Weather fetch failed: \(String(describing: error), privacy: .public)")
         }
     }
 
