@@ -13,6 +13,7 @@ struct WeatherLayerView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
+    private var dark: Bool { colorScheme == .dark }
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
@@ -45,7 +46,11 @@ struct WeatherLayerView: View {
     private func drawClouds(_ context: inout GraphicsContext, size: CGSize, t: Double) {
         let drift = (t / 900).truncatingRemainder(dividingBy: 1)
         for rect in SceneWeather.clouds(in: CGSize(width: size.width, height: horizonY), sun: sun, sunRadius: sunRadius, drift: drift) {
-            context.fill(cloudShape(rect), with: .color(.white.opacity(0.72)))
+            // Soft edges; in the dark look a moonlit pale blue, thinner, so they never read as grey blobs.
+            context.drawLayer { layer in
+                layer.addFilter(.blur(radius: 2.5))
+                layer.fill(cloudShape(rect), with: .color(dark ? LGColor.moonCloud.opacity(0.42) : .white.opacity(0.72)))
+            }
         }
     }
 
@@ -87,10 +92,13 @@ struct WeatherLayerView: View {
         // One long thin cloud, high.
         let drift = CGFloat((t / 400).truncatingRemainder(dividingBy: 1))
         let w = size.width * 0.7
-        let rect = CGRect(x: -w * 0.3 + drift * (size.width + w * 0.3) - w * 0.2, y: max(8, min(sun.y - sunRadius - 26, horizonY * 0.12)),
+        let rect = CGRect(x: -w * 0.3 + drift * (size.width + w * 0.3) - w * 0.2, y: max(14, min(sun.y - sunRadius - 26, horizonY * 0.14)),
                           width: w, height: 10)
         if !SceneWeather.overlaps(rect, sun: sun, radius: sunRadius * 1.2) {
-            context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(0.6)))
+            context.drawLayer { layer in
+                layer.addFilter(.blur(radius: 3))
+                layer.fill(Path(ellipseIn: rect), with: .color(dark ? LGColor.moonCloud.opacity(0.38) : .white.opacity(0.6)))
+            }
         }
         // A few faint gust lines passing low.
         var rng = SceneWeather.Seeded(0x917)

@@ -115,6 +115,13 @@ enum LGColor {
     static let peachTile = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// The anniversary pill under Home's number.
     static let anniversaryPill = Color(light: 0xFFF1DA, dark: 0x2A2440)
+    /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
+    static let moonCloud = Color(hex: 0xC9D2EC)
+    /// The navy pill with gold words (Then and now's "… later", a letter's "You wrote this …"): lifted on the night
+    /// background so it still reads as a pill.
+    static let storyPill = Color(light: 0x16244A, dark: 0x2E3C78)
+    /// The faint rules on a letter's paper and the envelope's flap.
+    static let paperRule = Color(light: 0xE4E6EC, dark: 0x2C3560)
     /// A letter's paper and the sealed envelope (update 49).
     static let letterPaper = Color(light: 0xFFFDF8, dark: 0x1C2446)
     /// The Finish sheet's "A long one" card.

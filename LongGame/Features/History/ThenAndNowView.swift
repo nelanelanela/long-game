@@ -138,7 +138,7 @@ struct ThenAndNowView: View {
                 .lgText(LGTextStyle(size: 12, weight: .bold, relativeTo: .caption), color: LGColor.timerGold)
                 .padding(.horizontal, 12)
                 .frame(minHeight: 28)
-                .background(LGColor.navy, in: Capsule())
+                .background(LGColor.storyPill, in: Capsule())
                 .shadow(color: LGColor.navy.opacity(0.25), radius: 6, y: 4)
                 .padding(.vertical, -8)
                 .zIndex(1)

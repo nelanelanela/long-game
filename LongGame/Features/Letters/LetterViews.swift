@@ -7,6 +7,8 @@ import SwiftData
 struct LetterPaper<Content: View>: View {
     var tilt: Double = 0
     @ViewBuilder var content: Content
+    /// The letter's text size (15 pt, growing with Dynamic Type): the rules follow it, so they sit under the words.
+    @ScaledMetric(relativeTo: .body) private var fontSize: CGFloat = 15
 
     var body: some View {
         content
@@ -17,11 +19,14 @@ struct LetterPaper<Content: View>: View {
                     .fill(LGColor.letterPaper)
                     .overlay {
                         Canvas { context, size in
-                            var y: CGFloat = 15 + 21.4
+                            // Just under each line's descenders: 16 pt padding, then one line (the font's own
+                            // height plus the letter's line spacing) after another.
+                            let step = LetterLines.lineHeight(fontSize)
+                            var y: CGFloat = 16 + fontSize * 1.23
                             while y < size.height - 6 {
                                 context.fill(Path(CGRect(x: 0, y: y, width: size.width, height: 1)),
-                                             with: .color(LGColor.navy.opacity(0.07)))
-                                y += 22.4
+                                             with: .color(LGColor.paperRule))
+                                y += step
                             }
                         }
                         .accessibilityHidden(true)
@@ -30,6 +35,18 @@ struct LetterPaper<Content: View>: View {
                     .shadow(color: LGColor.navy.opacity(0.1), radius: 9, y: 6)
             }
             .rotationEffect(.degrees(tilt))
+    }
+}
+
+/// The letter's line spacing, matched to the paper's rules (22.4 pt lines at 15 pt, as on the board).
+struct LetterLines: ViewModifier {
+    @ScaledMetric(relativeTo: .body) private var fontSize: CGFloat = 15
+
+    static func spacing(_ fontSize: CGFloat) -> CGFloat { fontSize * 0.3 }
+    static func lineHeight(_ fontSize: CGFloat) -> CGFloat { fontSize * 1.193 + spacing(fontSize) }
+
+    func body(content: Content) -> some View {
+        content.lineSpacing(Self.spacing(fontSize))
     }
 }
 
@@ -46,7 +63,7 @@ struct SealedEnvelope: View {
                 p.addLine(to: CGPoint(x: 110, y: 84))
                 p.addLine(to: CGPoint(x: 220, y: 0))
             }
-            .stroke(LGColor.navy.opacity(0.12), lineWidth: 1.5)
+            .stroke(LGColor.paperRule, lineWidth: 1.5)
             Circle()
                 .fill(LGColor.amber)
                 .frame(width: 56, height: 56)
@@ -129,7 +146,7 @@ struct LetterWriteSheet: View {
                     LetterPaper {
                         TextField("", text: $text, axis: .vertical)
                             .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .body))
-                            .lineSpacing(6)
+                            .modifier(LetterLines())
                             .lineLimit(8...)
                             .focused($focused)
                             .accessibilityLabel("Your letter")
@@ -282,11 +299,11 @@ struct DeliveredLetterCard: View {
                 .lgText(LGTextStyle(size: 12, weight: .bold, relativeTo: .caption), color: LGColor.timerGold)
                 .padding(.horizontal, 12)
                 .frame(minHeight: 26)
-                .background(LGColor.navy, in: Capsule())
+                .background(LGColor.storyPill, in: Capsule())
             LetterPaper(tilt: -1) {
                 Text(verbatim: letter.text)
                     .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .body))
-                    .lineSpacing(6)
+                    .modifier(LetterLines())
                     .fixedSize(horizontal: false, vertical: true)
             }
             Text(verbatim: Letters.writtenLine(date: letter.writtenAt, totalWhenWritten: letter.totalWhenWritten))
