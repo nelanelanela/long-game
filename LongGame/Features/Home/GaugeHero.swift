@@ -190,13 +190,16 @@ struct GaugeScale: View {
 
                 // A zero-height strip at the tick's height, so the label is centred on it at any text size.
                 // The labels sit to the right of the line, as on the boards.
-                Color.clear.frame(width: 44, height: 0)
+                // The words grow with the text size up to a limit (decided for 1.0): about 1.5 times, so the scale
+                // still fits beside the sun. The strip is wide enough for "2.5k" and "12 h" at that size.
+                Color.clear.frame(width: 72, height: 0)
                     .overlay(alignment: .leading) {
                         Text(tick.label)
                             .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2), color: labelColour)
                             .monospacedDigit()
                             .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                            .fixedSize()
+                            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                             .opacity(covered ? 0 : 1)
                     }
                     .offset(x: metrics.scaleX + 10, y: y - 1)

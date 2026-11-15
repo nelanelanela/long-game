@@ -49,7 +49,14 @@ Every fix is its own commit on `accessibility-check`, named after the screen.
 Test set-up (not an app bug): a paused timer saved on disk by one test opened the next test's Timer paused. The
 test launches now clear it first.
 
-## What is left for you to decide (design)
+## Design decisions (settled 15 November 2026, for 1.0)
+
+Natalia's answers: 1 left as designed; 2 a touch darker orange (`LGColor.anniversaryText`, #A9501A in light, 4.9:1,
+also on the memory card); 3 the gauge's scale words now grow up to accessibility1 (about 1.5×) and then stop, and
+Meet your future self's track words already grew; 4 left as designed. 1, 3's cap and 4 are written down in
+`KnownFalseAlarms.swift` under "Decided for 1.0". 5 stays open: it isn't a design question.
+
+The questions as they were asked:
 
 1. **Calendar day cells are 18 × 18 pt** (about 120 audit findings per pass, one per day). Apple's minimum is 44 pt.
    VoiceOver and Voice Control can reach every day (each is a labelled button), but a finger with a tremor will miss.

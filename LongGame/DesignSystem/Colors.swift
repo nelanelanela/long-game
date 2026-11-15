@@ -115,6 +115,9 @@ enum LGColor {
     static let peachTile = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// The anniversary pill under Home's number.
     static let anniversaryPill = Color(light: 0xFFF1DA, dark: 0x2A2440)
+    /// Words on the anniversary pill and the memory card: ember a touch darker in light, so it reads at 4.9:1 on the
+    /// peach (ember itself measures 4.4:1 there). Decided for 1.0.
+    static let anniversaryText = Color(light: 0xA9501A, dark: 0xFFB877)
     /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
     static let moonCloud = Color(hex: 0xC9D2EC)
     /// The milestone card's small gold line over the dawn sky.

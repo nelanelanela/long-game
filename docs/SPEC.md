@@ -794,7 +794,7 @@ A small, rare line on Home from the person's own history (`Memories.today(...)`,
 
 - Preference in that order. A 29 February is remembered on 28 February in other years. Days use the person's calendar and time zone.
 - **How often:** at most one memory day in any 7 (`AppSettings.lastMemoryDay`; the day it shows keeps it all day). Never with an anniversary pill or an hour milestone that day, never in the first month after the first session, never a comparison where today is lower.
-- **Home:** one card under Today's number and quiet line: peach (`anniversaryPill`), radius 14, opening words in ember bold, optional 40 pt photo, small chevron. The sun winks once on the first open that day. A tap opens that day in History (or the photo). No notification, sound or haptic.
+- **Home:** one card under Today's number and quiet line: peach (`anniversaryPill`), radius 14, opening words in bold `anniversaryText` (ember, a touch darker in light: #A9501A), optional 40 pt photo, small chevron. The sun winks once on the first open that day. A tap opens that day in History (or the photo). No notification, sound or haptic.
 - **Settings:** in Sounds, under Giggle sound, **The sun remembers** (on by default), "Now and then, a memory from your own history".
 
 ## A letter to your future self (update 49, `design/redesign/LetterToFutureSelf.dc.html`)
@@ -871,6 +871,7 @@ Build the sun as one vector view (circle, 12 rays, face layers) so every state a
 | inkMuted | #5E6782 | #A9B1C9 |
 | primary button fill / label | #16244A / white | #FFD66B / #16244A |
 | accent text (ember) | #B4561A | #FFB877 |
+| anniversary pill and memory card words (`anniversaryText`) | #A9501A (4.9:1 on the peach) | #FFB877 |
 | segmentTrack, tabTrack | #EFE2CF | #262F57 |
 | hairline, divider | #ECE7DE, #F0ECE5 | #222B52 |
 | rest dot | #C5D0EC | #3D4D93 |

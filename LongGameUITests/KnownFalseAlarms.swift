@@ -36,6 +36,12 @@ enum KnownFalseAlarms {
         }
         //    Your letters' delivered cards (update 49): reported "partially unsupported" in the default and dark passes,
         //    but the largest-size pass passes and its screenshot shows every word at full size.
+        //    Meet your future self's track words ("Today · 3,257 h", "~Aug 2037 · 10,000 h") are the same: reported in
+        //    the default pass only; the largest-size pass passes, and they grow and wrap onto two lines there.
+        if issue.auditType == .dynamicType, screen == "Meet your future self", element.elementType == .staticText,
+           label.hasSuffix(" h") {
+            return true
+        }
         if issue.auditType == .dynamicType, screen == "Your letters", element.elementType == .staticText {
             return true
         }
@@ -139,6 +145,27 @@ enum KnownFalseAlarms {
         // 11. Undo in the "added" toast: gold #FFD66B on the navy pill measures 7.2:1. The audit samples the pill's
         //     translucent layer.
         if issue.auditType == .contrast, label == "Undo" {
+            return true
+        }
+
+        // Decided for 1.0 (15 November 2026): left as designed, on Natalia's word.
+        // D1. The calendar's day squares (18 pt). VoiceOver and Voice Control reach every day; a tap shows the day in
+        //     the card below the grid, which is full width.
+        if issue.auditType == .hitRegion, screen.hasPrefix("History · Calendar"), element.elementType == .button,
+           frame.width < 30, frame.height < 30 {
+            return true
+        }
+        // D2. Home's and History's tabs (36 pt tall) and This week's day bars (42 pt wide): close to 44 and easy to hit;
+        //     44 pt tabs would push the sky down on every Home tab.
+        if issue.auditType == .hitRegion, element.elementType == .button,
+           (tabs.contains(label) && frame.height >= 34) || (screen.hasPrefix("Home · This week") && frame.width >= 40 && frame.width < 44) {
+            return true
+        }
+        // D3. The gauge's scale words on Home ("0", "2.5k" … "10k", "6 h", "12 h"): they grow with the text size up to
+        //     about 1.5 times (accessibility1) and then stop, so the scale still fits beside the sun.
+        let scaleWord = label.range(of: #"^(\d+(\.\d)?k|0|\d+ h)$"#, options: .regularExpression) != nil
+        if issue.auditType == .dynamicType, screen.hasPrefix("Home ·"), element.elementType == .staticText,
+           scaleWord, frame.minY < 480 {
             return true
         }
 

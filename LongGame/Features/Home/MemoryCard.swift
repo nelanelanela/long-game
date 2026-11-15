@@ -16,7 +16,7 @@ struct MemoryCard: View {
                     PhotoThumb(id: photo.id, data: photo.data, side: 40, radius: 8)
                         .accessibilityHidden(true)
                 }
-                (Text(verbatim: memory.parts.lead).fontWeight(.bold).foregroundColor(LGColor.ember)
+                (Text(verbatim: memory.parts.lead).fontWeight(.bold).foregroundColor(LGColor.anniversaryText)
                  + Text(verbatim: " " + memory.parts.rest).foregroundColor(LGColor.ink))
                     .lgText(LGTextStyle(size: 13, weight: .regular, relativeTo: .footnote))
                     .lineSpacing(2)
@@ -25,7 +25,7 @@ struct MemoryCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Image(systemName: "chevron.right")
                     .lgIcon(12, weight: .semibold)
-                    .foregroundStyle(LGColor.ember)
+                    .foregroundStyle(LGColor.anniversaryText)
                     .accessibilityHidden(true)
             }
             .padding(.horizontal, 12).padding(.vertical, 10)

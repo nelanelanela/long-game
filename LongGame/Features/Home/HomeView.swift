@@ -618,7 +618,7 @@ struct HomeView: View {
             // Today's small anniversary: one line under the number, for that calendar day only.
             if let anniversary {
                 Text(verbatim: anniversary.line)
-                    .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.ember)
+                    .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.anniversaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 12).padding(.vertical, 5)
                     .frame(minHeight: 28)
