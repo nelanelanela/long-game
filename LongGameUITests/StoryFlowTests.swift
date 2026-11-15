@@ -41,7 +41,7 @@ final class StoryFlowTests: XCTestCase {
         field.typeText("Secret words for later.")
         XCTAssertTrue(seal.isEnabled)
         seal.tap()
-        XCTAssertTrue(text("Sealed.").waitForExistence(timeout: 4))
+        XCTAssertTrue(text("Your letter is sealed").waitForExistence(timeout: 4))
         shot("Letter sealed")
         app.buttons["Done"].tap()
         // On The long game: waiting, and the words never shown.

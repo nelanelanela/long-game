@@ -180,6 +180,7 @@ struct LetterWriteSheet: View {
                     SealedEnvelope().padding(.top, 48)
                     Text("Sealed.")
                         .lgText(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
+                        .accessibilityLabel(Text("Your letter is sealed"))
                         .accessibilityAddTraits(.isHeader)
                         .padding(.top, 36)
                     Text("The sun will bring it back at \(Letters.hoursName(milestone)). \(Letters.toGo(milestone: milestone, total: total))")

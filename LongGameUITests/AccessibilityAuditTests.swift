@@ -35,6 +35,9 @@ final class AccessibilityAuditTests: XCTestCase {
     /// Screenshot (kept in the results) and the audit. Issues the audit gets wrong are listed in `KnownFalseAlarms`
     /// with the reason; everything else fails the test.
     private func audit(_ screen: String, file: StaticString = #filePath, line: UInt = #line) {
+        // iOS's own "You have changed the icon" alert (the sample total passes a stage) would stop the audit: OK it.
+        let ok = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["OK"]
+        if ok.exists { ok.tap(); sleep(1) }
         let shot = XCTAttachment(screenshot: app.screenshot())
         shot.name = "\(pass) · \(screen)"
         shot.lifetime = .keepAlways
@@ -144,7 +147,7 @@ final class AccessibilityAuditTests: XCTestCase {
             field.tap()
             field.typeText("I hope the nocturne sings by now.")
             tap("Seal the letter")
-            wait("Sealed.")
+            wait("Your letter is sealed")
             audit("Letter · sealed")
         } else {
             XCTFail("No letter field")

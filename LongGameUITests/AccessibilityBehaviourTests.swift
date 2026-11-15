@@ -109,7 +109,7 @@ final class AccessibilityBehaviourTests: XCTestCase {
                 if screen == "history.calendar" { return false }
                 if decided.contains(where: { item.hasPrefix($0 + " ") }) { return false }
                 if item.hasPrefix(" ") { return false }              // a switch's unnamed inner part
-                if screen == "settings", item.hasSuffix("×28") { return false }   // a system switch's row
+                if screen == "settings", item.hasSuffix("×28") || item.hasSuffix("×27") { return false }   // a system switch's row (27 or 28 after rounding)
                 if screen == "home.week", item.hasSuffix("42×84") { return false } // a day bar
                 // The note's text view: the whole box is the target, checked by testNoteBoxStartsTyping.
                 if item.hasPrefix("A note, if you like ") { return false }

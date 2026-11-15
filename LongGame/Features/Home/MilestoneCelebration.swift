@@ -21,6 +21,7 @@ struct MilestoneCelebration: View {
     let onDone: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var startedAt = Date()
 
     private var isMastery: Bool { hours >= 10_000 }
@@ -39,7 +40,10 @@ struct MilestoneCelebration: View {
     private var milestoneBody: some View {
         GeometryReader { geo in
             // Each extra offer under the words takes about 62 pt: the scene gives that room up first.
-            let k = min(1, max(0.5, (geo.size.height - max(250, 190 + CGFloat(extraButtons) * 62)) / 560))
+            // At the accessibility sizes the buttons are taller than that and everything under the scene scrolls
+            // anyway, so the scene keeps its height and the words above the sun stay clear of it.
+            let room = typeSize.isAccessibilitySize ? 250 : max(250, 190 + CGFloat(extraButtons) * 62)
+            let k = min(1, max(0.5, (geo.size.height - room) / 560))
             ZStack(alignment: .top) {
                 LGColor.background.ignoresSafeArea()
                 VStack(spacing: 0) {
@@ -62,6 +66,8 @@ struct MilestoneCelebration: View {
                                 .lgNumber(LGTextStyle(size: 44, weight: .bold, relativeTo: .largeTitle, tracking: -1.3), color: .white)
                         }
                         .padding(.top, 70 * k + 8)
+                        // Drawn on the sky above the sun: they grow up to xxxLarge so they never cover it.
+                        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                         .accessibilityElement(children: .combine)
                     }
                     .ignoresSafeArea(edges: .top)

@@ -107,10 +107,13 @@ struct ThenAndNowView: View {
                 .padding(.leading, -10)
             Spacer()
             Text("Then and now").lgText(.navTitle).accessibilityAddTraits(.isHeader)
+                .lineLimit(1).minimumScaleFactor(0.6)
+                // The largest sizes would cut it off between the two buttons' room; it grows to xxxLarge.
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             Spacer()
             Color.clear.frame(width: 34, height: 44)
         }
-        .frame(height: 44)
+        .frame(minHeight: 44)
     }
 
     private func content(_ d: ThenAndNowData) -> some View {
@@ -295,6 +298,8 @@ struct ThenAndNowCard: View {
             LinearGradient(colors: [Color(hex: 0xFFF1DA), Color(hex: 0xFAF7F1)], startPoint: .top, endPoint: UnitPoint(x: 0.5, y: 0.34))
         }
         .environment(\.colorScheme, .light)
+        // Only ever an image to share: while it is being made, VoiceOver must not find its words on the screen.
+        .accessibilityHidden(true)
     }
 
     private func side(_ s: Side, label: String) -> some View {

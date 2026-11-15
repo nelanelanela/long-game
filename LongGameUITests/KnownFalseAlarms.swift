@@ -34,6 +34,14 @@ enum KnownFalseAlarms {
         if issue.auditType == .dynamicType, element.elementType == .button, tabs.contains(label) {
             return true
         }
+        //    The same on purpose for words that stop at xxxLarge so they stay whole and clear of a picture (update 50):
+        //    the celebration's craft line and number over the sun, and the Then and now title between its buttons.
+        let capped = ["· MILESTONE", " hours", "Then and now"]
+        if issue.auditType == .dynamicType, element.elementType == .staticText,
+           (screen == "Milestone celebration" && (label.hasSuffix(capped[0]) || label.hasSuffix(capped[1])))
+            || (screen == "Then and now" && label == capped[2]) {
+            return true
+        }
 
         // 4. The glass tab tracks (Home, History, Your year). The same misreading of glass as (1). Measured on the
         //    screenshots: navy on the light track about 13:1; white on the dark-sky track about 5.5:1 (lens) to
@@ -46,17 +54,35 @@ enum KnownFalseAlarms {
         //    (on the peach sky of Your weekly pace, 5.2:1 too), above the 4.5:1 that small text needs. The audit
         //    reads the soft edges of thin 13 pt letters as the text colour.
         let captions = ["Private to your Apple Account", "Your session on the Lock Screen", "One-time payments",
-                        "For the next 12 months", "Deletes your game, sessions, notes and photos"]
-        if issue.auditType == .contrast, element.elementType == .staticText, captions.contains(where: label.hasPrefix) {
+                        "For the next 12 months", "Deletes your game, sessions, notes and photos",
+                        // Then and now's "212 hours of piano between these two." on the peach top: 5.1:1.
+                        "between these two.",
+                        // Update 49: setup step 7's note, the letter's invitation and the sealed page (#5E6782 on
+                        // #FFF1DA / #FAF7F1 / #FFFDF8: 5.1–5.3:1).
+                        "iPhone will ask for your location", "Write a few lines to the person", "The sun will bring it back",
+                        "Not sure what to say?", "Your pace, split into a stretch"]
+        if issue.auditType == .contrast, element.elementType == .staticText, captions.contains(where: { label.hasPrefix($0) || label.hasSuffix($0) }) {
+            return true
+        }
+        // A delivered letter's date line ("8 June 2026 · at 3,700 h"): the same grey on the letter paper, 5.3:1.
+        if issue.auditType == .contrast, element.elementType == .staticText, label.contains(" · at "), label.hasSuffix(" h") {
             return true
         }
 
         // 6. Words scrolled under the pinned buttons at the bottom of Home, the intro pages, Welcome and setup steps
         //    1 and 3. Those pages scroll and the buttons sit on a soft fade on purpose; scrolled into view, the same
         //    words measure 5:1 or more.
-        let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 3"].contains(where: screen.hasPrefix)
+        //    Then and now (update 48) too: its Share and Choose other photos are pinned the same way.
+        let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 3", "Then and now"].contains(where: screen.hasPrefix)
         if issue.auditType == .contrast || issue.auditType == .textClipped, pinned, element.elementType == .staticText,
            frame.minY >= 700 {
+            return true
+        }
+
+        // 6b. The celebration (update 42 and 50): the craft line, white at 85% on the top of the dawn sky (navy #1E2550
+        //     there, about 11:1), and Share this moment, navy on 70% white over the cream page (about 13:1).
+        if issue.auditType == .contrast, screen.hasPrefix("Milestone celebration"),
+           label.hasSuffix("· MILESTONE") || label == "Share this moment" {
             return true
         }
 

@@ -67,10 +67,9 @@ struct MilestoneCardView: View {
         .frame(width: 360, height: 640)
         .clipped()
         .environment(\.colorScheme, .light)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(verbatim: MilestoneCardText.spoken(hours: content.hours, craft: content.craftName,
-                                                                     on: content.reached)))
-        .accessibilityAddTraits(.isImage)
+        // Only ever an image to share (its words go with it as the share sheet's title): while it is being made,
+        // VoiceOver must not find its words on the screen.
+        .accessibilityHidden(true)
     }
 }
 
