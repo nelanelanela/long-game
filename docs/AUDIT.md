@@ -800,7 +800,7 @@ Built on `redesign` after merging `dark-mode` and `accessibility-check` into it.
 - ✅ **The sun remembers:** `Logic/Memories.swift`, `Features/Home/MemoryCard.swift`, Home card in every Home layout (phone, wide, sidebar), the wink, the Settings switch, `lastMemoryDay`.
 - ✅ **Tests:** `LongGameTests/StoryTests.swift`, 24 tests: fewer than two photos, under 90 days, deleted photos, a chosen pair valid and not, gap words, totals, spoken card; each memory, order of preference, 29 February, time zones around midnight, the 7-day rule, anniversaries and milestones, nothing that stings, the first month and the switch. All 725 unit tests pass.
 - ✅ **Debug (Settings › Debug only):** "Force a memory on Home" (each memory, or None) and "Add sample photos two years apart" (two sessions with photos, 2 years 8 months apart; "Remove the sample year" deletes them).
-- 🟡 **Milestone button place:** the spec puts See then and now above Share this moment, which doesn't exist yet (update 42); it sits under Keep playing for now.
+- ✅ **Milestone button place:** See then and now sits above Share this moment (update 42, built 15 November 2026).
 - 🟡 **Not yet checked:** the UI audit passes and VoiceOver on the two new screens; the Then and now screen at the accessibility sizes.
 
 **See it in the Simulator:** run with `-demoData`. Then and now: Settings › Debug only › Add sample photos two years apart, then History › Growth › Then and now (or Fill a sample year, which also has photos months apart). The sun remembers: Settings › Debug only › Force a memory on Home, pick one; back on Home it is under Today's number. Choose None to go back to the real rule.
@@ -813,13 +813,40 @@ All three parts are built. Part 2 after the WeatherKit capability was switched o
 - ✅ **Keepsake poster:** `Logic/Keepsake.swift`, `Features/Keepsake/KeepsakeViews.swift` (poster, PDF, sheet), the Growth row and the celebration button.
 - ✅ **Tests:** `LettersTests` (next milestone, due letters including two at once, never for a passed milestone, hours-ago rounding, words, the invitation with and without a pace) and `KeepsakeTests` (first and last day, rest days, days played, day reached, a week and ten years both fit, hours before left out, file name, paper sizes and defaults, a one-page PDF of the right size for each paper).
 - ✅ **Debug (Settings › Debug only):** "Reach a milestone with a letter waiting" and "Open the poster with a three-year sample".
-- 🟡 **Decisions taken:** the letter offered on A gentle nudge leaves notifications undecided (as Not now); the export carries sealed letters without their text; "every 1,000 hours" celebrations are the ones that exist today at 1,000, 5,000 and 10,000 (2,000, 3,000 … have no celebration, so their poster is reached from Growth).
+- 🟡 **Decisions taken:** the letter offered on A gentle nudge leaves notifications undecided (as Not now); the export carries sealed letters without their text. ✅ Every 1,000 hours now has a celebration (update 50), so each poster has its moment.
 - 🟡 **Not checked yet:** the UI audit on the new screens and VoiceOver on a device.
 - ✅ **Weather in the scene (part 2):** `Logic/SceneWeather.swift` (layers, order, the 3-hour rule, seeded clouds that keep clear of the sun), `App/WeatherStore.swift` (WeatherKit, one approximate location, the last layer only), `Features/Home/WeatherLayerView.swift`, the Home scene and its spoken label, `Features/Settings/WeatherSwitchRow.swift` with Apple's attribution, `Features/Onboarding/WeatherStepView.swift` (step 7). Entitlement `com.apple.developer.weatherkit` in `LongGame/LongGame.entitlements`; the location purpose string and reduced accuracy in `project.yml`. `SceneWeatherTests`: each condition, the order, nothing when off, the 3-hour rule, clouds never over the sun along the arc, positions the same every time.
 - ✅ **Debug:** Settings › Debug only › "Force weather in the scene" (each layer, nothing, or the real weather).
 - ✅ **Mac app builds again:** since update 47 it was missing `UITestLaunch.swift`; that file and `WeatherStore.swift` are now in its sources (on the Mac there's no WeatherKit entitlement, so the scene stays as it is).
-- 🟡 **Not done:** in the wind layer the dunes and water don't sway faster (the scene's own sway has no speed setting yet); the real weather has only been tried with forced layers in the Simulator, not with a live WeatherKit call on a device.
+- ✅ **Wind sway** (update 50): the shoreline and the water's lines sway 2.4 times faster in wind.
+- 🟡 **Not done:** the real weather has only been tried with forced layers in the Simulator, not with a live WeatherKit call on a device.
 - 🟡 **For Natalia, outside the app:**
   - **Privacy policy:** add that, only if "Weather in the scene" is turned on, the app uses the device's approximate location to ask Apple Weather (WeatherKit) for the current weather a few times a day; the location isn't stored or shared by the app; Apple's own privacy policy applies to WeatherKit. And that letters stay in the app's data (and iCloud only when sync is on).
   - **App Store privacy answers:** add **Location › Coarse Location**, used for **App Functionality**, **not linked** to the user, **not used for tracking**. Nothing else changes. (Letters are user content that stays on the device and in the person's own iCloud, not collected by you.)
 
+
+## Update 42: Data & storage, the milestone card, the first week, words and sizes (15 November 2026, branch `redesign`)
+
+Built as part 1 of update 50 (it had never been built).
+
+- ✅ **Settings and Data & storage:** `Features/Settings/DataStorageView.swift` (iCloud, storage, export and import, Delete all data; shared `DataReset`, `DataStorageText`, `SettingsGroupLabel`, `SettingsFootnote`, `SettingsCard`). Settings is Appearance (with Weather in the scene), Support, Notifications (with The sun remembers), While you play (Focus or Show in Dock, Giggle sound), Your data, Your game (with Week starts on and the practice rows), Help, footer. Your photos' back button returns to Data & storage. Delete all data now removes letters too.
+- 🟡 **Settings on one screen:** not quite at the default size. The page has grown since the board (Appearance, the weather switch with Apple's attribution, Rhythm nudge, The sun remembers, Focus's Shortcuts, Week starts on, estimates, archived crafts, Switch to a new game), so it scrolls about one screen further. Nothing was dropped to make it fit; say if you'd like some of these moved.
+- 🟡 **Widgets row:** the board has "Widgets · See the sun without opening the app" under While you play. The app has no widgets page to open, so the row isn't there. It could open a short how-to (long-press the Home Screen › +); say if you want it.
+- ✅ **Share this moment:** `Features/Home/MilestoneCardView.swift` (`MilestoneCardView`, `ShareMomentButton`), `MilestoneCardText` in `Logic/Milestones.swift`. 1080 × 1920 checked by a test; compared with the board by eye: matches. The celebration's offers now scroll, and the scene gives up room for each one (before, with four offers, "A thousand hours." was squeezed out).
+- ✅ **First week:** `Logic/EarlyDays.swift` (first day, first full week, two weeks for the actual pace, days before the game). Calendar: pale dots before the game, the note, Rhythm "–", Steady for in days. Growth: no actual-pace line or key row, the waiting line (also full screen and VoiceOver), the axis follows the chosen pace. The year card line. Debug launch argument `-uitest.newGame` (with `-demoData`): a game set up three days ago.
+- ✅ **Words and sizes:** "Your pace, split into a stretch for each day."; calendar months 12 pt, weekday letters 10 pt, legend 12 pt and wrapping from XX Large; the year card strip's months 11 pt.
+- ✅ **Home boards:** the transparent glass top bar matches the redrawn Today, This week, the empty day and The long game.
+- ✅ **Tests:** `LongGameTests/DesignPolishTests.swift` (card words and size, Data & storage words, first-week rules). UI: the Settings audit goes through Data & storage and Your photos and checks Back returns to Data & storage; Settings' reading order updated. Audit false alarms added for the same reasons as before: the grey footnote under Delete all data (5.2:1 measured), and the One craft sheet's words reported clipped while it floats as an inset card (whole in the screenshot).
+- ✅ **iPad:** Settings, Data & storage, History (both tabs, first week too) and the celebration seen in portrait on the iPad Pro 11-inch Simulator. Fixed: the celebration's buttons stretched across the whole width; they now sit in a centred column.
+
+**See it in the Simulator** (Xcode › Product › Scheme › Edit Scheme › Run › Arguments):
+- **Data & storage:** run with `-demoData`, then Home › gear › Your data › Data & storage.
+- **A milestone with Share:** `-demoData -uitest.screen milestone`, then Share this moment.
+- **History on a brand-new game:** `-demoData -uitest.newGame -uitest.screen history.calendar` (or `history.growth`).
+
+## Update 50, part 1: celebrations at every 1,000 hours, wind (15 November 2026)
+
+- ✅ **Every 1,000 hours:** 2,000, 3,000, 4,000, 6,000, 7,000, 8,000 and 9,000 join the milestones, with their own lines ("Two thousand hours."). Letters, the poster button and Share this moment come with them. Someone updating already past some of them isn't shown them late (`adoptingThousands`, once). Tests: `EveryThousandTests`; two older tests updated for the new list.
+- ✅ **Wind:** see update 49.
+- ✅ **Updates 43–46:** all on `redesign` already (`dark-mode` and `accessibility-check` are merged in). Nothing missing.
+- ✅ **Mac app:** builds, launches with `-demoData` and keeps running. It couldn't be looked at from here (no screen recording permission), so seeing it is on the device checklist.

@@ -102,6 +102,7 @@ A weekly target for the next 12 months, counted from the day it's set (not the c
 - Onboarding step 4 of 6 (step dots show 6 steps on steps 1–6; 5 when A gentle nudge is left out). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
 - Title "Your weekly pace". One line: "For the next 12 months, the only distance to cover."
 - Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–168 h a week (no limit below the 168 hours in a week), step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
+- Under the scene of the day's stretch: "Your pace, split into a stretch for each day." (update 42; was "Each day, a stretch from the sea to the moon.").
 - One quiet line under the chips instead of a card: "About 1 h 43 m a day · until Nov 2027" (target ÷ 7, and the set date + 12 months). The "In a year" forecast moves to the Growth chart.
 - **Continue** opens step 3c.
 
@@ -205,7 +206,9 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 
 - Segmented control Calendar | Growth.
 - Grid of the last 53 weeks, one square per day, most recent week on the right, scrolled to the end; swipe to go back.
-- Colours **and shapes** by daily logged hours (section 20): 0 = small blue dot (rest); < 1 h = thin bar, 1–2 h = taller bar, 2–3 h = rounded square, 3 h+ = full circle, coloured yellow → deep orange. Days before onboarding use the same blue dot.
+- Colours **and shapes** by daily logged hours (section 20): 0 = small blue dot (rest); < 1 h = thin bar, 1–2 h = taller bar, 2–3 h = rounded square, 3 h+ = full circle, coloured yellow → deep orange. **Days before the game began** (the onboarding day, or an earlier session) are pale dots (#EFEBE4; #1E2750 in the dark look), so they never read as missed days (update 42).
+- Month labels 12 pt, weekday letters 10 pt, the legend's lines 12 pt; from the XX Large text size the legend wraps onto two lines (update 42).
+- **The first week** (update 42, `CalendarEarly.dc.html`; `Logic/EarlyDays.swift`): until the first full week has ended (the week the game began in when it began on the week's first day, else the week after), Rhythm shows "–", Steady for counts the days so far ("4 days"), and under the calendar card: "Your calendar fills in as you play. Rhythm appears after your first full week."
 - Tapping a day shows its total and sessions in the card below; sessions can be edited or deleted there. Each session row shows its photo (56 pt thumbnail) and note if it has them, otherwise "No note" in light grey (section 16).
 - A day with at least one photo gets a tiny white dot (4 pt) in the centre of its square. The legend keeps Rest and Less → More (drawn with the shapes), and adds a second line: a square with the dot and "White dot: a day with a photo" (only once the user has at least one photo).
 - Stats: **Rhythm**, **Steady for**, **Active days** in the window. There are no streaks anywhere in the app: nothing ever "breaks".
@@ -222,7 +225,8 @@ Your weekly target, turned into today's distance. "A thousand-mile walk is made 
 - Headline: "At your chosen pace, you'll finish around" / the chosen-pace month + year / "At your actual pace: around YYYY" (or "At your actual pace: after YYYY" beyond 30 years). When the actual pace is equal or faster, the last line reads "You're already playing at this pace".
 - **What if I practise more?** slider, 0–10 extra h/week on top of the chosen pace; the orange line, its sun and the text update live ("About 1.4 years sooner, around May 2035"); without a change it reads "On top of your chosen pace of 12 h a week." Not saved.
 - The chart card has a small expand button (36 pt circle, top right); tapping it or the chart opens the full-screen chart (section 19).
-- At the bottom: a quiet **Your 2026** row (small sun, "A card of your year, to keep or share", chevron) that opens the year card (section 17). It is there all year.
+- At the bottom: a quiet **Your 2026** row (small sun, "A card of your year, to keep or share", chevron) that opens the year card (section 17). It is there all year once the year has four weeks of data; before that, in the current year: "Your year card appears after four weeks of playing." (update 42).
+- **The first two weeks** (update 42, `GrowthEarly.dc.html`): until 14 days after the first session there is no actual-pace line and no "Your actual pace" key row; the line under the headline reads "Your actual pace shows after two weeks of playing." (also in the full-screen chart and in VoiceOver). The chosen-pace forecast shows as normal, and the chart's time axis follows it alone.
 
 ### 7 · Add past hours (`design/LogPast.dc.html`)
 
@@ -590,12 +594,21 @@ Finish date = today + (10,000 − T) ÷ rate weeks. A rate of 0 means "not withi
 
 ## Settings · Help (update 46, `design/redesign/Settings.dc.html`)
 
-- A **Help** group last, just above the footer (after Your game, the storage and data cards, and in debug builds the debug card), with one row: an envelope (`envelope`) in ember on a peach tile (#FFF1DA, radius 8, 32 pt), **Write to us**, the subtitle "yes@wehavesun.com · questions, ideas, bugs" and a chevron. The address is one constant, `Support.email`. The Mac and iPad get the same row (the same Settings view).
+- A **Help** group last, just above the footer (after Your game, and in debug builds the debug card), with one row: an envelope (`envelope`) in ember on a peach tile (#FFF1DA, radius 8, 32 pt), **Write to us**, the subtitle "yes@wehavesun.com · questions, ideas, bugs" and a chevron. The address is one constant, `Support.email`. The Mac and iPad get the same row (the same Settings view).
 - **A tap**, in this order (`WriteToUs.route`, behind the `MailEnvironment` protocol so it is tested without a device):
   1. iPhone and iPad with a Mail account: the Mail compose sheet, to the address, subject "Long Game", and a body of two empty lines, then "—" and "Long Game 1.0 (42) · iOS 26.1 · iPhone17,3" (the real version, build, system and model code; nothing else). Closing it does nothing more.
   2. Otherwise a `mailto:` link with the same subject and body, which opens Gmail or another default mail app (the Mac goes straight here).
   3. If nothing answers: the address is copied, the toast says "Email address copied" with a soft tap, and VoiceOver hears the same.
 - VoiceOver reads the row as "Write to us, yes@wehavesun.com, button".
+
+## Settings · a shorter page, and Data & storage (update 42, `design/redesign/Settings.dc.html`, `DataStorage.dc.html`)
+
+- **Settings, in order:** Appearance (Look; Weather in the scene with Apple's attribution) · Support Long Game · **Notifications** (Daily reminder with its time and days, Rhythm nudge, The sun remembers: "Shown quietly in the app, never pushed") · **While you play** (Practising Focus and its Shortcuts on iPhone and iPad, Show in Dock on the Mac; Giggle sound) · **Your data** (one row) · **Your game** (Weekly pace, App icon grows with you, Week starts on, Your estimates, Archived crafts, Switch to a new game) · Help · the footer. The Sounds group is gone. The same view on iPad and Mac.
+- **Your data › Data & storage:** a cloud (`icloud`) on a light blue tile (#EAF2FF, a night blue in the dark look), the subtitle from `DataStorageText.summary` ("iCloud on · photos 486 MB · export"; "iCloud off" when off; no photos part before there are any) and a chevron. Pushes Data & storage.
+- **Data & storage** (pushed, Back to Settings):
+  - **iCloud:** Save to iCloud with its status line; **Delete iCloud copy** in red (its confirmation as before); under the card "Private to your Apple Account. Deleting the iCloud copy keeps everything on this iPhone."
+  - **Storage:** Your photos ("214 photos · 486 MB", opens Your photos, whose Back returns here); Default pictures ("3.1 MB cache · never your photos", with Clear).
+  - **Your data:** Export sessions ("A CSV file with dates, times and notes. Photos aren't included.", the share sheet; the letters' file goes with it when there are letters); Import sessions ("From a CSV exported from Long Game"); **Delete all data** in red (its confirmation); under the card "Deletes your game, sessions, notes and photos from this iPhone and iCloud. This can't be undone." Delete all data also removes letters.
 
 ## Accounts, sync and notifications
 
@@ -620,7 +633,11 @@ Settings keeps a switch for the daily reminder and the rhythm nudge. Both start 
 | Long session | 4 h running | "Still practising?" |
 | Milestone | Total crosses a milestone | "1,000 hours of piano. Sunrise is coming." |
 
-**Milestones:** 100, 500, 1,000, 2,500, 5,000, 7,500 and 10,000 h. Each shows a one-time celebration on Home (the sun's celebrate state with a short burst). At 10,000 h the sun fully rises: a full-screen moment, and the app keeps counting.
+**Milestones:** 100, 500, every 1,000 (update 50), 2,500, 7,500 and 10,000 h. Each shows a one-time celebration on Home (the sun's celebrate state with a short burst). At 10,000 h the sun fully rises: a full-screen moment, and the app keeps counting. Their lines: "A hundred hours.", "Two thousand hours.", "Two and a half thousand hours." … "Nine thousand hours.". Someone who updates already past one of the added thousands isn't shown it late (`Milestones.adoptingThousands`, once, flagged by `AppSettings.thousandsAdopted`). Only 1,000, 5,000 and 10,000 change the app icon.
+
+**The celebration's buttons, top to bottom:** See then and now (secondary, only with a pair of photos) · **Share this moment** (update 42) · Keep playing (primary) · Write to yourself at N hours · Make a keepsake poster (at every 1,000) · Support Long Game (text, the gentle offer). The scene gives up 62 pt of height for each offer besides Keep playing, and everything under it scrolls at the largest text sizes. On iPad and Mac the words and buttons sit in a centred 440 pt column.
+
+**Share this moment** (`design/redesign/Milestone.dc.html`, `MilestoneCard.dc.html`): translucent white (70%), 50 pt high, a thin navy outline (12%), the share icon. It shares `MilestoneCardView` as a 9:16 PNG, 1080 × 1920 (the 360 pt layout × 3, through the year card's `YearCardRender`): the dawn sky with the moon to the right, the still sea, the sun with the celebrate face; "A MILESTONE IN THE LONG GAME" (gold #FFE08A, letter-spaced) and the craft name; the big number ("1,000 h"); the milestone line ("A thousand hours."); "Reached on 5 November 2026 · started in 2019" (the day the total reached it, or today when it came with the hours from before the app; no "started in" when it's the same year); the year card's footer. No animation, always the light look. VoiceOver: "A thousand hours of piano. Reached on 5 November 2026." File: "Long Game – 1,000 hours of Piano.png".
 
 ## Controls and shortcuts (`design/redesign/QuickerLogging.dc.html`)
 
@@ -759,7 +776,7 @@ One language, played through `Haptics` (DesignSystem) with each moment named by 
 An early session photo next to a recent one, made only from sessions already saved.
 
 - **When:** at least two session photos 90 days or more apart. Then is the earliest photo, Now the latest (`ThenAndNow.pair(photos:chosen:)`). A pair chosen with Choose other photos (two session ids in `AppSettings`) is kept until one of them is deleted, then it falls back to earliest and latest.
-- **Where:** History › Growth, a row above "Your 2026" ("Then and now · Your first photo next to your latest"), hidden without a pair; and **See then and now** (secondary) on the milestone celebration when a pair exists. (The celebration has no Share this moment yet: update 42 is not built, so the button sits under Keep playing.)
+- **Where:** History › Growth, a row above "Your 2026" ("Then and now · Your first photo next to your latest"), hidden without a pair; and **See then and now** (secondary) on the milestone celebration when a pair exists. (It sits above Share this moment.)
 - **Screen:** back chevron, "Then and now"; a small sun with open eyes, **Look how far.**, "984 hours of piano between these two." (the difference between the overall totals at the end of the two sessions, craft in lower case). Two white cards tilted −1.5° and +1.2° (still, whatever Reduce Motion): photo (aspect fill, radius 10) with a Then / Now pill, the date in the person's format and "at 2,310 h", the note on one line. Between them a navy pill in gold: "2 years 8 months later" (under a year months, under two months weeks, under a week days). Share (primary) makes a 1080 × 1920 image with the year card's rendering and footer, no notes. Choose other photos (text button) opens a grid by year: pick Then, then a later Now. Tapping a photo opens the photo viewer.
 - **Accessibility:** each card is one element ("Then. 12 March 2024, at 2,310 hours. First try at the nocturne. Photo."); the pill reads as its words; at the accessibility sizes the page scrolls and the date and hours stack.
 
@@ -801,9 +818,10 @@ A small, rare line on Home from the person's own history (`Memories.today(...)`,
 ## Weather in the scene (update 49, `design/redesign/SunMoods.dc.html`, `OnboardingWeather.dc.html`)
 
 - **What:** on Home only, one thin pale layer over the landscape (`SceneWeather.current(weather:)`): **cloud** (mostly cloudy, overcast: three soft clouds high and to the sides), **rain** (rain, drizzle: fine slanted lines, thin rings on the water, a faint navy veil; the sun rests its eyes, the `focus` face), **wind** (40 km/h or more: one long thin cloud, faint gust lines low), **mist** (fog, mist, haze: a veil densest just above the water, two slow bands), **snow** (snow, sleet: slow flakes of four sizes; the sun's eyes open, the `celebrate` face). One at a time: snow, rain, mist, wind, cloud. Clear, partly cloudy and no data: nothing changes.
+- **Wind** also makes the shoreline and the water's lines sway faster (`SceneWeather.windSway`, 2.4 times; the `landSway` environment value on `LandView`). Still with Reduce Motion.
 - **Never changes** the sky's colour, the sun's height or its rays. Clouds keep clear of the sun's disc along the whole arc; the mist stays below its face. Not in the timer, widgets, icon, share cards, launch or the Watch. A celebration, a wink and the giggle win over the weather's face. Slow movement, seeded positions; still with Reduce Motion; 70% in dark. VoiceOver: the scene's label gains the words ("…, light rain").
 - **Data:** WeatherKit `WeatherService`, current weather only. Fetched when Home appears, at most every 3 hours; only the last layer and the fetch time are kept, never the location. Errors and no network: the scene as it is, nothing said.
-- **Settings:** in Sounds, **Weather in the scene**, "Rain, mist and snow from outside your window", **off by default**. Turning it on asks for location (When In Use, reduced accuracy by default: `NSLocationDefaultAccuracyReduced`); refused, the switch goes back with "Without your location the app can't see the weather." Apple's Weather mark and the "Other data sources" link sit under it. Purpose string: "Long Game uses your approximate location only to show the weather in its landscape."
+- **Settings:** in Appearance (update 42 moved it from Sounds), **Weather in the scene**, "Rain, mist and snow from outside your window", **off by default**. Turning it on asks for location (When In Use, reduced accuracy by default: `NSLocationDefaultAccuracyReduced`); refused, the switch goes back with "Without your location the app can't see the weather." Apple's Weather mark and the "Other data sources" link sit under it. Purpose string: "Long Game uses your approximate location only to show the weather in its landscape."
 - **Onboarding:** a new last step, 7 of 7 (6 of 6 when the nudge is skipped), "The weather outside": Show the weather (the system prompt; allowed turns the switch on) or Not now; both go on to Home. The first letter's "Write to yourself at 100 hours" moved here, as the last step. People who already finished setup only have the Settings switch.
 
 ## Visual system
