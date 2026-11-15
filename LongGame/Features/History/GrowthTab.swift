@@ -32,11 +32,15 @@ struct GrowthTab: View {
         let s = summary(now: now, extra: extra, records: records)
         let past = GrowthSeries.past(estimates: estimates.map(\.rate), sessions: records,
                                      onboardingDate: craft.createdAt, startYear: craft.startYear, now: now)
-        let data = GrowthSeries.chartData(forecast: s.forecast, past: past, now: now)
+        let showsActual = EarlyDays.showsActualPace(sessionStarts: sessions.map(\.start), now: now)
+        // A game's first two weeks: no actual-pace line yet (it would only say how few days there have been).
+        // The axis then follows the chosen pace alone (the hidden line would stretch it).
+        let chartForecast = showsActual ? s.forecast : s.forecast.withActual(s.forecast.chosen)
+        let data = GrowthSeries.chartData(forecast: chartForecast, past: past, now: now).showingActual(showsActual)
 
         VStack(alignment: .leading, spacing: 0) {
-            headline(s: s, data: data, now: now)
-            forecastCard(s: s, data: data, now: now).padding(.top, 14)
+            headline(s: s, data: data, now: now, showsActual: showsActual)
+            forecastCard(s: s, data: data, now: now, showsActual: showsActual).padding(.top, 14)
             whatIf(s: s, now: now).padding(.top, 16)
             VStack(spacing: 0) {
                 thenAndNowRow
@@ -52,6 +56,7 @@ struct GrowthTab: View {
             GrowthScrubView(craftName: craft.name, past: past, data: data, forecast: s.forecast, total: s.total,
                             onboardingDate: craft.createdAt, now: now, hintSeen: settingsRows.first?.scrubHintSeen ?? false,
                             onHintSeen: markHintSeen)
+                .showingActual(showsActual)
                 .scrubTransition(id: "growth-chart", in: chartSpace)
                 .allowsRotation()
         }
@@ -127,7 +132,14 @@ struct GrowthTab: View {
         let year = YearSummary.defaultYear(now: now)
         let summary = YearSummary.make(year: year, sessions: records, estimates: estimates.map(\.rate),
                                        onboardingDate: craft.createdAt, now: now, weekStart: weekStart)
-        if summary.hasEnoughData {
+        if !summary.hasEnoughData && year == Calendar.current.component(.year, from: now) {
+            Text("Your year card appears after four weeks of playing.")
+                .lgText(.caption, color: LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 14)
+                .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
+        } else if summary.hasEnoughData {
             NavigationLink {
                 YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
             } label: {
@@ -141,7 +153,7 @@ struct GrowthTab: View {
     // MARK: Forecast
 
     /// Above the chart, straight on the page: a quiet line, the finish date large, the actual pace under it.
-    private func headline(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
+    private func headline(s: ProgressSummary, data: GrowthChartData, now: Date, showsActual: Bool) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             if s.total >= Totals.goalHours {
                 Text(ForecastText.crossed(on: data.past.first { $0.hours >= Totals.goalHours }?.date ?? now))
@@ -151,10 +163,10 @@ struct GrowthTab: View {
                 Text(ForecastText.headline(s.forecast.chosen, now: now))
                     .lgText(LGTextStyle(size: 34, weight: .bold, relativeTo: .largeTitle, tracking: -1))
                     .lineLimit(1).minimumScaleFactor(0.6)
-                Text(ForecastText.actualLine(s.forecast, now: now))
+                Text(showsActual ? ForecastText.actualLine(s.forecast, now: now) : EarlyDays.actualPaceWaiting)
                     .lgText(.note, color: LGColor.inkMuted)
             }
-            if !s.hasEnoughData {
+            if showsActual && !s.hasEnoughData {
                 Text("Forecast improves as you log more")
                     .lgText(.note, color: LGColor.inkMuted)
             }
@@ -163,7 +175,7 @@ struct GrowthTab: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func forecastCard(s: ProgressSummary, data: GrowthChartData, now: Date) -> some View {
+    private func forecastCard(s: ProgressSummary, data: GrowthChartData, now: Date, showsActual: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             GrowthChartView(data: data, total: s.total, now: now)
                 .frame(height: 210)
@@ -172,13 +184,13 @@ struct GrowthTab: View {
                 .contentShape(Rectangle())
                 .onTapGesture { scrubbing = true }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(GrowthText.chartLabel(total: s.total, forecast: s.forecast, now: now))
+                .accessibilityLabel(GrowthText.chartLabel(total: s.total, forecast: s.forecast, now: now, showsActual: showsActual))
                 .accessibilityAction(named: "Open full screen") { scrubbing = true }
                 .scrubTransitionSource(id: "growth-chart", in: chartSpace)
 
             if s.total < Totals.goalHours {
                 Rectangle().fill(LGColor.divider).frame(height: 1).padding(.horizontal, 6)
-                GrowthKey(forecast: s.forecast, now: now)
+                GrowthKey(forecast: s.forecast, now: now, showsActual: showsActual)
                     .padding(.horizontal, 6).padding(.top, 4)
             }
         }

@@ -118,6 +118,8 @@ enum LGColor {
     /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
     static let moonCloud = Color(hex: 0xC9D2EC)
     /// The milestone card's small gold line over the dawn sky.
+    /// History's calendar: a day before the game began, a pale dot that doesn't read as a missed day.
+    static let beforeGameDot = Color(light: 0xEFEBE4, dark: 0x1E2750)
     static let milestoneGold = Color(hex: 0xFFE08A)
     /// Share this moment: translucent white in light, a faint lift in dark.
     static let shareMomentFill = Color(light: 0xFFFFFF, dark: 0xFFFFFF, lightOpacity: 0.7, darkOpacity: 0.08)

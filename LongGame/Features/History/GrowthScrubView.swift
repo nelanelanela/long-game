@@ -15,6 +15,8 @@ struct GrowthScrubView: View {
     /// Whether the hint "Drag along the line" was already put away by an earlier scrub.
     let hintSeen: Bool
     let onHintSeen: () -> Void
+    /// False in a game's first two weeks: no actual-pace line or key row.
+    var showsActual = true
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -80,7 +82,7 @@ struct GrowthScrubView: View {
     private var idleHeadline: ScrubReadout {
         ScrubReadout(small: String(localized: "At your chosen pace, you'll finish around"),
                      big: ForecastText.headline(forecast.chosen, now: now),
-                     accent: ForecastText.actualLine(forecast, now: now), chip: "", blurb: "", date: "", hours: "")
+                     accent: showsActual ? ForecastText.actualLine(forecast, now: now) : EarlyDays.actualPaceWaiting, chip: "", blurb: "", date: "", hours: "")
     }
 
     // MARK: Body
@@ -179,7 +181,7 @@ struct GrowthScrubView: View {
     @ViewBuilder
     private var key: some View {
         if total < Totals.goalHours {
-            GrowthKey(forecast: forecast, now: now, style: .full).padding(.horizontal, 24)
+            GrowthKey(forecast: forecast, now: now, style: .full, showsActual: showsActual).padding(.horizontal, 24)
         }
     }
 
@@ -191,7 +193,7 @@ struct GrowthScrubView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Growth chart")
-            .accessibilityValue(readout?.spoken ?? GrowthText.chartLabel(total: total, forecast: forecast, now: now))
+            .accessibilityValue(readout?.spoken ?? GrowthText.chartLabel(total: total, forecast: forecast, now: now, showsActual: showsActual))
             .accessibilityHint("Swipe up or down to step through your milestones")
             .accessibilityAdjustableAction { direction in step(direction == .increment ? 1 : -1) }
             .accessibilityChartDescriptor(GrowthChartDescriptor(past: data.past, chosen: data.chosen, actual: data.actual, now: now))
@@ -339,3 +341,12 @@ private enum ScrubPreviewData {
 #Preview("Landscape", traits: .landscapeLeft) { ScrubPreviewData.make { _, ms, _ in ms.first { $0.hours == 5_000 }?.date } }
 #Preview("Wide window", traits: .fixedLayout(width: 1000, height: 700)) { ScrubPreviewData.make { now, _, _ in now } }
 #endif
+
+extension GrowthScrubView {
+    /// A game's first two weeks: no actual-pace line or key row.
+    func showingActual(_ shows: Bool) -> GrowthScrubView {
+        var copy = self
+        copy.showsActual = shows
+        return copy
+    }
+}

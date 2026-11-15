@@ -8,6 +8,7 @@ import SwiftData
 /// - `-uitest.freshInstall`: everything deleted, so the app opens on onboarding.
 /// - `-uitest.disableAnimations`: no opening sunrise, UIKit animations off.
 /// - `-uitest.screen <name>`: Home opens this screen or sheet (see `HomeView.applyUITestRoute`).
+/// - `-uitest.newGame`: a game set up three days ago, for History's first week.
 /// - `-uitest.today empty|progress|covered`: today's sample sessions, for Home · Today's three states.
 /// - `-uitest.appearance light|dark`: Settings › Look for this run.
 /// - `-uitest.reduceMotion`, `-uitest.reduceTransparency`, `-uitest.differentiateWithoutColor`: the app sees these
@@ -26,6 +27,8 @@ enum UITestLaunch {
     static var today: String? { value("-uitest.today") }
     /// `-uitest.photos`: two photo sessions years apart (Then and now), whatever the screen.
     static var photos: Bool { args.contains("-uitest.photos") }
+    /// `-uitest.newGame`: with `-demoData`, a game set up three days ago (History's first week).
+    static var newGame: Bool { args.contains("-uitest.newGame") }
     static var appearance: AppAppearance? { value("-uitest.appearance").flatMap(AppAppearance.init(rawValue:)) }
     static var reduceMotion: Bool { args.contains("-uitest.reduceMotion") }
     static var reduceTransparency: Bool { args.contains("-uitest.reduceTransparency") }

@@ -42,12 +42,14 @@ struct CalendarLevelMark: View {
     var hasPhoto = false
     /// For previews: act as if Increase Contrast were on.
     var forceIncreasedContrast = false
+    /// A day before the game began: the rest dot's shape in a pale colour, so it never reads as a missed day.
+    var beforeGame = false
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         ZStack {
-            CalendarLevelShape(level: level).fill(LGColor.calendar(level))
-            if contrast == .increased || forceIncreasedContrast, let outline = LGColor.calendarOutline(level) {
+            CalendarLevelShape(level: level).fill(beforeGame ? LGColor.beforeGameDot : LGColor.calendar(level))
+            if !beforeGame, contrast == .increased || forceIncreasedContrast, let outline = LGColor.calendarOutline(level) {
                 CalendarLevelShape(level: level).stroke(outline, lineWidth: 1)
             }
             // A white dot in the middle: this day has a photo (4 pt; the palest level gets a hairline around it).

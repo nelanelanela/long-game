@@ -104,12 +104,13 @@ extension ScenarioResult {
 
 enum GrowthText {
     /// What VoiceOver reads for the chart on the Growth card.
-    static func chartLabel(total: Double, forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+    static func chartLabel(total: Double, forecast: Forecast, now: Date, showsActual: Bool = true,
+                           calendar: Calendar = .current) -> String {
         let today = "Cumulative hours: \(DurationFormat.grouped(Totals.wholeHours(total: total))) today. "
         if total >= Totals.goalHours { return today + "You have crossed the finish line." }
         return today + "At your chosen pace you reach 10,000 hours: "
             + ForecastText.headline(forecast.chosen, now: now, calendar: calendar) + ". "
-            + ForecastText.actualLine(forecast, now: now, calendar: calendar) + "."
+            + (showsActual ? ForecastText.actualLine(forecast, now: now, calendar: calendar) + "." : EarlyDays.actualPaceWaiting)
     }
 }
 
@@ -129,7 +130,7 @@ enum GrowthKeyText {
     }
 
     /// One VoiceOver sentence for the whole key.
-    static func spoken(_ forecast: Forecast, now: Date, calendar: Calendar = .current) -> String {
+    static func spoken(_ forecast: Forecast, now: Date, showsActual: Bool = true, calendar: Calendar = .current) -> String {
         func rate(_ r: Double) -> String { WeeklyTarget.number(r) }
         let chosen: String
         if let m = forecast.chosen.monthsToGoal {
@@ -140,7 +141,9 @@ enum GrowthKeyText {
         let actual = forecast.actual.monthsToGoal == nil
             ? "finishes " + ForecastText.year(forecast.actual, now: now, calendar: calendar)
             : "finishes around " + ForecastText.year(forecast.actual, now: now, calendar: calendar)
-        return "Your chosen pace, \(rate(forecast.chosenRate)) hours a week, \(chosen). "
+        let first = "Your chosen pace, \(rate(forecast.chosenRate)) hours a week, \(chosen)."
+        guard showsActual else { return first }
+        return first + " "
             + "Your actual pace, \(rate(forecast.actualRate)) hours a week, \(actual)."
     }
 }

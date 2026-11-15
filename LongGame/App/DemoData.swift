@@ -17,7 +17,9 @@ enum DemoData {
 
         let calendar = Calendar.current
         let now = Date()
-        let onboarding = calendar.date(byAdding: .day, value: -120, to: now) ?? now
+        // `-uitest.newGame`: set up three days ago, with a session on each of those days (History's first week).
+        let newGame = UITestLaunch.newGame
+        let onboarding = calendar.date(byAdding: .day, value: newGame ? -3 : -120, to: now) ?? now
         let craft = Craft(name: "Piano", category: "Music", startYear: 2019, createdAt: onboarding)
         context.insert(craft)
         let hours = [3, 5, 6, 8, 10, 8, 12, 12]
@@ -35,7 +37,7 @@ enum DemoData {
         TargetSaving.apply(hours: 12, now: now, settings: settings, context: context)
 
         // A believable pattern: most days, a little more at weekends, a few rest days.
-        for offset in 0..<119 {
+        for offset in 0..<(newGame ? 3 : 119) {
             guard let day = calendar.date(byAdding: .day, value: -offset, to: now) else { continue }
             // UI tests: today's state (`-uitest.today empty|progress|covered`).
             if offset == 0, let today = UITestLaunch.today {
@@ -47,7 +49,7 @@ enum DemoData {
                 continue
             }
             let r = abs(sin(Double(offset + 7) * 12.9898) * 43758.5453).truncatingRemainder(dividingBy: 1)
-            if r < 0.2 { continue }
+            if r < 0.2 && !newGame { continue }
             let weekend = calendar.isDateInWeekend(day)
             let h = ((r * 3 + (weekend ? 1 : 0)) * 2).rounded() / 2
             guard h > 0 else { continue }
@@ -56,7 +58,7 @@ enum DemoData {
             context.insert(Session(craftId: craft.id, start: start, durationSec: min(h, 5) * 3600, source: .manual, note: note))
         }
         // UI tests (update 48 and 49 screens): two photo sessions 2 years 8 months apart for Then and now.
-        if ["thenAndNow", "history.growth", "milestone"].contains(UITestLaunch.screen ?? "") || UITestLaunch.photos {
+        if (["thenAndNow", "history.growth", "milestone"].contains(UITestLaunch.screen ?? "") && !newGame) || UITestLaunch.photos {
             let notes = ["First try at the nocturne", "Nocturne, left hand finally even"]
             for (i, date) in [calendar.date(byAdding: DateComponents(year: -2, month: -8), to: now),
                               calendar.date(byAdding: .day, value: -1, to: now)].enumerated() {

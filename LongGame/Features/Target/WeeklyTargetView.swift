@@ -68,7 +68,7 @@ struct WeeklyTargetView: View {
                 PaceScene()
                     .padding(.horizontal, -24)
                     .padding(.top, 28)
-                Text("Each day, a stretch from the sea to the moon.")
+                Text("Your pace, split into a stretch for each day.")
                     .lgText(.caption, color: LGColor.inkMuted)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)

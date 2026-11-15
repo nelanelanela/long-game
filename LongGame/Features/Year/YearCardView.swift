@@ -101,7 +101,7 @@ struct YearCardView: View {
                     Text(name)
                 }
             }
-            .font(.system(size: 9)).foregroundStyle(muted)
+            .font(.system(size: 11)).foregroundStyle(muted)
             .frame(width: 317)
             .padding(.top, 4)
             HStack(alignment: .top, spacing: 0) {

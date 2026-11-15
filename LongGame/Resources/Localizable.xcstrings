@@ -43,7 +43,13 @@
     "%lld of them so far." : {
 
     },
+    "%lld photos" : {
+
+    },
     "%lld%% · phase %lld" : {
+
+    },
+    "1 photo" : {
 
     },
     "100 days of practice" : {
@@ -73,6 +79,9 @@
     "^[%lld year](inflect: true) later" : {
 
     },
+    "A CSV file with dates, times and notes. Photos aren't included." : {
+
+    },
     "A keepsake for your wall" : {
 
     },
@@ -95,6 +104,9 @@
 
     },
     "A letter to your future self" : {
+
+    },
+    "A milestone in the long game" : {
 
     },
     "A month since you started" : {
@@ -151,6 +163,9 @@
     "cloudy" : {
 
     },
+    "Data & storage" : {
+
+    },
     "Debug only" : {
 
     },
@@ -169,7 +184,16 @@
     "Deletes all data and starts again from Welcome, with the three intro pages." : {
 
     },
+    "Deletes your game, sessions, notes and photos from this iPhone and iCloud. This can't be undone." : {
+
+    },
     "Every day of your %@ hours as a small sun. Print it at home or at any print shop." : {
+
+    },
+    "export" : {
+
+    },
+    "Export sessions" : {
 
     },
     "Fake an anniversary on Home" : {
@@ -190,10 +214,19 @@
     "Force weather in the scene" : {
 
     },
+    "From a CSV exported from Long Game" : {
+
+    },
     "Home draws this layer whatever the weather and whether or not the switch is on. The real weather needs a device (or a simulated location) with the switch on." : {
 
     },
     "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
+
+    },
+    "iCloud off" : {
+
+    },
+    "iCloud on" : {
 
     },
     "iPhone will ask for your location next. Change your mind any time in Settings." : {
@@ -250,16 +283,25 @@
     "No peeking. A sealed letter can't be opened early." : {
 
     },
+    "No sessions found. Choose a CSV exported from Long Game." : {
+
+    },
     "None (the real one)" : {
 
     },
     "Not sure what to say? What's hard right now. What you hope to be able to do." : {
 
     },
+    "Notifications" : {
+
+    },
     "Now" : {
 
     },
     "Now and then, a memory from your own history" : {
+
+    },
+    "Now and then, a memory from your own history. Shown quietly in the app, never pushed" : {
 
     },
     "of %@" : {
@@ -283,6 +325,9 @@
     "Paper" : {
 
     },
+    "photos %@" : {
+
+    },
     "Play opening sunrise" : {
 
     },
@@ -292,10 +337,19 @@
     "Pretend last session was %@ ago" : {
 
     },
+    "Private to your Apple Account. Deleting the iCloud copy keeps everything on this iPhone." : {
+
+    },
     "Rain, mist and snow from outside your window" : {
 
     },
     "Reach a milestone with a letter waiting" : {
+
+    },
+    "Reached on %@" : {
+
+    },
+    "Reached on %@." : {
 
     },
     "Remove the sample year" : {
@@ -325,6 +379,9 @@
     "See then and now" : {
 
     },
+    "Share this moment" : {
+
+    },
     "Show Meet your future self again" : {
 
     },
@@ -341,6 +398,15 @@
 
     },
     "Start a session that began 3 h 12 m ago" : {
+
+    },
+    "started in %@" : {
+
+    },
+    "Storage" : {
+
+    },
+    "That file couldn't be read. Choose a CSV exported from Long Game." : {
 
     },
     "The keepsake poster sheet with three years of sample days (nothing is saved), to try the paper sizes, the night look and the PDF." : {
@@ -397,6 +463,9 @@
     "When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly; on a clear day nothing changes." : {
 
     },
+    "While you play" : {
+
+    },
     "windy" : {
 
     },
@@ -439,6 +508,15 @@
     "Your 100th session" : {
 
     },
+    "Your actual pace shows after two weeks of playing." : {
+
+    },
+    "Your calendar fills in as you play. Rhythm appears after your first full week." : {
+
+    },
+    "Your data" : {
+
+    },
     "Your day of the week" : {
 
     },
@@ -454,10 +532,16 @@
     "Your letters" : {
 
     },
+    "Your pace, split into a stretch for each day." : {
+
+    },
     "Your rough area is enough" : {
 
     },
     "Your whole calendar, ready to print" : {
+
+    },
+    "Your year card appears after four weeks of playing." : {
 
     },
     "–" : {

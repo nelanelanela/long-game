@@ -21,6 +21,8 @@ struct CalendarTab: View {
         _selected = State(initialValue: Calendar.current.startOfDay(for: initialDay ?? Date()))
     }
 
+    /// The legend's lines (update 42: 12 pt, up from 11).
+    static let legendText = LGTextStyle(size: 12, weight: .regular, relativeTo: .caption)
     private let cell: CGFloat = 14
     private let gap: CGFloat = 4
     private var calendar: Calendar { .current }
@@ -31,9 +33,21 @@ struct CalendarTab: View {
         let daily = Practice.dailySeconds(sessions.map(\.record), calendar: calendar)
         let windowStart = weeks.first?.first ?? now
 
+        let firstDay = EarlyDays.firstDay(onboarding: craft.createdAt, sessionStarts: sessions.map(\.start), calendar: calendar)
+        let early = EarlyDays.beforeFirstFullWeek(firstDay: firstDay, now: now, weekStart: weekStart, calendar: calendar)
+
         VStack(spacing: 14) {
-            gridCard(weeks: weeks, daily: daily, windowStart: windowStart, now: now)
-            statsCard(daily: daily, windowStart: windowStart, now: now)
+            VStack(alignment: .leading, spacing: 8) {
+                gridCard(weeks: weeks, daily: daily, windowStart: windowStart, now: now, firstDay: firstDay)
+                if early {
+                    Text("Your calendar fills in as you play. Rhythm appears after your first full week.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .lineSpacing(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 4)
+                }
+            }
+            statsCard(daily: daily, windowStart: windowStart, now: now, early: early)
             dayCard(daily: daily, now: now)
         }
         .sheet(item: $editing) { session in
@@ -56,7 +70,7 @@ struct CalendarTab: View {
 
     // MARK: Grid
 
-    private func gridCard(weeks: [[Date]], daily: [Date: Double], windowStart: Date, now: Date) -> some View {
+    private func gridCard(weeks: [[Date]], daily: [Date: Double], windowStart: Date, now: Date, firstDay: Date) -> some View {
         let today = calendar.startOfDay(for: now)
         let photoDays = SessionPhotos.daysWithPhoto(sessions.filter(\.hasPhoto).map { ($0.start, true) }, calendar: calendar)
 
@@ -69,13 +83,14 @@ struct CalendarTab: View {
                         ForEach(Array(weeks.enumerated()), id: \.offset) { index, week in
                             VStack(spacing: gap) {
                                 Text(labels[index] ?? "")
-                                    .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
+                                    .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
                                     .fixedSize()
                                     .dynamicTypeSize(...DynamicTypeSize.xLarge)
                                     .frame(width: cell, height: cell, alignment: .leading)
                                     .accessibilityHidden(true)
                                 ForEach(week, id: \.self) { day in
-                                    dayCell(day, daily: daily, today: today, hasPhoto: photoDays.contains(day))
+                                    dayCell(day, daily: daily, today: today, hasPhoto: photoDays.contains(day),
+                                            beforeGame: EarlyDays.isBeforeGame(day, firstDay: firstDay))
                                 }
                             }
                         }
@@ -85,17 +100,17 @@ struct CalendarTab: View {
                 .defaultScrollAnchor(.trailing)
             }
 
-            // At the accessibility sizes the legend stacks, so "Less" and "More" never break mid-word.
-            let legend = isAccessibilitySize
+            // At large sizes the legend wraps onto two lines, so "Less" and "More" never break mid-word.
+            let legend = dynamicTypeSize >= .xxLarge
                 ? AnyLayout(VStackLayout(alignment: .leading, spacing: 10))
                 : AnyLayout(HStackLayout())
             legend {
                 legendSwatch(.rest, "Rest is part of the craft.")
-                if !isAccessibilitySize { Spacer() }
+                if dynamicTypeSize < .xxLarge { Spacer() }
                 HStack(spacing: 4) {
-                    Text("Less").lgText(.tiny, color: LGColor.inkMuted).padding(.trailing, 4)
+                    Text("Less").lgText(Self.legendText, color: LGColor.inkMuted).padding(.trailing, 4)
                     ForEach(CalendarLevel.allCases.dropFirst(), id: \.self) { CalendarLevelMark(level: $0, size: 12) }
-                    Text("More").lgText(.tiny, color: LGColor.inkMuted).padding(.leading, 4)
+                    Text("More").lgText(Self.legendText, color: LGColor.inkMuted).padding(.leading, 4)
                 }
             }
             .accessibilityHidden(true)
@@ -104,7 +119,7 @@ struct CalendarTab: View {
             if !photoDays.isEmpty {
                 HStack(spacing: 8) {
                     CalendarLevelMark(level: .from2to3, size: 12, hasPhoto: true)
-                    Text("White dot: a day with a photo").lgText(.tiny, color: LGColor.inkMuted)
+                    Text("White dot: a day with a photo").lgText(Self.legendText, color: LGColor.inkMuted)
                 }
                 .padding(.top, -4)
                 .accessibilityHidden(true)
@@ -114,7 +129,7 @@ struct CalendarTab: View {
         .lgCard(radius: 22)
     }
 
-    private func dayCell(_ day: Date, daily: [Date: Double], today: Date, hasPhoto: Bool) -> some View {
+    private func dayCell(_ day: Date, daily: [Date: Double], today: Date, hasPhoto: Bool, beforeGame: Bool) -> some View {
         let isFuture = day > today
         let seconds = daily[day] ?? 0
         let level = CalendarLevel.level(hours: seconds / 3600)
@@ -122,7 +137,7 @@ struct CalendarTab: View {
         return Button { if !isFuture { selected = day } } label: {
             // Future days are left empty; every other day is its level's shape (a rest day is the small dot).
             Group {
-                if isFuture { Color.clear } else { CalendarLevelMark(level: level, size: cell, hasPhoto: hasPhoto) }
+                if isFuture { Color.clear } else { CalendarLevelMark(level: level, size: cell, hasPhoto: hasPhoto, beforeGame: beforeGame && seconds == 0) }
             }
             .frame(width: cell, height: cell)
                 .overlay {
@@ -150,7 +165,7 @@ struct CalendarTab: View {
                 let weekday = calendar.component(.weekday, from: date)
                 let isLastRow = date == weeks.first?.last
                 Text([2, 4, 6].contains(weekday) || (isLastRow && [1, 7].contains(weekday)) ? Self.weekdayLetter(date, calendar) : "")
-                    .lgText(LGTextStyle(size: 9, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
+                    .lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2), color: LGColor.inkMuted)
                     .fixedSize()
                     .dynamicTypeSize(...DynamicTypeSize.xLarge)
                     .frame(height: cell, alignment: .leading)
@@ -163,7 +178,7 @@ struct CalendarTab: View {
     private func legendSwatch(_ level: CalendarLevel, _ title: String) -> some View {
         HStack(spacing: 8) {
             CalendarLevelMark(level: level, size: 12)
-            Text(title).lgText(.tiny, color: LGColor.inkMuted)
+            Text(title).lgText(Self.legendText, color: LGColor.inkMuted)
         }
     }
 
@@ -269,14 +284,18 @@ struct CalendarTab: View {
 
     // MARK: Stats
 
-    private func statsCard(daily: [Date: Double], windowStart: Date, now: Date) -> some View {
-        let rhythm = Rhythm.compute(daily: daily, since: craft.createdAt, now: now, weekStart: weekStart, calendar: calendar)
+    private func statsCard(daily: [Date: Double], windowStart: Date, now: Date, early: Bool) -> some View {
+        // Before the first full week there is no Rhythm yet, and Steady for counts the days so far.
+        let computed = Rhythm.compute(daily: daily, since: craft.createdAt, now: now, weekStart: weekStart, calendar: calendar)
+        let rhythm = early ? Rhythm.Result(daysPerWeek: 0, steadyWeeks: 0) : computed
+        let firstDay = EarlyDays.firstDay(onboarding: craft.createdAt, sessionStarts: sessions.map(\.start), calendar: calendar)
+        let daysSoFar = (calendar.dateComponents([.day], from: firstDay, to: calendar.startOfDay(for: now)).day ?? 0) + 1
         let active = Practice.activeDays(daily: daily, from: windowStart, to: now, calendar: calendar)
         let needed = max(1, rhythm.daysPerWeek - 1)
         // A plain row between two hairlines, the middle figure between two more: no card.
         return HStack(spacing: 0) {
             stat(rhythm.daysPerWeek > 0 ? Labels.daysPerWeek(rhythm.daysPerWeek) : "–", "Rhythm", info: .rhythm)
-            stat(rhythm.daysPerWeek > 0 ? Labels.weeks(rhythm.steadyWeeks) : "–", "Steady for",
+            stat(early ? Labels.days(daysSoFar) : (rhythm.daysPerWeek > 0 ? Labels.weeks(rhythm.steadyWeeks) : "–"), "Steady for",
                  info: .steady(daysNeeded: rhythm.daysPerWeek > 0 ? needed : nil))
                 .overlay(alignment: .leading) { Rectangle().fill(LGColor.hairline).frame(width: 1) }
                 .overlay(alignment: .trailing) { Rectangle().fill(LGColor.hairline).frame(width: 1) }

@@ -9,6 +9,8 @@ struct GrowthKey: View {
     let forecast: Forecast
     let now: Date
     var style: Style = .card
+    /// False in a game's first two weeks: only the chosen pace has a row.
+    var showsActual = true
 
     @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -18,11 +20,13 @@ struct GrowthKey: View {
         VStack(alignment: .leading, spacing: 6) {
             row(sample: .chosen, name: "Your chosen pace", nameColor: LGColor.chosenPaceName,
                 numbers: GrowthKeyText.chosenNumbers(forecast, now: now))
-            row(sample: .actual, name: "Your actual pace", nameColor: LGColor.inkMuted,
-                numbers: GrowthKeyText.actualNumbers(forecast, now: now))
+            if showsActual {
+                row(sample: .actual, name: "Your actual pace", nameColor: LGColor.inkMuted,
+                    numbers: GrowthKeyText.actualNumbers(forecast, now: now))
+            }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(GrowthKeyText.spoken(forecast, now: now))
+        .accessibilityLabel(GrowthKeyText.spoken(forecast, now: now, showsActual: showsActual))
     }
 
     private enum Sample { case chosen, actual }

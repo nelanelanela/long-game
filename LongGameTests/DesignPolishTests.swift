@@ -76,3 +76,54 @@ struct DataStorageTextTests {
         #expect(DataStorageText.photos(count: 214, bytes: 0).hasPrefix("214 photos · "))
     }
 }
+
+struct EarlyDaysTests {
+    // 2 November 2026 is a Monday.
+    @Test func firstDayIsTheEarlierOfSetupAndSessions() {
+        #expect(EarlyDays.firstDay(onboarding: day(2026, 11, 4), sessionStarts: [], calendar: polishUTC)
+                == polishUTC.startOfDay(for: day(2026, 11, 4)))
+        #expect(EarlyDays.firstDay(onboarding: day(2026, 11, 4), sessionStarts: [day(2026, 10, 1), day(2026, 11, 5)], calendar: polishUTC)
+                == polishUTC.startOfDay(for: day(2026, 10, 1)))
+    }
+
+    @Test func firstFullWeek() {
+        // Began on a Wednesday: the first full week is the next one, Monday 9 to Sunday 15.
+        let wed = polishUTC.startOfDay(for: day(2026, 11, 4))
+        #expect(EarlyDays.firstFullWeekEnds(firstDay: wed, weekStart: .monday, calendar: polishUTC)
+                == polishUTC.startOfDay(for: day(2026, 11, 16)))
+        #expect(EarlyDays.beforeFirstFullWeek(firstDay: wed, now: day(2026, 11, 15), weekStart: .monday, calendar: polishUTC))
+        #expect(!EarlyDays.beforeFirstFullWeek(firstDay: wed, now: day(2026, 11, 16), weekStart: .monday, calendar: polishUTC))
+        // Began on the week's first day: that week is the full one.
+        let mon = polishUTC.startOfDay(for: day(2026, 11, 2))
+        #expect(EarlyDays.firstFullWeekEnds(firstDay: mon, weekStart: .monday, calendar: polishUTC)
+                == polishUTC.startOfDay(for: day(2026, 11, 9)))
+        // With Sunday as the week's start, a Monday start waits for the week from Sunday 8.
+        #expect(EarlyDays.firstFullWeekEnds(firstDay: mon, weekStart: .sunday, calendar: polishUTC)
+                == polishUTC.startOfDay(for: day(2026, 11, 15)))
+    }
+
+    @Test func actualPaceAfterTwoWeeks() {
+        let starts = [day(2026, 11, 1), day(2026, 11, 3)]
+        #expect(!EarlyDays.showsActualPace(sessionStarts: [], now: day(2026, 11, 20), calendar: polishUTC))
+        #expect(!EarlyDays.showsActualPace(sessionStarts: starts, now: day(2026, 11, 14), calendar: polishUTC))
+        #expect(EarlyDays.showsActualPace(sessionStarts: starts, now: day(2026, 11, 15), calendar: polishUTC))
+    }
+
+    @Test func daysBeforeTheGame() {
+        let first = polishUTC.startOfDay(for: day(2026, 11, 4))
+        #expect(EarlyDays.isBeforeGame(polishUTC.startOfDay(for: day(2026, 11, 3)), firstDay: first))
+        #expect(!EarlyDays.isBeforeGame(first, firstDay: first))
+    }
+
+    @Test func chartWithoutActualLine() {
+        let f = ForecastEngine.forecast(total: 20, chosenPace: 10, actualPace: 2)
+        #expect(f.withActual(f.chosen).actual == f.chosen)
+        #expect(GrowthKeyText.spoken(f, now: day(2026, 11, 5), showsActual: false).contains("actual") == false)
+        #expect(GrowthText.chartLabel(total: 20, forecast: f, now: day(2026, 11, 5), showsActual: false)
+            .hasSuffix("Your actual pace shows after two weeks of playing."))
+    }
+
+    @Test func yearCardWaitsFourWeeks() {
+        #expect(YearSummary.minimumDays == 28)
+    }
+}
