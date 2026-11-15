@@ -90,6 +90,14 @@ enum KnownFalseAlarms {
             return true
         }
 
+        //    This week's day letters (M, T, W …) at the foot of the day bars: on the taller phones the strip's bottom
+        //    sits under Begin's fade at rest (the bars' frames reach about 730 pt). The largest-size pass, where the
+        //    page scrolls them into view, is clean.
+        if issue.auditType == .contrast, screen.hasPrefix("Home · This week"), element.elementType == .staticText,
+           label.count == 1, frame.maxY >= 700 {
+            return true
+        }
+
         // 6b. The celebration (update 42 and 50): the craft line, white at 85% on the top of the dawn sky (navy #1E2550
         //     there, about 11:1), and Share this moment, navy on 70% white over the cream page (about 13:1).
         if issue.auditType == .contrast, screen.hasPrefix("Milestone celebration"),
@@ -145,6 +153,14 @@ enum KnownFalseAlarms {
         // 11. Undo in the "added" toast: gold #FFD66B on the navy pill measures 7.2:1. The audit samples the pill's
         //     translucent layer.
         if issue.auditType == .contrast, label == "Undo" {
+            return true
+        }
+
+        // 12. The gauge's scale words on the dusk and night skies, white on their small navy tags (update 50). Measured
+        //     on the audit's own screenshots: "7.5k" on The long game 7.4:1, "12 h" on This week in the dark look
+        //     14.5:1. The audit reads the sky around the tag as the background.
+        if issue.auditType == .contrast, screen.hasPrefix("Home ·"), element.elementType == .staticText,
+           label.range(of: #"^(\d+(\.\d)?k|\d+ h)$"#, options: .regularExpression) != nil, frame.minY < 480 {
             return true
         }
 

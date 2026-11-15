@@ -871,6 +871,7 @@ Build the sun as one vector view (circle, 12 rays, face layers) so every state a
 | inkMuted | #5E6782 | #A9B1C9 |
 | primary button fill / label | #16244A / white | #FFD66B / #16244A |
 | accent text (ember) | #B4561A | #FFB877 |
+| gauge scale words on the dusk and night skies (`gaugeLabelTag`) | white on navy at 60%, radius 5 | the same |
 | anniversary pill and memory card words (`anniversaryText`) | #A9501A (4.9:1 on the peach) | #FFB877 |
 | segmentTrack, tabTrack | #EFE2CF | #262F57 |
 | hairline, divider | #ECE7DE, #F0ECE5 | #222B52 |

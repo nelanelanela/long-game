@@ -169,7 +169,14 @@ struct GaugeScale: View {
     var pillY: CGFloat?
 
     private var lineColour: Color { onDark ? .white.opacity(0.55) : LGColor.ink.opacity(0.5) }
-    private var labelColour: Color { onDark ? .white.opacity(0.85) : LGColor.inkMuted }
+    /// How close to the pill a word may sit before the pill covers it: half the pill's height and a little more, which
+    /// grows with the text size like the pill does.
+    @ScaledMetric(relativeTo: .caption2) private var coverReach: CGFloat = 20
+
+    /// On the dusk and night skies the words are full white on a small soft navy tag, so they stay readable where the
+    /// sky turns peach near the sea (white alone measured about 2–4:1 there).
+    private var labelColour: Color { onDark ? .white : LGColor.inkMuted }
+    private var tagColour: Color { onDark ? LGColor.gaugeLabelTag : .clear }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -181,7 +188,9 @@ struct GaugeScale: View {
 
             ForEach(ticks, id: \.fraction) { tick in
                 let y = metrics.centreY(fraction: tick.fraction)
-                let covered = pillY.map { abs($0 - y) < 16 } ?? false
+                // A word the pill would cover is not drawn at all (drawn see-through, the audit still measured it), nor
+                // the dusk and night skies' "0", which sits on the horizon behind the hills.
+                let covered = (pillY.map { abs($0 - y) < min(coverReach, 34) } ?? false) || (onDark && tick.fraction == 0)
                 Path { p in
                     p.move(to: CGPoint(x: metrics.scaleX - 4, y: y))
                     p.addLine(to: CGPoint(x: metrics.scaleX + 4, y: y))
@@ -194,13 +203,17 @@ struct GaugeScale: View {
                 // still fits beside the sun. The strip is wide enough for "2.5k" and "12 h" at that size.
                 Color.clear.frame(width: 72, height: 0)
                     .overlay(alignment: .leading) {
+                        if !covered {
                         Text(tick.label)
                             .lgText(LGTextStyle(size: 11, weight: .semibold, relativeTo: .caption2), color: labelColour)
                             .monospacedDigit()
                             .lineLimit(1)
                             .fixedSize()
                             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                            .opacity(covered ? 0 : 1)
+                            .padding(.horizontal, onDark ? 4 : 0).padding(.vertical, onDark ? 1 : 0)
+                            .background(tagColour, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+                            .offset(x: onDark ? -4 : 0)
+                        }
                     }
                     .offset(x: metrics.scaleX + 10, y: y - 1)
             }

@@ -7,543 +7,6 @@
     " " : {
 
     },
-    "%@ are your day." : {
-
-    },
-    "%@ days played · each row is four weeks" : {
-
-    },
-    "%@ hours came before" : {
-
-    },
-    "%@ hours of %@" : {
-
-    },
-    "%@ hours to go." : {
-
-    },
-    "%@ of %@ characters" : {
-
-    },
-    "%@ years ago today," : {
-
-    },
-    "%@ · at %@ h" : {
-
-    },
-    "%@, at %@ hours" : {
-
-    },
-    "%@. This %@ so far: %@." : {
-
-    },
-    "%@s" : {
-
-    },
-    "%lld of them so far." : {
-
-    },
-    "%lld photos" : {
-
-    },
-    "%lld%% · phase %lld" : {
-
-    },
-    "1 photo" : {
-
-    },
-    "100 days of practice" : {
-
-    },
-    "18 × 24 in" : {
-
-    },
-    "^[%lld day](inflect: true) later" : {
-
-    },
-    "^[%lld hour](inflect: true) between these two" : {
-
-    },
-    "^[%lld hour](inflect: true) of %@ between these two." : {
-
-    },
-    "^[%lld month](inflect: true) later" : {
-
-    },
-    "^[%lld week](inflect: true) later" : {
-
-    },
-    "^[%lld year](inflect: true) ^[%lld month](inflect: true) later" : {
-
-    },
-    "^[%lld year](inflect: true) later" : {
-
-    },
-    "A CSV file with dates, times and notes. Photos aren't included." : {
-
-    },
-    "A keepsake for your wall" : {
-
-    },
-    "A keepsake poster from Long Game: every day as a small sun." : {
-
-    },
-    "A later photo than Then." : {
-
-    },
-    "A letter from you" : {
-
-    },
-    "A letter is waiting" : {
-
-    },
-    "A letter to %@" : {
-
-    },
-    "A letter to you at %@" : {
-
-    },
-    "A letter to your future self" : {
-
-    },
-    "A milestone in the long game" : {
-
-    },
-    "A month since you started" : {
-
-    },
-    "A photo's anniversary" : {
-
-    },
-    "A year ago today" : {
-
-    },
-    "A year ago today," : {
-
-    },
-    "A year since you started" : {
-
-    },
-    "Add sample photos two years apart" : {
-
-    },
-    "Adds a short debug session (delete it from Recent afterwards) so the total sits 20 seconds below the next whole hour. Start a session and the sun bounces about 20 seconds later." : {
-
-    },
-    "Adds this year so far as sessions that look like a real year: busy and quiet weeks, quieter weekends, the odd week off, and a photo on about one practice day in seven. The same days every time. History → Growth → Your year then shows a full card straight away. Remove deletes only those sessions." : {
-
-    },
-    "All your letters" : {
-
-    },
-    "An early photo." : {
-
-    },
-    "at %@ h" : {
-
-    },
-    "Back" : {
-
-    },
-    "Back on Home the sheet opens by itself, as it does the first time after onboarding." : {
-
-    },
-    "Choose Now" : {
-
-    },
-    "Choose other photos" : {
-
-    },
-    "Choose Then" : {
-
-    },
-    "Clear (nothing)" : {
-
-    },
-    "cloudy" : {
-
-    },
-    "Data & storage" : {
-
-    },
-    "Debug only" : {
-
-    },
-    "Debug only. Your crafts, estimates and sessions are removed from this iPhone." : {
-
-    },
-    "Delete everything and start over" : {
-
-    },
-    "Delete this letter" : {
-
-    },
-    "Delete this letter?" : {
-
-    },
-    "Deletes all data and starts again from Welcome, with the three intro pages." : {
-
-    },
-    "Deletes your game, sessions, notes and photos from this iPhone and iCloud. This can't be undone." : {
-
-    },
-    "Every day of your %@ hours as a small sun. Print it at home or at any print shop." : {
-
-    },
-    "export" : {
-
-    },
-    "Export sessions" : {
-
-    },
-    "Fake an anniversary on Home" : {
-
-    },
-    "Fill a sample year" : {
-
-    },
-    "For trying \"A long one. Did the timer keep running?\": opens the timer as if you forgot to stop it. If you have fewer than 5 timer sessions, it first adds five 45 m ones on the last five days (note \"Debug: usual session\"; delete them from History afterwards)." : {
-
-    },
-    "For you at %@" : {
-
-    },
-    "Force a memory on Home" : {
-
-    },
-    "Force weather in the scene" : {
-
-    },
-    "From a CSV exported from Long Game" : {
-
-    },
-    "Home draws this layer whatever the weather and whether or not the switch is on. The real weather needs a device (or a simulated location) with the switch on." : {
-
-    },
-    "Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one." : {
-
-    },
-    "iCloud off" : {
-
-    },
-    "iCloud on" : {
-
-    },
-    "iPhone will ask for your location next. Change your mind any time in Settings." : {
-
-    },
-    "It can't be brought back." : {
-
-    },
-    "It hasn't been opened yet, and it can't be brought back." : {
-
-    },
-    "Jump total to just under a whole hour" : {
-
-    },
-    "Keep it and close" : {
-
-    },
-    "Keep writing" : {
-
-    },
-    "Keepsake poster" : {
-
-    },
-    "Last %@:" : {
-
-    },
-    "less" : {
-
-    },
-    "light rain" : {
-
-    },
-    "LONG GAME" : {
-
-    },
-    "Look how far." : {
-
-    },
-    "Make a keepsake poster" : {
-
-    },
-    "mist" : {
-
-    },
-    "more" : {
-
-    },
-    "Moves the dates of your target. Back on Home you see the reminder in the target row, or the New year of pace sheet." : {
-
-    },
-    "Never reached" : {
-
-    },
-    "No peeking. A sealed letter can't be opened early." : {
-
-    },
-    "No sessions found. Choose a CSV exported from Long Game." : {
-
-    },
-    "None (the real one)" : {
-
-    },
-    "Not sure what to say? What's hard right now. What you hope to be able to do." : {
-
-    },
-    "Notifications" : {
-
-    },
-    "Now" : {
-
-    },
-    "Now and then, a memory from your own history" : {
-
-    },
-    "Now and then, a memory from your own history. Shown quietly in the app, never pushed" : {
-
-    },
-    "of %@" : {
-
-    },
-    "Only in the landscape" : {
-
-    },
-    "Open the poster with a three-year sample" : {
-
-    },
-    "Opens at %@ h · written %@" : {
-
-    },
-    "Opens that day in History" : {
-
-    },
-    "Other data sources" : {
-
-    },
-    "Paper" : {
-
-    },
-    "photos %@" : {
-
-    },
-    "Play opening sunrise" : {
-
-    },
-    "Poster: %@ hours of %@, %@ days played." : {
-
-    },
-    "Pretend last session was %@ ago" : {
-
-    },
-    "Private to your Apple Account. Deleting the iCloud copy keeps everything on this iPhone." : {
-
-    },
-    "Rain, mist and snow from outside your window" : {
-
-    },
-    "Reach a milestone with a letter waiting" : {
-
-    },
-    "Reached on %@" : {
-
-    },
-    "Reached on %@." : {
-
-    },
-    "Remove the sample year" : {
-
-    },
-    "Reset onboarding" : {
-
-    },
-    "Reset onboarding?" : {
-
-    },
-    "Rewrite" : {
-
-    },
-    "Save the poster" : {
-
-    },
-    "Seal the letter" : {
-
-    },
-    "Sealed." : {
-
-    },
-    "Seals a sample letter to the next milestone (written 300 hours ago), then adds a session (note \"Debug: letter\") that reaches it. Back on Home the letter arrives, after the celebration if that milestone has one." : {
-
-    },
-    "See then and now" : {
-
-    },
-    "Share this moment" : {
-
-    },
-    "Show Meet your future self again" : {
-
-    },
-    "Show the weather" : {
-
-    },
-    "Show the weekly look-back" : {
-
-    },
-    "Show Welcome back on Home" : {
-
-    },
-    "snow" : {
-
-    },
-    "Start a session that began 3 h 12 m ago" : {
-
-    },
-    "started in %@" : {
-
-    },
-    "Storage" : {
-
-    },
-    "That file couldn't be read. Choose a CSV exported from Long Game." : {
-
-    },
-    "The keepsake poster sheet with three years of sample days (nothing is saved), to try the paper sizes, the night look and the PDF." : {
-
-    },
-    "The real weather" : {
-
-    },
-    "The same month, a year on" : {
-
-    },
-    "The sun remembers" : {
-
-    },
-    "The sun remembers: Home shows this memory today, ignoring the once-a-week rule. A photo's anniversary uses one of your photos." : {
-
-    },
-    "The sun will bring it back at %@. %@" : {
-
-    },
-    "The sun's height and the sky still show your progress." : {
-
-    },
-    "The weather outside" : {
-
-    },
-    "Then" : {
-
-    },
-    "Then and now" : {
-
-    },
-    "Then and now · %@" : {
-
-    },
-    "Throw away" : {
-
-    },
-    "Throw this letter away?" : {
-
-    },
-    "Two sessions with a photo and a note: one 2 years 8 months ago, one yesterday. History → Growth → Then and now then appears. Remove the sample year deletes them too." : {
-
-    },
-    "Two years since you started" : {
-
-    },
-    "Used to ask Apple Weather a few times a day. Never saved, never shared." : {
-
-    },
-    "Weather in the scene" : {
-
-    },
-    "When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly; on a clear day nothing changes." : {
-
-    },
-    "While you play" : {
-
-    },
-    "windy" : {
-
-    },
-    "Without your location the app can't see the weather." : {
-
-    },
-    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there, around %@ at your pace." : {
-
-    },
-    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there." : {
-
-    },
-    "Write to you at %@" : {
-
-    },
-    "Write to yourself at %@" : {
-
-    },
-    "Year of pace ended yesterday" : {
-
-    },
-    "Year of pace ends in 10 days" : {
-
-    },
-    "you played %@." : {
-
-    },
-    "you played %@. Today, %@." : {
-
-    },
-    "you played your first session here." : {
-
-    },
-    "you took this photo." : {
-
-    },
-    "You wrote this %@ hours ago" : {
-
-    },
-    "Your 100th session" : {
-
-    },
-    "Your actual pace shows after two weeks of playing." : {
-
-    },
-    "Your calendar fills in as you play. Rhythm appears after your first full week." : {
-
-    },
-    "Your data" : {
-
-    },
-    "Your day of the week" : {
-
-    },
-    "Your first day" : {
-
-    },
-    "Your first photo next to your latest" : {
-
-    },
-    "Your letter" : {
-
-    },
-    "Your letters" : {
-
-    },
-    "Your pace, split into a stretch for each day." : {
-
-    },
-    "Your rough area is enough" : {
-
-    },
-    "Your whole calendar, ready to print" : {
-
-    },
-    "Your year card appears after four weeks of playing." : {
-
-    },
     "–" : {
 
     },
@@ -570,6 +33,9 @@
       }
     },
     "%@ · 10,000 h" : {
+
+    },
+    "%@ · at %@ h" : {
 
     },
     "%@ · milestone" : {
@@ -600,7 +66,13 @@
     "%@ added" : {
 
     },
+    "%@ are your day." : {
+
+    },
     "%@ cache · never your photos" : {
+
+    },
+    "%@ days played · each row is four weeks" : {
 
     },
     "%@ extra" : {
@@ -628,7 +100,16 @@
     "%@ hours" : {
 
     },
+    "%@ hours came before" : {
+
+    },
+    "%@ hours of %@" : {
+
+    },
     "%@ hours this week" : {
+
+    },
+    "%@ hours to go." : {
 
     },
     "%@ left" : {
@@ -665,6 +146,9 @@
           }
         }
       }
+    },
+    "%@ of %@ characters" : {
+
     },
     "%@ of %@ h" : {
       "localizations" : {
@@ -748,6 +232,9 @@
     "%@ to go." : {
 
     },
+    "%@ years ago today," : {
+
+    },
     "%@ years since you started." : {
 
     },
@@ -762,6 +249,9 @@
       }
     },
     "%@, %@. Last %@, %@." : {
+
+    },
+    "%@, at %@ hours" : {
 
     },
     "%@, not yet" : {
@@ -789,6 +279,9 @@
     "%@. The sun has fully risen." : {
 
     },
+    "%@. This %@ so far: %@." : {
+
+    },
     "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {
       "localizations" : {
         "en" : {
@@ -798,6 +291,9 @@
           }
         }
       }
+    },
+    "%@s" : {
+
     },
     "%lld" : {
 
@@ -949,6 +445,12 @@
     "%lld of 7" : {
 
     },
+    "%lld of them so far." : {
+
+    },
+    "%lld photos" : {
+
+    },
     "%lld photos · %@" : {
 
     },
@@ -1090,6 +592,27 @@
     "%lld%% of the way" : {
 
     },
+    "^[%lld day](inflect: true) later" : {
+
+    },
+    "^[%lld hour](inflect: true) between these two" : {
+
+    },
+    "^[%lld hour](inflect: true) of %@ between these two." : {
+
+    },
+    "^[%lld month](inflect: true) later" : {
+
+    },
+    "^[%lld week](inflect: true) later" : {
+
+    },
+    "^[%lld year](inflect: true) ^[%lld month](inflect: true) later" : {
+
+    },
+    "^[%lld year](inflect: true) later" : {
+
+    },
     "+%lld" : {
 
     },
@@ -1102,16 +625,25 @@
     "+1 h today" : {
 
     },
+    "1 photo" : {
+
+    },
     "3,294" : {
 
     },
     "10,000 hours" : {
 
     },
+    "18 × 24 in" : {
+
+    },
     "A big thank-you" : {
 
     },
     "A card of your year, to keep or share" : {
+
+    },
+    "A CSV file with dates, times and notes. Photos aren't included." : {
 
     },
     "a full day" : {
@@ -1126,6 +658,30 @@
     "a good day" : {
 
     },
+    "A keepsake for your wall" : {
+
+    },
+    "A keepsake poster from Long Game: every day as a small sun." : {
+
+    },
+    "A later photo than Then." : {
+
+    },
+    "A letter from you" : {
+
+    },
+    "A letter is waiting" : {
+
+    },
+    "A letter to %@" : {
+
+    },
+    "A letter to you at %@" : {
+
+    },
+    "A letter to your future self" : {
+
+    },
     "a little" : {
 
     },
@@ -1136,6 +692,9 @@
 
     },
     "A long-session check" : {
+
+    },
+    "A milestone in the long game" : {
 
     },
     "A moment from %@ %@" : {
@@ -1175,6 +734,9 @@
 
     },
     "A whole sunrise" : {
+
+    },
+    "A year ago today," : {
 
     },
     "A year since you started." : {
@@ -1269,10 +831,16 @@
     "Afternoons" : {
 
     },
+    "All your letters" : {
+
+    },
     "Allow notifications" : {
 
     },
     "almost there" : {
+
+    },
+    "An early photo." : {
 
     },
     "App icon grows with you" : {
@@ -1288,6 +856,9 @@
 
     },
     "Asks first. Your sessions, hours and notes stay." : {
+
+    },
+    "at %@ h" : {
 
     },
     "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
@@ -1320,13 +891,13 @@
     "Average hours per week" : {
 
     },
+    "Back" : {
+
+    },
     "Back to %@." : {
 
     },
     "Back to my game" : {
-
-    },
-    "Back to Settings" : {
 
     },
     "Before you began. These hours add to your starting score, on top of your estimates." : {
@@ -1371,6 +942,15 @@
     "Choose from library" : {
 
     },
+    "Choose Now" : {
+
+    },
+    "Choose other photos" : {
+
+    },
+    "Choose Then" : {
+
+    },
     "Choose your game" : {
 
     },
@@ -1392,6 +972,9 @@
     "Close chart" : {
 
     },
+    "cloudy" : {
+
+    },
     "Continue" : {
 
     },
@@ -1411,6 +994,9 @@
 
     },
     "Dark" : {
+
+    },
+    "Data & storage" : {
 
     },
     "Date" : {
@@ -1455,7 +1041,16 @@
     "Delete session" : {
 
     },
+    "Delete this letter" : {
+
+    },
+    "Delete this letter?" : {
+
+    },
     "Delete this session?" : {
+
+    },
+    "Deletes your game, sessions, notes and photos from this iPhone and iCloud. This can't be undone." : {
 
     },
     "Deleting photos keeps your sessions, hours and notes. Tap a photo in History to delete just one." : {
@@ -1488,9 +1083,6 @@
     "Drawn from this session. Replace it with a photo, or remove it." : {
 
     },
-    "Each day, a stretch from the sea to the moon." : {
-
-    },
     "Edit note" : {
 
     },
@@ -1515,10 +1107,19 @@
     "Evenings" : {
 
     },
+    "Every day of your %@ hours as a small sun. Print it at home or at any print shop." : {
+
+    },
     "Every hour you play shapes the person you’ll be at 10,000." : {
 
     },
     "Expand chart" : {
+
+    },
+    "export" : {
+
+    },
+    "Export sessions" : {
 
     },
     "Extra hours per week" : {
@@ -1548,6 +1149,9 @@
     "For the next 12 months, the only distance to cover." : {
 
     },
+    "For you at %@" : {
+
+    },
     "Forecast" : {
 
     },
@@ -1555,6 +1159,9 @@
 
     },
     "Free, with no ads. Tips keep it that way." : {
+
+    },
+    "From a CSV exported from Long Game" : {
 
     },
     "Full screen" : {
@@ -1659,13 +1266,25 @@
     "iCloud" : {
 
     },
-    "iCloud & storage" : {
+    "iCloud off" : {
+
+    },
+    "iCloud on" : {
 
     },
     "Import sessions" : {
 
     },
     "In the Shortcuts app, make two shortcuts with the “Set Focus” action: one turning Practising on, one turning it off. Use the names above." : {
+
+    },
+    "iPhone will ask for your location next. Change your mind any time in Settings." : {
+
+    },
+    "It can't be brought back." : {
+
+    },
+    "It hasn't been opened yet, and it can't be brought back." : {
 
     },
     "It keeps that person in view, counts every step and shows how close you are." : {
@@ -1689,13 +1308,25 @@
     "Keep going" : {
 
     },
+    "Keep it and close" : {
+
+    },
     "Keep playing" : {
 
     },
     "Keep the sun shining" : {
 
     },
+    "Keep writing" : {
+
+    },
     "Keep your game safe" : {
+
+    },
+    "Keepsake poster" : {
+
+    },
+    "Last %@:" : {
 
     },
     "last day of the week" : {
@@ -1713,16 +1344,25 @@
     "Last week, day by day: %@." : {
 
     },
+    "less" : {
+
+    },
     "Less" : {
 
     },
     "Light" : {
 
     },
+    "light rain" : {
+
+    },
     "Like buying a coffee" : {
 
     },
     "Long Game" : {
+
+    },
+    "LONG GAME" : {
 
     },
     "Long Game · by We Have Sun" : {
@@ -1758,7 +1398,13 @@
     "Look" : {
 
     },
+    "Look how far." : {
+
+    },
     "Look of the card" : {
+
+    },
+    "Make a keepsake poster" : {
 
     },
     "Maximum" : {
@@ -1794,7 +1440,13 @@
     "Minutes" : {
 
     },
+    "mist" : {
+
+    },
     "Monday" : {
+
+    },
+    "more" : {
 
     },
     "More" : {
@@ -1830,6 +1482,9 @@
     "Nature does not hurry, yet everything is accomplished." : {
 
     },
+    "Never reached" : {
+
+    },
     "Next" : {
 
     },
@@ -1848,7 +1503,13 @@
     "No note" : {
 
     },
+    "No peeking. A sealed letter can't be opened early." : {
+
+    },
     "No session is running." : {
+
+    },
+    "No sessions found. Choose a CSV exported from Long Game." : {
 
     },
     "No weekly pace yet" : {
@@ -1863,19 +1524,34 @@
     "Not set" : {
 
     },
+    "Not sure what to say? What's hard right now. What you hope to be able to do." : {
+
+    },
     "not yet" : {
 
     },
     "Nothing here. Crafts you replace are kept here to look back on." : {
 
     },
+    "Notifications" : {
+
+    },
     "Notifications are off for Long Game in iPhone Settings" : {
+
+    },
+    "Now" : {
 
     },
     "Now · %@" : {
 
     },
+    "Now and then, a memory from your own history. Shown quietly in the app, never pushed" : {
+
+    },
     "Now, %@. Session running." : {
+
+    },
+    "of %@" : {
 
     },
     "of %@ · %lld%%" : {
@@ -1951,6 +1627,9 @@
     "One-time payments through the App Store. Prices are shown in your currency." : {
 
     },
+    "Only in the landscape" : {
+
+    },
     "Open chart full screen" : {
 
     },
@@ -1972,6 +1651,12 @@
     "Opens a short note about where your hours are heading" : {
 
     },
+    "Opens at %@ h · written %@" : {
+
+    },
+    "Opens that day in History" : {
+
+    },
     "Opens the Growth chart" : {
 
     },
@@ -1985,6 +1670,9 @@
 
     },
     "Opens your pace for the year" : {
+
+    },
+    "Other data sources" : {
 
     },
     "Overall total %@ hours, %lld percent of 10,000" : {
@@ -2012,6 +1700,9 @@
           }
         }
       }
+    },
+    "Paper" : {
+
     },
     "Pause" : {
 
@@ -2046,6 +1737,9 @@
     "Photos" : {
 
     },
+    "photos %@" : {
+
+    },
     "Photos from %@ deleted" : {
 
     },
@@ -2076,10 +1770,19 @@
     "Plus" : {
 
     },
+    "Poster: %@ hours of %@, %@ days played." : {
+
+    },
     "Practising Focus" : {
 
     },
+    "Private to your Apple Account. Deleting the iCloud copy keeps everything on this iPhone." : {
+
+    },
     "Private to your Apple Account. Only you can see it. No sign-in needed." : {
+
+    },
+    "Rain, mist and snow from outside your window" : {
 
     },
     "Ray %lld lit" : {
@@ -2089,6 +1792,12 @@
 
     },
     "Reached 10,000 hours" : {
+
+    },
+    "Reached on %@" : {
+
+    },
+    "Reached on %@." : {
 
     },
     "Remove photo" : {
@@ -2127,6 +1836,9 @@
     "Resume" : {
 
     },
+    "Rewrite" : {
+
+    },
     "Rhythm" : {
 
     },
@@ -2139,13 +1851,25 @@
     "Save" : {
 
     },
+    "Save the poster" : {
+
+    },
     "Save to iCloud" : {
 
     },
     "Saved" : {
 
     },
+    "Seal the letter" : {
+
+    },
+    "Sealed." : {
+
+    },
     "Search or type your own" : {
+
+    },
+    "See then and now" : {
 
     },
     "Series" : {
@@ -2201,7 +1925,13 @@
     "Share" : {
 
     },
+    "Share this moment" : {
+
+    },
     "Show hours" : {
+
+    },
+    "Show the weather" : {
 
     },
     "Shows how this is worked out" : {
@@ -2214,6 +1944,9 @@
 
     },
     "Skip" : {
+
+    },
+    "snow" : {
 
     },
     "some" : {
@@ -2252,6 +1985,9 @@
     "Started %@. Enjoy it." : {
 
     },
+    "started in %@" : {
+
+    },
     "Started on %@" : {
 
     },
@@ -2265,6 +2001,9 @@
 
     },
     "Step %lld of %lld" : {
+
+    },
+    "Storage" : {
 
     },
     "Sunday" : {
@@ -2292,6 +2031,9 @@
 
     },
     "Thank you!" : {
+
+    },
+    "That file couldn't be read. Choose a CSV exported from Long Game." : {
 
     },
     "That would be more than 24 hours on this day. Lower the time or pick another day." : {
@@ -2374,13 +2116,34 @@
     "The sun over the sea" : {
 
     },
+    "The sun remembers" : {
+
+    },
     "The sun waited for you. Your %@ hours are all here." : {
+
+    },
+    "The sun will bring it back at %@. %@" : {
 
     },
     "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
 
     },
+    "The sun's height and the sky still show your progress." : {
+
+    },
     "The time won't be added to your hours." : {
+
+    },
+    "The weather outside" : {
+
+    },
+    "Then" : {
+
+    },
+    "Then and now" : {
+
+    },
+    "Then and now · %@" : {
 
     },
     "there" : {
@@ -2428,6 +2191,12 @@
 
     },
     "Three quarters of the way." : {
+
+    },
+    "Throw away" : {
+
+    },
+    "Throw this letter away?" : {
 
     },
     "Tickle the sun" : {
@@ -2520,6 +2289,9 @@
         }
       }
     },
+    "Used to ask Apple Weather a few times a day. Never saved, never shared." : {
+
+    },
     "Version %@" : {
 
     },
@@ -2527,6 +2299,9 @@
 
     },
     "We found your game in iCloud." : {
+
+    },
+    "Weather in the scene" : {
 
     },
     "Week starts on" : {
@@ -2556,6 +2331,9 @@
     "When did you start?" : {
 
     },
+    "When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly; on a clear day nothing changes." : {
+
+    },
     "When you start a session, Long Game runs a Shortcut of yours that turns on your Practising Focus, and another when you finish. iOS only lets Shortcuts switch a Focus on." : {
 
     },
@@ -2563,6 +2341,9 @@
 
     },
     "Where 10,000 hours can take you" : {
+
+    },
+    "While you play" : {
 
     },
     "White dot: a day with a photo" : {
@@ -2577,7 +2358,25 @@
     "Why steady matters." : {
 
     },
+    "windy" : {
+
+    },
+    "Without your location the app can't see the weather." : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there, around %@ at your pace." : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there." : {
+
+    },
     "Write to us" : {
+
+    },
+    "Write to you at %@" : {
+
+    },
+    "Write to yourself at %@" : {
 
     },
     "Year" : {
@@ -2598,7 +2397,22 @@
     "You just made the sun shine a little brighter. Your tip helps keep Long Game free for everyone." : {
 
     },
+    "you played %@." : {
+
+    },
+    "you played %@. Today, %@." : {
+
+    },
+    "you played your first session here." : {
+
+    },
     "You started on %@, %@." : {
+
+    },
+    "you took this photo." : {
+
+    },
+    "You wrote this %@ hours ago" : {
 
     },
     "You're already playing at this pace" : {
@@ -2632,16 +2446,25 @@
     "Your actual pace" : {
 
     },
+    "Your actual pace shows after two weeks of playing." : {
+
+    },
     "Your app icon has grown a little too." : {
+
+    },
+    "Your calendar fills in as you play. Rhythm appears after your first full week." : {
 
     },
     "Your chosen pace" : {
 
     },
-    "Your crafts, estimates and sessions will be removed from this iPhone. This can't be undone." : {
+    "Your data" : {
 
     },
     "Your estimates" : {
+
+    },
+    "Your first photo next to your latest" : {
 
     },
     "Your game" : {
@@ -2650,10 +2473,25 @@
     "Your last session was on %@, %@." : {
 
     },
+    "Your letter" : {
+
+    },
+    "Your letter is sealed" : {
+
+    },
+    "Your letters" : {
+
+    },
     "Your pace for the year" : {
 
     },
+    "Your pace, split into a stretch for each day." : {
+
+    },
     "Your photos" : {
+
+    },
+    "Your rough area is enough" : {
 
     },
     "Your session is already running." : {
@@ -2677,7 +2515,13 @@
     "your weekly target" : {
 
     },
+    "Your whole calendar, ready to print" : {
+
+    },
     "Your year" : {
+
+    },
+    "Your year card appears after four weeks of playing." : {
 
     },
     "Zoom in or out" : {

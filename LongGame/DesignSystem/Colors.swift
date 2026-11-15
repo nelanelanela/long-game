@@ -117,6 +117,8 @@ enum LGColor {
     static let anniversaryPill = Color(light: 0xFFF1DA, dark: 0x2A2440)
     /// Words on the anniversary pill and the memory card: ember a touch darker in light, so it reads at 4.9:1 on the
     /// peach (ember itself measures 4.4:1 there). Decided for 1.0.
+    /// The small tag behind the gauge's scale words on the dusk and night skies: navy at 60%.
+    static let gaugeLabelTag = Color(hex: 0x16244A).opacity(0.6)
     static let anniversaryText = Color(light: 0xA9501A, dark: 0xFFB877)
     /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
     static let moonCloud = Color(hex: 0xC9D2EC)
