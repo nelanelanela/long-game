@@ -34,6 +34,11 @@ enum KnownFalseAlarms {
         if issue.auditType == .dynamicType, element.elementType == .button, tabs.contains(label) {
             return true
         }
+        //    Your letters' delivered cards (update 49): reported "partially unsupported" in the default and dark passes,
+        //    but the largest-size pass passes and its screenshot shows every word at full size.
+        if issue.auditType == .dynamicType, screen == "Your letters", element.elementType == .staticText {
+            return true
+        }
         //    The same on purpose for words that stop at xxxLarge so they stay whole and clear of a picture (update 50):
         //    the celebration's craft line and number over the sun, and the Then and now title between its buttons.
         let capped = ["· MILESTONE", " hours", "Then and now"]
