@@ -784,7 +784,7 @@ struct SettingsView: View {
     }
 
     /// A soft coloured picture, prepared the same way as a real photo.
-    private static func samplePhoto(seed: Int) -> Data? {
+    static func samplePhoto(seed: Int) -> Data? {
         let hue = Double((seed * 47) % 100) / 100
         let view = ZStack {
             Color(hue: hue, saturation: 0.35, brightness: 0.95)

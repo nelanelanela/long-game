@@ -24,6 +24,8 @@ enum UITestLaunch {
     static var disableAnimations: Bool { args.contains("-uitest.disableAnimations") }
     static var screen: String? { value("-uitest.screen") }
     static var today: String? { value("-uitest.today") }
+    /// `-uitest.photos`: two photo sessions years apart (Then and now), whatever the screen.
+    static var photos: Bool { args.contains("-uitest.photos") }
     static var appearance: AppAppearance? { value("-uitest.appearance").flatMap(AppAppearance.init(rawValue:)) }
     static var reduceMotion: Bool { args.contains("-uitest.reduceMotion") }
     static var reduceTransparency: Bool { args.contains("-uitest.reduceTransparency") }

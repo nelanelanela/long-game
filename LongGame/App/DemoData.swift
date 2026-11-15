@@ -55,6 +55,18 @@ enum DemoData {
             let note = offset == 3 ? "Slow practice on the hardest passage." : nil
             context.insert(Session(craftId: craft.id, start: start, durationSec: min(h, 5) * 3600, source: .manual, note: note))
         }
+        // UI tests (update 48 and 49 screens): two photo sessions 2 years 8 months apart for Then and now.
+        if ["thenAndNow", "history.growth", "milestone"].contains(UITestLaunch.screen ?? "") || UITestLaunch.photos {
+            let notes = ["First try at the nocturne", "Nocturne, left hand finally even"]
+            for (i, date) in [calendar.date(byAdding: DateComponents(year: -2, month: -8), to: now),
+                              calendar.date(byAdding: .day, value: -1, to: now)].enumerated() {
+                guard let date else { continue }
+                let session = Session(craftId: craft.id, start: SessionRules.manualStart(on: date), durationSec: 3600,
+                                      source: .manual, note: notes[i])
+                context.insert(session)
+                if let data = SettingsView.samplePhoto(seed: 40 + i) { session.setPhoto(data) }
+            }
+        }
         // UI tests: five timer sessions of 45 m, so the Finish sheet has a usual length ("Forgot to stop?").
         if UITestLaunch.screen == "timer.long" {
             for daysAgo in 1...5 {

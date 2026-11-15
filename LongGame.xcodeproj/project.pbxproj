@@ -369,6 +369,7 @@
 		771CC584C4F5D7AC621A021A /* WriteToUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC1E3992BC4F7FCDFB34EE3 /* WriteToUs.swift */; };
 		78103E3171D251B36709FC3B /* WeeklyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2D6409A03756420CB015B7 /* WeeklyTarget.swift */; };
 		78A40CDDACF769DDA5226287 /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AE6FEEF481264026989B6D /* WeatherStore.swift */; };
+		792FC9BBE8DF70BF3C43715C /* StoryFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D711335D69B3B7E6A606AA4 /* StoryFlowTests.swift */; };
 		798A3EF8EE9EF2F7148048EA /* WeeklyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2D6409A03756420CB015B7 /* WeeklyTarget.swift */; };
 		798C22C081D81EB8D5AC10C8 /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C32D9A819D6096E8F4162B /* AppCommands.swift */; };
 		7A12E6D5561AD4BC17F54727 /* Basics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACABF7B3578EC4629399A351 /* Basics.swift */; };
@@ -925,6 +926,7 @@
 		6A8B6388CC8CF5632366662D /* HapticPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticPlan.swift; sourceTree = "<group>"; };
 		6B88287EBB843D599FA462AC /* WatchAddTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchAddTime.swift; sourceTree = "<group>"; };
 		6BFD17358C991858151676B8 /* WeatherSwitchRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherSwitchRow.swift; sourceTree = "<group>"; };
+		6D711335D69B3B7E6A606AA4 /* StoryFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryFlowTests.swift; sourceTree = "<group>"; };
 		6D7876826DD02639DAF252F6 /* SessionPictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPictureView.swift; sourceTree = "<group>"; };
 		6E0C7883CE69545EC403CAA3 /* LongGameWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LongGameWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FCC544F9830366BF50EAB12 /* GaugeHero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaugeHero.swift; sourceTree = "<group>"; };
@@ -1350,6 +1352,7 @@
 				3813AEC804D9B235982F322F /* AccessibilityAuditTests.swift */,
 				25D1F07744C02B0390AF2F1A /* AccessibilityBehaviourTests.swift */,
 				E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */,
+				6D711335D69B3B7E6A606AA4 /* StoryFlowTests.swift */,
 			);
 			path = LongGameUITests;
 			sourceTree = "<group>";
@@ -2580,6 +2583,7 @@
 				BDC569238C1B0C47AB1BB0E7 /* AccessibilityAuditTests.swift in Sources */,
 				C45C617D47EC07C9B19E89FA /* AccessibilityBehaviourTests.swift in Sources */,
 				66625BA6F44EE3AC76BB860E /* KnownFalseAlarms.swift in Sources */,
+				792FC9BBE8DF70BF3C43715C /* StoryFlowTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

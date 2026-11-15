@@ -20,10 +20,17 @@ enum KnownFalseAlarms {
         if screen.hasPrefix("Your year"), element.elementType == .staticText {
             return true
         }
+        // The same for the keepsake poster's small preview (update 49): a scaled picture of the PDF, read to VoiceOver
+        // as one summary ("Poster: 3,000 hours of piano, …"); the audit still finds the words drawn inside it.
+        if screen.hasPrefix("Keepsake poster"), element.elementType == .staticText, frame.maxY < 330, frame.height < 30 {
+            return true
+        }
 
         // 3. The tab names (Home, History, Your year) stop growing at the largest sizes on purpose so they stay whole,
         //    and show the Large Content Viewer on a long press, as the system's own tab bars do.
-        let tabs: Set<String> = ["Today", "This week", "The long game", "Calendar", "Growth", "Sunrise", "Evening", "Photos"]
+        let tabs: Set<String> = ["Today", "This week", "The long game", "Calendar", "Growth", "Sunrise", "Evening", "Photos",
+                                 // The keepsake poster's Paper and Look (update 49): the same glass tabs.
+                                 "A4", "A3", "50 × 70", "18 × 24 in", "Paper", "Night"]
         if issue.auditType == .dynamicType, element.elementType == .button, tabs.contains(label) {
             return true
         }

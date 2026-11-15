@@ -104,6 +104,77 @@ final class AccessibilityAuditTests: XCTestCase {
         tap("Continue")
         wait("A gentle nudge")
         audit("Setup 6 · A gentle nudge")
+        tap("Not now")
+        wait("The weather outside")
+        audit("Setup 7 · The weather outside")
+    }
+
+    // MARK: Update 48 and 49
+
+    func testThenAndNow() {
+        launch(["-uitest.screen", "thenAndNow"])
+        wait("Look how far.")
+        audit("Then and now")
+        tap("Choose other photos")
+        wait("Choose Then")
+        audit("Then and now · choose photos")
+    }
+
+    func testMemoryCard() {
+        launch(["-debug.forceMemory", "yearAgo", "-uitest.today", "empty", "-uitest.screen", "home.today"])
+        wait("A year ago today")
+        audit("Home · a memory")
+    }
+
+    func testWeatherLayers() {
+        for layer in ["cloud", "rain", "wind", "mist", "snow"] {
+            launch(["-debug.forceWeather", layer, "-uitest.screen", "home.today"])
+            wait("Begin")
+            audit("Home · weather, \(layer)")
+            app.terminate()
+        }
+    }
+
+    func testLetterWriteAndSeal() {
+        launch(["-uitest.screen", "letter.write"])
+        wait("Seal the letter")
+        audit("Letter · write")
+        let field = app.textViews["Your letter"].exists ? app.textViews["Your letter"] : app.textFields["Your letter"]
+        if field.waitForExistence(timeout: 4) {
+            field.tap()
+            field.typeText("I hope the nocturne sings by now.")
+            tap("Seal the letter")
+            wait("Sealed.")
+            audit("Letter · sealed")
+        } else {
+            XCTFail("No letter field")
+        }
+    }
+
+    func testLetterWaiting() { launch(["-uitest.screen", "letter.sealed"]); wait("A letter is waiting"); audit("Letter · waiting") }
+    func testLetterDelivered() { launch(["-uitest.screen", "letter.delivered"]); wait("A letter from you"); audit("Letter · delivered") }
+
+    func testYourLetters() {
+        launch(["-uitest.screen", "letters"])
+        wait("Begin")
+        app.swipeUp()
+        let row = app.buttons.containing(NSPredicate(format: "label BEGINSWITH 'Your letters'")).firstMatch
+        if row.waitForExistence(timeout: 4) {
+            row.tap()
+            sleep(1)
+            audit("Your letters")
+        } else {
+            XCTFail("No Your letters row")
+        }
+    }
+
+    func testKeepsakePoster() {
+        launch(["-uitest.screen", "keepsake"])
+        wait("A keepsake for your wall")
+        audit("Keepsake poster")
+        tap("Night")
+        sleep(1)
+        audit("Keepsake poster · night")
     }
 
     // MARK: Home

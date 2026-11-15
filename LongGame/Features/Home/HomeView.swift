@@ -1570,6 +1570,24 @@ struct HomeView: View {
         case "history.calendar": historyRoute = .day(now)
         case "history.growth": historyRoute = .growth
         case "milestone": celebrating = 1_000
+        // Update 48 and 49 screens.
+        case "thenAndNow": historyRoute = .thenAndNow
+        case "letter.write": sheet = .writeLetter(Letters.next(after: total) ?? 10_000)
+        case "letter.sealed", "letter.delivered", "letters":
+            let next = Letters.next(after: total) ?? 10_000
+            let letter = Letter(craftId: craft.id,
+                                text: "Dear me at \(DurationFormat.grouped(next)) hours, today the nocturne still falls apart in the left hand. I hope you can play it with your eyes closed. Whatever happened, I'm glad you kept going.",
+                                writtenAt: now.addingTimeInterval(-160 * 86_400), totalWhenWritten: max(0, Double(next) - 300),
+                                milestone: next)
+            context.insert(letter)
+            if screen != "letter.sealed" { letter.openedAt = now }
+            try? context.save()
+            switch screen {
+            case "letter.sealed": sheet = .sealedLetter
+            case "letter.delivered": deliveringLetter = letter
+            default: selectTab(.longGame)
+            }
+        case "keepsake": sheet = .keepsake(Keepsake.lastThousand(total: total) ?? 1_000)
         case "timer.running":
             timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
             totalBeforeTimer = total; showTimer = true
