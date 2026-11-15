@@ -100,7 +100,8 @@ struct MilestoneCelebration: View {
                                 Button("Support Long Game", action: onSupport).buttonStyle(.lg(.text))
                             }
                         }
-                        .frame(maxWidth: .infinity)
+                        // iPad and Mac: a phone-wide column of words and buttons, centred.
+                        .lgReadableColumn(440)
                         .frame(minHeight: max(0, geo.size.height - 560 * k - 30), alignment: .top)
                     }
                     .scrollBounceBehavior(.basedOnSize)
