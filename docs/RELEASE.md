@@ -2,6 +2,8 @@
 
 Written 15 November 2026 (update 50). Version 1.0, iPhone, iPad, Apple Watch and Mac.
 
+**Version and build:** 1.0 was never uploaded, so the first upload is **version 1.0, build 1** (`MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`). Every upload after that needs a higher build number (2, 3 …), even for a fix to the same 1.0.
+
 ## Your checklist (part 2), in this order
 
 Nothing here has been done for you; each step is yours.
@@ -30,7 +32,7 @@ Nothing here has been done for you; each step is yours.
 6. **The App Store page** (App Store Connect › your app › **iOS App 1.0**):
    - Screenshots: any taken before the redesign no longer match: the old Home, History, the old Settings and the timer. The app now has three Home tabs, the glass top bar, the dark look, Data & storage and the new celebration. The six that tell the story best: Home · Today (the sun up), the Timer's sunrise, Home · The long game, History · Calendar, Growth, and the milestone card. I can make them with the Simulator at the 6.9-inch size when you say so.
    - **Description**, **Keywords** and **Promotional Text:** drafts are at the end of this file.
-   - **What's New:** only if 1.0 was uploaded before. For a first release the box isn't there.
+   - **What's New:** not shown for a first release (1.0 was never uploaded).
    - Under **Version Release**, choose **Manually release this version**.
 
 ## On your iPhone and Watch, about 30 minutes (part 4)
