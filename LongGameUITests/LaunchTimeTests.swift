@@ -1,6 +1,7 @@
 import XCTest
 
-/// Update 50: how long the app takes to open, with Apple's launch metric (five launches, the first ignored).
+/// Update 50: how long the app takes to open, with Apple's launch metric (five launches): to the first frame, and to
+/// responsive (which also waits for the ~2 s opening sunrise, by design).
 /// In the Simulator and a Debug build this is only a guide; the real figure comes from a device (Xcode › Organizer ›
 /// Launch Time once people use it, or Instruments › App Launch).
 final class LaunchTimeTests: XCTestCase {
@@ -8,7 +9,7 @@ final class LaunchTimeTests: XCTestCase {
     func testLaunchTime() {
         let options = XCTMeasureOptions()
         options.iterationCount = 5
-        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)], options: options) {
+        measure(metrics: [XCTApplicationLaunchMetric(), XCTApplicationLaunchMetric(waitUntilResponsive: true)], options: options) {
             let app = XCUIApplication()
             app.launchArguments = ["-uitest.disableAnimations"]
             app.launch()
