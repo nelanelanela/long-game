@@ -34,7 +34,7 @@ struct GrowthChartView: View {
         // Only years with room for their whole label; at the largest text sizes they are spaced further apart
         // and kept further from the ends.
         let wide = typeSize.isAccessibilitySize
-        let yearTicks = GrowthSeries.yearTicks(from: data.xStart, to: data.xEnd, wideLabels: wide, edgeMargin: wide ? 0.12 : 0.07)
+        let yearTicks = GrowthSeries.yearTicks(from: data.xStart, to: data.xEnd, wideLabels: wide)
         Chart {
             let past = LineDraw.partial(data.past, fraction: draw.past)
             let chosen = LineDraw.partial(data.chosen, fraction: draw.chosen)

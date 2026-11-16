@@ -135,6 +135,8 @@ struct GrowthKeyTests {
     }
 
     @Test func yearTicksSpreadOutForLargeText() {
+        // 2024-06 to 2036-06 with wide labels: every 5th year, and the wider 12% edge leaves out 2025 (5% in) and
+        // 2035 (12% from the end), as the chart does.
         let ticks = GrowthSeries.yearTicks(from: day(2024, 6, 1), to: day(2036, 6, 1), wideLabels: true, calendar: utc)
         let years = ticks.map { utc.component(.year, from: $0) }
         #expect(years == [2030])

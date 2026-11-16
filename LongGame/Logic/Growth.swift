@@ -91,10 +91,12 @@ extension GrowthSeries {
     /// the chart is long (round years, so 2030, 2035, 2040). A year too close to either end of the chart is left out,
     /// because its label would hang off the edge and be cut short; fewer labels, but every one whole.
     /// - Parameters:
-    ///   - edgeMargin: how close to an end a year may sit, as a share of the chart's width.
+    ///   - edgeMargin: how close to an end a year may sit, as a share of the chart's width. Unless given, 7%, or
+    ///     12% with wide labels (a wider label hangs further off the edge).
     ///   - wideLabels: the largest text sizes, where each label is wider, so the years are spread further apart.
     static func yearTicks(from start: Date, to end: Date, wideLabels: Bool = false,
-                          edgeMargin: Double = 0.07, calendar: Calendar = .current) -> [Date] {
+                          edgeMargin: Double? = nil, calendar: Calendar = .current) -> [Date] {
+        let edgeMargin = edgeMargin ?? (wideLabels ? 0.12 : 0.07)
         let span = end.timeIntervalSince(start)
         guard span > 0 else { return [] }
         let years = span / (365.25 * 86_400) * (wideLabels ? 2 : 1)
