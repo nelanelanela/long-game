@@ -16,7 +16,8 @@ struct SettingsView: View {
     @Environment(TimerStore.self) private var timer
     @Query private var settingsRows: [AppSettings]
     @Query private var allCrafts: [Craft]
-    @Query private var allSessions: [Session]
+    /// Only the sessions with a photo (for the photo count): never every session.
+    @Query(filter: #Predicate<Session> { $0.hasPhoto }) private var photoSessions: [Session]
     @Query private var craftSessions: [Session]
     @Query private var craftEstimates: [YearEstimate]
 
@@ -280,7 +281,7 @@ struct SettingsView: View {
             }
         }
         .task { photoStats = await PhotoLibrary.loadStats(container: store.container) }
-        .onChange(of: allSessions.filter(\.hasPhoto).count) { _, _ in
+        .onChange(of: photoSessions.count) { _, _ in
             Task { photoStats = await PhotoLibrary.loadStats(container: store.container) }
         }
     }

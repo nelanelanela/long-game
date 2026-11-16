@@ -9,6 +9,7 @@ import SwiftData
 /// - `-uitest.freshInstall`: everything deleted, so the app opens on onboarding.
 /// - `-uitest.flat`: the flat tabs (the pre-iOS 26 look); `-uitest.increaseContrast`: Increase Contrast.
 /// - `-uitest.disableAnimations`: no opening sunrise, UIKit animations off.
+/// - `-uitest.skipOpening`: no opening sunrise, animations on (performance tests).
 /// - `-uitest.screen <name>`: Home opens this screen or sheet (see `HomeView.applyUITestRoute`).
 /// - `-uitest.newGame`: a game set up three days ago, for History's first week.
 /// - `-uitest.today empty|progress|covered`: today's sample sessions, for Home · Today's three states.
@@ -25,6 +26,9 @@ enum UITestLaunch {
 
     static var freshInstall: Bool { args.contains("-uitest.freshInstall") }
     static var disableAnimations: Bool { args.contains("-uitest.disableAnimations") }
+    /// `-uitest.skipOpening`: no opening sunrise, but every other animation as usual (the performance tests measure
+    /// them).
+    static var skipOpening: Bool { args.contains("-uitest.skipOpening") }
     static var screen: String? { value("-uitest.screen") }
     static var today: String? { value("-uitest.today") }
     /// `-uitest.photos`: two photo sessions years apart (Then and now), whatever the screen.

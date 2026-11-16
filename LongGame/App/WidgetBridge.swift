@@ -38,18 +38,41 @@ enum WidgetBridge {
 
 /// Publishes the widgets' data whenever a session, an estimate, the target, the week start or the craft changes
 /// (that includes edits that arrive from iCloud), and again when the app comes to the front.
+///
+/// Only the active craft's sessions and estimates are read, in a small view of their own: redraws of the app around
+/// it, and changes to other crafts, never make it read them again.
 private struct WidgetSync: ViewModifier {
     @Query private var crafts: [Craft]
+
+    func body(content: Content) -> some View {
+        let active = crafts.first(where: \.isActive)
+        content.background {
+            WidgetPublisher(craft: active).id(active?.id)
+        }
+    }
+}
+
+private struct WidgetPublisher: View {
+    let craft: Craft?
     @Query private var sessions: [Session]
     @Query private var estimates: [YearEstimate]
     @Query private var settingsRows: [AppSettings]
     @Environment(\.scenePhase) private var scenePhase
 
-    func body(content: Content) -> some View {
+    init(craft: Craft?) {
+        self.craft = craft
+        let id = craft?.id ?? UUID()
+        _sessions = Query(filter: #Predicate<Session> { $0.craftId == id }, sort: \Session.start)
+        _estimates = Query(filter: #Predicate<YearEstimate> { $0.craftId == id }, sort: \YearEstimate.year)
+    }
+
+    var body: some View {
         let snapshot = Signposts.measure("Widget snapshot") {
-            WidgetBridge.snapshot(crafts: crafts, sessions: sessions, estimates: estimates, settings: settingsRows.first)
+            craft.flatMap { WidgetBridge.snapshot(crafts: [$0], sessions: sessions, estimates: estimates, settings: settingsRows.first) }
         }
-        content
+        Color.clear
+            .accessibilityHidden(true)
+            .allowsHitTesting(false)
             .onAppear { WidgetBridge.publish(snapshot) }
             .onChange(of: snapshot) { _, new in WidgetBridge.publish(new) }
             .onChange(of: scenePhase) { _, phase in

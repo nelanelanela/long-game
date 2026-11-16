@@ -31,7 +31,7 @@ struct AppRoot: View {
     @State private var opening = OpeningCenter()
     @State private var openingUndecided: Bool = {
         #if DEBUG
-        if UITestLaunch.disableAnimations { _ = OpeningCenter.consumeColdStart(); return false }
+        if UITestLaunch.disableAnimations || UITestLaunch.skipOpening { _ = OpeningCenter.consumeColdStart(); return false }
         #endif
         return OpeningCenter.consumeColdStart()
     }()

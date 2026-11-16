@@ -199,3 +199,35 @@ background (as `PhotoLibrary.loadStats` already does for photos) or with `fetchC
   weather was in the plan; SwiftUI already draws them in the same frame, so it would save little and is left out.
 - Rough check (Debug build, iPhone 17 Simulator, heavy game, Home's Today tab untouched for 10 s): about 13% CPU on
   average, against 17 to 29% the evening before. The device recording (Power Profiler) is the real figure.
+
+### 16 November 2026, evening: widgets, Settings, and tests that keep it smooth (findings 4 and 5)
+
+- **Widgets:** the updater at the top of the app now reads only the active craft's sessions and estimates, in a
+  small view of its own (`WidgetPublisher`). Redraws around it and changes to other crafts no longer make it read
+  every session again.
+- **Settings and Data & storage:** the photo count and the photo row use a list of photo sessions only. The export
+  files (sessions and letters CSV) are written in the background from their own read of the database, and again after
+  each save, so opening Data & storage no longer loads and formats every session on the main thread.
+- **Launch switch** `-uitest.skipOpening`: no opening sunrise, all other animations as usual (for the tests below).
+- **Logic timing tests** (`LongGameTests/LogicPerformanceTests.swift`, eight years of sessions). Simulator, Debug:
+
+  | Work | Time |
+  |---|---|
+  | Home's summary | 2 ms |
+  | Week bars, this week and last | 2 ms |
+  | Growth history | 13 ms |
+  | Calendar daily totals and Rhythm | 9 ms |
+
+- **Screen tests** (`LongGameUITests/PerformanceUITests.swift`, heavy game). Simulator, Debug:
+
+  | Test | Result |
+  |---|---|
+  | Home idle, 10 s | 1.39 s of CPU (about 14%) |
+  | Tab switching, Today → This week → The long game → Today | 1.06 s, 0.47 s of CPU |
+  | History scroll up and down | 0.84 s |
+  | Settings scroll up and down | 2.56 s (a longer page) |
+
+  The Simulator reports how long a scroll lasts but not its stutters (hitches); run the same tests on your iPhone
+  (choose it as the destination, then Product › Test) for the hitch figures. To make them guard against slowdowns,
+  open the test report after a run on the phone and choose "Set Baseline" on each.
+- Not looked at on screen: the Export row in Data & storage (the export itself is covered by `ExportFilesTests`).

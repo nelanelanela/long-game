@@ -15,10 +15,13 @@ struct DataStorageView: View {
     @Environment(StoreHost.self) private var store
     @Environment(ICloudMonitor.self) private var monitor
     @Query private var allCrafts: [Craft]
-    @Query private var allSessions: [Session]
-    @Query private var allLetters: [Letter]
+    /// Only the sessions with a photo: the export file is built in the background from its own read of the
+    /// database, so opening this screen never loads every session.
+    @Query(filter: #Predicate<Session> { $0.hasPhoto }) private var photoSessions: [Session]
 
     @State private var csvURL: URL?
+    /// Bumped after each save, so the export files are rebuilt (the previous build is cancelled).
+    @State private var exportRequest = 0
     @State private var lettersURL: URL?
     @State private var confirmDelete = false
     @State private var confirmDeleteCopy = false
@@ -54,10 +57,10 @@ struct DataStorageView: View {
         }
         .lgScreen()
         .lgHidesNavigationBar()
-        .onAppear(perform: buildCSV)
-        .onChange(of: allSessions.count) { _, _ in buildCSV() }
+        .task(id: exportRequest) { await buildExportFiles() }
+        .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { _ in exportRequest += 1 }
         .task { await refreshStorage() }
-        .onChange(of: allSessions.filter(\.hasPhoto).count) { _, _ in Task { await refreshStorage() } }
+        .onChange(of: photoSessions.count) { _, _ in Task { await refreshStorage() } }
         .fileImporter(isPresented: $pickingCSV, allowedContentTypes: [.commaSeparatedText, .plainText]) { importCSV($0) }
         .alert("Import sessions", isPresented: Binding(get: { importMessage != nil }, set: { if !$0 { importMessage = nil } })) {
             Button("OK", role: .cancel) {}
@@ -127,7 +130,7 @@ struct DataStorageView: View {
     private var yourPhotosRow: some View {
         HStack(spacing: 12) {
             Group {
-                if let first = allSessions.filter(\.hasPhoto).max(by: { $0.start < $1.start }) {
+                if let first = photoSessions.max(by: { $0.start < $1.start }) {
                     PhotoThumb(session: first, side: 32, radius: 8)
                 } else {
                     RoundedRectangle(cornerRadius: 8, style: .continuous).fill(LGColor.chipFill).frame(width: 32, height: 32)
@@ -269,30 +272,15 @@ struct DataStorageView: View {
         }
     }
 
-    private func buildCSV() {
-        let names = Dictionary(uniqueKeysWithValues: allCrafts.map { ($0.id, $0.name) })
-        let rows = allSessions.map {
-            CSVExport.Row(craft: names[$0.craftId] ?? "", start: $0.start, durationSec: $0.durationSec,
-                          source: $0.sourceRaw, note: $0.note ?? "")
-        }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-sessions.csv")
-        do {
-            try CSVExport.sessions(rows).write(to: url, atomically: true, encoding: .utf8)
-            csvURL = url
-            if allLetters.isEmpty {
-                lettersURL = nil
-            } else {
-                let letterRows = allLetters.map {
-                    CSVExport.LetterRow(craft: names[$0.craftId] ?? "", written: $0.writtenAt, milestone: $0.milestone,
-                                        opened: $0.openedAt, text: $0.text)
-                }
-                let letters = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-letters.csv")
-                try CSVExport.letters(letterRows).write(to: letters, atomically: true, encoding: .utf8)
-                lettersURL = letters
-            }
-        } catch {
-            csvURL = nil
-        }
+    /// The sessions CSV and, when there are letters, the letters CSV, written in the background.
+    private func buildExportFiles() async {
+        let container = store.container
+        let files = await Task.detached(priority: .utility) {
+            Signposts.measure("Export files") { ExportFiles.write(container: container) }
+        }.value
+        guard !Task.isCancelled else { return }
+        csvURL = files.sessions
+        lettersURL = files.letters
     }
 
     private func importCSV(_ result: Result<URL, Error>) {
@@ -308,6 +296,7 @@ struct DataStorageView: View {
             importMessage = String(localized: "No sessions found. Choose a CSV exported from Long Game.")
             return
         }
+        let allSessions = (try? context.fetch(FetchDescriptor<Session>())) ?? []
         let existing = Set(allSessions.map { CSVImport.key(craftId: $0.craftId, start: $0.start, durationSec: $0.durationSec) })
         let plan = CSVImport.plan(rows: parsed.rows,
                                   crafts: allCrafts.map { .init(id: $0.id, name: $0.name) },
@@ -329,6 +318,36 @@ struct DataStorageView: View {
 
     private func deleteAll() {
         DataReset.deleteAll(context: context, timer: timer)
+    }
+}
+
+/// The files behind Export: every session (all crafts) and every letter, read from their own context so this can run
+/// off the main thread.
+enum ExportFiles {
+    nonisolated static func write(container: ModelContainer) -> (sessions: URL?, letters: URL?) {
+        let context = ModelContext(container)
+        let crafts = (try? context.fetch(FetchDescriptor<Craft>())) ?? []
+        let sessions = (try? context.fetch(FetchDescriptor<Session>())) ?? []
+        let letters = (try? context.fetch(FetchDescriptor<Letter>())) ?? []
+        let names = Dictionary(crafts.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
+        let rows = sessions.map {
+            CSVExport.Row(craft: names[$0.craftId] ?? "", start: $0.start, durationSec: $0.durationSec,
+                          source: $0.sourceRaw, note: $0.note ?? "")
+        }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-sessions.csv")
+        do {
+            try CSVExport.sessions(rows).write(to: url, atomically: true, encoding: .utf8)
+            guard !letters.isEmpty else { return (url, nil) }
+            let letterRows = letters.map {
+                CSVExport.LetterRow(craft: names[$0.craftId] ?? "", written: $0.writtenAt, milestone: $0.milestone,
+                                    opened: $0.openedAt, text: $0.text)
+            }
+            let lettersURL = FileManager.default.temporaryDirectory.appendingPathComponent("LongGame-letters.csv")
+            try CSVExport.letters(letterRows).write(to: lettersURL, atomically: true, encoding: .utf8)
+            return (url, lettersURL)
+        } catch {
+            return (nil, nil)
+        }
     }
 }
 

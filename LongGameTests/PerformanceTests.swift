@@ -76,3 +76,32 @@ struct ThumbnailGenerationTests {
         #expect(row.photo == nil)
     }
 }
+
+/// Export is now built in the background from its own read of the database: it still holds every session of every
+/// craft and every letter.
+struct ExportFilesTests {
+    @Test func everySessionAndLetterIsExported() throws {
+        let schema = Schema([Craft.self, YearEstimate.self, Session.self, AppSettings.self, TargetPeriod.self, Letter.self])
+        let container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none))
+        let context = ModelContext(container)
+        let piano = Craft(name: "Piano", startYear: 2020)
+        let clay = Craft(name: "Clay", startYear: 2018)
+        context.insert(piano)
+        context.insert(clay)
+        context.insert(Session(craftId: piano.id, start: Date(timeIntervalSince1970: 1_700_000_000), durationSec: 3_600, source: .manual, note: "Scales"))
+        context.insert(Session(craftId: clay.id, start: Date(timeIntervalSince1970: 1_600_000_000), durationSec: 1_800, source: .timer))
+        context.insert(Letter(craftId: piano.id, text: "Keep going", totalWhenWritten: 10, milestone: 100))
+        try context.save()
+
+        let files = ExportFiles.write(container: container)
+        let sessions = try String(contentsOf: try #require(files.sessions), encoding: .utf8)
+        #expect(sessions.contains("Piano"))
+        #expect(sessions.contains("Clay"))
+        #expect(sessions.contains("Scales"))
+        #expect(sessions.split(separator: "\n").count == 3)   // the header and two sessions
+        // A sealed letter is listed, its words kept back until it is opened (as before).
+        let letters = try String(contentsOf: try #require(files.letters), encoding: .utf8)
+        #expect(letters.contains("sealed until 100 h"))
+        #expect(!letters.contains("Keep going"))
+    }
+}
