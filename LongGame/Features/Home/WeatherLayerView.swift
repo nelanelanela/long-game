@@ -11,12 +11,28 @@ struct WeatherLayerView: View {
     /// Where the water starts.
     let horizonY: CGFloat
 
+    /// False while Home is covered (the Timer, Settings): the weather stands still, like the sun.
+    var isRunning = true
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     private var dark: Bool { colorScheme == .dark }
 
+    /// How often each layer is redrawn. Clouds drift about half a point a second, so twice a second looks the same
+    /// as thirty times (and each cloud's soft edge is a blur, the costly part). Mist moves a few points a second.
+    /// Rain, wind gusts and snow fall fast and keep 30.
+    static func frameInterval(_ layer: WeatherLayer) -> Double {
+        switch layer {
+        case .cloud: 1.0 / 2
+        case .mist: 1.0 / 15
+        case .rain, .wind, .snow: 1.0 / 30
+        }
+    }
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
+        TimelineView(.animation(minimumInterval: Self.frameInterval(layer),
+                                paused: reduceMotion || !isRunning || scenePhase != .active)) { timeline in
             let t = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
             Canvas { context, size in
                 switch layer {

@@ -170,19 +170,24 @@ struct LandView: View {
 
     var body: some View {
         if still || reduceMotion {
-            canvas(at: nil)
-        } else {
-            TimelineView(.animation(minimumInterval: 1.0 / 30, paused: scenePhase != .active)) { timeline in
-                canvas(at: timeline.date.timeIntervalSinceReferenceDate * sway)
+            Canvas { ctx, size in
+                LandView.drawGround(&ctx, size: size, night: night)
+                LandView.drawLines(&ctx, size: size, night: night, time: nil)
             }
+            .accessibilityHidden(true)
+        } else {
+            // Only the shoreline and the contour lines move, and they are drawn on top of everything else, so the
+            // dunes and the sea are drawn once (`LandGround`, redrawn only when the look changes) and only the lines
+            // are redrawn on each frame.
+            ZStack {
+                LandGround(night: night).equatable()
+                TimelineView(.animation(minimumInterval: 1.0 / 30, paused: scenePhase != .active)) { timeline in
+                    let time = timeline.date.timeIntervalSinceReferenceDate * sway
+                    Canvas { ctx, size in LandView.drawLines(&ctx, size: size, night: night, time: time) }
+                }
+            }
+            .accessibilityHidden(true)
         }
-    }
-
-    private func canvas(at time: Double?) -> some View {
-        Canvas { ctx, size in
-            draw(&ctx, size: size, time: time)
-        }
-        .accessibilityHidden(true)
     }
 
     // The five loops: shoreline 9 s, contours 7, 8, 10 and 12 s (as in the board's lg-w0...lg-w4).
@@ -207,7 +212,8 @@ struct LandView: View {
                                        Sway(period: 10, amplitude: 6, dip: 0.6, startsLeft: false),
                                        Sway(period: 12, amplitude: 7, dip: 0.8, startsLeft: true)]
 
-    private func draw(_ ctx: inout GraphicsContext, size: CGSize, time: Double?) {
+    /// The dunes and the sea: everything that never moves.
+    fileprivate static func drawGround(_ ctx: inout GraphicsContext, size: CGSize, night: Bool) {
         let sx = size.width / 390, sy = size.height / 120
         let scale = CGAffineTransform(scaleX: sx, y: sy)
         func scaled(_ p: Path) -> Path { p.applying(scale) }
@@ -268,6 +274,14 @@ struct LandView: View {
         // Solid fill under the very bottom so nothing can show through if the box is stretched.
         ctx.fill(Path(CGRect(x: 0, y: size.height - 1, width: size.width, height: 2)), with: .color(seaColours[2]))
 
+    }
+
+    /// The contour lines and the shoreline, swayed for `time` (nil: at rest). Drawn over the ground.
+    fileprivate static func drawLines(_ ctx: inout GraphicsContext, size: CGSize, night: Bool, time: Double?) {
+        let sx = size.width / 390, sy = size.height / 120
+        let scale = CGAffineTransform(scaleX: sx, y: sy)
+        func scaled(_ p: Path) -> Path { p.applying(scale) }
+
         // Contour lines, spaced wider as they go down.
         let contourColour = night ? LGColor.contourNight : LGColor.contour
         let lines: [(y: CGFloat, c1: CGFloat, c2: CGFloat, mid: CGFloat, c3: CGFloat, end: CGFloat, width: CGFloat, opacity: Double)] = [
@@ -293,6 +307,16 @@ struct LandView: View {
         let so = Self.shoreSway.offset(at: time)
         let shoreMoved = scaled(shore).applying(CGAffineTransform(translationX: so.width * sx, y: so.height * sy))
         ctx.stroke(shoreMoved, with: .color((night ? Color(hex: 0xC9A27A) : LGColor.navy).opacity(night ? 0.6 : 0.55)), lineWidth: 1.2)
+    }
+}
+
+/// The still part of the land. Equatable, so redrawing the land's moving lines (or the hero around it) never
+/// redraws these dunes and this sea.
+private struct LandGround: View, Equatable {
+    let night: Bool
+
+    var body: some View {
+        Canvas { ctx, size in LandView.drawGround(&ctx, size: size, night: night) }
     }
 }
 

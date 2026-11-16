@@ -123,7 +123,8 @@ struct GaugeHero: View, Animatable {
                 // The weather passes through the landscape: over the scene, under the pill and Home's text. It never
                 // changes the sky's colour, the sun's height or its rays.
                 if let weather {
-                    WeatherLayerView(layer: weather, sun: centre, sunRadius: size * 0.3, horizonY: metrics.waterY)
+                    WeatherLayerView(layer: weather, sun: centre, sunRadius: size * 0.3, horizonY: metrics.waterY,
+                                     isRunning: isRunning)
                         .frame(width: width, height: metrics.height)
                 }
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.

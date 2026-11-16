@@ -38,6 +38,9 @@ targets:
         UIBackgroundModes: [remote-notification]
         # Weather in the scene (update 49): approximate location is enough, so iOS offers it first.
         NSLocationDefaultAccuracyReduced: true
+        # ProMotion: without this iOS holds the app's own animations (the sun's glide, fades, the count-up) to
+        # 60 frames a second on 120 Hz iPhones. Timelines that cap themselves (the sea, the idle sun) are unchanged.
+        CADisableMinimumFrameDurationOnPhone: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame

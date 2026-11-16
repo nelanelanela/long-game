@@ -186,3 +186,16 @@ background (as `PhotoLibrary.loadStats` already does for photos) or with `fetchC
   photo's bytes (they were compared every second). The photo viewer's strip is lazy, so opening it no longer reads
   every photo. Known gap: a photo replaced on another device keeps its old thumbnail until the app is restarted.
 - Tests: `LongGameTests/PerformanceTests.swift`.
+
+### 16 November 2026: Home's animations (finding 2)
+
+- **120 Hz:** `CADisableMinimumFrameDurationOnPhone` is on (project.yml). Without it iOS held the app's own
+  animations (the sun's glide between tabs, fades, the count-up) to 60 frames a second on ProMotion iPhones.
+- **The sea:** the dunes and the water are drawn once (`LandGround`); only the swaying shoreline and contour lines are
+  redrawn each frame. They were all redrawn 30 times a second before.
+- **Weather:** stops while the app or Home is covered (it kept going before). Clouds are redrawn twice a second (they
+  drift about half a point a second, and each one is blurred), mist 15 times; rain, wind gusts and snow stay at 30.
+- Not changed: the idle sun and the hero still redraw at 30 frames a second. One shared clock for the sun, sea and
+  weather was in the plan; SwiftUI already draws them in the same frame, so it would save little and is left out.
+- Rough check (Debug build, iPhone 17 Simulator, heavy game, Home's Today tab untouched for 10 s): about 13% CPU on
+  average, against 17 to 29% the evening before. The device recording (Power Profiler) is the real figure.
