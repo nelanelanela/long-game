@@ -58,7 +58,7 @@ enum SceneWeather {
 
     // MARK: Seeded positions
 
-    /// A small seeded generator, so drops, flakes and clouds sit in the same natural places every launch.
+    /// A small seeded generator, so drops and flakes sit in the same natural places every launch.
     struct Seeded {
         private var state: UInt64
         init(_ seed: UInt64) { state = seed == 0 ? 0x9E3779B97F4A7C15 : seed }
@@ -68,29 +68,7 @@ enum SceneWeather {
         }
     }
 
-    /// Three soft clouds high and to the sides, each moved clear of the sun's disc (plus a margin) wherever the sun is.
-    /// `drift` (0…1) slides them slowly across.
-    static func clouds(in size: CGSize, sun: CGPoint, sunRadius: CGFloat, drift: Double = 0) -> [CGRect] {
-        var rng = Seeded(0xC10D)
-        let clear = sunRadius * 1.25
-        return (0..<3).map { i in
-            let w = size.width * (0.26 + 0.1 * rng.next())
-            let h = w * 0.36
-            let baseX = [0.04, 0.62, 0.30][i] * size.width + CGFloat(rng.next()) * size.width * 0.06
-            let x = (baseX + CGFloat(drift) * size.width * 0.18).truncatingRemainder(dividingBy: size.width + w) - w * 0.15
-            var rect = CGRect(x: x, y: size.height * (0.06 + 0.1 * Double(i % 2)) + CGFloat(rng.next()) * 10, width: w, height: h)
-            // Keep clear of the sun: move up, or sideways, until the cloud no longer touches its disc.
-            var tries = 0
-            while overlaps(rect, sun: sun, radius: clear), tries < 40 {
-                rect.origin.x += rect.midX < sun.x ? -8 : 8
-                if tries % 3 == 0, rect.minY > 0 { rect.origin.y = max(0, rect.origin.y - 6) }
-                tries += 1
-            }
-            return rect
-        }
-    }
-
-    /// Whether a cloud's oval touches a circle around the sun.
+    /// Whether a box touches a circle around the sun.
     static func overlaps(_ rect: CGRect, sun: CGPoint, radius: CGFloat) -> Bool {
         // Nearest point of the cloud's box to the sun's centre.
         let nx = min(max(sun.x, rect.minX), rect.maxX), ny = min(max(sun.y, rect.minY), rect.maxY)

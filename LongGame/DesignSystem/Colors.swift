@@ -125,6 +125,11 @@ enum LGColor {
     static let anniversaryText = Color(light: 0xA9501A, dark: 0xFFB877)
     /// Clouds in the weather layer on the night sky: a pale moonlit blue (update 49).
     static let moonCloud = Color(hex: 0xC9D2EC)
+    /// The shading over a cloud in the day look, top to bottom (update 52): white, warm white, a cool lilac grey, and
+    /// the underside lit by the low sun (warm far away, cooler near). The values live in `CloudSky.shading`.
+    static func cloudShading(_ depth: CloudDepth) -> Gradient {
+        Gradient(stops: CloudSky.shading(depth).map { .init(color: Color(hex: $0.hex), location: $0.at) })
+    }
     /// The milestone card's small gold line over the dawn sky.
     /// History's calendar: a day before the game began, a pale dot that doesn't read as a missed day.
     static let beforeGameDot = Color(light: 0xEFEBE4, dark: 0x1E2750)

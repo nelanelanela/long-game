@@ -8,6 +8,8 @@ struct WeatherLayerView: View {
     /// The sun's centre and radius in this view's space, so clouds and mist keep clear of it.
     let sun: CGPoint
     let sunRadius: CGFloat
+    /// How far the sun's rays reach from its centre: clouds keep 1.3 × this away (update 52).
+    var sunRayRadius: CGFloat? = nil
     /// Where the water starts.
     let horizonY: CGFloat
 
@@ -17,6 +19,7 @@ struct WeatherLayerView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.displayScale) private var displayScale
     private var dark: Bool { colorScheme == .dark }
 
     /// How often each layer is redrawn. Clouds drift about half a point a second, so twice a second looks the same
@@ -34,13 +37,22 @@ struct WeatherLayerView: View {
         TimelineView(.animation(minimumInterval: Self.frameInterval(layer),
                                 paused: reduceMotion || !isRunning || scenePhase != .active)) { timeline in
             let t = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
-            Canvas { context, size in
-                switch layer {
-                case .cloud: drawClouds(&context, size: size, t: t)
-                case .rain: drawRain(&context, size: size, t: t)
-                case .wind: drawWind(&context, size: size, t: t)
-                case .mist: drawMist(&context, size: size, t: t)
-                case .snow: drawSnow(&context, size: size, t: t)
+            if layer == .cloud {
+                GeometryReader { geo in
+                    let scene = CGSize(width: geo.size.width, height: horizonY)
+                    let seed = Self.cloudSeed(timeline.date)
+                    let pictures = CloudPictures.shared.pictures(seed: seed, scene: scene, dark: dark, scale: displayScale)
+                    Canvas { context, _ in drawClouds(&context, scene: scene, seed: seed, pictures: pictures, t: t) }
+                }
+            } else {
+                Canvas { context, size in
+                    switch layer {
+                    case .cloud: break
+                    case .rain: drawRain(&context, size: size, t: t)
+                    case .wind: drawWind(&context, size: size, t: t)
+                    case .mist: drawMist(&context, size: size, t: t)
+                    case .snow: drawSnow(&context, size: size, t: t)
+                    }
                 }
             }
         }
@@ -51,22 +63,30 @@ struct WeatherLayerView: View {
 
     // MARK: Cloud
 
-    private func cloudShape(_ rect: CGRect) -> Path {
-        var p = Path()
-        p.addEllipse(in: CGRect(x: rect.minX, y: rect.minY + rect.height * 0.35, width: rect.width, height: rect.height * 0.65))
-        p.addEllipse(in: CGRect(x: rect.minX + rect.width * 0.18, y: rect.minY + rect.height * 0.05, width: rect.width * 0.42, height: rect.height * 0.8))
-        p.addEllipse(in: CGRect(x: rect.minX + rect.width * 0.45, y: rect.minY, width: rect.width * 0.36, height: rect.height * 0.75))
-        return p
+    /// The day's seed. A debug build can step it with `-debug.cloudDayOffset N`, to see other days' skies.
+    private static func cloudSeed(_ date: Date) -> UInt32 {
+        var day = date
+        #if DEBUG
+        let offset = UserDefaults.standard.integer(forKey: "debug.cloudDayOffset")
+        day = Calendar.current.date(byAdding: .day, value: offset, to: date) ?? date
+        #endif
+        return CloudSky.seed(for: day)
     }
 
-    private func drawClouds(_ context: inout GraphicsContext, size: CGSize, t: Double) {
-        let drift = (t / 900).truncatingRemainder(dividingBy: 1)
-        for rect in SceneWeather.clouds(in: CGSize(width: size.width, height: horizonY), sun: sun, sunRadius: sunRadius, drift: drift) {
-            // Soft edges; in the dark look a moonlit pale blue, thinner, so they never read as grey blobs.
-            context.drawLayer { layer in
-                layer.addFilter(.blur(radius: 2.5))
-                layer.fill(cloudShape(rect), with: .color(dark ? LGColor.moonCloud.opacity(0.42) : .white.opacity(0.72)))
-            }
+    /// Far clouds, then near ones, then wisps: each a picture drawn once a day, here only placed and drifted.
+    private func drawClouds(_ context: inout GraphicsContext, scene: CGSize, seed: UInt32, pictures: CloudPictures.Set, t: Double) {
+        let sky = CloudSky.make(seed: seed, size: scene, sun: sun, rayRadius: sunRayRadius ?? sunRadius * 1.5)
+        let pad = CloudPictures.pad
+        for cloud in sky.clouds {
+            guard let image = pictures.clouds[cloud.index] else { continue }
+            let dx = CloudSky.drift(cloud.shape.depth, t: t)
+            context.opacity = cloud.shape.depth.opacity
+            context.draw(image, in: cloud.frame.offsetBy(dx: dx, dy: 0).insetBy(dx: -pad, dy: -pad))
+        }
+        context.opacity = 1
+        for (k, wisp) in sky.wisps.enumerated() {
+            guard let image = pictures.wisps[k] else { continue }
+            context.draw(image, in: wisp.frame.insetBy(dx: -pad, dy: -pad))
         }
     }
 
@@ -162,6 +182,94 @@ struct WeatherLayerView: View {
             let y = (y0 + t * speed).truncatingRemainder(dividingBy: Double(horizonY + 6)) - 6
             let x = x0 + sin(t * 0.6 + rng.next() * 6) * 8
             context.fill(Path(ellipseIn: CGRect(x: x, y: y, width: d, height: d)), with: .color(.white.opacity(0.85)))
+        }
+    }
+}
+
+/// Each cloud and wisp of the day drawn once, blur and all, so the 2-a-second redraw only moves pictures (update 52).
+@MainActor
+final class CloudPictures {
+    static let shared = CloudPictures()
+    /// Room around each picture for its soft edge.
+    static let pad: CGFloat = 4
+
+    struct Set {
+        var clouds: [Int: Image] = [:]
+        var wisps: [Int: Image] = [:]
+    }
+
+    private struct Key: Equatable { var seed: UInt32; var scene: CGSize; var dark: Bool; var scale: CGFloat }
+    private var key: Key?
+    private var made = Set()
+
+    func pictures(seed: UInt32, scene: CGSize, dark: Bool, scale: CGFloat) -> Set {
+        let key = Key(seed: seed, scene: scene, dark: dark, scale: scale)
+        if key == self.key { return made }
+        // The shapes don't depend on the sun (it only moves them), so a sky with the sun far away has every one.
+        let sky = CloudSky.make(seed: seed, size: scene, sun: CGPoint(x: -10_000, y: -10_000), rayRadius: 0)
+        var set = Set()
+        for cloud in sky.clouds { set.clouds[cloud.index] = render(cloud.shape, dark: dark, scale: scale) }
+        for (k, wisp) in sky.wisps.enumerated() { set.wisps[k] = render(wisp, dark: dark, scale: scale) }
+        self.key = key
+        made = set
+        return set
+    }
+
+    private func picture(size: CGSize, scale: CGFloat, _ draw: @escaping (inout GraphicsContext) -> Void) -> Image? {
+        let pad = Self.pad
+        let view = Canvas { context, _ in
+            context.translateBy(x: pad, y: pad)
+            draw(&context)
+        }
+        .frame(width: size.width + pad * 2, height: size.height + pad * 2)
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = scale
+        guard let image = renderer.cgImage else { return nil }
+        return Image(decorative: image, scale: scale)
+    }
+
+    private func render(_ shape: CloudShape, dark: Bool, scale: CGFloat) -> Image? {
+        picture(size: shape.size, scale: scale) { context in
+            let pad = Self.pad, h = shape.size.height, w = shape.size.width
+            context.drawLayer { cloud in
+                // One shape (the union of the puffs and the base), so overlapping puffs show no seams.
+                cloud.drawLayer { soft in
+                    soft.addFilter(.blur(radius: shape.depth.blur))
+                    let fill: GraphicsContext.Shading = dark
+                        ? .color(LGColor.moonCloud)
+                        : .linearGradient(LGColor.cloudShading(shape.depth), startPoint: .zero, endPoint: CGPoint(x: 0, y: h))
+                    soft.fill(Path(shape.path), with: fill)
+                }
+                // The bottom 20% fades out; nothing below the box.
+                let total = h + pad
+                cloud.blendMode = .destinationIn
+                cloud.fill(Path(CGRect(x: -pad, y: -pad, width: w + pad * 2, height: h + pad * 2)),
+                           with: .linearGradient(Gradient(stops: [
+                               .init(color: .white, location: 0),
+                               .init(color: .white, location: (pad + h * CloudSky.fadeFrom) / total),
+                               .init(color: .white.opacity(CloudSky.fadeTo), location: (pad + h) / total - 0.001),
+                               .init(color: .white.opacity(0), location: (pad + h) / total)]),
+                               startPoint: CGPoint(x: 0, y: -pad), endPoint: CGPoint(x: 0, y: h)))
+            }
+        }
+    }
+
+    private func render(_ wisp: Wisp, dark: Bool, scale: CGFloat) -> Image? {
+        let frame = wisp.frame
+        return picture(size: frame.size, scale: scale) { context in
+            context.translateBy(x: -frame.minX, y: -frame.minY)
+            let colour = dark ? LGColor.moonCloud : .white
+            context.addFilter(.blur(radius: Wisp.blur))
+            var line = Path()
+            line.move(to: wisp.start)
+            line.addQuadCurve(to: wisp.end, control: wisp.control)
+            context.stroke(line, with: .color(colour.opacity(Wisp.opacity)),
+                           style: StrokeStyle(lineWidth: Wisp.lineWidth, lineCap: .round))
+            var under = Path()
+            under.move(to: wisp.underStart)
+            under.addLine(to: wisp.underEnd)
+            context.stroke(under, with: .color(colour.opacity(Wisp.underOpacity)),
+                           style: StrokeStyle(lineWidth: Wisp.underWidth, lineCap: .round))
         }
     }
 }

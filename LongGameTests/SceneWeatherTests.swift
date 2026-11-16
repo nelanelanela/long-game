@@ -50,27 +50,6 @@ struct SceneWeatherTests {
         // A clock set back: fetch again rather than wait.
         #expect(SceneWeather.shouldFetch(lastFetch: now.addingTimeInterval(3600), now: now, enabled: true))
     }
-
-    @Test func cloudsNeverCoverTheSun() {
-        let size = CGSize(width: 390, height: 330)
-        let radius: CGFloat = 45
-        // The sun along its whole arc, low left to high centre to low right, and at several drifts.
-        for i in 0...20 {
-            let t = Double(i) / 20
-            let sun = CGPoint(x: 40 + 310 * t, y: 260 - 200 * sin(.pi * t))
-            for drift in stride(from: 0.0, through: 1.0, by: 0.25) {
-                for cloud in SceneWeather.clouds(in: size, sun: sun, sunRadius: radius, drift: drift) {
-                    #expect(!SceneWeather.overlaps(cloud, sun: sun, radius: radius), "sun at \(sun), drift \(drift)")
-                }
-            }
-        }
-    }
-
-    @Test func positionsAreTheSameEveryTime() {
-        let a = SceneWeather.clouds(in: CGSize(width: 390, height: 330), sun: CGPoint(x: 195, y: 120), sunRadius: 45)
-        let b = SceneWeather.clouds(in: CGSize(width: 390, height: 330), sun: CGPoint(x: 195, y: 120), sunRadius: 45)
-        #expect(a == b)
-    }
 }
 
 struct WindSwayTests {
