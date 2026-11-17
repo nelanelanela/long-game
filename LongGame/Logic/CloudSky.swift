@@ -102,7 +102,8 @@ struct CloudSky: Equatable, Sendable {
     /// The day's seed: the same all day, different the next.
     static func seed(for date: Date, calendar: Calendar = .current) -> UInt32 {
         let day = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
-        return UInt32(truncatingIfNeeded: day &* 2_654_435_761)
+        // In 32 bits, so the watch (whose whole numbers are 32-bit) gets the same seed as the phone.
+        return UInt32(truncatingIfNeeded: day) &* 2_654_435_761
     }
 
     // MARK: Shapes
