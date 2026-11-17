@@ -1517,8 +1517,8 @@ struct HomeView: View {
         }
     }
 
-    /// A sheet, the timer or Settings has fully closed (their `onDismiss` runs after the animation): a thousand that
-    /// the saved session crossed, and that has no celebration, changes the icon now, over Home.
+    /// A sheet, the timer or Settings has fully closed (their `onDismiss` runs after the animation): the icon catches
+    /// up quietly (a thousand already seen without its celebration, or a lower total), over Home.
     private func sheetClosed() {
         syncIconQuietly(total: summary(now: Date()).total)
         if celebrating == nil { checkLetters(total: summary(now: Date()).total) }

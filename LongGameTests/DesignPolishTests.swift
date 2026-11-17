@@ -155,8 +155,10 @@ struct EveryThousandTests {
         #expect(Milestones.adoptingThousands(total: 3_294, seen: seen) == seen)
     }
 
-    @Test func iconStillGrowsOnlyAtItsOwnSteps() {
-        #expect(!Milestones.iconGrows(at: 2_000))
+    @Test func theIconGrowsAtEveryThousandButNotTheHalves() {
+        #expect(Milestones.iconGrows(at: 2_000))
         #expect(Milestones.iconGrows(at: 5_000))
+        #expect(!Milestones.iconGrows(at: 2_500))
+        #expect(!Milestones.iconGrows(at: 500))
     }
 }

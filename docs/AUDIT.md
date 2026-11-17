@@ -30,7 +30,7 @@ Not done or not testable here:
 | Dark and Tinted for every set | ✅ | same | Dark reuses the artwork; Tinted is greyscale |
 | Alternate sets listed in `project.yml` | ✅ | `project.yml` | `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` |
 | `IconStage.for(totalHours:)` and `IconPlan` | ✅ | `Logic/IconStage.swift` | Tests in `IconStageTests.swift` |
-| 1,000, 5,000 and 10,000 change the icon after the celebration's main button | ✅ | `HomeView.celebrationDone` | 2,500 and 7,500 celebrate but never change it themselves; jumps go to the highest stage |
+| Every thousand changes the icon after the celebration's main button (update 50) | ✅ | `HomeView.celebrationDone` | 2,500 and 7,500 celebrate but never change it themselves; jumps go to the highest stage |
 | Other thousands change the icon once the sheet or timer has closed | ✅ | `HomeView.sheetClosed`, `syncIconQuietly` | Uses each sheet's `onDismiss`; Watch / Live Activity saves wait for the next active Home |
 | `IconStage` is a count of thousands; old stored value treated as unknown | ✅ | `Logic/IconStage.swift`, `Models.swift` | No migration |
 | Quiet lowering on launch / foreground, never during a session | ✅ | `HomeView.syncIconQuietly` | Replace my craft resets at once (`OneCraftSheet`) |

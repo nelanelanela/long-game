@@ -66,10 +66,6 @@ enum IconPlan {
         return target == applied ? nil : target
     }
 
-    /// Thousands that have no celebration of their own: the icon changes right after the session that crossed them
-    /// is saved, once its sheet has closed.
-    static func hasCelebration(thousands: Int) -> Bool { [1, 5, 10].contains(thousands) }
-
     /// The quiet check on launch, on return to the foreground, when Home first appears and when a sheet has closed.
     /// A stored stage that is unknown (nil) counts as "set it again".
     /// A lower stage (the total went down) is set at once; a higher one waits while a celebration of 1,000 h or more is due or showing,

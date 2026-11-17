@@ -29,8 +29,8 @@ struct MilestoneTests {
         #expect(Set(lines).count == Milestones.all.count)
     }
 
-    @Test func onlyTheThousandsSayTheIconHasGrown() {
-        #expect(Milestones.all.filter(Milestones.iconGrows(at:)) == [1_000, 5_000, 10_000])
+    @Test func everyThousandSaysTheIconHasGrown() {
+        #expect(Milestones.all.filter(Milestones.iconGrows(at:)) == Array(stride(from: 1_000, through: 10_000, by: 1_000)))
     }
 }
 

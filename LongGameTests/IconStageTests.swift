@@ -40,11 +40,8 @@ struct IconPlanTests {
     private let g = true
     private func stage(_ n: Int) -> IconStage { IconStage(thousands: n) }
 
-    @Test func onlyOneThousandFivethousandAndTenthousandHaveACelebration() {
-        #expect(IconPlan.hasCelebration(thousands: 1))
-        #expect(IconPlan.hasCelebration(thousands: 5))
-        #expect(IconPlan.hasCelebration(thousands: 10))
-        #expect([2, 3, 4, 6, 7, 8, 9].allSatisfy { !IconPlan.hasCelebration(thousands: $0) })
+    @Test func everyThousandHasACelebration() {
+        #expect((1...10).allSatisfy { Milestones.all.contains($0 * 1_000) })
     }
 
     @Test func aCelebrationedThousandWaitsForTheButton() {

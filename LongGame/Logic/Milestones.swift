@@ -65,8 +65,9 @@ enum Milestones {
         return line.hasSuffix(".") ? String(line.dropLast()) : line
     }
 
-    /// Only the thousands change the app icon, so only they say it has grown.
-    static func iconGrows(at hours: Int) -> Bool { [1_000, 5_000, 10_000].contains(hours) }
+    /// The icon has a stage for every whole thousand, so each of those celebrations says it has grown.
+    /// 100, 500, 2,500 and 7,500 don't change it.
+    static func iconGrows(at hours: Int) -> Bool { hours >= 1_000 && hours <= 10_000 && hours % 1_000 == 0 }
 }
 
 /// The milestone card to share (update 42, `design/redesign/MilestoneCard.dc.html`): its words.
