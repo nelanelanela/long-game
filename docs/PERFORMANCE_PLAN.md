@@ -193,8 +193,9 @@ background (as `PhotoLibrary.loadStats` already does for photos) or with `fetchC
   animations (the sun's glide between tabs, fades, the count-up) to 60 frames a second on ProMotion iPhones.
 - **The sea:** the dunes and the water are drawn once (`LandGround`); only the swaying shoreline and contour lines are
   redrawn each frame. They were all redrawn 30 times a second before.
-- **Weather:** stops while the app or Home is covered (it kept going before). Clouds are redrawn twice a second (they
-  drift about half a point a second, and each one is blurred), mist 15 times; rain, wind gusts and snow stay at 30.
+- **Weather:** stops while the app or Home is covered (it kept going before). Mist is redrawn 15 times a second; clouds,
+  rain, wind gusts and snow 30. (Clouds were redrawn twice a second at first, but stepped visibly; since update 52
+  each cloud is a picture drawn once a day, so redrawing only moves pictures and 30 is cheap.)
 - Not changed: the idle sun and the hero still redraw at 30 frames a second. One shared clock for the sun, sea and
   weather was in the plan; SwiftUI already draws them in the same frame, so it would save little and is left out.
 - Rough check (Debug build, iPhone 17 Simulator, heavy game, Home's Today tab untouched for 10 s): about 13% CPU on

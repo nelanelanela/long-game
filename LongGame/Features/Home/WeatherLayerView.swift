@@ -35,12 +35,12 @@ struct WeatherLayerView: View {
     @Environment(\.displayScale) private var displayScale
     private var dark: Bool { colorScheme == .dark }
 
-    /// How often each layer is redrawn. Clouds drift about half a point a second, so twice a second looks the same
-    /// as thirty times (and each cloud's soft edge is a blur, the costly part). Mist moves a few points a second.
-    /// Rain, wind gusts and snow fall fast and keep 30.
+    /// How often each layer is redrawn. Clouds drift slowly (up to about a point a second), but redrawn less often
+    /// they visibly step, so they keep 30 too: each frame only places pictures drawn once a day, blur and all, which
+    /// is cheap. Mist moves a few points a second. Rain, wind gusts and snow fall fast and keep 30.
     static func frameInterval(_ layer: WeatherLayer) -> Double {
         switch layer {
-        case .cloud: 1.0 / 2
+        case .cloud: 1.0 / 30
         case .mist: 1.0 / 15
         case .rain, .wind, .snow: 1.0 / 30
         }
@@ -208,7 +208,7 @@ struct WeatherLayerView: View {
     }
 }
 
-/// Each cloud and wisp of the day drawn once, blur and all, so the 2-a-second redraw only moves pictures (update 52).
+/// Each cloud and wisp of the day drawn once, blur and all, so each redraw only moves pictures (update 52).
 @MainActor
 final class CloudPictures {
     static let shared = CloudPictures()
