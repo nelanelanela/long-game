@@ -1542,6 +1542,7 @@ struct HomeView: View {
 
     /// The one gentle offer; recorded as soon as it is shown. Never a pop-up of its own.
     private func shouldOfferSupport(_ settings: AppSettings) -> Bool {
+        guard TipRules.tipsAvailable else { return false }
         let now = Date()
         guard TipRules.shouldOffer(now: now, onboardedAt: craft.createdAt, lastOfferAt: settings.lastTipOfferAt,
                                    lastTipAt: settings.lastTipAt, timerRunning: timer.isActive,
