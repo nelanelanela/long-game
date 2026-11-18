@@ -10,9 +10,9 @@ enum NotificationPlanner {
                         sessions: [SessionRecord], now: Date = Date(), calendar: Calendar = .current) async {
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()
-        center.removePendingNotificationRequests(withIdentifiers: pending.map(\.identifier).filter { id in
-            prefixes.contains { id.hasPrefix($0) }
-        })
+        let stale = pending.map(\.identifier).filter { id in prefixes.contains { id.hasPrefix($0) } }
+        // Off the main thread: this call waits for iOS's notification service (see `Notifications.queue`).
+        await Notifications.onQueue { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: stale) }
 
         let status = await center.notificationSettings().authorizationStatus
         guard status == .authorized || status == .provisional else { return }
@@ -45,6 +45,6 @@ enum NotificationPlanner {
     }
 
     static func cancelAll() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        Notifications.queue.async { UNUserNotificationCenter.current().removeAllPendingNotificationRequests() }
     }
 }
