@@ -46,6 +46,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wehavesun.LongGame
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
         INFOPLIST_KEY_NSCameraUsageDescription: "Take a photo of what you made, if you like."
+        # "Save Image" in the share sheet (milestone card, year card, then and now, the poster) adds to Photos;
+        # without this sentence iOS closes the app the moment it is tapped.
+        INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Save your Long Game cards and poster to your photos."
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Long Game uses your approximate location only to show the weather in its landscape."
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
