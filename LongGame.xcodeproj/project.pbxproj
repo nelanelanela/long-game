@@ -26,6 +26,7 @@
 		04676FA03E248BF2F343A580 /* SessionPicture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4E77FE3BD0216875F7EB7B /* SessionPicture.swift */; };
 		048FD662402CFCAEE04CA29E /* FeelingProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5C93503A04583AD8A77E27 /* FeelingProgressTests.swift */; };
 		049863C80131F8293642E877 /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C32D9A819D6096E8F4162B /* AppCommands.swift */; };
+		049FDB04189E6A40EEC8EA0C /* SessionLengthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F34FA74CE52BEE0E11C2B8 /* SessionLengthTests.swift */; };
 		054944C33BD9A8707CB00391 /* QuickerLoggingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FF530C05A78ABB8CA96C97 /* QuickerLoggingTests.swift */; };
 		054ECBE5A8F5C74F3001A7E8 /* TimerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D585F07C0E99A89FD1223DB /* TimerStore.swift */; };
 		05554E05364DBB5D23151B9C /* TimerMoments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FADE04FC791931D0B34E177 /* TimerMoments.swift */; };
@@ -91,6 +92,7 @@
 		19321CAA18A6E4745ACC7CEA /* WelcomeBackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F226A24E27FD1AB98767099F /* WelcomeBackView.swift */; };
 		196910816AC4994ECA0CBE2F /* MacSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547CC11F78BB164F419772F8 /* MacSnapshotTests.swift */; };
 		19AD520B8DD078E89F6744E9 /* WeekLookBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E0AC80460EA3AC649BF53C /* WeekLookBack.swift */; };
+		1A010470685CF2B7B3B7C90D /* SessionLengthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0F34FA74CE52BEE0E11C2B8 /* SessionLengthTests.swift */; };
 		1A27892788A920AD44296CE7 /* OpeningSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FC0D6A9C7A9C9D549832A /* OpeningSunrise.swift */; };
 		1AA029B697AAAA0F250B9591 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE9F568BE6C8C49CA7159FC /* DemoData.swift */; };
 		1AE6F9362F21C78788B487F9 /* TodaySessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699FC58C2C9D4C16626A3161 /* TodaySessions.swift */; };
@@ -146,6 +148,7 @@
 		28794D2A690920C5C1146C8E /* YearCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6369ABA0B3545E896705EE57 /* YearCardView.swift */; };
 		28B82DA46845541A4E3BE40B /* Water.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43824C0EB89F2251259C11A0 /* Water.swift */; };
 		299310F06A515E5B5E71EF87 /* TipRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95668AEA33090AE8C1ED90AF /* TipRules.swift */; };
+		2B0B507FBD5F0600F6E548AB /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		2B115793ED3C9F5C065A9B6E /* TipStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6022DFF5F6081A955B9C3863 /* TipStore.swift */; };
 		2B9B79FB0EE7FAED520278C1 /* PhotoStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9642D2A09DBB1B722BA56FDA /* PhotoStorageTests.swift */; };
 		2BB5EC9BB90061EB6300A821 /* StretchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942690642F88AA62C586D4B8 /* StretchSource.swift */; };
@@ -162,6 +165,7 @@
 		2DFE6C6B1755FE997FA3F60D /* WriteToUs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC1E3992BC4F7FCDFB34EE3 /* WriteToUs.swift */; };
 		2E257B512E1E5F17B6EB4483 /* SunWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF88E6907D99B65C071F188D /* SunWidgets.swift */; };
 		2EC8A2C3FEB58FD1553113C7 /* SidebarLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F3044A6A68F733B316517A /* SidebarLayout.swift */; };
+		2F552938345ECE66AF3CD582 /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		2F5DC2C6511ED3B104C629F9 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		2FA82FDD8FDB8D7F10D2A6E3 /* CatchUpSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6786F3B6D0CB2CD09F547A54 /* CatchUpSheet.swift */; };
 		2FB5DDA1C2D54C7C180285AD /* HapticPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B6388CC8CF5632366662D /* HapticPlan.swift */; };
@@ -502,8 +506,10 @@
 		9E98E886FFE8E4F57BC75FA9 /* WeeklyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2D6409A03756420CB015B7 /* WeeklyTarget.swift */; };
 		9E9CFA08BC847C10109636B4 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 480213F17CA1F530062D7B2E /* IntroView.swift */; };
 		9F21453DD1555DE194072FB7 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F8D4894833A78A620446EC2B /* Localizable.xcstrings */; };
+		9F2C244BE7C6B4B9CF01069C /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		9F3DC2175DFF5A2F352DC30E /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB309A444D8CD7FFD6139114 /* CloudSync.swift */; };
 		9F5797629D276D98CEC67AE1 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
+		A042EA7C5C8095448D6AE35D /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		A076BDED917DF71FBF0392BD /* SunWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC62C9206943FB7C8E407B4 /* SunWords.swift */; };
 		A1870E06C0AB78D62DCF2FCC /* HoursStepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF4BD8A2FF9D147011B5D0 /* HoursStepping.swift */; };
 		A20EF96157E594B468756BFA /* SunriseMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4550047415AAFD5C241B9EF8 /* SunriseMotion.swift */; };
@@ -619,6 +625,7 @@
 		C5D31D5685B250C2246252E7 /* ArchivedCraftsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CC49F874CF563564E5ECA0 /* ArchivedCraftsView.swift */; };
 		C5F19031B263931207CAEDBF /* StarField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED420A0325DE97FED2EBE88 /* StarField.swift */; };
 		C64F6BBE3E4A886B99B79E58 /* LongGameMacCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD43C05C68EA068141C5EF1 /* LongGameMacCommands.swift */; };
+		C77F5D4FFE59C6BE67AF62E4 /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		C81FF17E3A3B2C7A8EA5514D /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9429C70C8E5C507E316B0BBC /* WidgetViews.swift */; };
 		C8359EDA3C3A1970ECB3D56B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 26CEE57CA26FF21B355E51D3 /* PrivacyInfo.xcprivacy */; };
 		C914E6F29E609FDFA727ED48 /* SunWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF88E6907D99B65C071F188D /* SunWidgets.swift */; };
@@ -633,6 +640,7 @@
 		CB5CD226F36FB0D8F8D96D5C /* TodaySessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699FC58C2C9D4C16626A3161 /* TodaySessions.swift */; };
 		CB64E23D7E1C7531BC2F3BA7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D3125885B8A2AC3B3EB399 /* Models.swift */; };
 		CBD992FA754FDA2D9B3E461D /* SceneWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD102A2D17F2F284510564C /* SceneWeatherTests.swift */; };
+		CC1F91754270E9CDEEA1AE73 /* SessionLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98E0D98C41359465C04798E /* SessionLength.swift */; };
 		CC479167FE07089EDA637A76 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF86E7F3BE3B356942FB65E4 /* WatchSync.swift */; };
 		CCFB98D662F865C7B6FBB2CF /* WeeklyTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00D5764DAEC9966CA01FB8A /* WeeklyTargetTests.swift */; };
 		CD6A36843C8F74931B090F97 /* PlatformShims.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E9895D9A62DA2CEBEAB750 /* PlatformShims.swift */; };
@@ -1069,6 +1077,7 @@
 		BE084A076784A1A934FB8B82 /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
 		BE5638F1FDC878C0C8CE56E1 /* Keepsake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keepsake.swift; sourceTree = "<group>"; };
 		C01483483B87BB0D9F02C45F /* DesignPolishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignPolishTests.swift; sourceTree = "<group>"; };
+		C0F34FA74CE52BEE0E11C2B8 /* SessionLengthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionLengthTests.swift; sourceTree = "<group>"; };
 		C2B14C53E85637C41993D32D /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		C376529B80B4C903039F615E /* SunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunView.swift; sourceTree = "<group>"; };
 		C5978022CC9A62CC334E3246 /* SessionPictureCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPictureCache.swift; sourceTree = "<group>"; };
@@ -1103,6 +1112,7 @@
 		D7A2536744CE70D66C28008A /* LongGameMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameMacApp.swift; sourceTree = "<group>"; };
 		D8DE1E2C41179019E71470B1 /* TodaySessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySessionsView.swift; sourceTree = "<group>"; };
 		D98BB75880B3BE798BB21487 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D98E0D98C41359465C04798E /* SessionLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionLength.swift; sourceTree = "<group>"; };
 		DAC77651FD0C1022D8DFF364 /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		DC4A0177BF67B1D08678952F /* giggle-1.m4a */ = {isa = PBXFileReference; path = "giggle-1.m4a"; sourceTree = "<group>"; };
 		DD4128CE14B1359C65AB6CB2 /* LongGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongGameApp.swift; sourceTree = "<group>"; };
@@ -1474,6 +1484,7 @@
 				533A6C340A10D0233C361798 /* PhotoViews.swift */,
 				2AF3C5DCEB543083E891D780 /* Practice.swift */,
 				FB3FB31088BD04BBC50ACFF8 /* SceneWeather.swift */,
+				D98E0D98C41359465C04798E /* SessionLength.swift */,
 				0E4E77FE3BD0216875F7EB7B /* SessionPicture.swift */,
 				700FCCCCEFC31A0C12C55B7E /* Signposts.swift */,
 				DED420A0325DE97FED2EBE88 /* StarField.swift */,
@@ -1664,6 +1675,7 @@
 				50FF530C05A78ABB8CA96C97 /* QuickerLoggingTests.swift */,
 				E773072D1CD5918F00B4D6F7 /* RhythmTests.swift */,
 				DFD102A2D17F2F284510564C /* SceneWeatherTests.swift */,
+				C0F34FA74CE52BEE0E11C2B8 /* SessionLengthTests.swift */,
 				46A1D6F0C3642672B3DD62B3 /* SessionPictureTests.swift */,
 				3B48DE43B2B7F9FE6A6F8858 /* StarFieldTests.swift */,
 				A2E145E52BAAAD03ECC3BD17 /* StoreLocationTests.swift */,
@@ -2197,6 +2209,7 @@
 				E9D1906A74A57FDD2CC3821F /* SceneWeather.swift in Sources */,
 				ED2727FEBC2E3A7B5B8BF1FF /* SessionFormView.swift in Sources */,
 				72D5F0E7A07A9858CE7916FD /* SessionIntents.swift in Sources */,
+				A042EA7C5C8095448D6AE35D /* SessionLength.swift in Sources */,
 				04676FA03E248BF2F343A580 /* SessionPicture.swift in Sources */,
 				176196CCB0D124C5C12DFC41 /* SessionPictureCache.swift in Sources */,
 				7A7E54AAC170F6247B636515 /* SessionPictureView.swift in Sources */,
@@ -2303,6 +2316,7 @@
 				054944C33BD9A8707CB00391 /* QuickerLoggingTests.swift in Sources */,
 				B73E6E3CCDBDE4687AFD0351 /* RhythmTests.swift in Sources */,
 				CBD992FA754FDA2D9B3E461D /* SceneWeatherTests.swift in Sources */,
+				049FDB04189E6A40EEC8EA0C /* SessionLengthTests.swift in Sources */,
 				3510910756FFDB4339D23C68 /* SessionPictureTests.swift in Sources */,
 				EF7092BD48A31CA2D0C507F6 /* StarFieldTests.swift in Sources */,
 				0DD59B97D866F7714E43EB2A /* StoreLocationTests.swift in Sources */,
@@ -2366,6 +2380,7 @@
 				A68A5D5F1510D002D1BB6842 /* Practice.swift in Sources */,
 				0848F3DE1F86A41EC8E0DEEB /* Scene.swift in Sources */,
 				F953C3360DF95A585FE39322 /* SceneWeather.swift in Sources */,
+				C77F5D4FFE59C6BE67AF62E4 /* SessionLength.swift in Sources */,
 				7F52A92625D9DCEDFA9A7D56 /* SessionPicture.swift in Sources */,
 				16B8ADE78180A8B2427517DC /* Signposts.swift in Sources */,
 				C2327CD8B440083A0C234581 /* StarField.swift in Sources */,
@@ -2512,6 +2527,7 @@
 				2C417B20A68244AD6D00412B /* SessionControlIntent.swift in Sources */,
 				B4E457A4E844BA194EE3DBA1 /* SessionFormView.swift in Sources */,
 				1070C32EAC7315141426FABD /* SessionIntents.swift in Sources */,
+				2F552938345ECE66AF3CD582 /* SessionLength.swift in Sources */,
 				3088FD86F6985D79EC66BFCB /* SessionPicture.swift in Sources */,
 				37210FAC46A5D4BAB99F712C /* SessionPictureCache.swift in Sources */,
 				DEEE9FF45459100A6C747AE5 /* SessionPictureView.swift in Sources */,
@@ -2621,6 +2637,7 @@
 				A62F317F4712D0D98B4ECB58 /* QuickerLoggingTests.swift in Sources */,
 				A3ECD47A33A03DC1984C4A37 /* RhythmTests.swift in Sources */,
 				D799DEA04CFCDC8B80031581 /* SceneWeatherTests.swift in Sources */,
+				1A010470685CF2B7B3B7C90D /* SessionLengthTests.swift in Sources */,
 				657A3890A3144022077D3166 /* SessionPictureTests.swift in Sources */,
 				B06448BEF3FA150DEEB5E919 /* StarFieldTests.swift in Sources */,
 				D85898C284D4AE39AA343DD8 /* StoryTests.swift in Sources */,
@@ -2683,6 +2700,7 @@
 				B75BBA00C6C8822619E4DB07 /* Practice.swift in Sources */,
 				13CAAC06F0EFBD613090335F /* Scene.swift in Sources */,
 				A841E94DD7192F0B8FB4B0B9 /* SceneWeather.swift in Sources */,
+				9F2C244BE7C6B4B9CF01069C /* SessionLength.swift in Sources */,
 				48E79BCD1AA62D193759F45B /* SessionPicture.swift in Sources */,
 				951B8EC2D0246F24990E7C98 /* Signposts.swift in Sources */,
 				B7F593E6F9CEDBA2AA780ECB /* StarField.swift in Sources */,
@@ -2779,6 +2797,7 @@
 				B83E6AE8CEAC3192791812B7 /* SessionControl.swift in Sources */,
 				5DBDBB145812A37D38B39D7F /* SessionControlIntent.swift in Sources */,
 				A341D4381F49FD02ADE43221 /* SessionIntents.swift in Sources */,
+				2B0B507FBD5F0600F6E548AB /* SessionLength.swift in Sources */,
 				4DDB71189F849CA9F72A7DFD /* SessionPicture.swift in Sources */,
 				8F56799AF9A69785EAEFF145 /* Signposts.swift in Sources */,
 				FA7D13E5CCAC0BEDE6BD0190 /* StarField.swift in Sources */,
@@ -2856,6 +2875,7 @@
 				58637BFA66C3C8CA176B1DB4 /* Practice.swift in Sources */,
 				3185677D0195716951EDFEA1 /* Scene.swift in Sources */,
 				44C610F2429B39A483D31E05 /* SceneWeather.swift in Sources */,
+				CC1F91754270E9CDEEA1AE73 /* SessionLength.swift in Sources */,
 				99EA5212439AF3E037D33AC4 /* SessionPicture.swift in Sources */,
 				F6D72D667DE4CDB4446FABFE /* Signposts.swift in Sources */,
 				E58CAC8AD4F6949AC2ADCD90 /* StarField.swift in Sources */,
@@ -2939,6 +2959,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Long Game";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of what you made, if you like.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Long Game uses your approximate location only to show the weather in its landscape.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your Long Game cards and poster to your photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsMultipleScenes = YES;
@@ -3388,6 +3409,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Long Game";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of what you made, if you like.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Long Game uses your approximate location only to show the weather in its landscape.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your Long Game cards and poster to your photos.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsMultipleScenes = YES;

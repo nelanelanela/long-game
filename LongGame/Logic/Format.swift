@@ -85,7 +85,7 @@ enum DurationFormat {
     }
 
     static func hoursMinutes(seconds: Double) -> String {
-        let minutes = Int((seconds / 60).rounded())
+        let minutes = SessionLength.wholeMinutes(seconds)
         return String(format: "%d:%02d", minutes / 60, minutes % 60)
     }
 

@@ -24,10 +24,10 @@ struct SessionFormView: View {
         self.sessions = sessions
         self.editing = editing
         if let editing {
-            let total = Int((editing.durationSec / 60).rounded())
+            let fields = SessionLength.fields(seconds: editing.durationSec)
             _day = State(initialValue: editing.start)
-            _hours = State(initialValue: min(12, total / 60))
-            _minutes = State(initialValue: (total % 60) / 5 * 5)
+            _hours = State(initialValue: fields.hours)
+            _minutes = State(initialValue: fields.minutes)
             _note = State(initialValue: editing.note ?? "")
             _photo = State(initialValue: editing.photo)
             _hidesDefault = State(initialValue: editing.hidesDefaultPicture)
@@ -40,7 +40,11 @@ struct SessionFormView: View {
     }
 
     private var calendar: Calendar { .current }
-    private var seconds: Double { Double(hours * 3600 + minutes * 60) }
+    /// The length as it will be saved: an untouched session keeps its exact seconds.
+    private var seconds: Double {
+        guard let editing else { return Double(hours * 3600 + minutes * 60) }
+        return SessionLength.savedSeconds(original: editing.durationSec, hours: hours, minutes: minutes)
+    }
 
     /// Back to 1 January of the start year, so hours from before the game began can be added too.
     private var earliestDay: Date {
@@ -193,7 +197,7 @@ struct SessionFormView: View {
         row(title) {
             HStack(spacing: 10) {
                 LGRepeatButton(systemName: "minus", label: less, enabled: value.wrappedValue > range.lowerBound, diameter: 36) {
-                    value.wrappedValue = max(range.lowerBound, value.wrappedValue - step)
+                    value.wrappedValue = SessionLength.stepped(value.wrappedValue, up: false, step: step, range: range)
                 }
                 .frame(width: 44, height: 44)
                 Text("\(value.wrappedValue)")
@@ -202,7 +206,7 @@ struct SessionFormView: View {
                     .frame(minWidth: 40)
                     .accessibilityHidden(true)
                 LGRepeatButton(systemName: "plus", label: more, enabled: value.wrappedValue < range.upperBound, diameter: 36) {
-                    value.wrappedValue = min(range.upperBound, value.wrappedValue + step)
+                    value.wrappedValue = SessionLength.stepped(value.wrappedValue, up: true, step: step, range: range)
                 }
                 .frame(width: 44, height: 44)
             }
@@ -213,8 +217,8 @@ struct SessionFormView: View {
         .accessibilityValue(spoken)
         .accessibilityAdjustableAction { direction in
             switch direction {
-            case .increment: value.wrappedValue = min(range.upperBound, value.wrappedValue + step)
-            case .decrement: value.wrappedValue = max(range.lowerBound, value.wrappedValue - step)
+            case .increment: value.wrappedValue = SessionLength.stepped(value.wrappedValue, up: true, step: step, range: range)
+            case .decrement: value.wrappedValue = SessionLength.stepped(value.wrappedValue, up: false, step: step, range: range)
             @unknown default: break
             }
         }
