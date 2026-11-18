@@ -16,6 +16,11 @@ struct GrowthTab: View {
     @State private var scrubbing = false
     /// The keepsake poster sheet, for these hours.
     @State private var keepsakeHours: KeepsakeChoice?
+    /// Then and now and the year card open full screen with their own stack, not pushed: History is already pushed
+    /// with its navigation bar hidden, and a second such screen pushed on top froze the app in an endless redraw on
+    /// iOS 26 (Then and now, November 2026; the same loop Settings once had).
+    @State private var showingThenAndNow = false
+    @State private var showingYear: Int?
     @Namespace private var chartSpace
     @Query private var settingsRows: [AppSettings]
     @Environment(\.modelContext) private var context
@@ -60,6 +65,18 @@ struct GrowthTab: View {
                 .scrubTransition(id: "growth-chart", in: chartSpace)
                 .allowsRotation()
         }
+        .onChange(of: showingThenAndNow) { _, _ in }
+        .fullScreenCover(isPresented: $showingThenAndNow) {
+            NavigationStack { ThenAndNowView(craft: craft) }
+        }
+        .onChange(of: showingYear) { _, _ in }
+        .fullScreenCover(isPresented: Binding(get: { showingYear != nil }, set: { if !$0 { showingYear = nil } })) {
+            if let year = showingYear {
+                NavigationStack {
+                    YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
+                }
+            }
+        }
     }
 
     /// After the first scrub ever, the hint "Drag along the line" is gone for good.
@@ -103,9 +120,7 @@ struct GrowthTab: View {
     private var thenAndNowRow: some View {
         let photos = sessions.filter(\.hasPhoto).map { ThenAndNow.Photo(sessionId: $0.id, start: $0.start) }
         if ThenAndNow.pair(photos: photos, chosen: settingsRows.first?.thenAndNowChoice) != nil {
-            NavigationLink {
-                ThenAndNowView(craft: craft)
-            } label: {
+            Button { showingThenAndNow = true } label: {
                 HStack(spacing: 12) {
                     SunView(idle: false, face: .happy).frame(width: 34, height: 34).accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
@@ -139,9 +154,7 @@ struct GrowthTab: View {
                 .padding(.vertical, 14)
                 .overlay(alignment: .top) { Rectangle().fill(LGColor.hairline).frame(height: 1) }
         } else if summary.hasEnoughData {
-            NavigationLink {
-                YearScreen(craft: craft, sessions: sessions, estimates: estimates, weekStart: weekStart, year: year)
-            } label: {
+            Button { showingYear = year } label: {
                 YearEntryRow(year: year, sunSize: 34)
             }
             .buttonStyle(.plain)
