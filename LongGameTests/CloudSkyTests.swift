@@ -86,7 +86,7 @@ struct CloudSkyTests {
                 for cloud in sky.clouds {
                     // Wherever it is in its drift.
                     for step in 0...8 {
-                        let dx = CloudSky.drift(cloud.shape.depth, t: Double(step) * cloud.shape.depth.driftPeriod / 4)
+                        let dx = CloudSky.drift(cloud.drift, t: Double(step) * cloud.drift.period / 4)
                         #expect(!SceneWeather.overlaps(cloud.frame.offsetBy(dx: dx, dy: 0), sun: sun, radius: clear),
                                 "seed \(seed), sun at \(sun)")
                     }
@@ -99,9 +99,39 @@ struct CloudSkyTests {
     }
 
     @Test func driftSwingsGentlyBothWays() {
-        // Near: 28 pt over 40 s; far: the other way, 16 pt over 60 s.
-        #expect(abs(CloudSky.drift(.near, t: 0) + 14) < 0.01 && abs(CloudSky.drift(.near, t: 40) - 14) < 0.01)
-        #expect(abs(CloudSky.drift(.far, t: 0) - 8) < 0.01 && abs(CloudSky.drift(.far, t: 60) + 8) < 0.01)
-        #expect(abs(CloudSky.drift(.near, t: 80) + 14) < 0.01)
+        // From one end to the other in one period, and back in the next; near goes right first, far left.
+        let near = CloudDrift(amplitude: 14, period: 40, phase: 0, rightFirst: true)
+        let far = CloudDrift(amplitude: 8, period: 60, phase: 0, rightFirst: false)
+        #expect(abs(CloudSky.drift(near, t: 0) + 14) < 0.01 && abs(CloudSky.drift(near, t: 40) - 14) < 0.01)
+        #expect(abs(CloudSky.drift(far, t: 0) - 8) < 0.01 && abs(CloudSky.drift(far, t: 60) + 8) < 0.01)
+        #expect(abs(CloudSky.drift(near, t: 80) + 14) < 0.01)
+        // A phase of 1 starts at the other end.
+        #expect(abs(CloudSky.drift(CloudDrift(amplitude: 14, period: 40, phase: 1, rightFirst: true), t: 0) - 14) < 0.01)
+    }
+
+    @Test func everyCloudHasItsOwnSpeed() {
+        // A year of days.
+        for seed in (0..<366).map({ CloudSky.seed(for: Date(timeIntervalSince1970: 1_767_225_600 + Double($0) * 86_400)) }) {
+            let sky = CloudSky.make(seed: seed, size: scene, sun: CGPoint(x: -1_000, y: -1_000), rayRadius: 50)
+            let speeds = sky.clouds.map(\.drift.topSpeed)
+            for i in speeds.indices {
+                for j in speeds.indices where j > i {
+                    // At least 5% apart, so the difference shows.
+                    #expect(abs(speeds[i] - speeds[j]) > 0.05 * max(speeds[i], speeds[j]), "seed \(seed)")
+                }
+            }
+            for cloud in sky.clouds {
+                // Never swings further than placement kept clear, and stays gentle (under 2 pt a second).
+                #expect(cloud.drift.amplitude <= cloud.shape.depth.driftAmplitude)
+                #expect(cloud.drift.topSpeed < 2)
+            }
+        }
+    }
+
+    @Test func driftIsTheSameAllDay() {
+        // Seeded by the day: the same sky gives the same drift every time it is made.
+        let a = CloudSky.make(seed: 7, size: scene, sun: CGPoint(x: 200, y: 120), rayRadius: 50)
+        let b = CloudSky.make(seed: 7, size: scene, sun: CGPoint(x: 200, y: 120), rayRadius: 50)
+        #expect(a.clouds.map(\.drift) == b.clouds.map(\.drift))
     }
 }

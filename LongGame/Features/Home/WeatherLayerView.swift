@@ -95,7 +95,7 @@ struct WeatherLayerView: View {
         let pad = CloudPictures.pad
         for cloud in sky.clouds {
             guard let image = pictures.clouds[cloud.index] else { continue }
-            let dx = CloudSky.drift(cloud.shape.depth, t: t)
+            let dx = CloudSky.drift(cloud.drift, t: t)
             context.opacity = cloud.shape.depth.opacity
             context.draw(image, in: cloud.frame.offsetBy(dx: dx, dy: 0).insetBy(dx: -pad, dy: -pad))
         }

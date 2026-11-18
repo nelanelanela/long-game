@@ -23,9 +23,53 @@ enum CloudDepth: Sendable {
     var widthRange: ClosedRange<Double> { self == .far ? 0.14...0.24 : 0.24...0.40 }
     /// How many of them.
     var countRange: ClosedRange<Int> { self == .far ? 2...3 : 1...3 }
-    /// Side-to-side drift: half the full swing in points, and how long one swing takes.
+    /// Side-to-side drift: the most any cloud of this depth swings each way, in points (placement keeps this much
+    /// clear of the sun). Each cloud has its own swing and speed (`CloudDrift`).
     var driftAmplitude: CGFloat { self == .far ? 8 : 14 }
-    var driftPeriod: Double { self == .far ? 60 : 40 }
+}
+
+/// How one cloud drifts: its own swing, time and starting point, so every cloud moves at its own speed.
+struct CloudDrift: Equatable, Sendable {
+    /// Half the full swing, in points (never more than the depth's `driftAmplitude`).
+    var amplitude: CGFloat
+    /// How long one swing takes, in seconds.
+    var period: Double
+    /// Where in its swing it is at time 0, from 0 to 2 (one swing there and back).
+    var phase: Double
+    /// Near clouds go right first, far ones left, so the two depths pass each other.
+    var rightFirst: Bool
+
+    /// The day's top speeds, in points a second: spread evenly from slow to fast, so every cloud is clearly different.
+    static let speeds: ClosedRange<Double> = 0.35...1.25
+
+    /// The drift for each of the day's clouds (far ones first, then near): every cloud gets its own slot of `speeds`,
+    /// with a little jitter; far clouds get the slower slots, in a random order, near ones the faster. Drawn from its
+    /// own seeded stream, so it changes nothing about where the day's clouds sit.
+    static func make(seed: UInt32, depths: [CloudDepth]) -> [CloudDrift] {
+        var random = Mulberry32(seed: seed ^ 0x9E37_79B9)
+        let n = depths.count
+        guard n > 0 else { return [] }
+        var slots = Array(0..<n)
+        let farCount = depths.filter { $0 == .far }.count
+        func shuffle(_ range: Range<Int>) {
+            for i in stride(from: range.upperBound - 1, to: range.lowerBound, by: -1) {
+                slots.swapAt(i, range.lowerBound + Int(random.next() * Double(i - range.lowerBound + 1)))
+            }
+        }
+        shuffle(0..<farCount)
+        shuffle(farCount..<n)
+        let gap = (speeds.upperBound - speeds.lowerBound) / Double(n)
+        return depths.indices.map { i in
+            let depth = depths[i]
+            let speed = speeds.lowerBound + gap * (Double(slots[i]) + 0.5 + 0.3 * (random.next() - 0.5))
+            let amplitude = depth.driftAmplitude * CGFloat(0.65 + 0.35 * random.next())
+            return CloudDrift(amplitude: amplitude, period: Double(amplitude) * .pi / speed,
+                              phase: 2 * random.next(), rightFirst: depth == .near)
+        }
+    }
+
+    /// The fastest it moves, in points a second (mid-swing).
+    var topSpeed: Double { Double(amplitude) * .pi / period }
 }
 
 /// One cloud's shape, in its own space: its box is (0, 0, size).
@@ -60,6 +104,8 @@ struct PlacedCloud: Equatable, Sendable {
     var origin: CGPoint
     /// A number unique to this cloud for the day (to cache its picture).
     var index: Int
+    /// Its own side-to-side drift.
+    var drift: CloudDrift
     var frame: CGRect { CGRect(origin: origin, size: shape.size) }
 }
 
@@ -203,10 +249,15 @@ struct CloudSky: Equatable, Sendable {
                 let origin = CGPoint(x: mid - w / 2, y: baseLine - shape.baseY)
                 if let placed = clearOfSun(CGRect(origin: origin, size: shape.size), sun: sun, clear: clear,
                                            drift: depth.driftAmplitude, scene: size) {
-                    clouds.append(PlacedCloud(shape: shape, origin: placed, index: index))
+                    clouds.append(PlacedCloud(shape: shape, origin: placed, index: index,
+                                              drift: CloudDrift(amplitude: 0, period: 1, phase: 0, rightFirst: true)))
                 }
                 index += 1
             }
+        }
+        // Each cloud's own drift, once we know which made it into the sky.
+        for (cloud, drift) in zip(clouds.indices, CloudDrift.make(seed: seed, depths: clouds.map(\.shape.depth))) {
+            clouds[cloud].drift = drift
         }
         var wisps: [Wisp] = []
         let wispCount = 1 + Int(random.next() * 2)
@@ -251,13 +302,14 @@ struct CloudSky: Equatable, Sendable {
         SceneWeather.overlaps(rect.insetBy(dx: -drift, dy: 0), sun: sun, radius: clear)
     }
 
-    /// How far a depth has drifted at time `t`: an ease in and out from one side to the other and back. Near clouds go
-    /// right first, far ones left, so the two depths pass each other.
-    static func drift(_ depth: CloudDepth, t: Double) -> CGFloat {
-        let p = (t / depth.driftPeriod).truncatingRemainder(dividingBy: 2)
+    /// How far a cloud has drifted at time `t`: an ease in and out from one side to the other and back, at its own
+    /// speed.
+    static func drift(_ drift: CloudDrift, t: Double) -> CGFloat {
+        var p = (t / drift.period + drift.phase).truncatingRemainder(dividingBy: 2)
+        if p < 0 { p += 2 }
         let leg = p < 1 ? p : 2 - p                                 // 0→1→0, like `alternate`
         let eased = 0.5 - 0.5 * cos(.pi * leg)
-        let x = CGFloat(-1 + 2 * eased) * depth.driftAmplitude
-        return depth == .near ? x : -x
+        let x = CGFloat(-1 + 2 * eased) * drift.amplitude
+        return drift.rightFirst ? x : -x
     }
 }
