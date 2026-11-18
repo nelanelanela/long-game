@@ -16,6 +16,16 @@ struct WeatherLayerView: View {
     /// False while Home is covered (the Timer, Settings): the weather stands still, like the sun.
     var isRunning = true
 
+    /// Set when this layer is the sky above the scene (Home's sky runs on up behind the bar and past the top of the
+    /// page): only the falling rain and snow, as dense as in a scene whose sky is this tall, with no veil and no water.
+    var aboveSceneSky: CGFloat? = nil
+
+    /// How many drops or flakes, so the sky above has the same density as the scene.
+    private func count(_ inScene: Int) -> Int {
+        guard let sky = aboveSceneSky, sky > 0 else { return inScene }
+        return Int((Double(inScene) * Double(horizonY / sky)).rounded())
+    }
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
@@ -37,7 +47,10 @@ struct WeatherLayerView: View {
         TimelineView(.animation(minimumInterval: Self.frameInterval(layer),
                                 paused: reduceMotion || !isRunning || scenePhase != .active)) { timeline in
             let t = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
-            if layer == .cloud {
+            if aboveSceneSky != nil && layer != .rain && layer != .snow {
+                // Clouds, wind and mist belong to the scene; only what falls carries on up.
+                Color.clear
+            } else if layer == .cloud {
                 GeometryReader { geo in
                     let scene = CGSize(width: geo.size.width, height: horizonY)
                     let seed = Self.cloudSeed(timeline.date)
@@ -93,15 +106,18 @@ struct WeatherLayerView: View {
     // MARK: Rain
 
     private func drawRain(_ context: inout GraphicsContext, size: CGSize, t: Double) {
+        let above = aboveSceneSky != nil
         // A 10% cooler scene: a faint navy veil, fading out at the top and below the water so it has no edges.
-        let veil = Gradient(stops: [.init(color: LGColor.navy.opacity(0), location: 0),
-                                    .init(color: LGColor.navy.opacity(0.1), location: 0.18),
-                                    .init(color: LGColor.navy.opacity(0.1), location: horizonY / size.height),
-                                    .init(color: LGColor.navy.opacity(0), location: 1)])
-        context.fill(Path(CGRect(origin: .zero, size: size)),
-                     with: .linearGradient(veil, startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
-        var rng = SceneWeather.Seeded(0x4A1)
-        for _ in 0..<70 {
+        if !above {
+            let veil = Gradient(stops: [.init(color: LGColor.navy.opacity(0), location: 0),
+                                        .init(color: LGColor.navy.opacity(0.1), location: 0.18),
+                                        .init(color: LGColor.navy.opacity(0.1), location: horizonY / size.height),
+                                        .init(color: LGColor.navy.opacity(0), location: 1)])
+            context.fill(Path(CGRect(origin: .zero, size: size)),
+                         with: .linearGradient(veil, startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
+        }
+        var rng = SceneWeather.Seeded(above ? 0x4A2 : 0x4A1)
+        for _ in 0..<count(70) {
             let x0 = rng.next() * Double(size.width + 40), y0 = rng.next() * Double(horizonY)
             let speed = 160 + rng.next() * 60
             let y = (y0 + t * speed).truncatingRemainder(dividingBy: Double(horizonY + 10)) - 10
@@ -112,6 +128,7 @@ struct WeatherLayerView: View {
             context.stroke(line, with: .color(.white.opacity(0.55)), lineWidth: 1)
         }
         // A few thin rings on the water.
+        guard !above else { return }
         for i in 0..<5 {
             var r = SceneWeather.Seeded(UInt64(0x51 + i))
             let cx = r.next() * Double(size.width), cy = Double(horizonY) + 8 + r.next() * 30
@@ -173,9 +190,9 @@ struct WeatherLayerView: View {
     // MARK: Snow
 
     private func drawSnow(_ context: inout GraphicsContext, size: CGSize, t: Double) {
-        var rng = SceneWeather.Seeded(0x5A0)
+        var rng = SceneWeather.Seeded(aboveSceneSky != nil ? 0x5A1 : 0x5A0)
         let sizes: [CGFloat] = [2, 3, 4, 5.5]
-        for i in 0..<60 {
+        for i in 0..<count(60) {
             let d = sizes[i % 4]
             let x0 = rng.next() * Double(size.width), y0 = rng.next() * Double(horizonY)
             let speed = 14 + Double(d) * 4

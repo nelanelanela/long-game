@@ -1691,7 +1691,17 @@ struct HomeView: View {
         .padding(.leading, 24 + inset.leading).padding(.trailing, 24 + inset.trailing)
         .padding(.top, 12)
         .padding(.bottom, 4)
-        .background(LGColor.background.opacity(0.94))
+        // The page's colour rises softly over what scrolls beneath (the sky, the sea), never as a straight edge.
+        .background {
+            VStack(spacing: 0) {
+                LinearGradient(colors: [LGColor.background.opacity(0), LGColor.background.opacity(0.94)],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 28)
+                LGColor.background.opacity(0.94)
+            }
+            .padding(.top, -28)
+            .allowsHitTesting(false)
+        }
         // Read after the day's words, not before the tabs: the bar sits at the bottom of the screen.
         .accessibilityElement(children: .contain)
         .accessibilitySortPriority(-1)

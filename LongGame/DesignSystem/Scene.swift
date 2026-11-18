@@ -53,6 +53,15 @@ struct SkyView: View {
         .accessibilityHidden(true)
     }
 
+    /// The colour at the very top of the sky, for carrying it on further up (none by day: that sky is clear).
+    static func topColour(_ tone: SceneTone) -> Color? {
+        switch tone {
+        case .night: Color(hex: 0x060A1E)
+        case .dawn: Color(hex: 0x1B2552)
+        case .day: nil
+        }
+    }
+
     private func glowSize(_ w: CGFloat, _ h: CGFloat) -> CGFloat { max(w, h) * (tone == .night ? 1.1 : 1.3) }
 
     private var backgroundGradient: some View {
@@ -61,7 +70,7 @@ struct SkyView: View {
         let stops: [Gradient.Stop]
         switch tone {
         case .night:
-            stops = [.init(color: Color(hex: 0x060A1E), location: 0),
+            stops = [.init(color: Self.topColour(.night) ?? .clear, location: 0),
                      .init(color: Color(hex: 0x0F1A3D), location: at(0.55)),
                      .init(color: Color(hex: 0x22305C), location: at(0.85)),
                      .init(color: Color(hex: 0x6B5A5E), location: max(p - 0.03, 0)),
@@ -69,7 +78,7 @@ struct SkyView: View {
                      .init(color: LGColor.night, location: p),
                      .init(color: LGColor.night, location: 1)]
         case .dawn:
-            stops = [.init(color: Color(hex: 0x1B2552), location: 0),
+            stops = [.init(color: Self.topColour(.dawn) ?? .clear, location: 0),
                      .init(color: Color(hex: 0x3A4A7E), location: at(0.5)),
                      .init(color: Color(hex: 0x9A8AA0), location: at(0.8)),
                      .init(color: Color(hex: 0xF2C38E), location: max(p - 0.02, 0)),

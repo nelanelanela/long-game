@@ -50,6 +50,14 @@ struct GaugeHero: View, Animatable {
 
     /// How far the sky reaches above the hero, to sit behind the status bar, title and tabs.
     static let skyExtension: CGFloat = 340
+    /// How far further up the sky (and its rain or snow) fades out, for when the page is pulled down.
+    static let skyFade: CGFloat = 700
+    /// Clear at the top, full at the bottom, easing in so there is no visible start.
+    static let fadeUp = LinearGradient(stops: [.init(color: .clear, location: 0),
+                                               .init(color: .black.opacity(0.25), location: 0.35),
+                                               .init(color: .black.opacity(0.7), location: 0.7),
+                                               .init(color: .black, location: 1)],
+                                       startPoint: .top, endPoint: .bottom)
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -93,6 +101,15 @@ struct GaugeHero: View, Animatable {
                 // arc, so the dotted arc and its moon show on it.
                 if extendsSky {
                     let ext = Self.skyExtension
+                    // Past the extension (pulling the page down), the sky's top colour carries on and slowly gives
+                    // way to the page, so there is never a straight edge.
+                    if let top = SkyView.topColour(skyTone) {
+                        top.frame(width: width, height: Self.skyFade)
+                            .mask(Self.fadeUp)
+                            .offset(y: -ext - Self.skyFade)
+                            .allowsHitTesting(false)
+                            .accessibilityHidden(true)
+                    }
                     SkyView(tone: skyTone, horizon: (ext + metrics.waterY) / (ext + metrics.height),
                             moon: gauge.tab == .longGame, glowX: min(max((width / 2 + metrics.sunOffsetX) / width, 0), 1),
                             glowStrength: glowStrength(place))
@@ -127,6 +144,17 @@ struct GaugeHero: View, Animatable {
                                      horizonY: metrics.waterY,
                                      isRunning: isRunning)
                         .frame(width: width, height: metrics.height)
+                    // Rain and snow keep falling above the scene, behind the bar and past the top of the page, thinning
+                    // out the higher they are.
+                    if extendsSky {
+                        let above = Self.skyExtension + Self.skyFade
+                        WeatherLayerView(layer: weather, sun: CGPoint(x: centre.x, y: centre.y + above),
+                                         sunRadius: size * 0.3, horizonY: above, isRunning: isRunning,
+                                         aboveSceneSky: metrics.waterY)
+                            .frame(width: width, height: above)
+                            .mask(Self.fadeUp)
+                            .offset(y: -above)
+                    }
                 }
                 // An invisible marker where the sun sits on Today's arc, for the opening sunrise to glide to.
                 // Measured before it is positioned: `position` makes a view as big as its parent, which would report the
