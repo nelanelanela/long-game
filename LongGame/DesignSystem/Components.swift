@@ -157,6 +157,9 @@ struct LGButtonStyle: ButtonStyle {
         switch kind {
         case .primary: darkDisabledPrimary ? LGColor.inkMuted : LGColor.primaryLabel
         case .translucent: .white
+        // The white button keeps navy words in both looks; the adaptive ink turns cream in the dark look and
+        // vanishes on white (the session picture's "Replace with a photo").
+        case .light: LGColor.navy
         default: LGColor.ink
         }
     }
