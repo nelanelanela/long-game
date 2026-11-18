@@ -17,8 +17,11 @@ struct WeatherLayerView: View {
     var isRunning = true
 
     /// Set when this layer is the sky above the scene (Home's sky runs on up behind the bar and past the top of the
-    /// page): only the falling rain and snow, as dense as in a scene whose sky is this tall, with no veil and no water.
+    /// page): only the falling rain and snow, as dense as in a scene whose sky is this tall, with no water. Rain's veil
+    /// is even all the way up; the view's mask fades it out.
     var aboveSceneSky: CGFloat? = nil
+    /// True when a layer above carries on from this one: rain's veil starts at full strength at the top, with no fade.
+    var continuesAbove = false
 
     /// How many drops or flakes, so the sky above has the same density as the scene.
     private func count(_ inScene: Int) -> Int {
@@ -107,15 +110,17 @@ struct WeatherLayerView: View {
 
     private func drawRain(_ context: inout GraphicsContext, size: CGSize, t: Double) {
         let above = aboveSceneSky != nil
-        // A 10% cooler scene: a faint navy veil, fading out at the top and below the water so it has no edges.
-        if !above {
-            let veil = Gradient(stops: [.init(color: LGColor.navy.opacity(0), location: 0),
-                                        .init(color: LGColor.navy.opacity(0.1), location: 0.18),
-                                        .init(color: LGColor.navy.opacity(0.1), location: horizonY / size.height),
-                                        .init(color: LGColor.navy.opacity(0), location: 1)])
-            context.fill(Path(CGRect(origin: .zero, size: size)),
-                         with: .linearGradient(veil, startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
-        }
+        // A 10% cooler scene: a faint navy veil, fading out below the water and, unless the sky above carries it on,
+        // at the top, so it has no edges.
+        let top = above || continuesAbove ? 0.1 : 0
+        let bottom = above ? 0.1 : 0
+        let water = above ? 1 : horizonY / size.height
+        let veil = Gradient(stops: [.init(color: LGColor.navy.opacity(top), location: 0),
+                                    .init(color: LGColor.navy.opacity(0.1), location: above || continuesAbove ? 0 : 0.18),
+                                    .init(color: LGColor.navy.opacity(0.1), location: water),
+                                    .init(color: LGColor.navy.opacity(bottom), location: 1)])
+        context.fill(Path(CGRect(origin: .zero, size: size)),
+                     with: .linearGradient(veil, startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
         var rng = SceneWeather.Seeded(above ? 0x4A2 : 0x4A1)
         for _ in 0..<count(70) {
             let x0 = rng.next() * Double(size.width + 40), y0 = rng.next() * Double(horizonY)

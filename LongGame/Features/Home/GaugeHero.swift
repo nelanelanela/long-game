@@ -50,14 +50,23 @@ struct GaugeHero: View, Animatable {
 
     /// How far the sky reaches above the hero, to sit behind the status bar, title and tabs.
     static let skyExtension: CGFloat = 340
-    /// How far further up the sky (and its rain or snow) fades out, for when the page is pulled down.
-    static let skyFade: CGFloat = 700
-    /// Clear at the top, full at the bottom, easing in so there is no visible start.
-    static let fadeUp = LinearGradient(stops: [.init(color: .clear, location: 0),
-                                               .init(color: .black.opacity(0.25), location: 0.35),
-                                               .init(color: .black.opacity(0.7), location: 0.7),
-                                               .init(color: .black, location: 1)],
-                                       startPoint: .top, endPoint: .bottom)
+    /// How far further up the sky (and its rain or snow) fades out, for when the page is pulled down. It starts above
+    /// the top of the screen, so it is only seen when the page is pulled.
+    static let skyFade: CGFloat = 1200
+
+    /// A mask that is full over the bottom `solid` points and fades out over the `fade` points above them, along a
+    /// smooth curve (no visible start or end).
+    static func fadeUp(solid: CGFloat, fade: CGFloat) -> LinearGradient {
+        let total = solid + fade
+        let steps = 24
+        var stops: [Gradient.Stop] = (0...steps).map { i in
+            let t = Double(i) / Double(steps)                 // 0 at the top of the fade, 1 where it is full
+            let eased = t * t * t * (t * (t * 6 - 15) + 10)    // smootherstep
+            return .init(color: .black.opacity(eased), location: t * fade / total)
+        }
+        stops.append(.init(color: .black, location: 1))
+        return LinearGradient(stops: stops, startPoint: .top, endPoint: .bottom)
+    }
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -105,7 +114,7 @@ struct GaugeHero: View, Animatable {
                     // way to the page, so there is never a straight edge.
                     if let top = SkyView.topColour(skyTone) {
                         top.frame(width: width, height: Self.skyFade)
-                            .mask(Self.fadeUp)
+                            .mask(Self.fadeUp(solid: 0, fade: Self.skyFade))
                             .offset(y: -ext - Self.skyFade)
                             .allowsHitTesting(false)
                             .accessibilityHidden(true)
@@ -142,17 +151,17 @@ struct GaugeHero: View, Animatable {
                 if let weather {
                     WeatherLayerView(layer: weather, sun: centre, sunRadius: size * 0.3, sunRayRadius: size * 0.46,
                                      horizonY: metrics.waterY,
-                                     isRunning: isRunning)
+                                     isRunning: isRunning, continuesAbove: extendsSky)
                         .frame(width: width, height: metrics.height)
-                    // Rain and snow keep falling above the scene, behind the bar and past the top of the page, thinning
-                    // out the higher they are.
+                    // Rain and snow keep falling above the scene at full strength behind the bar, then thin out past
+                    // the top of the screen, where only pulling the page down shows them.
                     if extendsSky {
                         let above = Self.skyExtension + Self.skyFade
                         WeatherLayerView(layer: weather, sun: CGPoint(x: centre.x, y: centre.y + above),
                                          sunRadius: size * 0.3, horizonY: above, isRunning: isRunning,
                                          aboveSceneSky: metrics.waterY)
                             .frame(width: width, height: above)
-                            .mask(Self.fadeUp)
+                            .mask(Self.fadeUp(solid: Self.skyExtension, fade: Self.skyFade))
                             .offset(y: -above)
                     }
                 }
