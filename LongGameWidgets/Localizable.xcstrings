@@ -4,7 +4,23 @@
     "%@" : {
 
     },
+    "%@ · at %@ h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · at %2$@ h"
+          }
+        }
+      }
+    },
     "%@ %@, the longest day" : {
+
+    },
+    "%@ are your day." : {
+
+    },
+    "%@ days played · each row is four weeks" : {
 
     },
     "%@ extra" : {
@@ -17,6 +33,12 @@
 
     },
     "%@ hours" : {
+
+    },
+    "%@ hours came before" : {
+
+    },
+    "%@ hours to go." : {
 
     },
     "%@ left" : {
@@ -54,6 +76,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ of %2$@ %3$@."
+          }
+        }
+      }
+    },
+    "%@ of %@ characters" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@ characters"
           }
         }
       }
@@ -106,6 +138,9 @@
     "%@ to go." : {
 
     },
+    "%@ years ago today," : {
+
+    },
     "%@ years since you started." : {
 
     },
@@ -115,6 +150,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@, %2$@ extra today."
+          }
+        }
+      }
+    },
+    "%@, at %@ hours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, at %2$@ hours"
           }
         }
       }
@@ -138,7 +183,20 @@
     "%@. The sun has fully risen." : {
 
     },
+    "%@. This %@ so far: %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. This %2$@ so far: %3$@."
+          }
+        }
+      }
+    },
     "%@. Today %@. This week %@ of %@ hours. The long game %@ of 10,000 hours." : {
+
+    },
+    "%@s" : {
 
     },
     "%lld days" : {
@@ -171,6 +229,9 @@
     "%lld months" : {
 
     },
+    "%lld of them so far." : {
+
+    },
     "%lld seconds" : {
 
     },
@@ -192,7 +253,48 @@
     "%lld%% of the way" : {
 
     },
+    "^[%lld day](inflect: true) later" : {
+
+    },
+    "^[%lld hour](inflect: true) between these two" : {
+
+    },
+    "^[%lld hour](inflect: true) of %@ between these two." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^[%1$lld hour](inflect: true) of %2$@ between these two."
+          }
+        }
+      }
+    },
+    "^[%lld month](inflect: true) later" : {
+
+    },
+    "^[%lld week](inflect: true) later" : {
+
+    },
+    "^[%lld year](inflect: true) ^[%lld month](inflect: true) later" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "^[%1$lld year](inflect: true) ^[%2$lld month](inflect: true) later"
+          }
+        }
+      }
+    },
+    "^[%lld year](inflect: true) later" : {
+
+    },
     "+%lld h/wk" : {
+
+    },
+    "10,000 hours" : {
+
+    },
+    "18 × 24 in" : {
 
     },
     "a full day" : {
@@ -217,6 +319,9 @@
 
     },
     "a third of the way" : {
+
+    },
+    "A year ago today," : {
 
     },
     "A year since you started." : {
@@ -269,6 +374,9 @@
     "almost there" : {
 
     },
+    "at %@ h" : {
+
+    },
     "At your actual pace: %@" : {
 
     },
@@ -300,6 +408,9 @@
 
     },
     "Choose the view" : {
+
+    },
+    "cloudy" : {
 
     },
     "Craft" : {
@@ -362,6 +473,9 @@
     "just under %@" : {
 
     },
+    "Last %@:" : {
+
+    },
     "last day of the week" : {
 
     },
@@ -369,6 +483,9 @@
 
     },
     "Last week, day by day: %@." : {
+
+    },
+    "light rain" : {
 
     },
     "Long Game" : {
@@ -398,6 +515,9 @@
     "Milestone reached · estimate" : {
 
     },
+    "mist" : {
+
+    },
     "morning" : {
 
     },
@@ -420,6 +540,9 @@
 
     },
     "No weekly target yet." : {
+
+    },
+    "Now" : {
 
     },
     "Now · %@" : {
@@ -485,6 +608,9 @@
     "Pauses the running session, or resumes it if it's paused." : {
 
     },
+    "Photo" : {
+
+    },
     "Photo from %@, %@ session" : {
       "localizations" : {
         "en" : {
@@ -510,6 +636,16 @@
     "Playing" : {
 
     },
+    "Poster: %@ hours of %@, %@ days played." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Poster: %1$@ hours of %2$@, %3$@ days played."
+          }
+        }
+      }
+    },
     "Ray %lld lit" : {
 
     },
@@ -517,6 +653,12 @@
 
     },
     "Reached 10,000 hours" : {
+
+    },
+    "Reached on %@" : {
+
+    },
+    "Reached on %@." : {
 
     },
     "rest day" : {
@@ -556,6 +698,9 @@
     "Sign in to iCloud in the Settings app to keep a copy." : {
 
     },
+    "snow" : {
+
+    },
     "some" : {
 
     },
@@ -563,6 +708,9 @@
 
     },
     "Started %@. Enjoy it." : {
+
+    },
+    "started in %@" : {
 
     },
     "Started on %@" : {
@@ -626,6 +774,9 @@
     "The sun rises with this week's hours, or with the long game." : {
 
     },
+    "Then" : {
+
+    },
     "there" : {
 
     },
@@ -687,7 +838,38 @@
     "View" : {
 
     },
+    "windy" : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there, around %@ at your pace." : {
+
+    },
+    "Write a few lines to the person you'll be then. The sun keeps it sealed until you get there." : {
+
+    },
     "You crossed the finish line on %@" : {
+
+    },
+    "you played %@." : {
+
+    },
+    "you played %@. Today, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "you played %1$@. Today, %2$@."
+          }
+        }
+      }
+    },
+    "you played your first session here." : {
+
+    },
+    "you took this photo." : {
+
+    },
+    "You wrote this %@ hours ago" : {
 
     },
     "You're already playing at this pace" : {
@@ -714,6 +896,9 @@
       }
     },
     "Your %@th session." : {
+
+    },
+    "Your actual pace shows after two weeks of playing." : {
 
     },
     "Your session is already running." : {

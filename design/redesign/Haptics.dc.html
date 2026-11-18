@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Haptics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1100px; height: 640px; box-sizing: border-box; padding: 40px; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #5E6782">10</span><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em">Haptics · a quiet language</span><span style="font-size: 14px; line-height: 1.5; color: #5E6782; max-width: 900px">The same feeling always means the same thing, on the iPhone and on the Watch, so progress can be felt without looking.</span></div>
+<div style="padding: 4px 20px 8px; border-radius: 22px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(22,36,74,0.06)">
+<div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0 10px; font-size: 12px; font-weight: 600; color: #5E6782"><span>Name</span><span>Feels like</span><span>Means</span><span>Today</span></div>
+<div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Soft tap</span><span style="color: #5E6782">One light tap</span><span>A ray lights (every 5 minutes) · a session is saved · time is added · Undo</span><span style="color: #5E6782">Already used for rays; saving currently uses the success pattern</span></div><div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Two taps</span><span style="color: #5E6782">Two light taps, 0.12 s apart</span><span>Today’s stretch is covered (in the timer, or by a save)</span><span style="color: #5E6782">New</span></div><div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Rising three</span><span style="color: #5E6782">Three taps, each a little stronger</span><span>An hour milestone · the weekly pace is reached · 10,000 hours</span><span style="color: #5E6782">Milestones use success today</span></div><div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Tick</span><span style="color: #5E6782">The system selection tick</span><span>Steppers, the Crown, the Growth chart crossing a milestone, switching tabs</span><span style="color: #5E6782">As now</span></div><div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Ha-ha-ha</span><span style="color: #5E6782">Three taps, each softer</span><span>The giggle</span><span style="color: #5E6782">Unchanged</span></div><div style="display: grid; grid-template-columns: 130px 200px 1fr 240px; gap: 16px; padding: 12px 0; border-top: 1px solid #F0ECE5; font-size: 13px; line-height: 1.45"><span style="font-weight: 700">Nothing</span><span style="color: #5E6782">No haptic</span><span>Errors, deleting, pausing, notifications arriving in the app</span><span style="color: #5E6782">Quiet on purpose</span></div>
+</div>
+<span style="font-size: 13px; line-height: 1.5; color: #5E6782; max-width: 980px">Never two at once: the strongest one wins. Only when system haptics are on. The Watch plays the matching pattern on the wrist when the iPhone is locked. Widgets and the Live Activity stay silent.</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

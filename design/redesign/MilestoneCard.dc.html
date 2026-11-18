@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Milestone card</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="A thousand hours of piano. Reached on 5 November 2026, seven years after starting." style="width: 360px; height: 640px; position: relative; overflow: hidden; background: #FAF7F1; color: #16244A; font-family: Inter, -apple-system, system-ui, sans-serif">
+<div style="position: absolute; left: 0; top: 0"><dc-import name="Sky" w="360" h="420" tone="dawn" horizon="0.86" moon="true" moonX="0.8" moonY="0.3" hint-size="360px,420px"></dc-import></div>
+<div style="position: absolute; left: 50%; top: 214px; margin-left: -65px"><dc-import name="Sun" size="130" face="celebrate" idle="false" hint-size="130px,130px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 315px"><dc-import name="Land" w="360" h="120" tone="day" still="true" hint-size="360px,120px"></dc-import></div>
+<div style="position: absolute; left: 0; right: 0; top: 46px; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #FFFFFF">
+<span style="font-size: 11px; font-weight: 600; letter-spacing: 0.16em; color: #FFE08A">A MILESTONE IN THE LONG GAME</span>
+<span style="font-size: 30px; font-weight: 700; letter-spacing: -0.02em">Piano</span>
+</div>
+<div style="position: absolute; left: 24px; right: 24px; top: 446px; bottom: 20px; display: flex; flex-direction: column; align-items: center; text-align: center">
+<span style="font-size: 56px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">1,000 h</span>
+<span style="margin-top: 8px; font-size: 17px; font-weight: 600">A thousand hours.</span>
+<span style="margin-top: 6px; font-size: 13px; color: #5E6782">Reached on 5 November 2026 · started in 2019</span>
+<div style="flex: 1"></div>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #5E6782"><dc-import name="Sun" size="18" face="happy" halo="false" idle="false" hint-size="18px,18px"></dc-import>Long Game · the longest game, played in real life</span>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
