@@ -21,10 +21,14 @@ enum DebugOptions {
         return (target - total) * 3600
     }
 
-    /// Settings button: Home shows this anniversary today instead of the real one (cleared with nil).
+    /// Settings button: Home shows this anniversary today instead of the real one (cleared with nil). Like a real
+    /// anniversary it lasts only the calendar day it was chosen on; one saved without its day (older builds) is ignored.
     static var fakeAnniversary: Anniversary? {
         get {
-            switch UserDefaults.standard.string(forKey: "debug.fakeAnniversary") {
+            let defaults = UserDefaults.standard
+            let today = Calendar.current.startOfDay(for: Date()).timeIntervalSince1970
+            guard defaults.double(forKey: "debug.fakeAnniversaryDay") == today else { return nil }
+            return switch defaults.string(forKey: "debug.fakeAnniversary") {
             case "years": .years(2)
             case "year": .years(1)
             case "session": .session(100)
@@ -42,8 +46,15 @@ enum DebugOptions {
             case .months: "month"
             case nil: nil
             }
-            UserDefaults.standard.set(key, forKey: "debug.fakeAnniversary")
-            UserDefaults.standard.removeObject(forKey: "anniversary.faceDay")
+            let defaults = UserDefaults.standard
+            if let key {
+                defaults.set(key, forKey: "debug.fakeAnniversary")
+                defaults.set(Calendar.current.startOfDay(for: Date()).timeIntervalSince1970, forKey: "debug.fakeAnniversaryDay")
+            } else {
+                defaults.removeObject(forKey: "debug.fakeAnniversary")
+                defaults.removeObject(forKey: "debug.fakeAnniversaryDay")
+            }
+            defaults.removeObject(forKey: "anniversary.faceDay")
         }
     }
 

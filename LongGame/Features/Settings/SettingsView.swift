@@ -496,7 +496,7 @@ struct SettingsView: View {
                     } label: {
                         Text("Fake an anniversary on Home").lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
                     }
-                    Text("Home shows this line under the number today, with the celebrate face once. Choose None to go back to the real one.")
+                    Text("Home shows this line under the number today only, with the celebrate face once. Choose None to go back to the real one sooner.")
                         .lgText(.caption, color: LGColor.inkMuted)
                         .padding(.bottom, 12)
                 }
