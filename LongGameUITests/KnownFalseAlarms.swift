@@ -88,8 +88,9 @@ enum KnownFalseAlarms {
         // 6. Words scrolled under the pinned buttons at the bottom of Home, the intro pages, Welcome and setup steps
         //    1 and 3. Those pages scroll and the buttons sit on a soft fade on purpose; scrolled into view, the same
         //    words measure 5:1 or more.
-        //    Then and now (update 48) too: its Share and Choose other photos are pinned the same way.
-        let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 3", "Then and now"].contains(where: screen.hasPrefix)
+        //    Then and now (update 48) too: its Share and Choose other photos are pinned the same way. Since update 53
+        //    step 2 scrolls under its button at the largest sizes too (the setup scene sits above the year).
+        let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 2", "Setup 3", "Then and now"].contains(where: screen.hasPrefix)
         if issue.auditType == .contrast || issue.auditType == .textClipped, pinned, element.elementType == .staticText,
            frame.minY >= 700 {
             return true

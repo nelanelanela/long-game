@@ -123,7 +123,7 @@ struct CraftStepView: View {
 
     /// The typed text as a chip, already selected: "+ Calligraphy".
     private func ownChip(_ name: String) -> some View {
-        label(Text("+ ") + Text(verbatim: name), selected: true)
+        label(Text(verbatim: "+ " + name), selected: true)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("Your own: \(name)"))
             .accessibilityAddTraits(.isSelected)

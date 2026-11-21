@@ -88,7 +88,6 @@ struct SetupSceneView: View {
         if let value {
             Text(verbatim: value)
                 .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption))
-                .lineLimit(1)
                 .padding(.horizontal, 11)
                 .frame(minHeight: 28)
                 .background(editing ? LGColor.setupChipEditing : LGColor.surface, in: Capsule())
@@ -113,16 +112,30 @@ struct SetupTimeStripView: View {
     let lit: SetupTimeStrip
 
     var body: some View {
-        HStack(spacing: 8) {
-            label("Before today", lit: lit == .beforeToday)
-            bar(lit: lit == .beforeToday, dashed: false)
-            VStack(spacing: 2) {
-                Circle().fill(LGColor.selectedFill).frame(width: 8, height: 8)
-                Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
+        // One line when it fits; at the largest text sizes the three parts stack, so the page never grows wider.
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                label("Before today", lit: lit == .beforeToday)
+                bar(lit: lit == .beforeToday, dashed: false)
+                today.padding(.top, 12)
+                bar(lit: lit == .nextYear, dashed: lit == .beforeToday)
+                label("Next 12 months", lit: lit == .nextYear)
             }
-            .padding(.top, 12)
-            bar(lit: lit == .nextYear, dashed: lit == .beforeToday)
-            label("Next 12 months", lit: lit == .nextYear)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 10) {
+                    bar(lit: lit == .beforeToday, dashed: false).frame(width: 36)
+                    label("Before today", lit: lit == .beforeToday)
+                }
+                HStack(spacing: 10) {
+                    Circle().fill(LGColor.selectedFill).frame(width: 8, height: 8).frame(width: 36)
+                    Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
+                }
+                HStack(spacing: 10) {
+                    bar(lit: lit == .nextYear, dashed: lit == .beforeToday).frame(width: 36)
+                    label("Next 12 months", lit: lit == .nextYear)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 24)
         .accessibilityHidden(true)
@@ -131,6 +144,13 @@ struct SetupTimeStripView: View {
                 .accessibilityElement()
                 .accessibilityLabel(Text(verbatim: lit.spoken))
                 .accessibilityAddTraits(.isImage)
+        }
+    }
+
+    private var today: some View {
+        VStack(spacing: 2) {
+            Circle().fill(LGColor.selectedFill).frame(width: 8, height: 8)
+            Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
         }
     }
 
@@ -147,12 +167,13 @@ struct SetupTimeStripView: View {
         if lit {
             Capsule().fill(LinearGradient(colors: [LGColor.setupFinishTop, LGColor.setupFinishBottom],
                                           startPoint: .leading, endPoint: .trailing))
-                .frame(height: 4)
+                .frame(minWidth: 28, idealWidth: 28, maxWidth: .infinity, minHeight: 4, maxHeight: 4)
         } else if dashed {
             Line().stroke(LGColor.setupStripQuiet, style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [4, 5]))
-                .frame(height: 4)
+                .frame(minWidth: 28, idealWidth: 28, maxWidth: .infinity, minHeight: 4, maxHeight: 4)
         } else {
-            Capsule().fill(LGColor.setupStripQuiet).frame(height: 4)
+            Capsule().fill(LGColor.setupStripQuiet)
+                .frame(minWidth: 28, idealWidth: 28, maxWidth: .infinity, minHeight: 4, maxHeight: 4)
         }
     }
 

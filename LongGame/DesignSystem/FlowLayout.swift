@@ -32,7 +32,9 @@ struct FlowLayout: Layout {
         var result = Arrangement()
         var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0
         for (i, sub) in subviews.enumerated() {
-            let size = sub.sizeThatFits(.unspecified)
+            var size = sub.sizeThatFits(.unspecified)
+            // An item wider than the whole line (a long name at the largest text sizes) wraps inside it instead.
+            if width.isFinite, size.width > width { size = sub.sizeThatFits(ProposedViewSize(width: width, height: nil)) }
             if x > 0, x + size.width > width {
                 x = 0
                 y += rowHeight + spacing
