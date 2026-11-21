@@ -26,47 +26,45 @@ enum CraftSuggestions {
         return nil
     }
 
-    static func filtered(_ query: String) -> [CraftGroup] {
-        let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard !q.isEmpty else { return groups }
-        return groups.compactMap { g in
-            let hits = g.crafts.filter { $0.lowercased().contains(q) }
-            return hits.isEmpty ? nil : CraftGroup(name: g.name, crafts: hits)
-        }
-    }
-
     static func isValidName(_ text: String) -> Bool {
         (2...40).contains(text.trimmingCharacters(in: .whitespacesAndNewlines).count)
     }
 
-    /// What the list shows for the typed text (update 53).
+    /// What the list shows (updates 53 and 54). The list is never filtered: every group and every choice is always
+    /// there, and the typed name is added on top as its own chip.
     struct Choice: Equatable {
-        /// "Your own": the typed text as a chip, already selected. Nil below 2 characters or on an exact match.
+        /// "Your own": the typed text as a chip, from 2 characters, unless it matches a choice exactly.
         var own: String?
-        /// The suggestion the text matches exactly (ignoring case), which is selected instead.
-        var matched: String?
-        /// The groups to show under their labels.
+        /// The choice that is selected: one tapped (`picked`), or the one the typed text matches exactly.
+        var selectedChoice: String?
+        /// Every group, always.
         var groups: [CraftGroup]
-        /// "Not on the list? It's your game, call it anything." when only the own chip is left.
-        var showsNoMatchLine: Bool
-
-        /// The craft the button would play: the exact match, or the own text.
-        var selected: String? { matched ?? own }
+        /// "Not on the list? It's your game, call it anything." shows exactly when the own chip shows.
+        var showsNoMatchLine: Bool { own != nil }
+        /// The own chip is selected while no choice is.
+        var ownSelected: Bool { own != nil && selectedChoice == nil }
+        /// The craft the button plays: the selected choice, or the typed name.
+        var selected: String? { selectedChoice ?? own }
     }
 
-    static func choice(_ text: String) -> Choice {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let hit = match(trimmed)
-        // An exact match shows every group again, so another craft is one tap away.
-        let shown = hit != nil ? groups : filtered(trimmed)
-        let own = hit == nil && trimmed.count >= 2 ? String(trimmed.prefix(40)) : nil
-        return Choice(own: own, matched: hit?.craft, groups: shown, showsNoMatchLine: own != nil && shown.isEmpty)
+    /// - Parameters:
+    ///   - text: what is typed in the field (kept as typed when a choice is tapped).
+    ///   - picked: a choice tapped in the list, which wins over the typed text.
+    static func choice(_ text: String, picked: String? = nil) -> Choice {
+        let trimmed = String(text.trimmingCharacters(in: .whitespacesAndNewlines).prefix(40))
+        let exact = match(trimmed)?.craft
+        let own = exact == nil && trimmed.count >= 2 ? trimmed : nil
+        return Choice(own: own, selectedChoice: picked ?? exact, groups: groups)
     }
 
-    /// "Play Calligraphy" once a name of 2 to 40 characters exists, otherwise nil ("Continue", disabled).
-    static func playTitle(_ text: String) -> String? {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard isValidName(trimmed) else { return nil }
-        return String(localized: "Play \(match(trimmed)?.craft ?? trimmed)")
+    /// The group a choice belongs to.
+    static func group(of craft: String) -> String? {
+        groups.first { $0.crafts.contains(craft) }?.name
+    }
+
+    /// "Play Calligraphy" once a name of 2 to 40 characters is chosen, otherwise nil ("Continue", disabled).
+    static func playTitle(_ name: String?) -> String? {
+        guard let name, isValidName(name) else { return nil }
+        return String(localized: "Play \(name)")
     }
 }

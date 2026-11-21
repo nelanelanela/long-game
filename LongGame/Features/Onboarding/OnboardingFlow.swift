@@ -3,8 +3,17 @@ import SwiftData
 
 @Observable
 final class OnboardingModel {
-    var craftName = ""
-    var category = CraftSuggestions.customCategory
+    /// What is typed in the craft field. A tapped choice doesn't change it (update 54).
+    var craftName = "" {
+        didSet { if craftName != oldValue { pickedCraft = nil } }
+    }
+    /// A choice tapped in the list, which wins over the typed text until the text changes or the own chip is tapped.
+    var pickedCraft: String?
+    /// The list as it stands, and the craft that would be played.
+    var craftChoice: CraftSuggestions.Choice { CraftSuggestions.choice(craftName, picked: pickedCraft) }
+    var chosenCraft: String? { craftChoice.selected }
+    /// The suggestion group of the chosen craft, or "Your own".
+    var category: String { chosenCraft.flatMap(CraftSuggestions.group(of:)) ?? CraftSuggestions.customCategory }
     var startYear: Int
     var hours: [Int: Int] = [:]
     /// "Before today" for a game started this year: about how many hours so far, in total (update 53).
@@ -73,7 +82,7 @@ final class OnboardingModel {
 
     /// The setup scene as it stands on a step.
     func scene(editing: SetupSceneState.Chip?, pace: Double? = nil, showsFinish: Bool = false) -> SetupSceneState {
-        let name = CraftSuggestions.isValidName(craftName) ? craftName.trimmingCharacters(in: .whitespacesAndNewlines) : ""
+        let name = chosenCraft ?? ""
         return SetupSceneState(craftName: name,
                                startYear: startYearKnown || editing == .startYear ? startYear : nil,
                                score: estimateKnown || editing == .score ? estimatedSoFar() : nil,
@@ -84,7 +93,7 @@ final class OnboardingModel {
     /// Saves the craft, the estimates, the weekly target, and the iCloud choice (never the daily reminder, which
     /// only Settings turns on); Home then opens on The long game, once.
     func save(in context: ModelContext) {
-        let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
+        let craft = Craft(name: chosenCraft ?? craftName.trimmingCharacters(in: .whitespacesAndNewlines),
                           category: category, startYear: startYear, createdAt: now)
         context.insert(craft)
         for e in estimates {

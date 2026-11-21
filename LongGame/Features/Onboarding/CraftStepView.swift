@@ -8,10 +8,8 @@ struct CraftStepView: View {
     @FocusState private var focused: Bool
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-    private var choice: CraftSuggestions.Choice { CraftSuggestions.choice(model.craftName) }
-
     var body: some View {
-        let choice = choice
+        let choice = model.craftChoice
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(step: 1, showsBack: onBack != nil, onBack: onBack)
 
@@ -21,28 +19,40 @@ struct CraftStepView: View {
 
             field.padding(.top, 14)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    if let own = choice.own {
-                        group(name: CraftSuggestions.customCategory) { ownChip(own) }
-                    }
-                    ForEach(choice.groups) { group in
-                        self.group(name: group.name) {
-                            ForEach(group.crafts, id: \.self) { craft in chip(craft, in: group, selected: craft == choice.matched) }
+            // Update 54: every group and every choice is always shown; the typed name is added on top, never
+            // filtered down. The top stays in view when the own chip appears.
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 14) {
+                        if let own = choice.own {
+                            VStack(alignment: .leading, spacing: 8) {
+                                groupLabel(String(localized: "Your own"))
+                                ownChip(own, selected: choice.ownSelected)
+                                Text("Not on the list? It’s your game, call it anything.")
+                                    .lgText(.caption, color: LGColor.inkMuted)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        ForEach(choice.groups) { group in
+                            VStack(alignment: .leading, spacing: 8) {
+                                groupLabel(group.name)
+                                chips {
+                                    ForEach(group.crafts, id: \.self) { craft in chip(craft, selected: craft == choice.selectedChoice) }
+                                }
+                            }
                         }
                     }
-                    if choice.showsNoMatchLine {
-                        Text("Not on the list? It’s your game, call it anything.")
-                            .lgText(.note, color: LGColor.inkMuted)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    .padding(.top, 14)
+                    .id("top")
+                    // Room at the end so the last chips scroll fully clear of the fade.
+                    .padding(.bottom, 52)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.top, 14)
-                // Room at the end so the last chips scroll fully clear of the fade.
-                .padding(.bottom, 52)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: choice.own != nil) { _, shown in
+                    if shown { proxy.scrollTo("top", anchor: .top) }
+                }
             }
-            .scrollDismissesKeyboard(.interactively)
             .overlay(alignment: .bottom) {
                 // A soft fade so it is clear the list scrolls.
                 LinearGradient(colors: [LGColor.background.opacity(0), LGColor.background],
@@ -51,9 +61,9 @@ struct CraftStepView: View {
                     .allowsHitTesting(false)
             }
 
-            Button(CraftSuggestions.playTitle(model.craftName) ?? String(localized: "Continue"), action: play)
+            Button(CraftSuggestions.playTitle(choice.selected) ?? String(localized: "Continue"), action: play)
                 .buttonStyle(.lg(.primary))
-                .disabled(!CraftSuggestions.isValidName(model.craftName))
+                .disabled(choice.selected == nil)
                 .padding(.top, 14)
             LGBrandLine().padding(.top, 12)
         }
@@ -78,8 +88,6 @@ struct CraftStepView: View {
                 .onSubmit(play)
                 .onChange(of: model.craftName) { _, new in
                     if new.count > 40 { model.craftName = String(new.prefix(40)) }
-                    if let hit = CraftSuggestions.match(new) { model.category = hit.group }
-                    else { model.category = CraftSuggestions.customCategory }
                 }
             if !model.craftName.isEmpty {
                 Button { model.craftName = "" } label: {
@@ -101,42 +109,47 @@ struct CraftStepView: View {
 
     /// Return on the keyboard does the same as the button.
     private func play() {
-        guard CraftSuggestions.isValidName(model.craftName) else { return }
-        if let hit = CraftSuggestions.match(model.craftName) { model.craftName = hit.craft }
-        else { model.craftName = model.craftName.trimmingCharacters(in: .whitespacesAndNewlines) }
+        guard model.chosenCraft != nil else { return }
         focused = false
         onContinue()
     }
 
-    private func group<Content: View>(name: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(verbatim: name == CraftSuggestions.customCategory ? String(localized: "Your own") : name)
-                .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: LGColor.inkMuted)
-                .accessibilityAddTraits(.isHeader)
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: 6) { content() }
-            } else {
-                FlowLayout(spacing: 6) { content() }
-            }
+    private func groupLabel(_ name: String) -> some View {
+        Text(verbatim: name)
+            .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption), color: LGColor.inkMuted)
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    @ViewBuilder
+    private func chips<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 6) { content() }
+        } else {
+            FlowLayout(spacing: 6) { content() }
         }
     }
 
-    /// The typed text as a chip, already selected: "+ Calligraphy".
-    private func ownChip(_ name: String) -> some View {
-        label(Text(verbatim: "+ " + name), selected: true)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text("Your own: \(name)"))
-            .accessibilityAddTraits(.isSelected)
+    /// The typed name as a chip, "+ Calligraphy": selected until a choice is tapped; tapping it selects it back.
+    private func ownChip(_ name: String, selected: Bool) -> some View {
+        Button { model.pickedCraft = nil } label: {
+            label(Text(verbatim: "+  " + name), selected: selected)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("Your own: \(name)"))
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
-    /// Tapping selects the chip and fills the field (instead of the typed text); tapping it again clears both.
-    private func chip(_ craft: String, in group: CraftGroup, selected: Bool) -> some View {
+    /// Tapping a choice selects it instead of the typed name; the field keeps what was typed. With nothing typed,
+    /// the choice fills the field as before. Tapping the selected choice again lets it go.
+    private func chip(_ craft: String, selected: Bool) -> some View {
         Button {
             if selected {
-                model.craftName = ""
+                if model.pickedCraft == craft { model.pickedCraft = nil } else { model.craftName = "" }
+            } else if model.craftName.trimmingCharacters(in: .whitespaces).count >= 2 {
+                model.pickedCraft = craft
+                focused = false
             } else {
                 model.craftName = craft
-                model.category = group.name
                 focused = false
             }
         } label: {
@@ -160,16 +173,11 @@ struct CraftStepView: View {
     }
 }
 
-#Preview("Craft · nothing selected") {
+#Preview("Craft · empty") {
     CraftStepView(model: OnboardingModel(), onContinue: {})
 }
 
-#Preview("Craft · Piano selected") {
-    let m = OnboardingModel(); m.craftName = "Piano"; m.category = "Music"
-    return CraftStepView(model: m, onContinue: {})
-}
-
-#Preview("Craft · searching “pa”") {
+#Preview("Craft · “pa”") {
     let m = OnboardingModel(); m.craftName = "pa"
     return CraftStepView(model: m, onContinue: {})
 }
@@ -179,12 +187,17 @@ struct CraftStepView: View {
     return CraftStepView(model: m, onContinue: {})
 }
 
-#Preview("Craft · dark") {
-    let m = OnboardingModel(); m.craftName = "pa"
+#Preview("Craft · “piano”") {
+    let m = OnboardingModel(); m.craftName = "piano"
+    return CraftStepView(model: m, onContinue: {})
+}
+
+#Preview("Craft · “Calligraphy”, dark") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"
     return CraftStepView(model: m, onContinue: {}).preferredColorScheme(.dark)
 }
 
 #Preview("Craft · AX5") {
-    CraftStepView(model: OnboardingModel(), onContinue: {})
-        .environment(\.dynamicTypeSize, .accessibility5)
+    let m = OnboardingModel(); m.craftName = "Calligraphy"
+    return CraftStepView(model: m, onContinue: {}).environment(\.dynamicTypeSize, .accessibility5)
 }

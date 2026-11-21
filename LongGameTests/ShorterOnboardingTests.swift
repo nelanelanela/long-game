@@ -126,33 +126,65 @@ struct ShorterOnboardingTests {
         #expect(scene.sunHeight == 0.31)
     }
 
-    // MARK: The craft list
+    // MARK: The craft list (updates 53 and 54)
 
-    @Test func typedTextBecomesAnOwnChipAlreadySelected() {
+    private var allChoices: Int { CraftSuggestions.groups.reduce(0) { $0 + $1.crafts.count } }
+
+    @Test func theOwnChipShowsWithEveryChoice() {
         let c = CraftSuggestions.choice("Calligraphy")
         #expect(c.own == "Calligraphy")
+        #expect(c.ownSelected)
         #expect(c.selected == "Calligraphy")
-        #expect(c.showsNoMatchLine)
-        #expect(CraftSuggestions.playTitle("Calligraphy") == "Play Calligraphy")
-    }
-
-    @Test func anExactMatchSelectsTheSuggestionInstead() {
-        let c = CraftSuggestions.choice("piano")
-        #expect(c.own == nil)
-        #expect(c.matched == "Piano")
+        // Never filtered: all five groups, every choice.
         #expect(c.groups.count == 5)
-        #expect(CraftSuggestions.playTitle("piano") == "Play Piano")
+        #expect(c.groups.reduce(0) { $0 + $1.crafts.count } == allChoices)
+        #expect(allChoices == 36)
+        #expect(CraftSuggestions.playTitle(c.selected) == "Play Calligraphy")
     }
 
-    @Test func partialTextShowsTheOwnChipAndTheMatches() {
+    @Test func partialTextKeepsEveryChoiceToo() {
         let c = CraftSuggestions.choice("pa")
         #expect(c.own == "pa")
-        #expect(c.groups.flatMap(\.crafts) == ["Painting"])
-        #expect(!c.showsNoMatchLine)
+        #expect(c.groups.reduce(0) { $0 + $1.crafts.count } == allChoices)
         // One character: no own chip yet, and the button stays Continue.
         #expect(CraftSuggestions.choice("p").own == nil)
-        #expect(CraftSuggestions.playTitle("p") == nil)
+        #expect(CraftSuggestions.choice("p").selected == nil)
+        #expect(CraftSuggestions.playTitle(nil) == nil)
         #expect(CraftSuggestions.choice("").groups.count == 5)
+    }
+
+    @Test func anExactMatchSelectsTheChoiceAndShowsNoOwnChip() {
+        let c = CraftSuggestions.choice("piano")
+        #expect(c.own == nil)
+        #expect(c.selectedChoice == "Piano")
+        #expect(!c.showsNoMatchLine)
+        #expect(c.groups.reduce(0) { $0 + $1.crafts.count } == allChoices)
+        #expect(CraftSuggestions.playTitle(c.selected) == "Play Piano")
+    }
+
+    @Test func theNotOnTheListLineShowsExactlyWithTheOwnChip() {
+        for text in ["", "p", "pa", "Calligraphy", "piano", "Piano ", "zz"] {
+            let c = CraftSuggestions.choice(text)
+            #expect(c.showsNoMatchLine == (c.own != nil), "\(text)")
+        }
+    }
+
+    @Test func tappingAChoiceWinsAndTheTypedTextStays() {
+        let model = OnboardingModel(now: day(2026, 11, 21), calendar: utc)
+        model.craftName = "Calligraphy"
+        model.pickedCraft = "Drawing"
+        #expect(model.craftName == "Calligraphy")
+        #expect(model.chosenCraft == "Drawing")
+        #expect(model.category == "Visual arts & making")
+        #expect(!model.craftChoice.ownSelected)
+        // Only one thing is selected: tapping the own chip again selects it back.
+        model.pickedCraft = nil
+        #expect(model.chosenCraft == "Calligraphy")
+        #expect(model.category == CraftSuggestions.customCategory)
+        // Typing again lets go of the tapped choice.
+        model.pickedCraft = "Drawing"
+        model.craftName = "Calligraphy pens"
+        #expect(model.chosenCraft == "Calligraphy pens")
     }
 
     // MARK: The two questions moved out of setup
