@@ -150,6 +150,17 @@ enum LGColor {
     /// The iPad/Mac sidebar and its quiet capsule button (#EFEBE4), and the chosen row's wash.
     static let sidebar = Color(light: 0xEFEBE4, dark: 0x10163A)
     static let sidebarSelection = Color(light: 0x16244A, dark: 0xFFFFFF, lightOpacity: 0.10, darkOpacity: 0.10)
+    // The setup scene and time strip (update 53, SetupScene.dc.html)
+    /// A chip not yet filled in: dashed outline.
+    static let setupChipPending = Color(light: 0xD9D2C6, dark: 0x3A4470)
+    /// The chip being changed on this screen, and its gold ring.
+    static let setupChipEditing = Color(light: 0xFFF0C8, dark: 0x3A3350)
+    static let setupChipRing = Color(hex: 0xF0B43A)
+    /// The finish line chip's gold gradient.
+    static let setupFinishTop = Color(hex: 0xFFD66B)
+    static let setupFinishBottom = Color(hex: 0xF0A93A)
+    /// The time strip's quiet part.
+    static let setupStripQuiet = Color(light: 0xE4DFD6, dark: 0x2E3866)
     // Hour steppers
     static let stepperButton = Color(light: 0xF3F0EA, dark: 0x262F57)
     static let stepperButtonLimit = Color(light: 0xF6F4EF, dark: 0x1E2750)

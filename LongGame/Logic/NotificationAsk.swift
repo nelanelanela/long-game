@@ -1,13 +1,12 @@
 import Foundation
 
-/// The setup steps pushed after the craft name (step 1), in order.
+/// The setup steps pushed after the craft name (step 1), in order. Update 53 made setup five steps: the notification
+/// question moved to the first session (`NotificationAskRule`) and the weather to a week later (`WeatherInviteRule`).
 enum OnboardingStep: Hashable, CaseIterable, Sendable {
-    case start, hours, pace, keepSafe, notifications
-    /// "The weather outside" (update 49): always the last step.
-    case weather
+    case start, hours, pace, keepSafe
 }
 
-/// What iOS has been told about Long Game's notifications, as far as onboarding cares.
+/// What iOS has been told about Long Game's notifications.
 enum NotificationPermission: Equatable, Sendable {
     /// iOS has never shown its prompt.
     case notAsked
@@ -17,34 +16,23 @@ enum NotificationPermission: Equatable, Sendable {
     case denied
 }
 
-/// The order of the setup steps, and whether the "A gentle nudge" step (6) is shown.
+/// The order of the setup steps. Nothing in setup asks for a permission any more.
 enum OnboardingSteps {
-    /// "A gentle nudge" only makes sense while iOS has never asked; once permission is decided (for example after
-    /// "Switch to a new game") the question would do nothing, so the step is left out.
-    static func showsNotifications(_ permission: NotificationPermission) -> Bool {
-        permission == .notAsked
-    }
-
     /// The pushed steps in order.
-    static func order(permission: NotificationPermission) -> [OnboardingStep] {
-        OnboardingStep.allCases.filter { $0 != .notifications || showsNotifications(permission) }
+    static let order = OnboardingStep.allCases
+
+    /// The step after this one, or nil when this one ("Keep your game safe") finishes onboarding.
+    static func next(after step: OnboardingStep) -> OnboardingStep? {
+        guard let i = order.firstIndex(of: step), i + 1 < order.count else { return nil }
+        return order[i + 1]
     }
 
-    /// The step after this one, or nil when this one finishes onboarding.
-    static func next(after step: OnboardingStep, permission: NotificationPermission) -> OnboardingStep? {
-        let steps = order(permission: permission)
-        guard let i = steps.firstIndex(of: step), i + 1 < steps.count else { return nil }
-        return steps[i + 1]
-    }
-
-    /// How many step dots there are: the craft step plus the pushed steps.
-    static func count(permission: NotificationPermission) -> Int {
-        1 + order(permission: permission).count
-    }
+    /// How many step dots there are: the craft step plus the pushed steps (five).
+    static var count: Int { 1 + order.count }
 
     /// The dot a step lights up to (the craft step is 1).
     static func number(of step: OnboardingStep) -> Int {
-        2 + (OnboardingStep.allCases.firstIndex(of: step) ?? 0)
+        2 + (order.firstIndex(of: step) ?? 0)
     }
 }
 

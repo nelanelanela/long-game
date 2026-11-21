@@ -7,49 +7,92 @@ final class OnboardingModel {
     var category = CraftSuggestions.customCategory
     var startYear: Int
     var hours: [Int: Int] = [:]
-    /// Set once the user has seen the hours step, so the intro can show the real starting score.
+    /// "Before today" for a game started this year: about how many hours so far, in total (update 53).
+    var soFarTotal: Double = OnboardingModel.defaultSoFar
+    /// Set once the started-this-year screen has been seen, so going back to an earlier year fills this year's row
+    /// from its total.
+    var soFarSeen = false
+    /// Set once the user has seen the hours step, so the intro and the setup scene can show the real starting score.
     var estimateKnown = false
     /// The weekly pace chosen in step 4, saved with everything else when the last step is done.
     var targetHours: Double = 0
+    /// Set once step 4 has been seen, so the scene's pace chip is filled in.
+    var paceKnown = false
     /// Step 5's Save to iCloud switch: on unless the person turns it off (or has no iCloud account).
     var saveToICloud = true
-    /// The last step's "Show the weather": on only once location was allowed.
-    var weatherInScene = false
+    /// Set once step 2 has been seen, so the scene's "Since" chip is filled in.
+    var startYearKnown = false
+
+    static let defaultSoFar: Double = 20
+    /// The pace "From today on" suggests to someone who started this year.
+    static let startedThisYearPace: Double = 5
 
     let currentYear: Int
+    /// The day setup happens: everything entered is "before today".
+    let now: Date
+    let calendar: Calendar
 
     init(now: Date = Date(), calendar: Calendar = .current) {
+        self.now = now
+        self.calendar = calendar
         currentYear = calendar.component(.year, from: now)
         startYear = currentYear - 3
     }
 
+    /// Started this year: "Before today" asks for a total instead of hours a week.
+    var startedThisYear: Bool { startYear >= currentYear }
+
     var years: [Int] { Array(startYear...currentYear) }
 
-    func hoursFor(_ year: Int) -> Int { hours[year] ?? 5 }
-
-    var estimates: [YearRate] {
-        years.map { YearRate(year: $0, hoursPerWeek: Double(hoursFor($0))) }
+    /// Hours a week for a year. This year's row starts from the total given on the started-this-year screen, if any.
+    func hoursFor(_ year: Int) -> Int {
+        if let h = hours[year] { return h }
+        if year == currentYear && soFarSeen { return Int(soFarWeeklyRate.rounded()) }
+        return 5
     }
 
-    func estimatedSoFar(now: Date = Date(), calendar: Calendar = .current) -> Double {
+    /// The total as hours a week since 1 January, stored beside it.
+    var soFarWeeklyRate: Double { Baseline.weeklyRate(totalHours: soFarTotal, onboardingDate: now, calendar: calendar) }
+
+    var estimates: [YearRate] {
+        if startedThisYear {
+            return [YearRate(year: currentYear, hoursPerWeek: soFarWeeklyRate, totalHours: soFarTotal)]
+        }
+        return years.map { YearRate(year: $0, hoursPerWeek: Double(hoursFor($0))) }
+    }
+
+    func estimatedSoFar() -> Double {
         Baseline.hours(estimates: estimates, onboardingDate: now, calendar: calendar)
     }
 
-    /// This year's estimate is the pace on offer in step 4: there are no sessions to measure yet.
-    var actualPace: Double { Double(hoursFor(currentYear)) }
+    /// The pace "From today on" starts at: the latest year's hours a week, or 5 h for a game started this year.
+    var actualPace: Double { startedThisYear ? Self.startedThisYearPace : Double(hoursFor(currentYear)) }
+
+    /// The link card on "From today on".
+    var link: SetupLink { SetupLink.make(estimates: estimates, currentYear: currentYear) }
+
+    /// The setup scene as it stands on a step.
+    func scene(editing: SetupSceneState.Chip?, pace: Double? = nil, showsFinish: Bool = false) -> SetupSceneState {
+        let name = CraftSuggestions.isValidName(craftName) ? craftName.trimmingCharacters(in: .whitespacesAndNewlines) : ""
+        return SetupSceneState(craftName: name,
+                               startYear: startYearKnown || editing == .startYear ? startYear : nil,
+                               score: estimateKnown || editing == .score ? estimatedSoFar() : nil,
+                               weeklyPace: pace ?? (paceKnown ? targetHours : nil),
+                               showsFinish: showsFinish, editing: editing, now: now)
+    }
 
     /// Saves the craft, the estimates, the weekly target, and the iCloud choice (never the daily reminder, which
-    /// only Settings turns on); Home then opens on
-    /// The long game, once.
-    func save(in context: ModelContext, now: Date = Date()) {
+    /// only Settings turns on); Home then opens on The long game, once.
+    func save(in context: ModelContext) {
         let craft = Craft(name: craftName.trimmingCharacters(in: .whitespacesAndNewlines),
                           category: category, startYear: startYear, createdAt: now)
         context.insert(craft)
-        for year in years {
-            context.insert(YearEstimate(craftId: craft.id, year: year, hoursPerWeek: hoursFor(year)))
+        for e in estimates {
+            context.insert(YearEstimate(craftId: craft.id, year: e.year, hoursPerWeek: Int(e.hoursPerWeek.rounded()),
+                                        totalHours: e.totalHours))
         }
         // Hours estimated at onboarding never trigger milestone celebrations.
-        let seen = Milestones.newlyCrossed(total: estimatedSoFar(now: now), seen: [])
+        let seen = Milestones.newlyCrossed(total: estimatedSoFar(), seen: [])
         let settings: AppSettings
         if let existing = (try? context.fetch(FetchDescriptor<AppSettings>()))?.first {
             settings = existing
@@ -59,7 +102,6 @@ final class OnboardingModel {
         }
         settings.milestonesSeen = seen
         settings.thousandsAdopted = true
-        settings.weatherInScene = weatherInScene
         settings.syncEnabled = saveToICloud
         // The first Home after onboarding opens on The long game; every launch after that opens on This week.
         settings.lastHomeTab = .longGame
@@ -68,7 +110,7 @@ final class OnboardingModel {
 }
 
 /// Welcome (first launch, and again after "Switch to a new game"), the three "How the game works" pages (first
-/// onboarding only), then the seven setup steps (six when notifications were already decided: see `OnboardingSteps`).
+/// onboarding only), then the five setup steps. Nothing here asks for a permission (update 53).
 struct OnboardingFlow: View {
     /// False after "Switch to a new game": the user has played before, so the intro pages are skipped.
     let showIntro: Bool
@@ -82,22 +124,9 @@ struct OnboardingFlow: View {
     @State private var model = OnboardingModel()
     @State private var path: [OnboardingStep] = []
     @State private var stage = Stage.welcome
-    /// Read from iOS when onboarding opens; "A gentle nudge" is left out once permission is decided.
-    @State private var permission = NotificationPermission.notAsked
 
     private func push(after step: OnboardingStep) {
-        if let next = OnboardingSteps.next(after: step, permission: permission) { path.append(next) } else { startPlaying() }
-    }
-
-    /// "Allow notifications" only shows iOS's prompt (the daily reminder stays off); "Not now" doesn't ask.
-    /// Either way the question has been asked, and onboarding finishes.
-    private func answerNotifications(allow: Bool) {
-        UserDefaults.standard.set(true, forKey: Notifications.askedKey)
-        guard allow else { push(after: .notifications); return }
-        Task {
-            _ = await Notifications.requestAuthorization()
-            push(after: .notifications)
-        }
+        if let next = OnboardingSteps.next(after: step) { path.append(next) } else { startPlaying() }
     }
 
     /// Saves the game, then applies the iCloud choice (which reopens the same database with or without mirroring).
@@ -130,36 +159,35 @@ struct OnboardingFlow: View {
                 case .start:
                     StartYearView(model: model) { push(after: .start) }
                 case .hours:
-                    YearlyHoursView(model: model) { push(after: .hours) }
+                    if model.startedThisYear {
+                        SoFarThisYearView(model: model) { push(after: .hours) }
+                    } else {
+                        YearlyHoursView(model: model) { push(after: .hours) }
+                    }
                 case .pace:
-                    WeeklyTargetView(mode: .onboarding, actualPace: model.actualPace) { hours in
+                    WeeklyTargetView(mode: .onboarding, initial: model.paceKnown ? model.targetHours : nil,
+                                     actualPace: model.actualPace, now: model.now, total: model.estimatedSoFar(),
+                                     link: model.link, onboarding: model,
+                                     onBackToHours: { path.removeLast() }) { hours in
                         model.targetHours = hours
+                        model.paceKnown = true
                         push(after: .pace)
                     }
                 case .keepSafe:
-                    ICloudStepView(model: model, finishes: OnboardingSteps.next(after: .keepSafe, permission: permission) == nil,
-                                   letterTotal: model.estimatedSoFar()) {
+                    ICloudStepView(model: model, letterTotal: model.estimatedSoFar()) {
                         push(after: .keepSafe)
-                    }
-                case .notifications:
-                    NotificationsStepView(craftName: model.craftName, onAnswer: answerNotifications)
-                case .weather:
-                    WeatherStepView(letterTotal: model.estimatedSoFar()) { show in
-                        model.weatherInScene = show
-                        startPlaying()
                     }
                 }
             }
             .lgHidesNavigationBar()
         }
-        .environment(\.onboardingStepCount, OnboardingSteps.count(permission: permission))
-        .task { permission = await Notifications.permission() }
+        .environment(\.onboardingStepCount, OnboardingSteps.count)
     }
 }
 
-private struct OnboardingStepCountKey: EnvironmentKey { static let defaultValue = 6 }
+private struct OnboardingStepCountKey: EnvironmentKey { static let defaultValue = OnboardingSteps.count }
 extension EnvironmentValues {
-    /// How many step dots onboarding shows: six, or five when "A gentle nudge" is left out.
+    /// How many step dots onboarding shows: five.
     var onboardingStepCount: Int {
         get { self[OnboardingStepCountKey.self] }
         set { self[OnboardingStepCountKey.self] = newValue }

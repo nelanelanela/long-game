@@ -368,7 +368,10 @@ struct HomeView: View {
                                   })
             case .editPace:
                 NavigationStack {
-                    WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, onSave: saveTarget)
+                    WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, total: s.total,
+                                     link: SetupLink.make(estimates: estimates.map(\.rate),
+                                                          currentYear: Calendar.current.component(.year, from: Date())),
+                                     onSave: saveTarget)
                 }
             case .target(let first):
                 WeeklyTargetView(mode: first ? .firstTime : .newYear,
@@ -1172,7 +1175,10 @@ struct HomeView: View {
     /// Under the day bars: this week against the target; opens "Your pace for the year" to change it.
     private func targetRow(_ s: ProgressSummary, now: Date) -> some View {
         NavigationLink {
-            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, onSave: saveTarget)
+            WeeklyTargetView(mode: .edit, initial: target?.hoursPerWeek, actualPace: s.pace, total: s.total,
+                                     link: SetupLink.make(estimates: estimates.map(\.rate),
+                                                          currentYear: Calendar.current.component(.year, from: Date())),
+                                     onSave: saveTarget)
         } label: {
             TargetRow(target: target, hoursThisWeek: s.thisWeek, weekStart: weekStart, now: now)
         }

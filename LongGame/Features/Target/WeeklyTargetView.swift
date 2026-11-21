@@ -4,7 +4,7 @@ import SwiftUI
 /// Step 4 of onboarding, pushed from the target row on Home to change it, and a sheet when a year ends.
 struct WeeklyTargetView: View {
     enum Mode {
-        /// Setup step 4 of 6: back chevron, six step dots, "Continue" (step 5 is Keep your game safe).
+        /// Setup step 4 of 5, "From today on": the setup scene, the time strip, "Continue" (step 5 is Keep your game safe).
         case onboarding
         /// Pushed from Home: back chevron, "Save".
         case edit
@@ -21,25 +21,43 @@ struct WeeklyTargetView: View {
     let actualPace: Double
     let onSave: (Double) -> Void
     var now: Date = Date()
+    /// The total so far, for the finish line under the stepper (update 53). Nil leaves it out.
+    var total: Double?
+    /// The small card that links back to "Before today". Nil leaves it out.
+    var link: SetupLink?
+    /// Onboarding's answers, for the setup scene (step 4 only).
+    var onboarding: OnboardingModel?
+    /// Tapping the link card in onboarding goes back to step 3.
+    var onBackToHours: (() -> Void)?
 
     @State private var hours: Double
     @Environment(\.dismiss) private var dismiss
 
-    init(mode: Mode, initial: Double? = nil, actualPace: Double, now: Date = Date(),
+    init(mode: Mode, initial: Double? = nil, actualPace: Double, now: Date = Date(), total: Double? = nil,
+         link: SetupLink? = nil, onboarding: OnboardingModel? = nil, onBackToHours: (() -> Void)? = nil,
          onSave: @escaping (Double) -> Void) {
         self.mode = mode
         self.actualPace = actualPace
         self.now = now
+        self.total = total
+        self.link = link
+        self.onboarding = onboarding
+        self.onBackToHours = onBackToHours
         self.onSave = onSave
         _hours = State(initialValue: WeeklyTarget.clamped(initial ?? WeeklyTarget.suggested(pace: actualPace)))
     }
 
     private var title: LocalizedStringKey {
         switch mode {
-        case .onboarding: "Your weekly pace"
+        case .onboarding: "From today on"
         case .newYear: "A new year of pace"
         case .edit, .firstTime: "Your pace for the year"
         }
+    }
+
+    private var subtitle: LocalizedStringKey {
+        mode == .onboarding ? "How many hours a week do you want to play for the next 12 months?"
+                            : "For the next 12 months, the only distance to cover."
     }
 
     private var buttonTitle: LocalizedStringKey { mode == .onboarding ? "Continue" : "Save" }
@@ -50,38 +68,78 @@ struct WeeklyTargetView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 header
+                if mode == .onboarding, let onboarding {
+                    SetupSceneView(state: onboarding.scene(editing: .pace, pace: hours, showsFinish: true))
+                        .padding(.horizontal, -24)
+                    SetupTimeStripView(lit: .nextYear)
+                        .padding(.horizontal, -24)
+                        .padding(.top, 10)
+                }
                 Text(title).lgText(.setupTitle).accessibilityAddTraits(.isHeader)
-                    .padding(.top, mode.isSheet ? 12 : 18)
-                Text("For the next 12 months, the only distance to cover.")
+                    .padding(.top, mode.isSheet ? 12 : (mode == .onboarding ? 14 : 18))
+                Text(subtitle)
                     .lgText(.body, color: LGColor.inkMuted)
                     .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 8)
 
-                picker.padding(.top, 34)
-                Text("About \(WeeklyTarget.perDay(hours)) · until \(DateText.monthYear(WeeklyTarget.endDate(from: now)))")
-                    .lgText(.note, color: LGColor.inkMuted)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 20)
+                if let link { linkCard(link).padding(.top, 14) }
 
-                // The day's stretch in small: the sun on the sea at the left, a dotted road over to the moon.
-                PaceScene()
-                    .padding(.horizontal, -24)
-                    .padding(.top, 28)
-                Text("Your pace, split into a stretch for each day.")
-                    .lgText(.caption, color: LGColor.inkMuted)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 2)
+                picker.padding(.top, link == nil ? 34 : 24)
+                VStack(spacing: 6) {
+                    Text("About \(WeeklyTarget.perDay(hours)) · until \(DateText.monthYear(WeeklyTarget.endDate(from: now)))")
+                        .lgText(.note, color: LGColor.inkMuted)
+                    if let total {
+                        Text(verbatim: FinishLineText.sentence(total: total, weeklyRate: hours, now: now))
+                            .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .footnote), color: LGColor.ember)
+                    }
+                }
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 20)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
         }
         .scrollBounceBehavior(.basedOnSize)
+        // In setup the pace is kept as it changes, so going back to "Before today" and returning doesn't lose it.
+        .onChange(of: hours) { _, new in
+            onboarding?.targetHours = new
+            onboarding?.paceKnown = true
+        }
         .safeAreaInset(edge: .bottom) { actions }
         .lgSetupScreen()
         .navigationBarBackButtonHidden()
         .lgHidesNavigationBar()
+    }
+
+    /// One dot, a bold first part and a muted second: "Last year: 12 h a week. Keep that pace, or change it."
+    /// In onboarding it goes back to "Before today".
+    @ViewBuilder
+    private func linkCard(_ link: SetupLink) -> some View {
+        let content = HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Circle().fill(LGColor.amber).frame(width: 8, height: 8)
+                .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
+            (Text(verbatim: link.bold).fontWeight(.semibold) + Text(verbatim: " ")
+             + Text(verbatim: link.muted).foregroundColor(LGColor.inkMuted))
+                .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            if onBackToHours != nil {
+                Image(systemName: "chevron.right").lgIcon(12, weight: .semibold).foregroundStyle(LGColor.inkMuted)
+            }
+        }
+        .padding(.horizontal, 14).padding(.vertical, 12)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .lgCard(radius: 14)
+        if let onBackToHours {
+            Button(action: onBackToHours) { content }
+                .buttonStyle(.plain)
+                .accessibilityHint("Goes back to Before today")
+        } else {
+            content.accessibilityElement(children: .combine)
+        }
     }
 
     // MARK: Pieces
@@ -127,53 +185,25 @@ struct WeeklyTargetView: View {
     }
 }
 
-/// The small picture on "Your weekly pace" (WeeklyPace.dc.html, a 390 × 180 box): a day sky glowing on the left,
-/// the dotted road to the moon, and a small sun half in the sea.
-private struct PaceScene: View {
-    @Environment(\.colorScheme) private var colorScheme
-
-    var body: some View {
-        let dark = colorScheme == .dark
-        GeometryReader { geo in
-            let k = geo.size.width / 390
-            ZStack(alignment: .topLeading) {
-                // The dark look: the dawn sky over the night land, as on the other small scenes.
-                SkyView(tone: dark ? .dawn : .day, horizon: 0.62, moon: false, glowX: 0.2)
-                    .frame(width: geo.size.width, height: 170)
-                    // The dawn sky's top melts into the page in the dark look, so it has no hard edge.
-                    .overlay(alignment: .top) {
-                        if dark {
-                            LinearGradient(colors: [LGColor.background, LGColor.background.opacity(0)], startPoint: .top, endPoint: .bottom)
-                                .frame(height: 60)
-                        }
-                    }
-                Path { p in
-                    p.move(to: CGPoint(x: 60 * k, y: 52))
-                    p.addCurve(to: CGPoint(x: 336 * k, y: 72), control1: CGPoint(x: 120 * k, y: 2), control2: CGPoint(x: 280 * k, y: 8))
-                }
-                .stroke(LGColor.arcDots, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [2, 8]))
-                MoonShape().fill(LGColor.moon)
-                    .frame(width: 40, height: 40)
-                    .offset(x: 336 * k - 21, y: 42)
-                SunView(idle: false, face: .happy)
-                    .frame(width: 60, height: 60)
-                    // Higher than on the board (74), where the left dune would hide it: here it rests on the ridge.
-                    .offset(x: 30 * k, y: 22)
-                LandView(tone: dark ? .night : .day)
-                    .frame(width: geo.size.width, height: 120)
-                    .offset(y: 60)
-            }
-        }
-        .frame(height: 180)
-        .clipped()
-        // Only a picture: it must never take a tap meant for the stepper above it.
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+#Preview("From today on") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = 2019; m.startYearKnown = true; m.estimateKnown = true
+    return NavigationStack {
+        WeeklyTargetView(mode: .onboarding, actualPace: m.actualPace, total: m.estimatedSoFar(), link: m.link,
+                         onboarding: m, onBackToHours: {}) { _ in }
     }
+}
+
+#Preview("From today on · dark, AX5") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = m.currentYear; m.startYearKnown = true; m.estimateKnown = true
+    return NavigationStack {
+        WeeklyTargetView(mode: .onboarding, actualPace: m.actualPace, total: m.estimatedSoFar(), link: m.link,
+                         onboarding: m, onBackToHours: {}) { _ in }
+    }
+    .preferredColorScheme(.dark).dynamicTypeSize(.accessibility5)
 }
 
 #Preview("Your pace for the year") {
     NavigationStack {
-        WeeklyTargetView(mode: .onboarding, actualPace: 12) { _ in }
+        WeeklyTargetView(mode: .edit, actualPace: 12, total: 3_100, link: .lastYear(hoursPerWeek: 12)) { _ in }
     }
 }

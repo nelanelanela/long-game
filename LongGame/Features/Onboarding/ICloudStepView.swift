@@ -27,15 +27,13 @@ struct ICloudIllustration: View {
     }
 }
 
-/// Step 5 of 7, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Continue to
-/// "A gentle nudge". When that step is left out (notifications already decided) this is the last one: Start playing.
+/// Step 5 of 5, "Keep your game safe": one card with the Save to iCloud switch (on by default), and Start playing,
+/// which saves everything and opens Home on The long game.
 struct ICloudStepView: View {
     @Bindable var model: OnboardingModel
-    /// True when this step finishes onboarding.
-    var finishes = false
     /// The total setup has worked out, for "Write to yourself at 100 hours" on the last step.
     var letterTotal: Double = 0
-    /// Goes to step 6, or saves everything and opens Home when `finishes`.
+    /// Saves everything and opens Home.
     let onContinue: () -> Void
 
     @Environment(ICloudMonitor.self) private var monitor
@@ -68,10 +66,10 @@ struct ICloudStepView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             .padding(.horizontal, -24)
-            Button(finishes ? "Start playing" : "Continue", action: onContinue).buttonStyle(.lg(.primary))
+            Button("Start playing", action: onContinue).buttonStyle(.lg(.primary))
                 .padding(.top, 8)
             // The last step offers the first letter: Home opens it after setup.
-            if finishes, let title = LetterOffer.title(total: letterTotal) {
+            if let title = LetterOffer.title(total: letterTotal) {
                 Button(title) {
                     UserDefaults.standard.set(true, forKey: LetterOffer.afterSetupKey)
                     onContinue()
@@ -79,7 +77,7 @@ struct ICloudStepView: View {
                 .buttonStyle(.lg(.text))
                 .padding(.top, 2)
             }
-            LGBrandLine().padding(.top, finishes ? 4 : 12)
+            LGBrandLine().padding(.top, 4)
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 10)

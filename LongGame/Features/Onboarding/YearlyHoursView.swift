@@ -11,10 +11,18 @@ struct YearlyHoursView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(step: 3)
+            SetupSceneView(state: model.scene(editing: .score))
+                .padding(.horizontal, -24)
+            SetupTimeStripView(lit: .beforeToday)
+                .padding(.horizontal, -24)
+                .padding(.top, 10)
 
-            Text("Hours a week, each year").lgText(.setupTitle)
+            Text("Before today").lgText(.setupTitle)
                 .accessibilityAddTraits(.isHeader)
-                .padding(.top, 18)
+                .padding(.top, 14)
+            Text("Roughly, hours a week in each year.").lgText(.body, color: LGColor.inkMuted)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
 
             // The card is only as tall as its rows; with many years the whole page scrolls, the button stays put.
             ScrollView {
@@ -37,6 +45,7 @@ struct YearlyHoursView: View {
                     VStack(spacing: 0) {
                         ForEach(model.years, id: \.self) { year in
                             HoursStepperRow(label: String(year),
+                                            subLabel: year == model.currentYear ? String(localized: "So far this year") : nil,
                                             value: Binding(get: { Double(model.hoursFor(year)) },
                                                            set: { model.hours[year] = Int($0.rounded()); changedYear = year }),
                                             isHighlighted: changedYear == year)
@@ -60,17 +69,8 @@ struct YearlyHoursView: View {
                         .buttonStyle(.plain)
                         .padding(.top, 6)
                     }
-
-                    HStack(alignment: .firstTextBaseline) {
-                        Text("Your starting score").lgText(.row, color: LGColor.inkMuted)
-                        Spacer()
-                        Text("\(DurationFormat.grouped(Totals.wholeHours(total: model.estimatedSoFar()))) h")
-                            .lgNumber(LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56))
-                    }
-                    .accessibilityElement(children: .combine)
-                    .padding(.top, 8)
                 }
-                .padding(.top, 16)
+                .padding(.top, 12)
                 // Room for the card's soft shadow, which a scroll view would otherwise cut off at its sides.
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
@@ -89,4 +89,24 @@ struct YearlyHoursView: View {
         .navigationBarBackButtonHidden()
         .onAppear { model.estimateKnown = true }
     }
+}
+
+#Preview("Before today · one year") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = m.currentYear - 1; m.startYearKnown = true
+    return NavigationStack { YearlyHoursView(model: m) {} }
+}
+
+#Preview("Before today · seven years") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = m.currentYear - 6; m.startYearKnown = true
+    return NavigationStack { YearlyHoursView(model: m) {} }
+}
+
+#Preview("Before today · twenty years, dark") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = m.currentYear - 19; m.startYearKnown = true
+    return NavigationStack { YearlyHoursView(model: m) {} }.preferredColorScheme(.dark)
+}
+
+#Preview("Before today · AX5") {
+    let m = OnboardingModel(); m.craftName = "Calligraphy"; m.startYear = m.currentYear - 6; m.startYearKnown = true
+    return NavigationStack { YearlyHoursView(model: m) {} }.dynamicTypeSize(.accessibility5)
 }

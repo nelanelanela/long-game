@@ -3,16 +3,16 @@ import Foundation
 import SwiftData
 @testable import LongGame
 
-/// "A gentle nudge" (setup step 6): where it sits, when it is left out, and what its answer saves.
+/// The setup steps, the reminders setup leaves off, and starting a session never asking on its own.
 struct NotificationAskTests {
     // MARK: Step order
 
-    @Test func theNudgeComesBeforeTheWeatherOfSevenSteps() {
-        #expect(OnboardingSteps.order(permission: .notAsked) == [.start, .hours, .pace, .keepSafe, .notifications, .weather])
-        #expect(OnboardingSteps.count(permission: .notAsked) == 7)
-        #expect(OnboardingSteps.next(after: .keepSafe, permission: .notAsked) == .notifications)
-        #expect(OnboardingSteps.next(after: .notifications, permission: .notAsked) == .weather)
-        #expect(OnboardingSteps.next(after: .weather, permission: .notAsked) == nil)
+    /// Update 53: five steps, and nothing in setup asks for a permission.
+    @Test func setupIsFiveStepsWithNoPermissionQuestions() {
+        #expect(OnboardingSteps.order == [.start, .hours, .pace, .keepSafe])
+        #expect(OnboardingSteps.count == 5)
+        #expect(OnboardingSteps.next(after: .pace) == .keepSafe)
+        #expect(OnboardingSteps.next(after: .keepSafe) == nil)
     }
 
     @Test func stepNumbersFollowTheCraftStep() {
@@ -20,16 +20,6 @@ struct NotificationAskTests {
         #expect(OnboardingSteps.number(of: .hours) == 3)
         #expect(OnboardingSteps.number(of: .pace) == 4)
         #expect(OnboardingSteps.number(of: .keepSafe) == 5)
-        #expect(OnboardingSteps.number(of: .notifications) == 6)
-    }
-
-    @Test(arguments: [NotificationPermission.allowed, .denied])
-    func theNudgeIsSkippedOncePermissionIsDecided(_ permission: NotificationPermission) {
-        #expect(!OnboardingSteps.showsNotifications(permission))
-        #expect(OnboardingSteps.order(permission: permission) == [.start, .hours, .pace, .keepSafe, .weather])
-        #expect(OnboardingSteps.count(permission: permission) == 6)
-        // Keep your game safe goes straight on to the weather.
-        #expect(OnboardingSteps.next(after: .keepSafe, permission: permission) == .weather)
     }
 
     // MARK: Allow notifications
