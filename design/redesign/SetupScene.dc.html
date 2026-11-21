@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Your game, building up (setup scene)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div role="img" aria-label="{{a11y}}" style="width: 390px; font-family: Inter, -apple-system, system-ui, sans-serif; color: #16244A">
+<div style="position: relative; width: 390px; height: 80px; overflow: hidden">
+<div style="position: absolute; inset: 0"><dc-import name="Sky" w="390" h="80" tone="day" horizon="0.8" glowX="0.5" hint-size="390px,80px"></dc-import></div>
+<!-- finish line: the top of the scene is 10,000 h -->
+<svg aria-hidden="true" width="390" height="80" viewBox="0 0 390 80" style="position: absolute; left: 0; top: 0"><path d="M24 16H366" stroke="#E0A93A" stroke-width="1.5" stroke-dasharray="4 5" stroke-linecap="round"></path></svg>
+<span style="position: absolute; right: 24px; top: 2px; font-size: 10px; font-weight: 600; color: #B4561A">Finish line · 10,000 h</span>
+<div style="position: absolute; left: 171px; top: {{sunTop}}; transition: top 0.6s cubic-bezier(.3,1.4,.5,1)"><dc-import name="Sun" size="48" face="happy" hint-size="48px,48px"></dc-import></div>
+<div style="position: absolute; left: 0; top: 19px"><dc-import name="Land" w="390" h="120" tone="day" hint-size="390px,120px"></dc-import></div>
+</div>
+<div style="margin-top: 8px; padding: 0 24px; display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+<span style="height: 28px; padding: 0 11px; box-sizing: border-box; border-radius: 14px; display: flex; align-items: center; font-size: 12px; font-weight: {{c.fw}}; white-space: nowrap; background: {{c.bg}}; color: {{c.color}}; box-shadow: {{c.ring}}">{{c.text}}</span>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"craft":{"editor":"text","default":"Calligraphy"},"year":{"editor":"text","default":"2019"},"score":{"editor":"range","default":3208,"min":-1,"max":10000,"step":1},"pace":{"editor":"range","default":-1,"min":-1,"max":40,"step":0.5},"finish":{"editor":"text","default":""},"focus":{"editor":"text","default":"score"},"$preview":{"width":390,"height":124}}'>
+class Component extends DCLogic {
+  // "Your game" builds up through setup. Placed at the top of steps 2–4, full bleed.
+  // Props: craft, year, score (-1 = not set yet), pace (-1 = not set yet), finish ("" = hidden), focus (year|score|pace).
+  // The sun's centre goes from the horizon (0 h) to the dashed finish line (10,000 h), springing to its new height
+  // whenever the score changes. The chip being edited on this step is highlighted.
+  renderVals() {
+    const num = (v) => { const n = parseFloat(v); return isNaN(n) ? -1 : n; };
+    const craft = this.props.craft || 'Calligraphy';
+    const year = this.props.year || '';
+    const score = num(this.props.score);
+    const pace = num(this.props.pace);
+    const finish = this.props.finish || '';
+    const focus = this.props.focus || '';
+    const fmt = (n) => Math.round(n).toLocaleString('en-GB');
+    const p = score > 0 ? Math.min(1, score / 10000) : 0;
+    const horizonY = 64, finishY = 16;
+    const cy = horizonY - (horizonY - finishY) * p;
+    const filled = (text, on) => ({ text, fw: 600, bg: on ? '#FFF0C8' : '#FFFFFF', color: '#16244A', ring: on ? 'inset 0 0 0 1.5px #F0B43A' : '0 3px 10px rgba(22,36,74,0.06)' });
+    const empty = (text) => ({ text, fw: 500, bg: 'transparent', color: '#8A93AB', ring: 'inset 0 0 0 1px #D9D2C6' });
+    const chips = [filled(craft, false)];
+    chips.push(year ? filled('Since ' + year, focus === 'year') : empty('start year'));
+    chips.push(score >= 0 ? filled(fmt(score) + ' h', focus === 'score') : empty('starting score'));
+    chips.push(pace >= 0 ? filled((pace % 1 ? pace.toFixed(1) : pace) + ' h a week', focus === 'pace') : empty('weekly pace'));
+    if (finish) chips.push({ text: 'Finish line ' + finish, fw: 700, bg: 'linear-gradient(90deg,#FFD66B,#F0A93A)', color: '#16244A', ring: '0 3px 10px rgba(240,146,42,0.3)' });
+    const parts = [craft];
+    if (year) parts.push('since ' + year);
+    if (score >= 0) parts.push(fmt(score) + ' hours so far');
+    if (pace >= 0) parts.push(pace + ' hours a week');
+    if (finish) parts.push('finish line ' + finish.replace('~', 'around '));
+    return {
+      sunTop: (cy - 24).toFixed(1) + 'px',
+      chips,
+      a11y: 'Your game: ' + parts.join(', ') + '.'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First session · lost in your work?</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#16244A}a:hover{color:#000000}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion: reduce){.live{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; font-family: Inter, -apple-system, system-ui, sans-serif; color: #16244A">
+<!-- The timer has already started underneath: practice is never held up by the question -->
+<div aria-hidden="true" style="position: absolute; inset: 0"><dc-import name="Timer" progress="0.38" start="0.37" hint-size="390px,844px"></dc-import></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(6,10,30,0.45)"></div>
+
+<div role="dialog" aria-label="Can we check in?" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 10px 24px 22px; background: #FAF7F1; border-radius: 28px 28px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.25); display: flex; flex-direction: column">
+<span aria-hidden="true" style="align-self: center; width: 36px; height: 5px; border-radius: 3px; background: #D9D2C6"></span>
+<div style="margin-top: 14px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #5E6782"><span class="live" style="width: 8px; height: 8px; border-radius: 4px; background: #F0922A; animation: livePulse 1.6s ease-in-out infinite"></span>Your first session is running</div>
+
+<div style="margin-top: 14px; display: flex; align-items: center; gap: 14px">
+<div style="flex-shrink: 0"><dc-import name="Sun" size="64" face="wink" hint-size="64px,64px"></dc-import></div>
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1">Can we check in?</h1>
+</div>
+<p style="margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: #5E6782">Sometimes the timer keeps running after you’ve stopped. We can send one quiet note to check.</p>
+
+<div style="margin-top: 14px; padding: 2px 16px; background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 30px rgba(22,36,74,0.06); display: flex; flex-direction: column">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #FFF1DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4561A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20a2 2 0 0 0 4 0"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">After 4 hours</span><span style="font-size: 13px; line-height: 1.4; color: #5E6782">A note asks “Still practising?” Tap it to stop the timer, or keep going.</span></span>
+</div>
+<div style="height: 1px; background: #F0ECE5"></div>
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 0">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #FFF1DA; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4561A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 600">Easy to fix later</span><span style="font-size: 13px; line-height: 1.4; color: #5E6782">You can change a session’s length when you finish, or any time in History.</span></span>
+</div>
+</div>
+<p style="margin: 12px 4px 0; font-size: 13px; line-height: 1.45; color: #5E6782">We only send this note and your milestones. Nothing else.</p>
+
+<a href="Timer.dc.html" style="margin-top: 16px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #16244A; color: #FFFFFF; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(22,36,74,0.22)">Allow notifications</a>
+<a href="Timer.dc.html" style="height: 44px; margin-top: 4px; flex-shrink: 0; font-size: 15px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">Not now</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  // When: the first time the user taps Start session (Home, widget, Watch excluded), right after the timer starts.
+  // The timer runs underneath; the sheet never pauses or delays it.
+  // Copy (update 55): title "Can we check in?", gentle and plain; no "lost", no "forget".
+  // Allow notifications -> the system prompt; Not now -> closes. Either way, never shown again.
+  // Swipe down = Not now. Settings keeps the notification switches.
+  // If the session was started from the Live Activity, Watch or a Control, show it the next time the app is opened while that first session runs.
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
