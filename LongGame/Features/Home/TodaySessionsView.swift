@@ -81,6 +81,8 @@ private struct SessionRow: View {
         .background(dropping ? LGColor.stepperHighlight : .clear, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(TodaySessions.spoken(row, calendar: calendar))
+        // Combining the row into one element drops the Button's own trait; without it VoiceOver doesn't say it opens.
+        .accessibilityAddTraits(.isButton)
         .accessibilityHint("Edit or delete this session")
     }
 

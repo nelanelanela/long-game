@@ -729,6 +729,7 @@
 		E94CC4B0DB1CDA6482BADA75 /* TimerSunrise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6356BA8282E6BBB873F0FBD /* TimerSunrise.swift */; };
 		E94EBA1518841010B8731B30 /* UsualSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D0CF1CDABEA1F2BC3196AA /* UsualSession.swift */; };
 		E9D1906A74A57FDD2CC3821F /* SceneWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3FB31088BD04BBC50ACFF8 /* SceneWeather.swift */; };
+		EA1305998A0D92D1BD28B489 /* CoreFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEC0B78F59C439FCF1986EF /* CoreFlowTests.swift */; };
 		EA29E38E5E97DFB8660CFFF5 /* SunGiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8923CA416B60E47B20009872 /* SunGiggle.swift */; };
 		EAAEBD7B64BA4790F35B96B9 /* YearSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89B469CCBC753428C70BB58 /* YearSummary.swift */; };
 		EBA0B19C0775823AB8937F77 /* GiggleSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63D8B9012C3CB29E0CB321D /* GiggleSoundPlayer.swift */; };
@@ -1108,6 +1109,7 @@
 		C959578556E103EF105C91D6 /* FocusMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusMode.swift; sourceTree = "<group>"; };
 		C96AF671CB1AD559EB5E0AE8 /* CraftSuggestionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftSuggestionsTests.swift; sourceTree = "<group>"; };
 		CA6CD5EADB8E3ACA7389B8B1 /* Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Labels.swift; sourceTree = "<group>"; };
+		CAEC0B78F59C439FCF1986EF /* CoreFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreFlowTests.swift; sourceTree = "<group>"; };
 		CC6EA09F49A2207416A2C211 /* TimerPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerPersistence.swift; sourceTree = "<group>"; };
 		CC7D665D0523432A43B4E231 /* IconStageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconStageTests.swift; sourceTree = "<group>"; };
 		CD0107C50DCDD44D74875A35 /* ActiveSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionTests.swift; sourceTree = "<group>"; };
@@ -1460,6 +1462,7 @@
 			children = (
 				3813AEC804D9B235982F322F /* AccessibilityAuditTests.swift */,
 				25D1F07744C02B0390AF2F1A /* AccessibilityBehaviourTests.swift */,
+				CAEC0B78F59C439FCF1986EF /* CoreFlowTests.swift */,
 				E112C2537B088025CF85C9BC /* KnownFalseAlarms.swift */,
 				189323B313359531A81C6794 /* LaunchTimeTests.swift */,
 				36AB7CFD1F5A607C59433197 /* PerformanceUITests.swift */,
@@ -2781,6 +2784,7 @@
 			files = (
 				BDC569238C1B0C47AB1BB0E7 /* AccessibilityAuditTests.swift in Sources */,
 				C45C617D47EC07C9B19E89FA /* AccessibilityBehaviourTests.swift in Sources */,
+				EA1305998A0D92D1BD28B489 /* CoreFlowTests.swift in Sources */,
 				66625BA6F44EE3AC76BB860E /* KnownFalseAlarms.swift in Sources */,
 				4E09CF436FCCFC058021D784 /* LaunchTimeTests.swift in Sources */,
 				91D0607928A75CCE37708BCC /* PerformanceUITests.swift in Sources */,
