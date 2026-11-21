@@ -11,22 +11,24 @@ struct YearlyHoursView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             OnboardingHeader(step: 3)
-            SetupSceneView(state: model.scene(editing: .score))
-                .padding(.horizontal, -24)
-            SetupTimeStripView(lit: .beforeToday)
-                .padding(.horizontal, -24)
-                .padding(.top, 10)
 
-            Text("Before today").lgText(.setupTitle)
-                .accessibilityAddTraits(.isHeader)
-                .padding(.top, 14)
-            Text("Roughly, hours a week in each year.").lgText(.body, color: LGColor.inkMuted)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 6)
-
-            // The card is only as tall as its rows; with many years the whole page scrolls, the button stays put.
+            // The scene, the title and the card scroll together; with many years the whole page scrolls, the button
+            // stays put.
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    SetupSceneView(state: model.scene(editing: .score))
+                        .padding(.horizontal, -24)
+                    SetupTimeStripView(lit: .beforeToday)
+                        .padding(.horizontal, -24)
+                        .padding(.top, 10)
+
+                    Text("Before today").lgText(.setupTitle)
+                        .accessibilityAddTraits(.isHeader)
+                        .padding(.top, 14)
+                    Text("Roughly, hours a week in each year.").lgText(.body, color: LGColor.inkMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 6)
+                        .padding(.bottom, 12)
                     if model.years.count > 8 {
                         HStack {
                             Text("Set all to").lgText(.row, color: LGColor.inkMuted)
@@ -70,7 +72,6 @@ struct YearlyHoursView: View {
                         .padding(.top, 6)
                     }
                 }
-                .padding(.top, 12)
                 // Room for the card's soft shadow, which a scroll view would otherwise cut off at its sides.
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)

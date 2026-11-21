@@ -91,26 +91,47 @@ final class AccessibilityAuditTests: XCTestCase {
         tap("Choose your game")
         wait("What’s your game?")
         audit("Setup 1 · Your game")
-        tap("Piano")
-        tap("Continue")
+        // Update 53: typing your own craft makes it a selected chip, and the button plays it.
+        let field = app.textFields.firstMatch
+        field.tap()
+        field.typeText("Calligraphy")
+        wait("Your own: Calligraphy")
+        audit("Setup 1 · Your own craft")
+        tap("Play Calligraphy")
         wait("When did you start?")
         audit("Setup 2 · When did you start")
         tap("Continue")
-        wait("Hours a week, each year")
-        audit("Setup 3 · Hours a week")
+        wait("Before today")
+        audit("Setup 3 · Before today")
         tap("Continue")
-        wait("Your weekly pace")
-        audit("Setup 4 · Your weekly pace")
+        wait("From today on")
+        audit("Setup 4 · From today on")
         tap("Continue")
         wait("Keep your game safe")
         audit("Setup 5 · Keep your game safe")
-        tap("Continue")
-        wait("A gentle nudge")
-        audit("Setup 6 · A gentle nudge")
-        tap("Not now")
-        wait("The weather outside")
-        audit("Setup 7 · The weather outside")
     }
+
+    /// Update 53: started this year, so Before today asks for a total.
+    func testOnboardingStartedThisYear() {
+        launch(["-uitest.freshInstall"], demo: false)
+        tap("Get started", timeout: 12)
+        tap("Next"); tap("Next")
+        tap("Choose your game")
+        tap("Piano")
+        tap("Play Piano")
+        wait("When did you start?")
+        for _ in 0..<3 { app.buttons["Later year"].firstMatch.tap() }
+        tap("Continue")
+        wait("hours so far")
+        audit("Setup 3 · Before today, started this year")
+        tap("I’m just starting · 0 h")
+        tap("Continue")
+        wait("Starting from zero.")
+        audit("Setup 4 · From today on, from zero")
+    }
+
+    func testNotificationAsk() { launch(["-uitest.screen", "notifyAsk"]); wait("Lost in your work?"); audit("Lost in your work?") }
+    func testWeatherInvite() { launch(["-uitest.screen", "weatherInvite"]); wait("Bring the weather in?"); audit("Bring the weather in?") }
 
     // MARK: Update 48 and 49
 

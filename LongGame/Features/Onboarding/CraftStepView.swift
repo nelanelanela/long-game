@@ -70,7 +70,7 @@ struct CraftStepView: View {
                 .foregroundStyle(LGColor.inkMuted)
                 .accessibilityHidden(true)
             TextField("Type any craft, or pick one below", text: $model.craftName)
-                .lgText(.bodyLarge)
+                .lgText(.body)
                 .focused($focused)
                 .submitLabel(.done)
                 .textInputAutocapitalization(.words)

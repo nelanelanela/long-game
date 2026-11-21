@@ -20,8 +20,14 @@ struct SetupSceneView: View {
             picture
             chips.padding(.horizontal, 24)
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(verbatim: state.spoken))
+        // One element for VoiceOver, read as a picture; its words change as the steppers move without moving focus.
+        .accessibilityHidden(true)
+        .overlay {
+            Color.clear
+                .accessibilityElement()
+                .accessibilityLabel(Text(verbatim: state.spoken))
+                .accessibilityAddTraits(.isImage)
+        }
     }
 
     private var picture: some View {
@@ -119,8 +125,13 @@ struct SetupTimeStripView: View {
             label("Next 12 months", lit: lit == .nextYear)
         }
         .padding(.horizontal, 24)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(verbatim: lit.spoken))
+        .accessibilityHidden(true)
+        .overlay {
+            Color.clear
+                .accessibilityElement()
+                .accessibilityLabel(Text(verbatim: lit.spoken))
+                .accessibilityAddTraits(.isImage)
+        }
     }
 
     private func label(_ text: LocalizedStringKey, lit: Bool) -> some View {

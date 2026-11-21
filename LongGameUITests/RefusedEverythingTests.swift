@@ -1,6 +1,7 @@
 import XCTest
 
 /// Update 50: a fresh install where the person says no to everything (iCloud off, no notifications, no location)
+/// (since update 53 notifications are asked on the first session, location only from Settings or the weather invite)
 /// still works fully: setup finishes, a session is timed and saved, History and Settings open, and turning Weather in
 /// the scene on afterwards just says the app can't see the weather.
 /// Run after `xcrun simctl privacy <device> reset all com.wehavesun.LongGame`, so iOS asks for location again.
@@ -45,21 +46,16 @@ final class RefusedEverythingTests: XCTestCase {
         tap("Get started", timeout: 40)   // a fresh Simulator can hold the launch for ~30 s
         tap("Next"); tap("Next")
         tap("Choose your game")
-        tap("Piano"); tap("Continue")
+        tap("Piano"); tap("Play Piano")
         tap("Continue")                     // When did you start?
-        tap("Continue")                     // Hours a week
-        tap("Continue")                     // Your weekly pace
+        tap("Continue")                     // Before today
+        tap("Continue")                     // From today on
         see("Keep your game safe")
         let iCloud = app.switches["Save to iCloud"].firstMatch
         if iCloud.waitForExistence(timeout: 3), iCloud.isEnabled, (iCloud.value as? String) == "1" {
             iCloud.switches.firstMatch.exists ? iCloud.switches.firstMatch.tap() : iCloud.tap()
         }
-        tap("Continue")
-        see("A gentle nudge")
-        tap("Not now")                      // no notifications
-        see("The weather outside")
-        tap("Show the weather")             // then refuse the location prompt
-        refuseLocationIfAsked()
+        tap("Start playing")                // update 53: setup asks for no permission
 
         // iOS's "You have changed the icon" (the estimate is past 1,000 hours) and, the first time, Meet your future self.
         dismissSystemAlert()
@@ -67,8 +63,9 @@ final class RefusedEverythingTests: XCTestCase {
         if futureSelf.waitForExistence(timeout: 8) { futureSelf.tap() }
         dismissSystemAlert()
 
-        // Home works: time a session and save it.
+        // Home works: time a session and save it. The first session asks about notifications: Not now.
         tap("Begin", timeout: 12)
+        tap("Not now", timeout: 8)
         sleep(65)                           // a session needs a minute to be saved
         tap("Finish", timeout: 8)
         tap("Save", timeout: 8)

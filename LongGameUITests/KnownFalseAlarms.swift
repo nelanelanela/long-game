@@ -72,7 +72,11 @@ enum KnownFalseAlarms {
                         // Update 49: setup step 7's note, the letter's invitation and the sealed page (#5E6782 on
                         // #FFF1DA / #FAF7F1 / #FFFDF8: 5.1–5.3:1).
                         "iPhone will ask for your location", "Write a few lines to the person", "The sun will bring it back",
-                        "Not sure what to say?", "Your pace, split into a stretch"]
+                        "Not sure what to say?", "Your pace, split into a stretch",
+                        // Update 53: From today on's question (on the peach sky, like the old caption), the notes
+                        // under Lost in your work? and Bring the weather in? (#5E6782 on #FAF7F1, 5.2:1).
+                        "How many hours a week do you want", "Only a few quiet notifications",
+                        "You’ve been playing for a week now", "You started this year."]
         if issue.auditType == .contrast, element.elementType == .staticText, captions.contains(where: { label.hasPrefix($0) || label.hasSuffix($0) }) {
             return true
         }
@@ -133,6 +137,12 @@ enum KnownFalseAlarms {
         //    (checked by AccessibilityBehaviourTests.testNoteBoxStartsTyping); the audit only sees the text view's
         //    first line inside it.
         if issue.auditType == .hitRegion, label == "A note, if you like" {
+            return true
+        }
+
+        // 8b. What's your game?'s field (update 53): the audit reports the empty text field's own text box as clipped;
+        //     the screenshots show the whole placeholder ("Type any craft, or pick one below") and the typed name.
+        if issue.auditType == .textClipped, screen.hasPrefix("Setup 1"), element.elementType == .textField {
             return true
         }
 
