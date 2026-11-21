@@ -31,7 +31,7 @@ enum WidgetModel {
     static func make(_ snapshot: WidgetSnapshot, at now: Date, calendar: Calendar = .current) -> WidgetState {
         let weekStart = WeekStart(rawValue: snapshot.weekStart) ?? .monday
         let sessions = records(snapshot)
-        let rates = snapshot.estimates.map { YearRate(year: $0.year, hoursPerWeek: $0.hoursPerWeek) }
+        let rates = snapshot.estimates.map { YearRate(year: $0.year, hoursPerWeek: $0.hoursPerWeek, totalHours: $0.totalHours) }
 
         let baseline = Baseline.hours(estimates: rates, onboardingDate: snapshot.onboardingDate, calendar: calendar)
         let total = Totals.total(baseline: baseline, logged: Totals.loggedHours(sessions))

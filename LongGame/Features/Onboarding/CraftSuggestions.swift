@@ -1,6 +1,6 @@
 import Foundation
 
-struct CraftGroup: Identifiable {
+struct CraftGroup: Identifiable, Equatable {
     let name: String
     let crafts: [String]
     var id: String { name }
@@ -37,5 +37,36 @@ enum CraftSuggestions {
 
     static func isValidName(_ text: String) -> Bool {
         (2...40).contains(text.trimmingCharacters(in: .whitespacesAndNewlines).count)
+    }
+
+    /// What the list shows for the typed text (update 53).
+    struct Choice: Equatable {
+        /// "Your own": the typed text as a chip, already selected. Nil below 2 characters or on an exact match.
+        var own: String?
+        /// The suggestion the text matches exactly (ignoring case), which is selected instead.
+        var matched: String?
+        /// The groups to show under their labels.
+        var groups: [CraftGroup]
+        /// "Not on the list? It's your game, call it anything." when only the own chip is left.
+        var showsNoMatchLine: Bool
+
+        /// The craft the button would play: the exact match, or the own text.
+        var selected: String? { matched ?? own }
+    }
+
+    static func choice(_ text: String) -> Choice {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hit = match(trimmed)
+        // An exact match shows every group again, so another craft is one tap away.
+        let shown = hit != nil ? groups : filtered(trimmed)
+        let own = hit == nil && trimmed.count >= 2 ? String(trimmed.prefix(40)) : nil
+        return Choice(own: own, matched: hit?.craft, groups: shown, showsNoMatchLine: own != nil && shown.isEmpty)
+    }
+
+    /// "Play Calligraphy" once a name of 2 to 40 characters exists, otherwise nil ("Continue", disabled).
+    static func playTitle(_ text: String) -> String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard isValidName(trimmed) else { return nil }
+        return String(localized: "Play \(match(trimmed)?.craft ?? trimmed)")
     }
 }

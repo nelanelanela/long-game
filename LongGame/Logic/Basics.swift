@@ -12,6 +12,9 @@ struct SessionRecord: Equatable, Sendable {
 struct YearRate: Equatable, Sendable {
     var year: Int
     var hoursPerWeek: Double
+    /// Update 53: for the onboarding year only, the total the person gave on "Before today" when they started this
+    /// year ("about 40 hours so far"). When set it is that year's baseline instead of hours a week × weeks elapsed.
+    var totalHours: Double? = nil
 }
 
 enum WeekStart: String, Codable, Sendable, CaseIterable {
@@ -64,10 +67,34 @@ enum Baseline {
             if e.year < onboardingYear {
                 total += e.hoursPerWeek * 52
             } else if e.year == onboardingYear {
-                total += e.hoursPerWeek * weeksElapsedInYear(of: onboardingDate, calendar: calendar)
+                total += e.totalHours.map { max(0, $0) } ?? e.hoursPerWeek * weeksElapsedInYear(of: onboardingDate, calendar: calendar)
             }
         }
         return total
+    }
+
+    /// The baseline as it stood on `date`, a day before onboarding (the Growth chart's line up to setup). A year given
+    /// as a total grows evenly from 1 January to the onboarding date.
+    static func hours(estimates: [YearRate], onboardingDate: Date, upTo date: Date, calendar: Calendar = .current) -> Double {
+        guard date < onboardingDate else { return hours(estimates: estimates, onboardingDate: onboardingDate, calendar: calendar) }
+        let onboardingYear = calendar.component(.year, from: onboardingDate)
+        let dateYear = calendar.component(.year, from: date)
+        let fullWeeks = weeksElapsedInYear(of: onboardingDate, calendar: calendar)
+        let scaled = estimates.map { e -> YearRate in
+            guard e.year == onboardingYear, let total = e.totalHours, dateYear == onboardingYear else {
+                return YearRate(year: e.year, hoursPerWeek: e.hoursPerWeek)
+            }
+            let part = fullWeeks > 0 ? weeksElapsedInYear(of: date, calendar: calendar) / fullWeeks : 1
+            return YearRate(year: e.year, hoursPerWeek: e.hoursPerWeek, totalHours: max(0, total) * min(1, part))
+        }
+        return hours(estimates: scaled, onboardingDate: date, calendar: calendar)
+    }
+
+    /// The hours a week stored beside a total for this year, so pace blending and Your estimates keep working:
+    /// total ÷ weeks since 1 January, to the nearest half hour, never below 0. In the first week it counts as one week.
+    static func weeklyRate(totalHours: Double, onboardingDate: Date, calendar: Calendar = .current) -> Double {
+        let weeks = max(1, weeksElapsedInYear(of: onboardingDate, calendar: calendar))
+        return max(0, (max(0, totalHours) / weeks * 2).rounded() / 2)
     }
 
     static func weeksElapsedInYear(of date: Date, calendar: Calendar = .current) -> Double {

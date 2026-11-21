@@ -139,7 +139,7 @@ enum WatchModel {
         let widget = WidgetModel.make(merged, at: now, calendar: calendar)
         let weekStart = WeekStart(rawValue: merged.weekStart) ?? .monday
         let summary = ProgressSummary.make(
-            estimates: merged.estimates.map { YearRate(year: $0.year, hoursPerWeek: $0.hoursPerWeek) },
+            estimates: merged.estimates.map { YearRate(year: $0.year, hoursPerWeek: $0.hoursPerWeek, totalHours: $0.totalHours) },
             sessions: WidgetModel.records(merged), onboardingDate: merged.onboardingDate, weekStart: weekStart, now: now,
             target: merged.target.map { TargetRecord(hoursPerWeek: $0.hoursPerWeek, start: $0.start, end: $0.end) },
             calendar: calendar)

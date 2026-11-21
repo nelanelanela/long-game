@@ -40,7 +40,10 @@ struct MigrationTests {
         // New on Session since main: defaults.
         #expect(sessions.allSatisfy { $0.viewCount == 0 && !$0.hidesDefaultPicture })
 
-        #expect(try context.fetch(FetchDescriptor<YearEstimate>()).count == 8)
+        let estimates = try context.fetch(FetchDescriptor<YearEstimate>())
+        #expect(estimates.count == 8)
+        // Update 53's optional total opens empty: every year keeps its hours a week.
+        #expect(estimates.allSatisfy { $0.totalHours == nil })
 
         let settings = try #require(try context.fetch(FetchDescriptor<AppSettings>()).first)
         #expect(settings.weekStart == .sunday)
@@ -52,6 +55,8 @@ struct MigrationTests {
         #expect(settings.sunRemembers)
         #expect(!settings.weatherInScene)
         #expect(!settings.thousandsAdopted)
+        #expect(!settings.notificationAskShown)
+        #expect(!settings.weatherInviteShown)
 
         #expect(try context.fetch(FetchDescriptor<Letter>()).isEmpty)
     }

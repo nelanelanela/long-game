@@ -7,6 +7,8 @@ struct WidgetSnapshot: Codable, Equatable, Sendable {
     struct Estimate: Codable, Equatable, Sendable {
         var year: Int
         var hoursPerWeek: Double
+        /// The onboarding year given as a total (update 53); missing in older snapshots.
+        var totalHours: Double? = nil
     }
 
     struct Entry: Codable, Equatable, Sendable {

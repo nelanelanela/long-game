@@ -12,6 +12,8 @@ struct HoursStepSpec: Equatable, Sendable {
     static let wholeHours = HoursStepSpec(range: 0...WeeklyTarget.maxHours, step: 1)
     /// Your pace for the year.
     static let pace = HoursStepSpec(range: WeeklyTarget.range, step: WeeklyTarget.step)
+    /// "Before today" for a game started this year: hours in total, 0 to 5,000 in fives (update 53).
+    static let soFarTotal = HoursStepSpec(range: 0...5_000, step: 5)
 
     /// Half-hour steps need a decimal pad.
     var needsDecimals: Bool { step.truncatingRemainder(dividingBy: 1) != 0 }

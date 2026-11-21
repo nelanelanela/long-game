@@ -13,7 +13,7 @@ enum WidgetBridge {
         return WidgetSnapshot(
             craftName: craft.name,
             onboardingDate: craft.createdAt,
-            estimates: estimates.filter { $0.craftId == id }.map { .init(year: $0.year, hoursPerWeek: Double($0.hoursPerWeek)) },
+            estimates: estimates.filter { $0.craftId == id }.map { .init(year: $0.year, hoursPerWeek: Double($0.hoursPerWeek), totalHours: $0.totalHours) },
             sessions: sessions.filter { $0.craftId == id }.map { .init(start: $0.start, seconds: $0.durationSec, id: $0.id) },
             weekStart: (settings?.weekStart ?? .localeDefault).rawValue,
             target: settings?.currentTarget.map { .init(hoursPerWeek: $0.hoursPerWeek, start: $0.start, end: $0.end) },

@@ -49,7 +49,7 @@ enum GrowthSeries {
                 cursor += 1
             }
             let baseline = date >= onboardingDate ? fullBaseline
-                : Baseline.hours(estimates: estimates, onboardingDate: date, calendar: calendar)
+                : Baseline.hours(estimates: estimates, onboardingDate: onboardingDate, upTo: date, calendar: calendar)
             points.append(CumulativePoint(date: date, hours: baseline + logged))
         }
         return points

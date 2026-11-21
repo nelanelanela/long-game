@@ -43,7 +43,7 @@ struct EstimatesEditorView: View {
                     Spacer()
                     Menu {
                         ForEach([0, 2, 5, 10, 15, 20], id: \.self) { value in
-                            Button(Labels.hoursPerWeek(value)) { estimates.forEach { $0.hoursPerWeek = value } }
+                            Button(Labels.hoursPerWeek(value)) { estimates.forEach { $0.setHoursPerWeek(value) } }
                         }
                     } label: {
                         Text("Choose…").lgText(.rowStrong).padding(.horizontal, 14).frame(minHeight: 44)
@@ -55,7 +55,7 @@ struct EstimatesEditorView: View {
                 VStack(spacing: 0) {
                     ForEach(estimates, id: \.persistentModelID) { estimate in
                         HoursStepperRow(label: String(estimate.year), value: Binding(get: { Double(estimate.hoursPerWeek) },
-                                                                                     set: { estimate.hoursPerWeek = YearEstimate.clamped(Int($0.rounded())) }))
+                                                                                     set: { estimate.setHoursPerWeek(Int($0.rounded())) }))
                             .frame(minHeight: 52)
                         if estimate.persistentModelID != estimates.last?.persistentModelID { Divider().overlay(LGColor.divider) }
                     }

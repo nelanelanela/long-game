@@ -29,17 +29,28 @@ final class YearEstimate {
     var craftId: UUID = UUID()
     var year: Int = 2020
     var hoursPerWeek: Int = 5
+    /// Update 53: "about 40 hours so far" for the year setup happened in, when the person started that year. When
+    /// set it is the year's baseline; `hoursPerWeek` then holds total ÷ weeks elapsed, for pace and Your estimates.
+    /// Editing the year as hours a week clears it. Optional, so existing stores open unchanged (SwiftData adds it).
+    var totalHours: Double?
 
-    init(craftId: UUID, year: Int, hoursPerWeek: Int) {
+    init(craftId: UUID, year: Int, hoursPerWeek: Int, totalHours: Double? = nil) {
         self.craftId = craftId
         self.year = year
         self.hoursPerWeek = Self.clamped(hoursPerWeek)
+        self.totalHours = totalHours.map { max(0, $0) }
+    }
+
+    /// Your estimates in Settings changed this year as hours a week: the total from setup no longer applies.
+    func setHoursPerWeek(_ hours: Int) {
+        hoursPerWeek = Self.clamped(hours)
+        totalHours = nil
     }
 
     /// 0 to 168: every hour of a week.
     static func clamped(_ hours: Int) -> Int { min(Int(WeeklyTarget.maxHours), max(0, hours)) }
 
-    var rate: YearRate { YearRate(year: year, hoursPerWeek: Double(hoursPerWeek)) }
+    var rate: YearRate { YearRate(year: year, hoursPerWeek: Double(hoursPerWeek), totalHours: totalHours) }
 }
 
 enum SessionSource: String, Codable, Sendable {
@@ -174,6 +185,10 @@ final class AppSettings {
     var yearCardPinsRaw: String = ""
     /// The `IconStage` the home-screen icon was last set to.
     var appliedIconStageRaw: String = IconStage.start.stored
+    /// "Lost in your work?" (update 53): the notification question on the first session, shown once ever.
+    var notificationAskShown: Bool = false
+    /// "Bring the weather in?" (update 53): the weather invite a week after setup, shown once ever.
+    var weatherInviteShown: Bool = false
 
     init() {}
 
