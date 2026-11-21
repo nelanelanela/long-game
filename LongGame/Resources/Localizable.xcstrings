@@ -10,16 +10,16 @@
     "–" : {
 
     },
-    "“%@” will be your craft." : {
-
-    },
-    "“1,000 hours of %@. Sunrise is coming.”" : {
-
-    },
-    "“Still practising?” after 4 hours, so a forgotten timer doesn’t count." : {
-
-    },
     "%@" : {
+
+    },
+    "%@ h a week" : {
+
+    },
+    "%@ hours a week" : {
+
+    },
+    "%@ hours so far" : {
 
     },
     "%@ · %@" : {
@@ -649,9 +649,6 @@
     "a full day" : {
 
     },
-    "A gentle nudge" : {
-
-    },
     "A golden hour" : {
 
     },
@@ -691,9 +688,6 @@
     "A long one. Did the timer keep running?" : {
 
     },
-    "A long-session check" : {
-
-    },
     "A milestone in the long game" : {
 
     },
@@ -719,6 +713,9 @@
 
     },
     "A rough guess is fine." : {
+
+    },
+    "A rough guess is fine. Only focused practice counts." : {
 
     },
     "A rough guess is fine. The hours are spread across the days." : {
@@ -822,6 +819,9 @@
     "Adding" : {
 
     },
+    "After 4 hours, a quiet “Still practising?”, so you can stop it." : {
+
+    },
     "afternoon" : {
 
     },
@@ -864,6 +864,12 @@
     "At 7 pm on a day you usually practise, if you haven't yet. At most twice a week." : {
 
     },
+    "At this pace, you reach 10,000 h after %@" : {
+
+    },
+    "At this pace, you reach 10,000 h around %@" : {
+
+    },
     "At your actual pace" : {
 
     },
@@ -900,6 +906,9 @@
     "Back to my game" : {
 
     },
+    "Before today" : {
+
+    },
     "Before you began. These hours add to your starting score, on top of your estimates." : {
 
     },
@@ -910,6 +919,9 @@
 
     },
     "Begin or pause a session" : {
+
+    },
+    "Bring the weather in?" : {
 
     },
     "By %@" : {
@@ -925,6 +937,9 @@
 
     },
     "Catch up" : {
+
+    },
+    "Change a session’s length when you finish, or later in History." : {
 
     },
     "Change my pace" : {
@@ -1140,6 +1155,21 @@
     "Finish line" : {
 
     },
+    "Finish line %@" : {
+
+    },
+    "finish line after %@" : {
+
+    },
+    "finish line around %@" : {
+
+    },
+    "Finish line reached" : {
+
+    },
+    "finish line reached" : {
+
+    },
     "Finish line · 10,000 h" : {
 
     },
@@ -1167,6 +1197,9 @@
     "From a CSV exported from Long Game" : {
 
     },
+    "From today on" : {
+
+    },
     "Full screen" : {
 
     },
@@ -1180,6 +1213,9 @@
 
     },
     "Goal" : {
+
+    },
+    "Goes back to Before today" : {
 
     },
     "Golden hour, all 12 rays lit" : {
@@ -1224,10 +1260,19 @@
     "hour a week" : {
 
     },
+    "hour so far" : {
+
+    },
     "hours" : {
 
     },
     "Hours" : {
+
+    },
+    "Hours so far" : {
+
+    },
+    "hours so far" : {
 
     },
     "hours · %@" : {
@@ -1242,9 +1287,6 @@
     "Hours a week for the next 12 months" : {
 
     },
-    "Hours a week, each year" : {
-
-    },
     "Hours per week for each year. Only focused practice." : {
 
     },
@@ -1255,6 +1297,9 @@
 
     },
     "How Long Game helps." : {
+
+    },
+    "How many hours a week do you want to play for the next 12 months?" : {
 
     },
     "How much did you play each week?" : {
@@ -1281,10 +1326,13 @@
     "In the Shortcuts app, make two shortcuts with the “Set Focus” action: one turning Practising on, one turning it off. Use the names above." : {
 
     },
-    "iPhone will ask for your location next. Change your mind any time in Settings." : {
+    "iPhone will ask for your location next. You’ll find it in Settings any time." : {
 
     },
     "It can't be brought back." : {
+
+    },
+    "It happens to everyone: you get absorbed in what you’re making and forget to stop the timer." : {
 
     },
     "It hasn't been opened yet, and it can't be brought back." : {
@@ -1294,6 +1342,9 @@
 
     },
     "Its hours will be removed from your total." : {
+
+    },
+    "I’m just starting · 0 h" : {
 
     },
     "just over %@" : {
@@ -1315,6 +1366,9 @@
 
     },
     "Keep playing" : {
+
+    },
+    "Keep that pace, or change it." : {
 
     },
     "Keep the sun shining" : {
@@ -1347,6 +1401,9 @@
     "Last week, day by day: %@." : {
 
     },
+    "Last year: %@ h a week." : {
+
+    },
     "less" : {
 
     },
@@ -1372,9 +1429,6 @@
 
     },
     "Long Game · the longest game, played in real life" : {
-
-    },
-    "Long Game can send you a few quiet notifications. Never ads, never streaks." : {
 
     },
     "Long Game follows one craft, so every hour lifts the same sun. You can switch, but your hours stay with %@." : {
@@ -1407,6 +1461,9 @@
     "Look of the card" : {
 
     },
+    "Lost in your work?" : {
+
+    },
     "Make a keepsake poster" : {
 
     },
@@ -1426,9 +1483,6 @@
 
     },
     "Milestone reached · estimate" : {
-
-    },
-    "Milestones" : {
 
     },
     "Minimise" : {
@@ -1491,6 +1545,9 @@
     "Next" : {
 
     },
+    "Next 12 months" : {
+
+    },
     "Next ray in %@" : {
 
     },
@@ -1524,6 +1581,9 @@
     "Not now" : {
 
     },
+    "Not on the list? It’s your game, call it anything." : {
+
+    },
     "Not set" : {
 
     },
@@ -1543,6 +1603,9 @@
 
     },
     "Now" : {
+
+    },
+    "Now choose a pace for each week." : {
 
     },
     "Now · %@" : {
@@ -1628,6 +1691,9 @@
 
     },
     "One-time payments through the App Store. Prices are shown in your currency." : {
+
+    },
+    "Only a few quiet notifications: this check and your milestones. Never ads, never streaks." : {
 
     },
     "Only in the landscape" : {
@@ -1746,10 +1812,16 @@
     "Photos from %@ deleted" : {
 
     },
+    "Pick a pace you can keep." : {
+
+    },
     "Picture of this session, double-tap to open it" : {
 
     },
     "Play" : {
+
+    },
+    "Play %@" : {
 
     },
     "Play every day" : {
@@ -1851,6 +1923,9 @@
     "Roughly where mastery begins. That’s your finish line." : {
 
     },
+    "Roughly, hours a week in each year." : {
+
+    },
     "Save" : {
 
     },
@@ -1867,9 +1942,6 @@
 
     },
     "Sealed." : {
-
-    },
-    "Search or type your own" : {
 
     },
     "See then and now" : {
@@ -1943,6 +2015,12 @@
     "Sign in to iCloud in the Settings app to keep a copy." : {
 
     },
+    "Since %@" : {
+
+    },
+    "since %@" : {
+
+    },
     "Since %@. On average, how many hours a week did you practise?" : {
 
     },
@@ -1950,6 +2028,12 @@
 
     },
     "snow" : {
+
+    },
+    "So far this year" : {
+
+    },
+    "So far: %@ h." : {
 
     },
     "some" : {
@@ -1982,6 +2066,9 @@
     "Start the week" : {
 
     },
+    "start year" : {
+
+    },
     "Started %@" : {
 
     },
@@ -1992,6 +2079,12 @@
 
     },
     "Started on %@" : {
+
+    },
+    "Starting from zero." : {
+
+    },
+    "starting score" : {
 
     },
     "Starts a practice session" : {
@@ -2140,9 +2233,6 @@
     "The time won't be added to your hours." : {
 
     },
-    "The weather outside" : {
-
-    },
     "Then" : {
 
     },
@@ -2159,6 +2249,12 @@
 
     },
     "This removes your game from iCloud and turns iCloud saving off. The data on this iPhone stays." : {
+
+    },
+    "This screen is about the next 12 months" : {
+
+    },
+    "This screen is about the time before today" : {
 
     },
     "this session" : {
@@ -2191,6 +2287,9 @@
       }
     },
     "This week: %@ h, about %@ a day." : {
+
+    },
+    "This year so far: %@ h a week." : {
 
     },
     "three quarters of the way" : {
@@ -2276,6 +2375,9 @@
     "Type a number" : {
 
     },
+    "Type any craft, or pick one below" : {
+
+    },
     "Undo" : {
 
     },
@@ -2316,10 +2418,16 @@
     "Weekly pace" : {
 
     },
+    "weekly pace" : {
+
+    },
     "Welcome back" : {
 
     },
     "Welcome back." : {
+
+    },
+    "We’ll tap you on the shoulder" : {
 
     },
     "What if I practise more?" : {
@@ -2335,9 +2443,6 @@
 
     },
     "When did you start?" : {
-
-    },
-    "When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly; on a clear day nothing changes." : {
 
     },
     "When you start a session, Long Game runs a Shortcut of yours that turns on your Practising Focus, and another when you finish. iOS only lets Shortcuts switch a Focus on." : {
@@ -2391,6 +2496,9 @@
     "Year of pace" : {
 
     },
+    "You can always fix the time" : {
+
+    },
     "You can trim up to what you really practised." : {
 
     },
@@ -2415,10 +2523,16 @@
     "You started on %@, %@." : {
 
     },
+    "You started this year. About how many hours have you played so far, in total?" : {
+
+    },
     "you took this photo." : {
 
     },
     "You wrote this %@ hours ago" : {
+
+    },
+    "You're already past 10,000 h" : {
 
     },
     "You're already playing at this pace" : {
@@ -2476,7 +2590,16 @@
     "Your first photo next to your latest" : {
 
     },
+    "Your first session is running" : {
+
+    },
     "Your game" : {
+
+    },
+    "your game" : {
+
+    },
+    "Your game: %@." : {
 
     },
     "Your last session was on %@, %@." : {
@@ -2491,10 +2614,13 @@
     "Your letters" : {
 
     },
-    "Your pace for the year" : {
+    "Your own" : {
 
     },
-    "Your pace, split into a stretch for each day." : {
+    "Your own: %@" : {
+
+    },
+    "Your pace for the year" : {
 
     },
     "Your photos" : {
@@ -2506,19 +2632,10 @@
     "Your session is already running." : {
 
     },
-    "Your session on the Lock Screen shows either way. Change your mind any time in Settings." : {
-
-    },
     "Your sessions are usually about %@." : {
 
     },
-    "Your starting score" : {
-
-    },
     "Your starting score · %@ h" : {
-
-    },
-    "Your weekly pace" : {
 
     },
     "your weekly target" : {
@@ -2531,6 +2648,9 @@
 
     },
     "Your year card appears after four weeks of playing." : {
+
+    },
+    "You’ve been playing for a week now. When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly." : {
 
     },
     "Zoom in or out" : {

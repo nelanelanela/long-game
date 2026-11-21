@@ -53,7 +53,7 @@ All sessions belong to the active craft; the timer and add-hours flows never ask
 
 ## Screens
 
-Phone screens: a launch screen with a short opening sunrise; Welcome (and Welcome back when iCloud already holds a game), three intro pages and six setup steps (Keep your game safe, then A gentle nudge; the last is left out when notification permission is already decided); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
+Phone screens: a launch screen with a short opening sunrise; Welcome (and Welcome back when iCloud already holds a game), three intro pages and five setup steps (What's your game?, When did you start?, Before today, From today on, Keep your game safe; update 53); Home with three tabs (Today, This week, The long game), History (Calendar, Growth), Your year, Timer, the Finish sheet and Add past hours; three sheets (One craft, Welcome back after a break, Meet your future self); the catch-up steps; and the tip jar with its thank-you sheet. Plus the Live Activity, widgets and the Apple Watch app. The user always returns to Home. Design files for the main flow are in `design/` with the same names as the canvas boards; the larger "details" boards explain each feature.
 
 ### 0 · Welcome (`design/Welcome.dc.html`)
 
@@ -73,66 +73,66 @@ Three swipeable pages between Welcome and "What's your game?", to explain the ga
 
 Shown only during first onboarding (not after Switch to a new game, which goes straight to step 1 after Welcome).
 
-### 1 · Your game (`design/Main.dc.html`)
+### Setup in five steps (update 53)
 
-- Title "What's your game?", no subtitle. A search field "Search or type your own", then the suggestions as tappable chips under small group labels.
+What's your game? → When did you start? → Before today → From today on → Keep your game safe. The step dots show 5 on every step. Nothing in setup asks for a permission: notifications are asked over the first session ("Lost in your work?", see Notifications), the weather a week later ("Bring the weather in?", see Weather in the scene).
 
-- Search field filters the suggestion list as you type; any typed text is accepted as a custom craft (2–40 characters).
-- Suggestion chips in five groups: Music; Visual arts & making; Performing arts; Words & mind; Professions (the list scrolls). Tapping one selects it (navy chip) and fills the field; only one can be selected.
-- **Continue** is disabled until a craft name exists.
+**The setup scene** (`design/redesign/SetupScene.dc.html`, `SetupSceneView`): at the top of steps 2, 3 (both versions) and 4, full width under the top bar, a small picture of the game building up.
+- An 80 pt picture: the day sky and land (dawn sky over the night land in the dark look), a dashed gold line near the top with "Finish line · 10,000 h" (10 pt semibold, #B4561A) at its right end, and the happy sun (48 pt) centred. Its centre moves linearly from the horizon (0 h, lower half under the sea) to the finish line (10,000 h), springing to a new height when the starting score changes (response 0.5, damping 0.7; no spring with Reduce Motion). The land is drawn in front of the sun.
+- Chips 8 pt under it (wrapping, 28 pt capsules, 12 pt): the craft · "Since 2019" · "3,100 h" · "12 h a week". Not yet set: a dashed #D9D2C6 outline with a muted placeholder ("start year", "starting score", "weekly pace"). The chip being changed on the screen: #FFF0C8 with a 1.5 pt #F0B43A ring. Step 4 adds a gold chip "Finish line ~Dec 2037" (#FFD66B → #F0A93A, bold), live with the stepper.
+- VoiceOver: one picture element, "Your game: Calligraphy, since 2019, 3,100 hours so far, 12 hours a week, finish line around December 2037." Its words change without moving focus.
 
-### 2 · When did you start? (`design/StartYear.dc.html`)
+**The time strip** (steps 3 and 4): "Before today" · a bar · a navy dot labelled "Today" · a bar · "Next 12 months". The part the screen is about is lit (gold bar, bold #B4561A label); the other is grey #E4DFD6 (dashed on step 3) with a #5E6782 label. VoiceOver: "This screen is about the time before today" / "…the next 12 months".
 
-- Title "When did you start?", line "A rough guess is fine." A big stepper (56 pt − and + either side of the year, 64 pt), default = current year − 3, range 1940 to current year, "N years ago" under it.
-- Choosing the current year still goes to step 3, which then shows a single stepper row for this year (default 5 h/week). The user can set it to 0 if they are starting from scratch. Baseline comes from this year's estimate only.
+### 1 · What's your game? (`design/redesign/Craft.dc.html`)
 
-### 3 · Hours a week, each year (`design/YearlyHours.dc.html`)
+- Title "What's your game?", no subtitle. A field with a pencil (typing is a real answer, not only a search) and the placeholder "Type any craft, or pick one below". While it has text: a 1.5 pt navy ring and a clear (✕) button.
+- From 2 typed characters, the first row of the list is a small label **Your own** with one chip, "+ Calligraphy", already selected (navy). If the text matches a suggestion exactly (ignoring case), that suggestion is selected instead and there is no Your own row. Matching suggestions still show under their group labels; tapping one selects it instead of the typed text. No matches: only Your own, and "Not on the list? It's your game, call it anything." (14 pt, #5E6782).
+- Suggestion chips in five groups: Music; Visual arts & making; Performing arts; Words & mind; Professions (the list scrolls).
+- The button reads **Play Calligraphy** once a name of 2–40 characters exists, otherwise **Continue**, disabled. Return on the keyboard does the same. VoiceOver reads the own chip "Your own: Calligraphy, selected".
 
-- Title "Hours a week, each year", no subtitle.
+### 2 · When did you start? (`design/redesign/StartYear.dc.html`)
 
-- One stepper row per year from start year to now (year · − · "N h" · +), 0–168 h/week (no limit below the 168 hours in a week), step 1, default 5. The year being changed is highlighted (#FFF3D6 behind its value).
-- After the user changes a year that has later years, a text button appears under the card: "Use N h for the years after YYYY"; it copies that value to every later year (one tap, undoable by changing them back).
-- Under the card, "Your starting score" with the live total (baseline formula).
-- **Continue** opens step 3b (Your weekly pace).
+- The setup scene (the "Since" chip being changed). Title "When did you start?", line "A rough guess is fine." A big stepper (56 pt − and + either side of the year), default = current year − 3, range 1940 to current year, "N years ago" under it.
+- Choosing the current year leads to the started-this-year version of step 3.
 
-### 3b · Your weekly pace (`design/WeeklyTarget.dc.html`)
+### 3 · Before today (`design/redesign/YearlyHours.dc.html`, `YearlyHoursThisYear.dc.html`)
 
-A weekly target for the next 12 months, counted from the day it's set (not the calendar year). The idea: a long walk is made one day's stretch at a time, so for a year the 10,000 hours step back and each week's target becomes the only distance to cover.
+**Several years.** The setup scene (the score chip being changed, live) and the time strip. Title "Before today", line "Roughly, hours a week in each year."
+- One stepper row per year from start year to now (year · − · "N h" · +), 0–168 h/week, step 1, default 5. The current year's row has a second line, "So far this year". The year being changed is highlighted.
+- After the user changes a year that has later years, a text button appears under the card: "Use N h for the years after YYYY".
+- The starting score is the scene's chip (there is no separate row). The scene, title and rows scroll together; Continue stays put.
 
-- Onboarding step 4 of 6 (step dots show 6 steps on steps 1–6; 5 when A gentle nudge is left out). Also opened from the target row on the **This week** tab, to change it at any time (then titled "Your pace for the year", button **Save**).
-- Title "Your weekly pace". One line: "For the next 12 months, the only distance to cover."
-- Big stepper: a 56 pt − button, the big number with "hours a week", a 56 pt + button; 1–168 h a week (no limit below the 168 hours in a week), step 0.5 (shown without decimals when whole). Default = current pace rounded (or the latest YearEstimate during onboarding). No quick-pick chips under it.
-- Under the scene of the day's stretch: "Your pace, split into a stretch for each day." (update 42; was "Each day, a stretch from the sea to the moon.").
-- One quiet line under the chips instead of a card: "About 1 h 43 m a day · until Nov 2027" (target ÷ 7, and the set date + 12 months). The "In a year" forecast moves to the Growth chart.
-- **Continue** opens step 3c.
+**Started this year** (start year = current year). Title "Before today", line "You started this year. About how many hours have you played so far, in total?"
+- One big stepper in hours, not hours a week: the number with "hours so far" under it. 0–5,000 h, step 5, hold to repeat, tap the number to type it. Default 20.
+- Under it: "A rough guess is fine. Only focused practice counts." and a white pill **I'm just starting · 0 h**, which sets 0.
+- Data: the year is saved with `YearEstimate.totalHours` (optional, added in update 53; existing stores open unchanged). When set, it is that year's baseline instead of hours a week × weeks elapsed. `hoursPerWeek` is stored beside it as total ÷ weeks since 1 January (at least one week), to the nearest half hour and then the whole hour the field holds, so pace blending and Your estimates keep working. Editing that year in Your estimates as hours a week clears `totalHours`. Before setup, the Growth line grows evenly from 1 January to the total.
+- Going back to step 2 and choosing an earlier year shows the several-years version, with this year's row prefilled from the total.
 
-### 3c · Keep your game safe (`design/ICloud.dc.html`)
+### 3b · From today on (`design/redesign/WeeklyPace.dc.html`)
 
-- Step 5 of 6. Illustration: the sun over the sea with a small white circle holding a blue iCloud symbol. Title "Keep your game safe".
-- One card: iCloud icon, **Save to iCloud**, line "On all your Apple devices, and back if you get a new iPhone.", and a switch, **on** by default.
-- Under the card, 13 pt muted: "Private to your Apple Account. Only you can see it. No sign-in needed."
-- If the device has no iCloud account (`CKContainer.accountStatus` ≠ available), the switch is off and disabled and the line reads "Sign in to iCloud in the Settings app to keep a copy."
-- **Continue** opens step 3d (A gentle nudge). When that step is left out (notifications already allowed or turned off, for example after "Switch to a new game"), this is the last step and the button reads **Start playing**: it saves everything (and the iCloud choice) and opens Home on The long game (once).
-- The weekly pace (step 3b) is saved with everything else when onboarding finishes. When editing from Home, the button reads **Save** and the 12 months restart from today.
+A weekly target for the next 12 months, counted from the day it's set (not the calendar year).
+
+- Onboarding step 4: the setup scene (the pace chip being changed, plus the gold finish-line chip) and the time strip lit on "Next 12 months". Title "From today on", line "How many hours a week do you want to play for the next 12 months?"
+- A small white card that links back to step 3: a dot, a bold first part and a muted second:
+  - several years: "**Last year: N h a week.** Keep that pace, or change it." (the year before the current one);
+  - only the current year, as hours a week: "**This year so far: N h a week.** Keep that pace, or change it.";
+  - started this year with a total: "**So far: N h.** Now choose a pace for each week.";
+  - started from 0: "**Starting from zero.** Pick a pace you can keep."
+- Big stepper: 1–168 h a week, step 0.5. Default: the latest year's hours a week; 5 h for a game started this year.
+- Under it, two centred lines: "About 1 h 43 m a day · until Nov 2027" and, #B4561A semibold, "At this pace, you reach 10,000 h around December 2037" (the chosen-pace line of the forecast, live with the stepper). Beyond 30 years: "…after 2056". Past 10,000 already: "You're already past 10,000 h". The daily-stretch picture is gone.
+- Opened from the target row on **This week** to change the pace: title "Your pace for the year", line "For the next 12 months, the only distance to cover.", button **Save**, no setup scene and no time strip; the link card and the finish line still show. The year-end sheets ("A new year of pace", and the first target for an older game) keep their titles.
 - Data: `Settings.weeklyTargetHours`, `targetSetAt`, `targetEndsAt` (= set date + 12 months). Earlier targets are kept in a small `TargetPeriod` list (hours, start, end) so past weeks are judged against the target that applied then.
 - When the 12 months end: from 14 days before, the This week tab's target row says "Your year of pace ends on 2 Nov. Choose the next one." On the first open after the end date, the screen opens as a sheet ("A new year of pace") with the old value pre-filled. Until a new one is set, the old target carries on.
 - Effect on the forecast: the finish-line forecast everywhere uses this chosen pace (see Forecast algorithm), so changing it moves the finish line straight away.
 
-### 3d · A gentle nudge (`design/redesign/Notifications.dc.html`)
+### 3c · Keep your game safe (`design/redesign/ICloud.dc.html`)
 
-The one place the app asks for notifications, so nothing interrupts the first session.
-
-- Step 6 of 6. Shown only while iOS has never asked (status "not determined"); otherwise step 3c finishes onboarding.
-- Illustration: the day sky, the sun with the wink face, the land and sea, and a bell (amber) in a small white bubble beside the sun (decorative, hidden from VoiceOver).
-- Title "A gentle nudge". Line: "Long Game can send you a few quiet notifications. Never ads, never streaks."
-- A white card with two rows, each an icon on a peach tile, a 15 pt semibold title and a 13 pt muted line; VoiceOver reads each row as one element:
-  - **Milestones** — "“1,000 hours of piano. Sunrise is coming.”" (with the user's craft)
-  - **A long-session check** — "“Still practising?” after 4 hours, so a forgotten timer doesn’t count."
-- Under the card, 13 pt muted: "Your session on the Lock Screen shows either way. Change your mind any time in Settings."
-- **Allow notifications** (primary) only shows iOS's own prompt. It never turns on the daily reminder, which stays off until the person turns it on in Settings. Then onboarding finishes (everything saved, Home opens on The long game once).
-- **Not now** (text button) finishes onboarding without asking iOS.
-- Either way `notifications.asked` is set. "by We Have Sun" under the buttons.
-- The milestone notification itself reads the same: "1,000 hours of piano. Sunrise is coming." (at 10,000: "10,000 hours of piano. The sun has fully risen."). The celebration on Home keeps its short line ("A thousand hours.").
+- Step 5 of 5. Illustration: the sun over the sea with a small white circle holding a blue iCloud symbol. Title "Keep your game safe".
+- One card: iCloud icon, **Save to iCloud**, line "On all your Apple devices, and back if you get a new iPhone.", and a switch, **on** by default.
+- Under the card, 13 pt muted: "Private to your Apple Account. Only you can see it. No sign-in needed."
+- If the device has no iCloud account, the switch is off and disabled and the line reads "Sign in to iCloud in the Settings app to keep a copy."
+- **Start playing** saves everything (the estimates, the pace and the iCloud choice) and opens Home on The long game (once). Under it, "Write to yourself at 100 hours" (or the next milestone past the setup total) does the same and then opens the letter sheet.
 
 ### 4 · Home (`design/TodayStretch.dc.html`, `design/HomeWeek.dc.html`, `design/Home.dc.html`)
 
@@ -622,7 +622,9 @@ No account and no sign-in: the app uses the iCloud account already on the device
 - A running timer syncs its timestamps (startedAt, pausedAt, accumulated pause, device) through iCloud as one small `ActiveSession` record, so a session started on one device shows on the others (iPhone, Mac) and any of them can pause or finish it. Only one active session at a time; if two devices start at once, the earlier start wins and the other device shows it. The Watch keeps using WatchConnectivity with the iPhone.
 - Settings opens from the gear in the Home bar (and from the gear in History). Its first row is "Support Long Game" (the tip jar, screen 14). Under it, an **iCloud** group: the **Save to iCloud** switch, a status line ("Up to date", "Syncing…", "Last synced 10:42", or "Sign in to iCloud in the Settings app to keep a copy"), and **Delete iCloud copy** (with confirmation; the data on this device stays). No account, sign-in or sign-out rows. Its practice group has Your estimates, Archived crafts and **Switch to a new game** (opens the One craft sheet, screen 8). It also offers Export (CSV of sessions, including notes; photos are not exported) and Delete all data (photos included).
 
-**Notifications** (all off by default; asked once, on the last setup step "A gentle nudge" (3d). Starting a session never shows a permission prompt; the milestone and long-session notifications are still planned, and iOS drops them if permission was not given)
+**Notifications** (all off by default). Since update 53 they are asked once, over the first session, never in setup.
+
+**Lost in your work?** (`design/redesign/TimerNotifyAsk.dc.html`): the first time a session is started from the app, right after the timer starts (it keeps running underneath; the sheet never pauses or delays it). If the first session was started from the Live Activity, the Watch, a Control or a Shortcut, it opens on Home the next time the app is opened while that session is still running. Shown once ever (`Settings.notificationAskShown`), and never once iOS's permission is decided. The sheet: a pulsing orange dot and "Your first session is running"; the wink sun (64 pt) beside the title; "It happens to everyone: you get absorbed in what you're making and forget to stop the timer."; a card with **We'll tap you on the shoulder** ("After 4 hours, a quiet “Still practising?”, so you can stop it.") and **You can always fix the time** ("Change a session's length when you finish, or later in History."); and "Only a few quiet notifications: this check and your milestones. Never ads, never streaks." **Allow notifications** shows iOS's prompt and, if allowed, plans the 4-hour "Still practising?" for the session already running. **Not now** or a swipe down closes it. The 4-hour notification is cancelled on pause, finish or discard and planned again on resume with the time left. Starting a session never shows iOS's prompt by itself; the milestone and long-session notifications are still planned, and iOS drops them without permission.
 
 Settings keeps a switch for the daily reminder and the rhythm nudge. Both start off for everyone; Settings is the only place to turn the daily reminder on (at 19:00 on every day to start) and choose its time and days. Turning one on asks iOS only if it never asked (someone who chose Not now). If notifications are off for Long Game, the switch stays off and a line reads "Notifications are off for Long Game in iPhone Settings" with an **Open Settings** button to the app's page in the Settings app.
 
@@ -801,7 +803,7 @@ A small, rare line on Home from the person's own history (`Memories.today(...)`,
 
 - **Model:** `Letter` (SwiftData): id, craftId, text, writtenAt, totalWhenWritten, milestone (hours), openedAt (nil while sealed). Same store as the sessions, so in iCloud only when sync is on. Exported as a second file, `LongGame-letters.csv` (a sealed letter's text stays sealed there: "(sealed until 4000 h)").
 - **Milestones:** 100, 500, 1,000, then every 1,000 to 10,000; one letter per milestone per craft; never for a milestone already passed (`Letters` in `Logic/`).
-- **Offered:** on each milestone celebration ("Write to yourself at 4,000 hours", secondary); a row on The long game ("A letter to your future self · For you at 4,000 hours"); at the end of setup ("Write to yourself at 100 hours", or the next milestone past the setup total; Home opens the letter sheet; on A gentle nudge it leaves notifications undecided, like Not now).
+- **Offered:** on each milestone celebration ("Write to yourself at 4,000 hours", secondary); a row on The long game ("A letter to your future self · For you at 4,000 hours"); at the end of setup ("Write to yourself at 100 hours" under Start playing on Keep your game safe, or the next milestone past the setup total; Home opens the letter sheet).
 - **Writing (sheet):** Not now · "112 / 1,000"; the sun with open eyes; "A letter to you at 4,000 hours"; the invitation with "around January 2028 at your pace" (the chosen weekly pace; without one it ends "until you get there."); lined paper, up to 1,000 characters; the hint; Seal the letter (primary, disabled while empty). Leaving with text asks "Throw this letter away?" (Keep writing / Throw away).
 - **Sealed:** envelope with an amber seal carrying the sun, "Sealed.", "The sun will bring it back at 4,000 hours. 1,000 hours to go.", Done; a soft tap. The row becomes "A letter is waiting · Opens at 4,000 h · written 3 June 2026"; it opens the envelope with Rewrite (replaces the old letter only when the new one is sealed) and Throw away (confirmed). A sealed letter's text is never shown in the app.
 - **Delivered:** right after the milestone's celebration closes (or, for milestones without a celebration, once the save has settled), once: the celebrate face, "A letter from you", the navy pill "You wrote this 1,000 hours ago", the letter on its paper, "3 June 2026 · at 3,000 h", Write to you at 5,000 hours / Keep it and close; rising three. Two at once: the earlier first. At 10,000 hours: "All your letters", first to last, on one screen.
@@ -815,14 +817,14 @@ A small, rare line on Home from the person's own history (`Memories.today(...)`,
 - **Sheet:** preview, "A keepsake for your wall", Paper (A4, A3, 50 × 70, 18 × 24 in; A3 by default, 18 × 24 in where the region uses inches), Look (Paper, Night), Save the poster (share sheet: Files, AirDrop, Print), Not now.
 - **File:** a one-page vector PDF at the paper size, made on the device from the poster's shapes and text (`ImageRenderer` into a Core Graphics PDF context, fonts embedded), 15 mm margin, title and description in its metadata, named "Long Game – 3,000 hours of piano.pdf". Nothing uploaded.
 
-## Weather in the scene (update 49, `design/redesign/SunMoods.dc.html`, `OnboardingWeather.dc.html`)
+## Weather in the scene (update 49, `design/redesign/SunMoods.dc.html`; the invite: update 53, `WeatherInvite.dc.html`)
 
 - **What:** on Home only, one thin pale layer over the landscape (`SceneWeather.current(weather:)`): **cloud** (mostly cloudy, overcast: three soft clouds high and to the sides), **rain** (rain, drizzle: fine slanted lines, thin rings on the water, a faint navy veil; the sun rests its eyes, the `focus` face), **wind** (40 km/h or more: one long thin cloud, faint gust lines low), **mist** (fog, mist, haze: a veil densest just above the water, two slow bands), **snow** (snow, sleet: slow flakes of four sizes; the sun's eyes open, the `celebrate` face). One at a time: snow, rain, mist, wind, cloud. Clear, partly cloudy and no data: nothing changes.
 - **Wind** also makes the shoreline and the water's lines sway faster (`SceneWeather.windSway`, 2.4 times; the `landSway` environment value on `LandView`). Still with Reduce Motion.
 - **Never changes** the sky's colour, the sun's height or its rays. Clouds keep clear of the sun's disc along the whole arc; the mist stays below its face. Not in the timer, widgets, icon, share cards, launch or the Watch. A celebration, a wink and the giggle win over the weather's face. Slow movement, seeded positions; still with Reduce Motion; 70% in dark. VoiceOver: the scene's label gains the words ("…, light rain").
 - **Data:** WeatherKit `WeatherService`, current weather only. Fetched when Home appears, at most every 3 hours; only the last layer and the fetch time are kept, never the location. Errors and no network: the scene as it is, nothing said.
 - **Settings:** in Appearance (update 42 moved it from Sounds), **Weather in the scene**, "Rain, mist and snow from outside your window", **off by default**. Turning it on asks for location (When In Use, reduced accuracy by default: `NSLocationDefaultAccuracyReduced`); refused, the switch goes back with "Without your location the app can't see the weather." Apple's Weather mark and the "Other data sources" link sit under it. Purpose string: "Long Game uses your approximate location only to show the weather in its landscape."
-- **Onboarding:** a new last step, 7 of 7 (6 of 6 when the nudge is skipped), "The weather outside": Show the weather (the system prompt; allowed turns the switch on) or Not now; both go on to Home. The first letter's "Write to yourself at 100 hours" moved here, as the last step. People who already finished setup only have the Settings switch.
+- **The invite** (update 53, replacing the onboarding step "The weather outside"): **Bring the weather in?** opens once (`Settings.weatherInviteShown`) when all hold: at least 7 days since onboarding, the switch off, a session just saved and Home back with any celebration, letter, icon change or other sheet finished, and no timer running. A small rainy scene with the sun resting its eyes, "You've been playing for a week now. When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly.", the two-row card (**Only in the landscape** · **Your rough area is enough**) and "iPhone will ask for your location next. You'll find it in Settings any time." **Show the weather** does what the Settings switch does (the location prompt; allowed turns it on; refused leaves it off and Settings shows the refusal line). **Not now** or a swipe down closes it. The location prompt is only ever shown from this button or the switch.
 
 ## Visual system
 
