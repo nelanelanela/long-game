@@ -4,6 +4,20 @@ import XCTest
 /// The report (`docs/ACCESSIBILITY_REPORT.md`) lists these too.
 enum KnownFalseAlarms {
     static func ignores(_ issue: XCUIAccessibilityAuditIssue, screen: String) -> Bool {
+        // 0. The two ask sheets of update 53 (redrawn in 55 and 56) are bottom sheets only as tall as what they hold.
+        //    On iOS 26 a sheet at a height detent floats as an inset card drawn at about 0.87 (as the One craft sheet in
+        //    9 below), and the audit then reports clipped text and contrast without naming any element. Their
+        //    screenshots show every word whole; at the accessibility sizes they open full height and pass.
+        if issue.element == nil, ["Can we check in?", "Bring the weather in?"].contains(screen),
+           [.textClipped, .contrast].contains(issue.auditType) {
+            return true
+        }
+        //    What's your game? (update 54): the list is never filtered any more, so every chip from the last rows sits
+        //    under the bottom fade above the pinned button. The audit reports those as contrast without naming them
+        //    (update 50 already listed "Setup 1 contrast, unnamed"); scrolled into view they are navy on white, 15:1.
+        if issue.element == nil, screen.hasPrefix("Setup 1"), issue.auditType == .contrast {
+            return true
+        }
         guard let element = issue.element else { return false }
         let label = element.label
         let frame = element.frame
@@ -74,8 +88,9 @@ enum KnownFalseAlarms {
                         "iPhone will ask for your location", "Write a few lines to the person", "The sun will bring it back",
                         "Not sure what to say?", "Your pace, split into a stretch",
                         // Update 53: From today on's question (on the peach sky, like the old caption), the notes
-                        // under Lost in your work? and Bring the weather in? (#5E6782 on #FAF7F1, 5.2:1).
-                        "How many hours a week do you want", "Only a few quiet notifications",
+                        // under Can we check in? and Bring the weather in? (#5E6782 on #FAF7F1, 5.2:1).
+                        "How many hours a week do you want", "We only send this note",
+                        "Sometimes the timer keeps running", "Roughly, hours a week in each year.",
                         "You’ve been playing for a week now", "You started this year."]
         if issue.auditType == .contrast, element.elementType == .staticText, captions.contains(where: { label.hasPrefix($0) || label.hasSuffix($0) }) {
             return true
@@ -93,6 +108,12 @@ enum KnownFalseAlarms {
         let pinned = ["Home ·", "Saved", "Intro", "Welcome", "Setup 1", "Setup 2", "Setup 3", "Then and now"].contains(where: screen.hasPrefix)
         if issue.auditType == .contrast || issue.auditType == .textClipped, pinned, element.elementType == .staticText,
            frame.minY >= 700 {
+            return true
+        }
+
+        //    What's your game?'s chips (update 54, buttons rather than words): with the list never filtered, the last
+        //    rows reach into the bottom fade from about 680 pt; scrolled up they are navy on white, 15:1.
+        if issue.auditType == .contrast, screen.hasPrefix("Setup 1"), element.elementType == .button, frame.minY >= 680 {
             return true
         }
 

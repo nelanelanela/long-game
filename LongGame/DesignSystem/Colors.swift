@@ -151,14 +151,19 @@ enum LGColor {
     static let sidebar = Color(light: 0xEFEBE4, dark: 0x10163A)
     static let sidebarSelection = Color(light: 0x16244A, dark: 0xFFFFFF, lightOpacity: 0.10, darkOpacity: 0.10)
     // The setup scene and time strip (update 53, SetupScene.dc.html)
-    /// A chip not yet filled in: dashed outline.
+    /// A chip not yet filled in: a thin outline (#D9D2C6), also the time strip's dashed future on step 3.
     static let setupChipPending = Color(light: 0xD9D2C6, dark: 0x3A4470)
+    /// The dashed finish line across the top of the setup scene.
+    static let setupFinishLine = Color(hex: 0xE0A93A)
     /// The chip being changed on this screen, and its gold ring.
     static let setupChipEditing = Color(light: 0xFFF0C8, dark: 0x3A3350)
     static let setupChipRing = Color(hex: 0xF0B43A)
-    /// The finish line chip's gold gradient.
+    /// The finish line chip's gold gradient (left to right).
     static let setupFinishTop = Color(hex: 0xFFD66B)
     static let setupFinishBottom = Color(hex: 0xF0A93A)
+    /// The lit part of the time strip, and the link card's dot: the step dots' gold (#FFC93C → #F0922A).
+    static let setupLitStart = Color(hex: 0xFFC93C)
+    static let setupLitEnd = Color(hex: 0xF0922A)
     /// The time strip's quiet part.
     static let setupStripQuiet = Color(light: 0xE4DFD6, dark: 0x2E3866)
     // Hour steppers

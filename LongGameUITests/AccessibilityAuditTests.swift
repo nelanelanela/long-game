@@ -68,7 +68,7 @@ final class AccessibilityAuditTests: XCTestCase {
     private func wait(_ label: String, timeout: TimeInterval = 6) {
         let any = app.descendants(matching: .any)[label].firstMatch
         if !any.waitForExistence(timeout: timeout) {
-            let text = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", label)).firstMatch
+            let text = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", label)).firstMatch
             XCTAssertTrue(text.waitForExistence(timeout: 2), "Didn't find '\(label)'")
         }
     }
@@ -130,7 +130,20 @@ final class AccessibilityAuditTests: XCTestCase {
         audit("Setup 4 · From today on, from zero")
     }
 
-    func testNotificationAsk() { launch(["-uitest.screen", "notifyAsk"]); wait("Lost in your work?"); audit("Lost in your work?") }
+    func testNotificationAsk() { launch(["-uitest.screen", "notifyAsk"]); wait("Can we check in?"); audit("Can we check in?") }
+    /// Update 54: an exact match selects the choice and shows no Your own row.
+    func testCraftExactMatch() {
+        launch(["-uitest.freshInstall"], demo: false)
+        tap("Get started", timeout: 12)
+        tap("Next"); tap("Next")
+        tap("Choose your game")
+        let field = app.textFields.firstMatch
+        field.tap()
+        field.typeText("piano")
+        wait("Play Piano")
+        XCTAssertFalse(app.buttons["Your own: piano"].exists)
+        audit("Setup 1 · Exact match")
+    }
     func testWeatherInvite() { launch(["-uitest.screen", "weatherInvite"]); wait("Bring the weather in?"); audit("Bring the weather in?") }
 
     // MARK: Update 48 and 49

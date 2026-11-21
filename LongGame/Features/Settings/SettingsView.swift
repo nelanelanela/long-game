@@ -505,7 +505,7 @@ struct SettingsView: View {
                 .lgText(.rowStrong).frame(minHeight: 54)
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
-                    Button("Show Lost in your work?") {
+                    Button("Show Can we check in?") {
                         DebugOptions.request(.notifyAsk)
                         (closeAll ?? { dismiss() })()
                     }

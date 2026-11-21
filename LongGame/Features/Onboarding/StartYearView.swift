@@ -20,10 +20,11 @@ struct StartYearView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     SetupSceneView(state: model.scene(editing: .startYear))
+                        .padding(.top, 6)
                     VStack(alignment: .leading, spacing: 0) {
                         Text("When did you start?").lgText(.setupTitle)
                             .accessibilityAddTraits(.isHeader)
-                            .padding(.top, 16)
+                            .padding(.top, 18)
                         Text("A rough guess is fine.").lgText(.body, color: LGColor.inkMuted)
                             .padding(.top, 8)
 
@@ -47,7 +48,7 @@ struct StartYearView: View {
                             Spacer()
                             stepButton("plus", label: "Later year", enabled: model.startYear < model.currentYear) { model.startYear += 1 }
                         }
-                        .padding(.top, 40)
+                        .padding(.top, 56)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 16)

@@ -116,7 +116,7 @@ struct SetupSceneState: Equatable, Sendable {
     }
 }
 
-/// "Lost in your work?" (update 53): notifications are asked about once, on the first session, instead of in setup.
+/// "Can we check in?" (update 53): notifications are asked about once, on the first session, instead of in setup.
 enum NotificationAskRule {
     /// Shown once ever, while a session is running, and only while iOS has never asked.
     static func shouldShow(alreadyShown: Bool, permission: NotificationPermission, sessionRunning: Bool) -> Bool {

@@ -71,22 +71,22 @@ struct WeeklyTargetView: View {
                 if mode == .onboarding, let onboarding {
                     SetupSceneView(state: onboarding.scene(editing: .pace, pace: hours, showsFinish: true))
                         .padding(.horizontal, -24)
+                        .padding(.top, 6)
                     SetupTimeStripView(lit: .nextYear)
-                        .padding(.horizontal, -24)
-                        .padding(.top, 10)
+                        .padding(.top, 14)
                 }
                 Text(title).lgText(.setupTitle).accessibilityAddTraits(.isHeader)
                     .padding(.top, mode.isSheet ? 12 : (mode == .onboarding ? 14 : 18))
                 Text(subtitle)
-                    .lgText(.body, color: LGColor.inkMuted)
-                    .lineSpacing(4)
+                    .lgText(mode == .onboarding ? .setupLine : .body, color: LGColor.inkMuted)
+                    .lineSpacing(mode == .onboarding ? 3 : 4)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 8)
+                    .padding(.top, mode == .onboarding ? 6 : 8)
 
                 if let link { linkCard(link).padding(.top, 14) }
 
-                picker.padding(.top, link == nil ? 34 : 24)
-                VStack(spacing: 6) {
+                picker.padding(.top, link == nil ? 34 : 30)
+                VStack(spacing: 4) {
                     Text("About \(WeeklyTarget.perDay(hours)) · until \(DateText.monthYear(WeeklyTarget.endDate(from: now)))")
                         .lgText(.note, color: LGColor.inkMuted)
                     if let total {
@@ -97,7 +97,7 @@ struct WeeklyTargetView: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity)
-                .padding(.top, 20)
+                .padding(.top, 22)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
@@ -114,23 +114,23 @@ struct WeeklyTargetView: View {
         .lgHidesNavigationBar()
     }
 
-    /// One dot, a bold first part and a muted second: "Last year: 12 h a week. Keep that pace, or change it."
-    /// In onboarding it goes back to "Before today".
+    /// One gold dot, a bold first part and a muted second: "Last year: 12 h a week. Keep that pace, or change it."
+    /// In onboarding a tap goes back to "Before today".
     @ViewBuilder
     private func linkCard(_ link: SetupLink) -> some View {
         let content = HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Circle().fill(LGColor.amber).frame(width: 8, height: 8)
+            Circle()
+                .fill(LinearGradient(colors: [LGColor.setupLitStart, LGColor.setupLitEnd], startPoint: .leading, endPoint: .trailing))
+                .frame(width: 8, height: 8)
                 .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
             (Text(verbatim: link.bold).fontWeight(.semibold) + Text(verbatim: " ")
              + Text(verbatim: link.muted).foregroundColor(LGColor.inkMuted))
                 .lgText(LGTextStyle(size: 14, weight: .regular, relativeTo: .subheadline))
+                .lineSpacing(2)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
-            if onBackToHours != nil {
-                Image(systemName: "chevron.right").lgIcon(12, weight: .semibold).foregroundStyle(LGColor.inkMuted)
-            }
         }
-        .padding(.horizontal, 14).padding(.vertical, 12)
+        .padding(.horizontal, 14).padding(.vertical, 10)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .lgCard(radius: 14)
         if let onBackToHours {

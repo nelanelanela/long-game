@@ -206,6 +206,8 @@ final class AccessibilityBehaviourTests: XCTestCase {
     func testOrderFinishSheet() { checkOrder("timer.finish", expected: ExpectedOrder.finish) }
     func testOrderCalendar() { checkOrder("history.calendar", expected: ExpectedOrder.calendar) }
     func testOrderSettings() { checkOrder("settings", expected: ExpectedOrder.settings) }
+    func testOrderCheckIn() { checkOrder("notifyAsk", expected: ExpectedOrder.checkIn) }
+    func testOrderWeatherInvite() { checkOrder("weatherInvite", expected: ExpectedOrder.weatherInvite) }
 }
 
 /// The order a person should hear things, top to bottom. Filled in from a first listen and checked against the
@@ -222,4 +224,10 @@ enum ExpectedOrder {
     static let calendar = ["Back", "History", "Settings", "Calendar", "Growth"]
     /// Back and the title first, then the groups in the order they are drawn.
     static let settings = ["Back", "Settings", "Appearance", "Look", "Weather in the scene", "Support Long Game", "Notifications", "Daily reminder"]
+    /// Update 55: the running line, the title, the two rows, the note, then the two buttons.
+    static let checkIn = ["Your first session is running", "Can we check in?", "Sometimes the timer keeps running",
+                          "After 4 hours", "Easy to fix later", "We only send this note", "Allow notifications", "Not now"]
+    /// Update 56: the title, the line, the two rows (the first now "Only the scenery changes"), the note, the buttons.
+    static let weatherInvite = ["Bring the weather in?", "You’ve been playing for a week now", "Only the scenery changes",
+                                "Your rough area is enough", "iPhone will ask for your location", "Show the weather", "Not now"]
 }

@@ -29,7 +29,7 @@ struct TimerView: View {
     /// The last state the timer had. Discarding clears the timer a moment before the screen has slid away, and
     /// without this the screen would show plain black until it is gone.
     @State private var lastState: TimerState?
-    /// "Lost in your work?" (update 53): once, over the first running session.
+    /// "Can we check in?" (update 53): once, over the first running session.
     @State private var showNotifyAsk = false
 
     init(craft: Craft, baseTotal: Double) {

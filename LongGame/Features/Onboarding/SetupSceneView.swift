@@ -1,19 +1,21 @@
 import SwiftUI
 
-/// A small picture of the game that builds up through setup (update 53, `design/redesign/SetupScene.dc.html`): at the
-/// top of steps 2, 3 and 4, right under the top bar. The day sky and land, a dashed gold finish line at 10,000 h, and
-/// the happy sun at the height of the starting score; under it, chips for what has been set so far.
+/// A small picture of the game that builds up through setup (updates 53, `design/redesign/SetupScene.dc.html`): at
+/// the top of steps 2, 3 and 4, full width, 6 pt under the top bar. The day sky and land, a dashed gold finish line at
+/// 10,000 h, and the happy sun at the height of the starting score; under it, chips for what has been set so far.
 struct SetupSceneView: View {
     let state: SetupSceneState
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.colorScheme) private var colorScheme
 
-    /// The picture is 80 pt tall: the sun's centre runs from the horizon (0 h) up to the finish line (10,000 h).
+    /// The board's 390 × 80 picture: the sun's centre runs from the horizon (0 h) up to the finish line (10,000 h).
     private static let height: CGFloat = 80
-    private static let horizonY: CGFloat = 56
+    private static let horizonY: CGFloat = 64
     private static let finishY: CGFloat = 16
     private static let sunSize: CGFloat = 48
+    /// The land box (390 × 120) starts here; its shoreline (46 pt down) meets the horizon.
+    private static let landTop: CGFloat = 19
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -35,28 +37,29 @@ struct SetupSceneView: View {
         let sunY = Self.horizonY - (Self.horizonY - Self.finishY) * state.sunHeight
         return GeometryReader { geo in
             ZStack(alignment: .topLeading) {
-                SkyView(tone: dark ? .dawn : .day, horizon: Self.horizonY / Self.height, moon: false)
+                SkyView(tone: dark ? .dawn : .day, horizon: 0.8, moon: false, glowX: 0.5)
                     .frame(width: geo.size.width, height: Self.height)
-                // The finish line, dashed, with its label at the right end.
+                // The finish line: the top of the scene is 10,000 h.
                 Path { p in
-                    p.move(to: CGPoint(x: 16, y: Self.finishY))
-                    p.addLine(to: CGPoint(x: geo.size.width - 134, y: Self.finishY))
+                    p.move(to: CGPoint(x: 24, y: Self.finishY))
+                    p.addLine(to: CGPoint(x: geo.size.width - 24, y: Self.finishY))
                 }
-                .stroke(LGColor.setupChipRing, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [4, 4]))
+                .stroke(LGColor.setupFinishLine, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [4, 5]))
                 Text("Finish line · 10,000 h")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(LGColor.ember)
                     .lineLimit(1)
                     .fixedSize()
-                    .position(x: geo.size.width - 74, y: Self.finishY)
+                    .frame(width: geo.size.width - 24, alignment: .trailing)
+                    .offset(y: 2)
                 SunView(idle: false, face: .happy)
                     .frame(width: Self.sunSize, height: Self.sunSize)
                     .position(x: geo.size.width / 2, y: sunY)
                     .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.7), value: sunY)
                 // The land and sea in front of the sun: at 0 h its lower half is under the sea, as on Home.
                 LandView(tone: dark ? .night : .day)
-                    .frame(width: geo.size.width, height: 60)
-                    .offset(y: Self.horizonY - 23)
+                    .frame(width: geo.size.width, height: 120)
+                    .offset(y: Self.landTop)
             }
         }
         .frame(height: Self.height)
@@ -76,12 +79,15 @@ struct SetupSceneView: View {
                     .padding(.horizontal, 11)
                     .frame(minHeight: 28)
                     .background(LinearGradient(colors: [LGColor.setupFinishTop, LGColor.setupFinishBottom],
-                                               startPoint: .top, endPoint: .bottom), in: Capsule())
+                                               startPoint: .leading, endPoint: .trailing), in: Capsule())
+                    .shadow(color: LGColor.amber.opacity(0.3), radius: 5, y: 3)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    /// Filled: white with a soft shadow, or #FFF0C8 with a gold ring while it is being changed on this step.
+    /// Not yet set: a thin #D9D2C6 outline and a muted placeholder.
     @ViewBuilder
     private func chip(_ value: String?, placeholder: String, as kind: SetupSceneState.Chip) -> some View {
         let editing = state.editing == kind
@@ -90,24 +96,23 @@ struct SetupSceneView: View {
                 .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption))
                 .padding(.horizontal, 11)
                 .frame(minHeight: 28)
-                .background(editing ? LGColor.setupChipEditing : LGColor.surface, in: Capsule())
+                .background {
+                    Capsule().fill(editing ? LGColor.setupChipEditing : LGColor.surface)
+                        .shadow(color: LGColor.navy.opacity(editing ? 0 : 0.06), radius: 5, y: 3)
+                }
                 .overlay { if editing { Capsule().strokeBorder(LGColor.setupChipRing, lineWidth: 1.5) } }
         } else {
             Text(verbatim: placeholder)
-                .lgText(LGTextStyle(size: 12, weight: .medium, relativeTo: .caption), color: LGColor.inkMuted)
+                .lgText(LGTextStyle(size: 12, weight: .medium, relativeTo: .caption), color: LGColor.gaugeLabel)
                 .padding(.horizontal, 11)
                 .frame(minHeight: 28)
-                .background(editing ? LGColor.setupChipEditing : .clear, in: Capsule())
-                .overlay {
-                    Capsule().strokeBorder(editing ? LGColor.setupChipRing : LGColor.setupChipPending,
-                                           style: StrokeStyle(lineWidth: editing ? 1.5 : 1, dash: editing ? [] : [3, 3]))
-                }
+                .overlay { Capsule().strokeBorder(LGColor.setupChipPending, lineWidth: 1) }
         }
     }
 }
 
-/// The thin strip under the setup scene on steps 3 and 4: "Before today" · a bar · Today · a bar · "Next 12 months".
-/// The part the screen is about is lit gold with a bold label.
+/// The thin strip on steps 3 and 4: "Before today" · a bar · Today · a bar · "Next 12 months". The part the screen
+/// is about is lit gold with a bold label; on step 3 the future is a dashed line, on step 4 the past a grey bar.
 struct SetupTimeStripView: View {
     let lit: SetupTimeStrip
 
@@ -117,7 +122,11 @@ struct SetupTimeStripView: View {
             HStack(spacing: 8) {
                 label("Before today", lit: lit == .beforeToday)
                 bar(lit: lit == .beforeToday, dashed: false)
-                today.padding(.top, 12)
+                VStack(spacing: 3) {
+                    dot
+                    today
+                }
+                .padding(.top, 13)
                 bar(lit: lit == .nextYear, dashed: lit == .beforeToday)
                 label("Next 12 months", lit: lit == .nextYear)
             }
@@ -127,8 +136,8 @@ struct SetupTimeStripView: View {
                     label("Before today", lit: lit == .beforeToday)
                 }
                 HStack(spacing: 10) {
-                    Circle().fill(LGColor.selectedFill).frame(width: 8, height: 8).frame(width: 36)
-                    Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
+                    dot.frame(width: 36)
+                    today
                 }
                 HStack(spacing: 10) {
                     bar(lit: lit == .nextYear, dashed: lit == .beforeToday).frame(width: 36)
@@ -137,7 +146,6 @@ struct SetupTimeStripView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.horizontal, 24)
         .accessibilityHidden(true)
         .overlay {
             Color.clear
@@ -147,16 +155,15 @@ struct SetupTimeStripView: View {
         }
     }
 
+    private var dot: some View { Circle().fill(LGColor.selectedFill).frame(width: 10, height: 10) }
+
     private var today: some View {
-        VStack(spacing: 2) {
-            Circle().fill(LGColor.selectedFill).frame(width: 8, height: 8)
-            Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
-        }
+        Text("Today").lgText(LGTextStyle(size: 10, weight: .semibold, relativeTo: .caption2))
     }
 
     private func label(_ text: LocalizedStringKey, lit: Bool) -> some View {
         Text(text)
-            .lgText(LGTextStyle(size: 12, weight: lit ? .bold : .regular, relativeTo: .caption),
+            .lgText(LGTextStyle(size: 12, weight: lit ? .bold : .medium, relativeTo: .caption),
                     color: lit ? LGColor.ember : LGColor.inkMuted)
             .lineLimit(1)
             .fixedSize()
@@ -165,11 +172,11 @@ struct SetupTimeStripView: View {
     @ViewBuilder
     private func bar(lit: Bool, dashed: Bool) -> some View {
         if lit {
-            Capsule().fill(LinearGradient(colors: [LGColor.setupFinishTop, LGColor.setupFinishBottom],
+            Capsule().fill(LinearGradient(colors: [LGColor.setupLitStart, LGColor.setupLitEnd],
                                           startPoint: .leading, endPoint: .trailing))
                 .frame(minWidth: 28, idealWidth: 28, maxWidth: .infinity, minHeight: 4, maxHeight: 4)
         } else if dashed {
-            Line().stroke(LGColor.setupStripQuiet, style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [4, 5]))
+            Line().stroke(LGColor.setupChipPending, style: StrokeStyle(lineWidth: 2, dash: [4, 4]))
                 .frame(minWidth: 28, idealWidth: 28, maxWidth: .infinity, minHeight: 4, maxHeight: 4)
         } else {
             Capsule().fill(LGColor.setupStripQuiet)
@@ -184,14 +191,14 @@ struct SetupTimeStripView: View {
     }
 }
 
-#Preview("Setup scene · step 2") {
+#Preview("Setup scene and strip") {
     VStack(spacing: 16) {
         SetupSceneView(state: SetupSceneState(craftName: "Calligraphy", startYear: 2019, editing: .startYear))
-        SetupSceneView(state: SetupSceneState(craftName: "Calligraphy", startYear: 2019, score: 3_100, editing: .score))
-        SetupTimeStripView(lit: .beforeToday)
+        SetupSceneView(state: SetupSceneState(craftName: "Calligraphy", startYear: 2019, score: 3_208, editing: .score))
+        SetupTimeStripView(lit: .beforeToday).padding(.horizontal, 24)
         SetupSceneView(state: SetupSceneState(craftName: "Calligraphy", startYear: 2019, score: 3_100, weeklyPace: 12,
                                               showsFinish: true, editing: .pace))
-        SetupTimeStripView(lit: .nextYear)
+        SetupTimeStripView(lit: .nextYear).padding(.horizontal, 24)
     }
     .lgScreen()
 }

@@ -489,6 +489,7 @@
 		940014BEF220642781BC7189 /* giggle-4.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F89D9922FAC602685500D771 /* giggle-4.m4a */; };
 		942A613EA4F9ABF961A16CFB /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25C749C7D371B6DF1E10DD /* LogicTests.swift */; };
 		946427BEB0F4313D04EB1DD2 /* ThenAndNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46341435F3DAA4F7E1836CD5 /* ThenAndNow.swift */; };
+		950EF87B9D04836323645CEE /* FittedSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18195D85B8CCB44113EE20D /* FittedSheet.swift */; };
 		951ADFF42830DE274CE27330 /* MenuBarText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C6A2DBA4292CAA6BB915D0 /* MenuBarText.swift */; };
 		951B8EC2D0246F24990E7C98 /* Signposts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 700FCCCCEFC31A0C12C55B7E /* Signposts.swift */; };
 		95E19996DA7D79BC0F4D5159 /* WriteToUsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14CB79861B994E9CC67F7131 /* WriteToUsRow.swift */; };
@@ -579,6 +580,7 @@
 		B16A52C6790B02C0A81388EC /* GrowthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDEA7A331E76422E857878BC /* GrowthTests.swift */; };
 		B1AEF467A2115A72C4FC43C0 /* YearSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89B469CCBC753428C70BB58 /* YearSummary.swift */; };
 		B1C5204377D14E5E157C53C8 /* giggle-4.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F89D9922FAC602685500D771 /* giggle-4.m4a */; };
+		B4A18620100FE9A3E769827E /* FittedSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18195D85B8CCB44113EE20D /* FittedSheet.swift */; };
 		B4E457A4E844BA194EE3DBA1 /* SessionFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADE0A24B1CD339FF51F1046 /* SessionFormView.swift */; };
 		B50F812C0D1B6C8FD19B67A3 /* CatchUpSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6786F3B6D0CB2CD09F547A54 /* CatchUpSheet.swift */; };
 		B57856D06F9F0439BC97A6F6 /* LongGameWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6856221672A7104915C0EC5 /* LongGameWatchApp.swift */; };
@@ -1093,6 +1095,7 @@
 		BE5638F1FDC878C0C8CE56E1 /* Keepsake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keepsake.swift; sourceTree = "<group>"; };
 		C01483483B87BB0D9F02C45F /* DesignPolishTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignPolishTests.swift; sourceTree = "<group>"; };
 		C0F34FA74CE52BEE0E11C2B8 /* SessionLengthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionLengthTests.swift; sourceTree = "<group>"; };
+		C18195D85B8CCB44113EE20D /* FittedSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FittedSheet.swift; sourceTree = "<group>"; };
 		C2B14C53E85637C41993D32D /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
 		C376529B80B4C903039F615E /* SunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunView.swift; sourceTree = "<group>"; };
 		C5978022CC9A62CC334E3246 /* SessionPictureCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPictureCache.swift; sourceTree = "<group>"; };
@@ -1354,6 +1357,7 @@
 				EAFC30909A65C878821BD434 /* Components.swift */,
 				D0EAD2429BCF420D02DB7885 /* DesignGallery.swift */,
 				DEF45215EAA92228AC729A7C /* DuoPreviews.swift */,
+				C18195D85B8CCB44113EE20D /* FittedSheet.swift */,
 				137080755F58FBE8663118CC /* FlowLayout.swift */,
 				DAC77651FD0C1022D8DFF364 /* Glass.swift */,
 				48F89794CCB6E3BA1FC3C4A2 /* GlassPreviews.swift */,
@@ -2157,6 +2161,7 @@
 				9034218471E3AEDD016CF62E /* EarlyDays.swift in Sources */,
 				5D0569749D5624AA21229454 /* EstimatesEditorView.swift in Sources */,
 				F973D7F6DA7302D3864D8905 /* FinishSheet.swift in Sources */,
+				950EF87B9D04836323645CEE /* FittedSheet.swift in Sources */,
 				D895F7D357058369F6332AFB /* FlowLayout.swift in Sources */,
 				6F64ECA37FDD26381ADF5969 /* FocusMode.swift in Sources */,
 				9C008326E7B5AE6A5670184E /* FocusPlan.swift in Sources */,
@@ -2479,6 +2484,7 @@
 				0BF3D965D9DD1829C1BAD240 /* EarlyDays.swift in Sources */,
 				092B496BD425270B1BD9FC0D /* EstimatesEditorView.swift in Sources */,
 				30560DBF0C15CE6B2A83AEC1 /* FinishSheet.swift in Sources */,
+				B4A18620100FE9A3E769827E /* FittedSheet.swift in Sources */,
 				FD3DE4552EED422E9FF39A2A /* FlowLayout.swift in Sources */,
 				C97C0FD7CD6F5E0F0930B73D /* FocusMode.swift in Sources */,
 				E9325B3757EF1507BF86D8EB /* FocusPlan.swift in Sources */,

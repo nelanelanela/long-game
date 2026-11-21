@@ -18,17 +18,17 @@ struct YearlyHoursView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     SetupSceneView(state: model.scene(editing: .score))
                         .padding(.horizontal, -24)
+                        .padding(.top, 6)
                     SetupTimeStripView(lit: .beforeToday)
-                        .padding(.horizontal, -24)
-                        .padding(.top, 10)
+                        .padding(.top, 14)
 
                     Text("Before today").lgText(.setupTitle)
                         .accessibilityAddTraits(.isHeader)
-                        .padding(.top, 14)
-                    Text("Roughly, hours a week in each year.").lgText(.body, color: LGColor.inkMuted)
+                        .padding(.top, 12)
+                    Text("Roughly, hours a week in each year.").lgText(.setupLine, color: LGColor.inkMuted)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 6)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 14)
                     if model.years.count > 8 {
                         HStack {
                             Text("Set all to").lgText(.row, color: LGColor.inkMuted)

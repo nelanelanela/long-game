@@ -10,6 +10,10 @@ struct LGTextStyle: Sendable {
     static let screenTitle = LGTextStyle(size: 32, weight: .bold, relativeTo: .largeTitle, tracking: -0.64)
     /// Setup steps, intro pages and sheets with a scene: 30 pt.
     static let setupTitle = LGTextStyle(size: 30, weight: .bold, relativeTo: .title, tracking: -0.6)
+    /// The line under a setup title on steps 3 and 4 (update 53): 15 pt.
+    static let setupLine = LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline)
+    /// The two ask sheets' titles (update 53): 28 pt.
+    static let askTitle = LGTextStyle(size: 28, weight: .bold, relativeTo: .title, tracking: -0.56)
     static let welcomeTitle = LGTextStyle(size: 44, weight: .bold, relativeTo: .largeTitle, tracking: -1.3)
     static let sheetTitle = LGTextStyle(size: 24, weight: .bold, relativeTo: .title2, tracking: -0.48)
     static let navTitle = LGTextStyle(size: 17, weight: .semibold, relativeTo: .headline)

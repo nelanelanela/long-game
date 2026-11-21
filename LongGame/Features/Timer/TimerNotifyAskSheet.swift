@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// "Lost in your work?" (update 53, `design/redesign/TimerNotifyAsk.dc.html`): the notification question, asked once,
-/// over the first running session instead of during setup. The timer keeps running underneath. Allow notifications
-/// shows iOS's prompt and, if allowed, plans the 4-hour "Still practising?" for the session already running.
-/// Not now, or a swipe down, closes it. Either way it is never shown again (the presenter records that on opening).
+/// "Can we check in?" (updates 53 and 55, `design/redesign/TimerNotifyAsk.dc.html`): the notification question,
+/// asked once, over the first running session instead of during setup. The timer keeps running underneath. Allow
+/// notifications shows iOS's prompt and, if allowed, plans the 4-hour "Still practising?" for the session already
+/// running. Not now, or a swipe down, closes it. Either way it is never shown again (the presenter records that).
 struct TimerNotifyAskSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -11,74 +11,65 @@ struct TimerNotifyAskSheet: View {
     @State private var answering = false
 
     var body: some View {
-        ScrollView {
+        FittedSheet {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 8) {
                     Circle().fill(LGColor.amber)
                         .frame(width: 8, height: 8)
-                        .scaleEffect(pulsing ? 1.35 : 1)
-                        .opacity(pulsing ? 0.55 : 1)
+                        .opacity(pulsing ? 0.35 : 1)
                         .accessibilityHidden(true)
                     Text("Your first session is running")
-                        .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.ember)
+                        .lgText(LGTextStyle(size: 13, weight: .semibold, relativeTo: .footnote), color: LGColor.inkMuted)
                 }
-                .padding(.top, 28)
+                .padding(.top, 30)
 
                 HStack(alignment: .center, spacing: 14) {
                     SunView(idle: false, face: .wink)
                         .frame(width: 64, height: 64)
                         .accessibilityHidden(true)
-                    Text("Lost in your work?").lgText(.setupTitle)
+                    Text("Can we check in?").lgText(.askTitle)
                         .accessibilityAddTraits(.isHeader)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.top, 14)
 
-                Text("It happens to everyone: you get absorbed in what you’re making and forget to stop the timer.")
+                Text("Sometimes the timer keeps running after you’ve stopped. We can send one quiet note to check.")
                     .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
-                    .lineSpacing(3)
+                    .lineSpacing(4)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 12)
 
                 VStack(spacing: 0) {
-                    AskRow(icon: "bell", title: "We’ll tap you on the shoulder",
-                           detail: "After 4 hours, a quiet “Still practising?”, so you can stop it.")
+                    AskRow(icon: "bell", title: "After 4 hours",
+                           detail: "A note asks “Still practising?” Tap it to stop the timer, or keep going.")
                     Divider().overlay(LGColor.divider)
-                    AskRow(icon: "pencil", title: "You can always fix the time",
-                           detail: "Change a session’s length when you finish, or later in History.")
+                    AskRow(icon: "pencil", title: "Easy to fix later",
+                           detail: "You can change a session’s length when you finish, or any time in History.")
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .lgCard(radius: 20)
-                .padding(.top, 16)
+                .padding(.top, 14)
 
-                Text("Only a few quiet notifications: this check and your milestones. Never ads, never streaks.")
+                Text("We only send this note and your milestones. Nothing else.")
                     .lgText(.caption, color: LGColor.inkMuted)
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 12).padding(.horizontal, 4)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 16)
-        }
-        .scrollBounceBehavior(.basedOnSize)
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 4) {
+
                 Button("Allow notifications", action: allow).buttonStyle(.lg(.primary))
+                    .padding(.top, 16)
                 Button("Not now") { dismiss() }.buttonStyle(.lg(.text))
+                    .padding(.top, 4)
             }
             .disabled(answering)
             .padding(.horizontal, 24)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-            .background(LGColor.background.opacity(0.94))
+            .padding(.bottom, 4)  // the sheet's own safe area sits under it
         }
-        .lgScreen()
-        .presentationDragIndicator(.visible)
         .onAppear {
             guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) { pulsing = true }
+            withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { pulsing = true }
         }
     }
 
@@ -130,14 +121,13 @@ extension View {
     func lgNotifyAsk(isPresented: Binding<Bool>) -> some View {
         sheet(isPresented: isPresented) {
             TimerNotifyAskSheet()
-                .presentationDetents([.fraction(0.8), .large])
                 .lgSheetCard()
                 .lgAppLook()
         }
     }
 }
 
-/// Decides whether "Lost in your work?" is due and records that it was shown.
+/// Decides whether "Can we check in?" is due and records that it was shown.
 @MainActor
 enum NotificationAskCheck {
     /// True when the ask should open now; marks it shown in Settings so it never opens again.
@@ -156,11 +146,11 @@ enum NotificationAskCheck {
     }
 }
 
-#Preview("Lost in your work?") {
+#Preview("Can we check in?") {
     Color.black.sheet(isPresented: .constant(true)) { TimerNotifyAskSheet() }
 }
 
-#Preview("Lost in your work? · dark, AX5") {
+#Preview("Can we check in? · dark, AX5") {
     Color.black.sheet(isPresented: .constant(true)) {
         TimerNotifyAskSheet().preferredColorScheme(.dark).dynamicTypeSize(.accessibility5)
     }

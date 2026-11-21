@@ -16,13 +16,14 @@ struct SoFarThisYearView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     SetupSceneView(state: model.scene(editing: .score))
-                    SetupTimeStripView(lit: .beforeToday).padding(.top, 10)
+                        .padding(.top, 6)
                     VStack(alignment: .leading, spacing: 0) {
+                        SetupTimeStripView(lit: .beforeToday).padding(.top, 14)
                         Text("Before today").lgText(.setupTitle)
                             .accessibilityAddTraits(.isHeader)
                             .padding(.top, 14)
                         Text("You started this year. About how many hours have you played so far, in total?")
-                            .lgText(.body, color: LGColor.inkMuted)
+                            .lgText(.setupLine, color: LGColor.inkMuted)
                             .lineSpacing(3)
                             .fixedSize(horizontal: false, vertical: true)
                             .padding(.top, 6)
@@ -31,29 +32,30 @@ struct SoFarThisYearView: View {
                                         spec: .soFarTotal, unit: unit,
                                         spoken: { String(localized: "\(DurationFormat.grouped(Int($0))) hours so far") })
                             .frame(maxWidth: .infinity)
-                            .padding(.top, 24)
+                            .padding(.top, 36)
 
                         Text("A rough guess is fine. Only focused practice counts.")
                             .lgText(.note, color: LGColor.inkMuted)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity)
-                            .padding(.top, 16)
+                            .padding(.top, 24)
 
+                        // A white pill with a thin edge, 40 pt tall; its touch area is 44.
                         Button { model.soFarTotal = 0 } label: {
                             Text("I’m just starting · 0 h")
                                 .lgText(LGTextStyle(size: 14, weight: .semibold, relativeTo: .subheadline))
-                                .padding(.horizontal, 18)
-                                .frame(minHeight: 44)
-                                .background {
-                                    Capsule().fill(LGColor.surface)
-                                        .shadow(color: LGColor.navy.opacity(0.06), radius: 5, y: 3)
-                                }
+                                .padding(.horizontal, 16)
+                                .frame(minHeight: 40)
+                                .background(LGColor.surface, in: Capsule())
+                                .overlay { Capsule().strokeBorder(LGColor.setupStripQuiet, lineWidth: 1) }
+                                .padding(.vertical, 2)
+                                .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
                         .accessibilityAddTraits(model.soFarTotal == 0 ? .isSelected : [])
                         .frame(maxWidth: .infinity)
-                        .padding(.top, 12)
+                        .padding(.top, 8)
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 16)

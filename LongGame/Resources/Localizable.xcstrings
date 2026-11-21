@@ -700,6 +700,9 @@
     "A new year of pace" : {
 
     },
+    "A note asks “Still practising?” Tap it to stop the timer, or keep going." : {
+
+    },
     "A note, if you like" : {
 
     },
@@ -819,7 +822,7 @@
     "Adding" : {
 
     },
-    "After 4 hours, a quiet “Still practising?”, so you can stop it." : {
+    "After 4 hours" : {
 
     },
     "afternoon" : {
@@ -933,13 +936,13 @@
     "Calendar" : {
 
     },
+    "Can we check in?" : {
+
+    },
     "Cancel" : {
 
     },
     "Catch up" : {
-
-    },
-    "Change a session’s length when you finish, or later in History." : {
 
     },
     "Change my pace" : {
@@ -1099,6 +1102,9 @@
 
     },
     "Drawn from this session. Replace it with a photo, or remove it." : {
+
+    },
+    "Easy to fix later" : {
 
     },
     "Edit note" : {
@@ -1332,9 +1338,6 @@
     "It can't be brought back." : {
 
     },
-    "It happens to everyone: you get absorbed in what you’re making and forget to stop the timer." : {
-
-    },
     "It hasn't been opened yet, and it can't be brought back." : {
 
     },
@@ -1459,9 +1462,6 @@
 
     },
     "Look of the card" : {
-
-    },
-    "Lost in your work?" : {
 
     },
     "Make a keepsake poster" : {
@@ -1693,10 +1693,7 @@
     "One-time payments through the App Store. Prices are shown in your currency." : {
 
     },
-    "Only a few quiet notifications: this check and your milestones. Never ads, never streaks." : {
-
-    },
-    "Only in the landscape" : {
+    "Only the scenery changes" : {
 
     },
     "Open chart full screen" : {
@@ -2039,6 +2036,9 @@
     "some" : {
 
     },
+    "Sometimes the timer keeps running after you’ve stopped. We can send one quiet note to check." : {
+
+    },
     "Sounds" : {
 
     },
@@ -2227,7 +2227,7 @@
     "The sun with 8 of its 12 rays lit, next to a badge saying plus 1 hour today" : {
 
     },
-    "The sun's height and the sky still show your progress." : {
+    "The sun’s height and the sky still show your progress." : {
 
     },
     "The time won't be added to your hours." : {
@@ -2409,6 +2409,9 @@
     "We found your game in iCloud." : {
 
     },
+    "We only send this note and your milestones. Nothing else." : {
+
+    },
     "Weather in the scene" : {
 
     },
@@ -2425,9 +2428,6 @@
 
     },
     "Welcome back." : {
-
-    },
-    "We’ll tap you on the shoulder" : {
 
     },
     "What if I practise more?" : {
@@ -2496,7 +2496,7 @@
     "Year of pace" : {
 
     },
-    "You can always fix the time" : {
+    "You can change a session’s length when you finish, or any time in History." : {
 
     },
     "You can trim up to what you really practised." : {

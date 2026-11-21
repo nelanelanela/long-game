@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// "Bring the weather in?" (update 53, `design/redesign/WeatherInvite.dc.html`): the weather question, once, a week
+/// "Bring the weather in?" (updates 53 and 56, `design/redesign/WeatherInvite.dc.html`): the weather question, once, a week
 /// after setup and right after a saved session, instead of a setup step. A small rainy scene with the sun resting its
 /// eyes, what the weather does and doesn't do, then Show the weather (the system location prompt, then the Settings
 /// switch on, as the switch itself does) or Not now. Either way it is never shown again (recorded on opening).
@@ -12,36 +12,38 @@ struct WeatherInviteSheet: View {
     @State private var asking = false
 
     var body: some View {
-        ScrollView {
+        FittedSheet {
             VStack(alignment: .leading, spacing: 0) {
+                // A small rainy scene: the sun resting its eyes behind the dunes, a faint navy veil, rain.
                 ZStack(alignment: .topLeading) {
-                    SceneHero(tone: .day, height: 176, skyHeight: 160, horizon: 0.72, landTop: 60,
-                              sunSize: 100, sunTop: 26, face: .sleepy, moon: false, hidden: true)
+                    SceneHero(tone: .day, height: 150, skyHeight: 140, horizon: 0.72, landTop: 36,
+                              sunSize: 90, sunTop: 18, face: .sleepy, moon: false, hidden: true)
+                    LGColor.navy.opacity(0.1)
                     GeometryReader { geo in
-                        WeatherLayerView(layer: .rain, sun: CGPoint(x: geo.size.width / 2, y: 26 + 50), sunRadius: 31,
-                                         horizonY: 176 * 0.72)
+                        WeatherLayerView(layer: .rain, sun: CGPoint(x: geo.size.width / 2, y: 18 + 45), sunRadius: 28,
+                                         horizonY: 150 * 0.72)
                     }
                 }
-                .frame(height: 176)
+                .frame(height: 150)
                 .clipped()
                 .accessibilityHidden(true)
-                .padding(.top, 20)
+                .padding(.top, 26)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Bring the weather in?").lgText(.setupTitle)
+                    Text("Bring the weather in?").lgText(.askTitle)
                         .accessibilityAddTraits(.isHeader)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 12)
+                        .padding(.top, 14)
                     Text("You’ve been playing for a week now. When it rains where you are, it can rain here too. Mist, wind, cloud and snow pass through quietly.")
                         .lgText(LGTextStyle(size: 15, weight: .regular, relativeTo: .subheadline), color: LGColor.inkMuted)
-                        .lineSpacing(3)
+                        .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 8)
                     VStack(spacing: 0) {
-                        AskRow(icon: "sun.horizon", title: "Only in the landscape",
-                               detail: "The sun's height and the sky still show your progress.")
+                        AskRow(icon: "cloud.rain", title: "Only the scenery changes",
+                               detail: "The sun’s height and the sky still show your progress.")
                         Divider().overlay(LGColor.divider)
-                        AskRow(icon: "location", title: "Your rough area is enough",
+                        AskRow(icon: "mappin", title: "Your rough area is enough",
                                detail: "Used to ask Apple Weather a few times a day. Never saved, never shared.")
                     }
                     .padding(.horizontal, 16)
@@ -54,25 +56,16 @@ struct WeatherInviteSheet: View {
                         .lineSpacing(3)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 12).padding(.horizontal, 4)
+                    Button("Show the weather", action: show).buttonStyle(.lg(.primary))
+                        .padding(.top, 14)
+                    Button("Not now") { dismiss() }.buttonStyle(.lg(.text))
+                        .padding(.top, 4)
                 }
+                .disabled(asking)
                 .padding(.horizontal, 24)
-                .padding(.bottom, 16)
+                .padding(.bottom, 4)  // the sheet's own safe area sits under it
             }
         }
-        .scrollBounceBehavior(.basedOnSize)
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 4) {
-                Button("Show the weather", action: show).buttonStyle(.lg(.primary))
-                Button("Not now") { dismiss() }.buttonStyle(.lg(.text))
-            }
-            .disabled(asking)
-            .padding(.horizontal, 24)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-            .background(LGColor.background.opacity(0.94))
-        }
-        .lgScreen()
-        .presentationDragIndicator(.visible)
     }
 
     /// The system location prompt is only ever shown from here or the Settings switch.

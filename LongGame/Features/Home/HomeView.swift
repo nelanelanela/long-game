@@ -22,7 +22,7 @@ private enum HomeSheet: Identifiable {
     case sealedLetter
     /// The keepsake poster for these hours.
     case keepsake(Int)
-    /// Update 53: "Lost in your work?" for a first session started away from the app, and "Bring the weather in?".
+    /// Update 53: "Can we check in?" for a first session started away from the app, and "Bring the weather in?".
     case notifyAsk, weatherInvite
 
     var id: String {
@@ -1365,7 +1365,7 @@ struct HomeView: View {
         .accessibilityHint("Opens a short note about where your hours are heading")
     }
 
-    /// "Lost in your work?" when the first session was started from the Live Activity, the Watch, a Control or a
+    /// "Can we check in?" when the first session was started from the Live Activity, the Watch, a Control or a
     /// Shortcut: the next time Home is open while it is still running (a session started here asks on the timer).
     private func checkNotifyAsk() {
         #if DEBUG

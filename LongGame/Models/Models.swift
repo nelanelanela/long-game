@@ -185,7 +185,7 @@ final class AppSettings {
     var yearCardPinsRaw: String = ""
     /// The `IconStage` the home-screen icon was last set to.
     var appliedIconStageRaw: String = IconStage.start.stored
-    /// "Lost in your work?" (update 53): the notification question on the first session, shown once ever.
+    /// "Can we check in?" (update 53): the notification question on the first session, shown once ever.
     var notificationAskShown: Bool = false
     /// "Bring the weather in?" (update 53): the weather invite a week after setup, shown once ever.
     var weatherInviteShown: Bool = false
