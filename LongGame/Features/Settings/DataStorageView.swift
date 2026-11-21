@@ -366,6 +366,7 @@ enum DataReset {
         try? context.delete(model: Letter.self)
         try? context.save()
         UserDefaults.standard.removeObject(forKey: Notifications.askedKey)
+        UserDefaults.standard.removeObject(forKey: WeatherSwitch.refusedKey)
     }
 }
 

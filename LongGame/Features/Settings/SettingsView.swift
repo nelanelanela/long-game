@@ -505,6 +505,28 @@ struct SettingsView: View {
                 .lgText(.rowStrong).frame(minHeight: 54)
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
+                    Button("Show Lost in your work?") {
+                        DebugOptions.request(.notifyAsk)
+                        (closeAll ?? { dismiss() })()
+                    }
+                    .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Button("Show Bring the weather in?") {
+                        DebugOptions.request(.weatherInvite)
+                        (closeAll ?? { dismiss() })()
+                    }
+                    .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Button("Ask both again on their own") {
+                        settings?.notificationAskShown = false
+                        settings?.weatherInviteShown = false
+                        try? context.save()
+                    }
+                    .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
+                    Text("The first two open straight away on Home, whatever the rules say. The third lets them come back by themselves: the notification question on the next session (only while iOS has never asked), the weather invite after a saved session at least a week after setup.")
+                        .lgText(.caption, color: LGColor.inkMuted)
+                        .padding(.bottom, 12)
+                }
+                Divider().overlay(LGColor.divider)
+                VStack(alignment: .leading, spacing: 2) {
                     Menu {
                         Button("A year since you started") { fakeAnniversary(.years(1)) }
                         Button("Two years since you started") { fakeAnniversary(.years(2)) }

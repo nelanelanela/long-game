@@ -22,6 +22,8 @@ private enum HomeSheet: Identifiable {
     case sealedLetter
     /// The keepsake poster for these hours.
     case keepsake(Int)
+    /// Update 53: "Lost in your work?" for a first session started away from the app, and "Bring the weather in?".
+    case notifyAsk, weatherInvite
 
     var id: String {
         switch self {
@@ -34,6 +36,8 @@ private enum HomeSheet: Identifiable {
         case .writeLetter(let m): "letter-\(m)"
         case .sealedLetter: "sealedLetter"
         case .keepsake(let h): "keepsake-\(h)"
+        case .notifyAsk: "notifyAsk"
+        case .weatherInvite: "weatherInvite"
         }
     }
 }
@@ -56,6 +60,8 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var celebrating: Int?
+    /// A session was just saved: "Bring the weather in?" may follow once Home is clear (update 53).
+    @State private var weatherInviteDue = false
     /// A 1,000+ hour celebration is due or showing: the icon waits until its main button is tapped.
     @State private var iconHeld = false
     @State private var offerSupport = false
@@ -260,8 +266,10 @@ struct HomeView: View {
             scheduleMilestoneNotification()
             checkCatchUp(summary: s)
             checkLookBack(summary: s)
+            checkNotifyAsk()
         }
         .onChange(of: timer.state) { _, _ in scheduleMilestoneNotification() }
+        .onChange(of: celebrating == nil) { _, done in if done { checkWeatherInvite() } }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 refreshAnniversary()
@@ -269,6 +277,7 @@ struct HomeView: View {
                 syncIconQuietly(total: now.total)
                 checkCatchUp(summary: now)
                 checkLookBack(summary: now)
+                checkNotifyAsk()
             }
         }
         .sheet(item: $catchUpGap, onDismiss: sheetClosed) { gap in
@@ -382,6 +391,10 @@ struct HomeView: View {
                                  replacing: letterReplacing, onDone: { letterReplacing = nil })
             case .keepsake(let hours):
                 KeepsakeSheet(content: KeepsakePoster.Content.make(hours: hours, craft: craft, sessions: Array(sessions), estimates: Array(estimates)))
+            case .notifyAsk:
+                TimerNotifyAskSheet()
+            case .weatherInvite:
+                WeatherInviteSheet(settings: settingsRows.first) { try? context.save() }
             case .sealedLetter:
                 if let sealed = sealedLetter {
                     SealedLetterSheet(letter: sealed) {
@@ -1352,6 +1365,27 @@ struct HomeView: View {
         .accessibilityHint("Opens a short note about where your hours are heading")
     }
 
+    /// "Lost in your work?" when the first session was started from the Live Activity, the Watch, a Control or a
+    /// Shortcut: the next time Home is open while it is still running (a session started here asks on the timer).
+    private func checkNotifyAsk() {
+        #if DEBUG
+        if let ask = DebugOptions.takeAskRequest() {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(0.6))
+                if sheet == nil { sheet = ask == .notifyAsk ? .notifyAsk : .weatherInvite }
+            }
+            return
+        }
+        #endif
+        guard timer.isActive, !showTimer, sheet == nil, catchUpGap == nil, celebrating == nil, editingSession == nil,
+              !showSettings else { return }
+        Task { @MainActor in
+            guard await NotificationAskCheck.take(settings: settingsRows.first, sessionRunning: timer.isActive,
+                                                  save: { try? context.save() }) else { return }
+            if sheet == nil && !showTimer { sheet = .notifyAsk }
+        }
+    }
+
     /// The first time Home appears after onboarding, "Meet your future self" opens on its own, once.
     private func showFutureSelfOnce() {
         guard let settings = settingsRows.first, !settings.futureSelfShown,
@@ -1528,6 +1562,34 @@ struct HomeView: View {
     private func sheetClosed() {
         syncIconQuietly(total: summary(now: Date()).total)
         if celebrating == nil { checkLetters(total: summary(now: Date()).total) }
+        checkWeatherInvite()
+        checkNotifyAsk()
+    }
+
+    /// "Bring the weather in?": once, at least a week after setup, right after a saved session, when Home is back and
+    /// any celebration, letter, icon change or other sheet has finished. Never while a timer runs. While something
+    /// else is up it waits (each sheet closing checks again); otherwise it waits for the next saved session.
+    private func checkWeatherInvite(after delay: Double = 1.6) {
+        guard weatherInviteDue else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(delay))
+            guard weatherInviteDue, let settings = settingsRows.first else { return }
+            #if DEBUG
+            if UITestLaunch.screen != nil { weatherInviteDue = false; return }
+            #endif
+            let busy = sheet != nil || catchUpGap != nil || celebrating != nil || iconHeld || showTimer
+                || editingSession != nil || showSettings || deliveringLetter != nil || showAllLetters
+            guard WeatherInviteRule.shouldShow(now: Date(), onboardedAt: craft.createdAt, weatherOn: settings.weatherInScene,
+                                               alreadyShown: settings.weatherInviteShown, sessionJustSaved: true,
+                                               timerRunning: timer.isActive, somethingElseShowing: busy) else {
+                if !busy { weatherInviteDue = false }
+                return
+            }
+            weatherInviteDue = false
+            settings.weatherInviteShown = true
+            try? context.save()
+            sheet = .weatherInvite
+        }
     }
 
     /// On launch, on return to the foreground and when Home first appears: set the right icon once, quietly.
@@ -1624,6 +1686,8 @@ struct HomeView: View {
             default: selectTab(.longGame)
             }
         case "keepsake": sheet = .keepsake(Keepsake.lastThousand(total: total) ?? 1_000)
+        case "notifyAsk": sheet = .notifyAsk
+        case "weatherInvite": sheet = .weatherInvite
         case "timer.running":
             timer.start(craft: craft, now: now.addingTimeInterval(-25 * 60))
             totalBeforeTimer = total; showTimer = true
@@ -1651,6 +1715,7 @@ struct HomeView: View {
 
     /// After a saved session the total counts up from old to new.
     private func timerDismissed() {
+        if timer.savedSession { weatherInviteDue = true }
         defer { sheetClosed() }
         guard timer.savedSession else { return }
         timer.savedSession = false

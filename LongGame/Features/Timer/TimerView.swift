@@ -29,6 +29,8 @@ struct TimerView: View {
     /// The last state the timer had. Discarding clears the timer a moment before the screen has slid away, and
     /// without this the screen would show plain black until it is gone.
     @State private var lastState: TimerState?
+    /// "Lost in your work?" (update 53): once, over the first running session.
+    @State private var showNotifyAsk = false
 
     init(craft: Craft, baseTotal: Double) {
         self.craft = craft
@@ -78,7 +80,7 @@ struct TimerView: View {
         }
         // ⌘N finishes the session; Space (below) pauses or resumes it. Neither while the Finish sheet is up.
         .onChange(of: commands?.issued) { _, issued in
-            guard !showFinish, store.state != nil, savedAt == nil else { return }
+            guard !showFinish, !showNotifyAsk, store.state != nil, savedAt == nil else { return }
             switch issued?.command {
             case .startOrFinish: store.pause(); showFinish = true
             case .pauseResume: store.togglePause()
@@ -112,6 +114,16 @@ struct TimerView: View {
             #endif
             if store.finishRequested { openFinishFromActivity() }
         }
+        .task {
+            // A moment after the timer has slid up, so it is clearly running underneath.
+            try? await Task.sleep(for: .seconds(0.7))
+            guard !showFinish, savedAt == nil, store.state != nil else { return }
+            if await NotificationAskCheck.take(settings: settingsRows.first, sessionRunning: store.state != nil,
+                                               save: { try? context.save() }) {
+                showNotifyAsk = true
+            }
+        }
+        .lgNotifyAsk(isPresented: $showNotifyAsk)
         .onDisappear {
             #if os(iOS)
             UIApplication.shared.isIdleTimerDisabled = false
@@ -121,7 +133,13 @@ struct TimerView: View {
 
     private func openFinishFromActivity() {
         store.finishRequested = false
-        showFinish = true
+        // The notification question closes first: two sheets can't be up at once.
+        if showNotifyAsk {
+            showNotifyAsk = false
+            Task { try? await Task.sleep(for: .seconds(0.5)); showFinish = true }
+        } else {
+            showFinish = true
+        }
     }
 
     /// The person's usual timer session, for the Finish sheet's "A long one" card.

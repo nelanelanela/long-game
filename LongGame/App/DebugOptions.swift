@@ -105,6 +105,17 @@ enum DebugOptions {
         return KeepsakePoster.Content(hours: 3_000, craft: craft, days: days, firstDay: first, lastDay: last, baseline: 2_190)
     }
 
+    /// Update 53's two questions, opened on Home straight away from Settings' debug card.
+    enum Ask: String { case notifyAsk, weatherInvite }
+
+    static func request(_ ask: Ask) { UserDefaults.standard.set(ask.rawValue, forKey: "debug.showAsk") }
+
+    static func takeAskRequest() -> Ask? {
+        let raw = UserDefaults.standard.string(forKey: "debug.showAsk")
+        UserDefaults.standard.removeObject(forKey: "debug.showAsk")
+        return raw.flatMap(Ask.init(rawValue:))
+    }
+
     /// Settings button: Home opens the weekly look-back on its next appearance, whatever the week (once).
     static func requestLookBack() { UserDefaults.standard.set(true, forKey: "debug.showLookBack") }
 

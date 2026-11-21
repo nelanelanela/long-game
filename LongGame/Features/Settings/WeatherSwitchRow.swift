@@ -28,27 +28,47 @@ struct WeatherSwitchRow: View {
         }
         .padding(.vertical, 10)
         .task { attribution = try? await WeatherService.shared.attribution }
+        // A refusal on "Bring the weather in?" shows the same line here.
+        .onAppear { if !settings.weatherInScene && UserDefaults.standard.bool(forKey: WeatherSwitch.refusedKey) { refused = true } }
     }
 
     private func turn(_ on: Bool) {
         refused = false
         guard on else {
-            settings.weatherInScene = false
-            WeatherStore.shared.clear()
-            save()
+            WeatherSwitch.turnOff(settings: settings, save: save)
             return
         }
-        Task {
-            if await LocationOnce.requestPermission() {
-                settings.weatherInScene = true
-                save()
-                await WeatherStore.shared.refreshIfDue(enabled: true)
-            } else {
-                settings.weatherInScene = false
-                save()
-                refused = true
-            }
+        Task { refused = !(await WeatherSwitch.turnOn(settings: settings, save: save)) }
+    }
+}
+
+/// Turning Weather in the scene on or off, from the Settings switch or "Bring the weather in?" (update 53). The
+/// location prompt is only ever shown from these two places.
+@MainActor
+enum WeatherSwitch {
+    /// Set when location was refused, so Settings shows "Without your location…" under the switch.
+    static let refusedKey = "weather.locationRefused"
+
+    /// Asks for location; on yes the switch is on and the weather is fetched. Returns whether it was allowed.
+    static func turnOn(settings: AppSettings, save: () -> Void) async -> Bool {
+        if await LocationOnce.requestPermission() {
+            settings.weatherInScene = true
+            save()
+            UserDefaults.standard.removeObject(forKey: refusedKey)
+            await WeatherStore.shared.refreshIfDue(enabled: true)
+            return true
         }
+        settings.weatherInScene = false
+        save()
+        UserDefaults.standard.set(true, forKey: refusedKey)
+        return false
+    }
+
+    static func turnOff(settings: AppSettings, save: () -> Void) {
+        settings.weatherInScene = false
+        WeatherStore.shared.clear()
+        UserDefaults.standard.removeObject(forKey: refusedKey)
+        save()
     }
 }
 
