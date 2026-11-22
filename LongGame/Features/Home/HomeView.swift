@@ -60,6 +60,8 @@ struct HomeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var celebrating: Int?
+    /// The celebration fades in and out over Home (its cover itself comes and goes without the slide).
+    @State private var celebrationShown = false
     /// A session was just saved: "Bring the weather in?" may follow once Home is clear (update 53).
     @State private var weatherInviteDue = false
     /// A 1,000+ hour celebration is due or showing: the icon waits until its main button is tapped.
@@ -329,15 +331,20 @@ struct HomeView: View {
         }
         // While the celebration is up, Home underneath is out of VoiceOver's reach (the audit still found its words).
         .accessibilityHidden(celebrating != nil)
-        .overlay {
+        // A full-screen cover rather than an overlay, so it can ask for a white clock and battery over its dark sky
+        // (as the Timer does) while everything in it keeps the app's own look.
+        .fullScreenCover(isPresented: Binding(get: { celebrating != nil }, set: { if !$0 { celebrating = nil } })) {
             if let hours = celebrating {
                 celebrationView(hours: hours)
-                    .transition(.opacity)
+                    .lgAppLook()
+                    .opacity(celebrationShown ? 1 : 0)
+                    .preferredColorScheme(.dark)
+                    .presentationBackground(.clear)
+                    .onAppear { withAnimation(.easeInOut(duration: 0.25)) { celebrationShown = true } }
                     // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
                     .accessibilityAddTraits(.isModal)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: celebrating)
         .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.25), value: toast)
         .fullScreenCover(item: $deliveringLetter, onDismiss: { checkLetters(total: summary(now: Date()).total) }) { letter in
             LetterDeliveredView(letter: letter, next: Letters.next(after: Double(letter.milestone)),
@@ -685,7 +692,7 @@ struct HomeView: View {
     private func celebrationView(hours: Int) -> MilestoneCelebration {
         MilestoneCelebration(hours: hours, craftName: craft.name, offerSupport: offerSupport,
                              iconGrows: settingsRows.first?.iconGrows ?? true,
-                             onSupport: { iconHeld = false; celebrating = nil; sheet = .support },
+                             onSupport: { iconHeld = false; endCelebration { sheet = .support } },
                              onThenAndNow: thenAndNowAction(hours: hours),
                              letterTo: Letters.next(after: summary(now: Date()).total),
                              onKeepsake: {
@@ -1534,15 +1541,37 @@ struct HomeView: View {
             // let a saved session's count-up finish first
             try? await Task.sleep(for: .seconds(1.6))
             offerSupport = shouldOfferSupport(settings)
-            celebrating = top
+            startCelebration(top)
         }
         return true
+    }
+
+    /// The celebration appears without the cover's slide up: it fades in on its own (`celebrationShown`).
+    private func startCelebration(_ hours: Int) {
+        celebrationShown = false
+        var still = Transaction()
+        still.disablesAnimations = true
+        withTransaction(still) { celebrating = hours }
+    }
+
+    /// Fades the celebration out, then takes its cover away without the slide down. `then` runs once it has gone,
+    /// so a sheet can follow it.
+    private func endCelebration(then: @escaping () -> Void = {}) {
+        withAnimation(.easeInOut(duration: 0.25)) { celebrationShown = false }
+        Task {
+            try? await Task.sleep(for: .seconds(0.25))
+            var still = Transaction()
+            still.disablesAnimations = true
+            withTransaction(still) { celebrating = nil }
+            try? await Task.sleep(for: .seconds(0.1))
+            then()
+        }
     }
 
     /// The celebration's main button: close it, then (only for 1,000 hours and up) let the icon grow. One change,
     /// straight to the stage for the whole total, even if a big save jumped over several milestones.
     private func celebrationDone(hours: Int) {
-        celebrating = nil
+        endCelebration()
         iconHeld = false
         // A letter waiting at this milestone comes right after the celebration.
         Task {
@@ -1667,7 +1696,7 @@ struct HomeView: View {
         case "settings": showSettings = true
         case "history.calendar": historyRoute = .day(now)
         case "history.growth": historyRoute = .growth
-        case "milestone": celebrating = 1_000
+        case "milestone": startCelebration(1_000)
         // Update 48 and 49 screens.
         case "thenAndNow": historyRoute = .thenAndNow
         case "letter.write": sheet = .writeLetter(Letters.next(after: total) ?? 10_000)
