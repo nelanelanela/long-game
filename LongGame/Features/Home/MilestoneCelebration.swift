@@ -39,17 +39,24 @@ struct MilestoneCelebration: View {
     /// A thousand hours and the others: the dawn scene, the number in white above it and a short line below.
     private var milestoneBody: some View {
         GeometryReader { geo in
+            // The board measures from the top of the screen, so the scene does too: it runs up under the status bar.
+            let top = geo.safeAreaInsets.top
+            let screen = geo.size.height + top
             // Each extra offer under the words takes about 62 pt: the scene gives that room up first.
             // At the accessibility sizes the buttons are taller than that and everything under the scene scrolls
             // anyway, so the scene keeps its height and the words above the sun stay clear of it.
-            let room = typeSize.isAccessibilitySize ? 250 : max(250, 190 + CGFloat(extraButtons) * 62)
-            let k = min(1, max(0.5, (geo.size.height - room) / 560))
+            let room = typeSize.isAccessibilitySize ? 250 : max(250, 160 + CGFloat(extraButtons) * 62)
+            // The scene ends where the land does (403 × k + its 120 pt), never cutting the sea off part-way.
+            let k = min(1, max(0.5, (screen - room - 140) / 403))
+            let sceneHeight = 403 * k + 120
             ZStack(alignment: .top) {
                 LGColor.background.ignoresSafeArea()
                 VStack(spacing: 0) {
                     ZStack(alignment: .top) {
-                        SceneHero(tone: .dawn, height: 560 * k, skyHeight: 560 * k, horizon: 0.8, landTop: 403 * k,
-                                  sunSize: 140 * k, sunTop: 240 * k, face: .celebrate, giggles: false, hidden: true)
+                        // A squeezed sky would put the moon under the clock and battery, so it only shows full size.
+                        SceneHero(tone: .dawn, height: sceneHeight, skyHeight: 560 * k, horizon: 0.8, landTop: 403 * k,
+                                  sunSize: 140 * k, sunTop: 240 * k, face: .celebrate, moon: k >= 0.95,
+                                  giggles: false, hidden: true)
                         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
                             let p = min(1, timeline.date.timeIntervalSince(startedAt) / 1.2)
                             if !reduceMotion && p < 1 {
@@ -57,7 +64,7 @@ struct MilestoneCelebration: View {
                                     .position(x: geo.size.width / 2, y: (240 + 70) * k)
                             }
                         }
-                        .frame(height: 560 * k)
+                        .frame(height: sceneHeight)
                         VStack(spacing: 6) {
                             Text("\(craftName) · milestone")
                                 .lgText(LGTextStyle(size: 12, weight: .semibold, relativeTo: .caption, tracking: 1.7), color: .white.opacity(0.85))
@@ -65,13 +72,15 @@ struct MilestoneCelebration: View {
                             Text("\(DurationFormat.grouped(hours)) hours")
                                 .lgNumber(LGTextStyle(size: 44, weight: .bold, relativeTo: .largeTitle, tracking: -1.3), color: .white)
                         }
-                        .padding(.top, 70 * k + 8)
+                        // Never under the status bar.
+                        .padding(.top, max(70 * k + 8, top + 8))
                         // Drawn on the sky above the sun: they grow up to xxxLarge so they never cover it.
                         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                         .accessibilityElement(children: .combine)
                     }
-                    .ignoresSafeArea(edges: .top)
-                    .frame(height: 560 * k)
+                    .frame(height: sceneHeight, alignment: .top)
+                    // Laid out from the top of the screen, so the part under the status bar is not left empty below.
+                    .padding(.top, -top)
 
                     // Everything under the scene scrolls if the largest text sizes need more room than is left
                     // (at the usual sizes it all fits and nothing moves).
@@ -108,7 +117,7 @@ struct MilestoneCelebration: View {
                         }
                         // iPad and Mac: a phone-wide column of words and buttons, centred.
                         .lgReadableColumn(440)
-                        .frame(minHeight: max(0, geo.size.height - 560 * k - 30), alignment: .top)
+                        .frame(minHeight: max(0, screen - sceneHeight - 30), alignment: .top)
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .padding(.horizontal, 24)
