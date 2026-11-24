@@ -34,6 +34,23 @@ Nothing here has been done for you; each step is yours.
    - **Description**, **Keywords** and **Promotional Text:** drafts are at the end of this file.
    - **What's New:** not shown for a first release (1.0 was never uploaded).
    - Under **Version Release**, choose **Manually release this version**.
+7. **Tips: the four in-app purchases** (added 24 November 2026; the app switches them on with `TipRules.tipsAvailable = true`).
+   - **Agreement active:** App Store Connect › **Business** (or Agreements, Tax, and Banking). The **Paid Apps** agreement must say **Active**, not Pending. That only happens once a **bank account** and the **tax forms** are both filled in. Until it says Active, App Review can't buy a tip and the store answers with no products.
+   - **Create each tip:** your app › **Monetization › In-App Purchases** › **+** › type **Consumable**. Four times, with these exact Product IDs (a single typo and that tip won't show):
+
+     | Reference Name | Product ID | Price | Display Name | Description |
+     | --- | --- | --- | --- | --- |
+     | Tip: A ray of sunshine | com.wehavesun.LongGame.tip.ray | €0.99 | A ray of sunshine | A small thank-you |
+     | Tip: A sunny morning | com.wehavesun.LongGame.tip.morning | €2.99 | A sunny morning | Like buying a coffee |
+     | Tip: A golden hour | com.wehavesun.LongGame.tip.goldenhour | €4.99 | A golden hour | A big thank-you |
+     | Tip: A whole sunrise | com.wehavesun.LongGame.tip.sunrise | €9.99 | A whole sunrise | For the biggest fans |
+
+   - For each: **Availability** › all countries; **Price Schedule** › pick the euro price with your home country as the base (Apple fills in the other currencies); **App Store Localization** › English (U.K.), and English (U.S.) too if that's a store language; **Review Information** › a screenshot of the tip jar screen (the same one is fine for all four) and the note: *"Optional tip. It unlocks nothing; every feature is free."* Save. The status becomes **Ready to Submit**.
+   - **Attach them to 1.0:** the first tips must go to review together with an app version. On the **iOS App 1.0** page, in **In-App Purchases and Subscriptions**, click **+** and select all four. Do the same on the Mac version if it's submitted separately.
+   - **App Review notes** (same page, App Review Information): *"Settings › Support Long Game opens the tip jar. Tips are optional consumables and change nothing in the app."*
+   - **App Privacy:** nothing to add. Apple handles the payment and Long Game only keeps the date and count of tips on the device and in the user's own iCloud.
+   - **Sandbox tester:** **Users and Access › Sandbox › Test Accounts** › **+**, with an email address that isn't an Apple ID yet. On the iPhone: Settings › Developer › Sandbox Apple Account › sign in with it.
+   - **Real sandbox test:** running from Xcode uses the pretend store in `LongGame.storekit`, not App Store Connect. To test the real tips, either install the TestFlight build, or in Xcode **Product › Scheme › Edit Scheme… › Run › Options › StoreKit Configuration › None** for that run (set it back afterwards). Then part 4, step 14.
 
 ## On your iPhone and Watch, about 30 minutes (part 4)
 

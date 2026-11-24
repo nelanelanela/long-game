@@ -24,10 +24,10 @@ enum TipTier: String, CaseIterable, Identifiable, Sendable {
 
 /// When the one gentle "Support Long Game" offer may appear (after a milestone celebration on Home).
 enum TipRules {
-    /// Tips are switched off until the App Store paid-apps agreement is in place.
-    /// While false, Settings shows the support row greyed out as "Coming soon" and Home never offers it.
-    /// Flip to true to bring the tip jar back; nothing else needs to change.
-    static let tipsAvailable = false
+    /// Tips are on: the App Store paid-apps agreement is in place.
+    /// Set to false to hide them again: Settings then shows the support row greyed out as "Coming soon"
+    /// and Home never offers it. Nothing else needs to change.
+    static let tipsAvailable = true
     static let minDaysSinceOnboarding = 14
     static let minDaysBetweenOffers = 90
     static let quietMonthsAfterTip = 12
