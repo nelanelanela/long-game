@@ -49,6 +49,11 @@ struct IntroView: View {
             pageContent(page).id(page).frame(maxWidth: .infinity, maxHeight: .infinity)
             #endif
 
+            // One page control for all three pages, so it stays at the same height and follows swipes.
+            LGPageControl(page: $page, count: count)
+                .padding(.top, 4)
+                .padding(.bottom, 8)
+
             Button(Self.pages[page].button) { next() }
                 .buttonStyle(.lg(.primary))
                 .padding(.horizontal, 24)
@@ -89,37 +94,10 @@ struct IntroView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 18)
-                // The page dots sit right under the words, as on the boards.
-                dots(for: index)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 20)
-                    .padding(.bottom, 16)
+                .padding(.bottom, 12)
             }
         }
         .scrollBounceBehavior(.basedOnSize)
-    }
-
-    private func dots(for shown: Int) -> some View {
-        HStack(spacing: 6) {
-            ForEach(0..<count, id: \.self) { index in
-                Capsule()
-                    .fill(index == shown ? LGColor.ink : LGColor.introDot)
-                    .frame(width: index == shown ? 18 : 6, height: 6)
-            }
-        }
-        // The dots are 6 pt tall; the element they make (adjustable: swipe up or down to change page) gets a 44 pt
-        // target, as the audit asked.
-        .frame(minWidth: 44, minHeight: 44)
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
-        .accessibilityAdjustableAction { direction in
-            switch direction {
-            case .increment: if page < count - 1 { page += 1 }
-            case .decrement: if page > 0 { page -= 1 }
-            @unknown default: break
-            }
-        }
     }
 
     private func back() {

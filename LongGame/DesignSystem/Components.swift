@@ -289,6 +289,60 @@ struct LGStepBar: View {
     }
 }
 
+// MARK: Page control
+
+/// Page dots that work like the system page control: the chosen page is a wide ink capsule, tapping a dot (or
+/// sliding a finger along the row) goes to that page, and VoiceOver can swipe up or down to change page.
+/// It lives outside the pages it drives, so it stays at one height whatever the page shows.
+struct LGPageControl: View {
+    @Binding var page: Int
+    let count: Int
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var width: CGFloat = 0
+
+    var body: some View {
+        HStack(spacing: 6) {
+            ForEach(0..<count, id: \.self) { index in
+                Capsule()
+                    .fill(index == page ? LGColor.ink : LGColor.introDot)
+                    .frame(width: index == page ? 18 : 6, height: 6)
+            }
+        }
+        .animation(reduceMotion ? nil : .snappy(duration: 0.25), value: page)
+        // A comfortable 44 pt tall target, a little wider than the dots.
+        .padding(.horizontal, 14)
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { go(to: index(at: $0.location.x)) }
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(localized: "Page \(page + 1) of \(count)"))
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: go(to: page + 1)
+            case .decrement: go(to: page - 1)
+            @unknown default: break
+            }
+        }
+    }
+
+    /// The dot under a point of the row: the row is split into equal slices, one per page.
+    private func index(at x: CGFloat) -> Int {
+        guard width > 0, count > 0 else { return page }
+        return Int((x / width) * CGFloat(count))
+    }
+
+    private func go(to target: Int) {
+        let clamped = min(max(target, 0), count - 1)
+        guard clamped != page else { return }
+        withAnimation(reduceMotion ? nil : .default) { page = clamped }
+    }
+}
+
 // MARK: Segmented control
 
 /// Two or more segments on a warm track with a white pill under the chosen one: Home's Today | This week | The long
