@@ -40,10 +40,9 @@ struct TipJarView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(TipTier.allCases.enumerated()), id: \.element) { index, tier in
                         row(tier)
-                        if index < TipTier.allCases.count - 1 { Divider().overlay(LGColor.divider) }
+                        if index < TipTier.allCases.count - 1 { Divider().overlay(LGColor.divider).padding(.horizontal, 14) }
                     }
                 }
-                .padding(.horizontal, 14)
                 .lgCard(radius: 20)
                 .padding(.top, 16)
 
@@ -73,18 +72,21 @@ struct TipJarView: View {
         }
     }
 
+    /// The whole row is one button, edge to edge in the card: tapping the sun, the words or the price starts the tip.
     private func row(_ tier: TipTier) -> some View {
         let price = tips.price(for: tier)
-        return HStack(spacing: 14) {
-            TipSunIcon(tier: tier)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(tier.title).lgText(.rowStrong)
-                Text(tier.line).lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
-            }
-            Spacer(minLength: 8)
-            Button {
-                Task { await tips.buy(tier) }
-            } label: {
+        let disabled = price == nil || tips.isPurchasing
+        return Button {
+            Task { await tips.buy(tier) }
+        } label: {
+            HStack(spacing: 14) {
+                TipSunIcon(tier: tier)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(tier.title).lgText(.rowStrong)
+                    Text(tier.line).lgText(LGTextStyle(size: 12, weight: .regular, relativeTo: .caption), color: LGColor.inkMuted)
+                }
+                .multilineTextAlignment(.leading)
+                Spacer(minLength: 8)
                 Group {
                     if let price { Text(price) }
                     else if tips.loading == .unavailable { Text("–") }
@@ -94,16 +96,23 @@ struct TipJarView: View {
                 .frame(minWidth: 40, minHeight: 34)
                 .padding(.horizontal, 12)
                 .background(LGColor.stepperButton, in: Capsule())
-                .frame(minHeight: 44)
-                // The 34 pt pill is drawn; the whole 44 pt row height is the target (it read as 64 × 34).
-                .contentShape(Rectangle())
-                .contentShape(.accessibility, Rectangle())
+                .opacity(disabled ? 0.4 : 1)
             }
-            .buttonStyle(.plain)
-            .disabled(price == nil || tips.isPurchasing)
-            .opacity(price == nil || tips.isPurchasing ? 0.4 : 1)
-            .accessibilityLabel(price.map { "\(tier.spokenTitle), \($0)" } ?? tier.spokenTitle)
+            .padding(.horizontal, 14)
+            .frame(minHeight: 60)
+            .contentShape(Rectangle())
         }
-        .frame(minHeight: 60)
+        .buttonStyle(TipRowButtonStyle())
+        .disabled(disabled)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(price.map { "\(tier.spokenTitle), \($0)" } ?? tier.spokenTitle)
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+/// A tip row dims a little while pressed, so the whole row reads as the button.
+private struct TipRowButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.opacity(configuration.isPressed ? 0.55 : 1)
     }
 }
