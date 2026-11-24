@@ -31,7 +31,7 @@ struct TipSunIcon: View {
                 }
                 face.move(to: CGPoint(x: 88 * s, y: 114 * s))
                 face.addQuadCurve(to: CGPoint(x: 112 * s, y: 114 * s), control: CGPoint(x: 100 * s, y: 125 * s))
-                context.stroke(face, with: .color(LGColor.ink), style: StrokeStyle(lineWidth: 4.5 * s, lineCap: .round))
+                context.stroke(face, with: .color(LGColor.navy), style: StrokeStyle(lineWidth: 4.5 * s, lineCap: .round))
             }
         }
         .frame(width: 40, height: 40)
