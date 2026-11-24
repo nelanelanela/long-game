@@ -325,6 +325,14 @@ schemes:
       targets:
         - LongGameTests
         - LongGameUITests
+  # The same iPhone app, but buying tips talks to App Store Connect's sandbox instead of LongGame.storekit.
+  # Run it on a real iPhone signed in to a sandbox tester (RELEASE.md, step 7).
+  "LongGame Sandbox":
+    build:
+      targets:
+        LongGame: all
+    run:
+      config: Debug
   "LongGame Mac":
     build:
       targets:

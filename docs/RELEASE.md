@@ -52,7 +52,7 @@ Nothing here has been done for you; each step is yours.
    - **App Review notes** (same page, App Review Information): *"Settings › Support Long Game opens the tip jar. Tips are optional consumables and change nothing in the app."*
    - **App Privacy:** nothing to add. Apple handles the payment and Long Game only keeps the date and count of tips on the device and in the user's own iCloud.
    - **Sandbox tester:** **Users and Access › Sandbox › Test Accounts** › **+**, with an email address that isn't an Apple ID yet. On the iPhone: Settings › Developer › Sandbox Apple Account › sign in with it.
-   - **Real sandbox test:** running from Xcode uses the pretend store in `LongGame.storekit`, not App Store Connect. To test the real tips, either install the TestFlight build, or in Xcode **Product › Scheme › Edit Scheme… › Run › Options › StoreKit Configuration › None** for that run (set it back afterwards). Then part 4, step 14.
+   - **Real sandbox test:** the usual **LongGame** scheme uses the pretend store in `LongGame.storekit`, not App Store Connect. To test the real tips, pick the **LongGame Sandbox** scheme at the top of Xcode (next to the ▶ button), choose your iPhone, and Run. Then Settings › Support Long Game: prices in the sandbox tester's currency mean it's connected, and Apple's sheet says **[Environment: Sandbox]**. "Tips aren't available right now" means it isn't yet: check the agreement is Active, each tip is Ready to Submit, the Product IDs match, then wait an hour. Switch back to **LongGame** for everyday work. Then part 4, step 14.
 
 ## On your iPhone and Watch, about 30 minutes (part 4)
 
