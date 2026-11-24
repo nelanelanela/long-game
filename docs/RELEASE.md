@@ -40,11 +40,12 @@ Nothing here has been done for you; each step is yours.
 
      | Reference Name | Product ID | Price | Display Name | Description |
      | --- | --- | --- | --- | --- |
-     | Tip: A ray of sunshine | com.wehavesun.LongGame.tip.ray | €0.99 | A ray of sunshine | A small thank-you |
-     | Tip: A sunny morning | com.wehavesun.LongGame.tip.morning | €2.99 | A sunny morning | Like buying a coffee |
-     | Tip: A golden hour | com.wehavesun.LongGame.tip.goldenhour | €4.99 | A golden hour | A big thank-you |
-     | Tip: A whole sunrise | com.wehavesun.LongGame.tip.sunrise | €9.99 | A whole sunrise | For the biggest fans |
+     | Tip: A ray of sunshine | com.wehavesun.LongGame.tip.ray | €0.99 | A ray of sunshine | A small thank-you that helps keep Long Game free. |
+     | Tip: A sunny morning | com.wehavesun.LongGame.tip.morning | €2.99 | A sunny morning | Like buying a coffee, to say thanks for the app. |
+     | Tip: A golden hour | com.wehavesun.LongGame.tip.goldenhour | €4.99 | A golden hour | A big thank-you that helps keep the sun shining. |
+     | Tip: A whole sunrise | com.wehavesun.LongGame.tip.sunrise | €9.99 | A whole sunrise | For the biggest fans, with a whole sunrise of thanks. |
 
+   - The Display Name (35 characters at most) and Description (55 at most) are what Apple's purchase sheet shows, so the names match the app's rows. They're typed in App Store Connect only; the app's own rows keep their short lines. Use the same English text for U.K. and U.S.
    - For each: **Availability** › all countries; **Price Schedule** › pick the euro price with your home country as the base (Apple fills in the other currencies); **App Store Localization** › English (U.K.), and English (U.S.) too if that's a store language; **Review Information** › the screenshot `docs/app-review/tip-jar.png` (the same one for all four) and the note: *"Optional tip. It unlocks nothing; every feature is free."* Save. The status becomes **Ready to Submit**.
    - **Attach them to 1.0:** the first tips must go to review together with an app version. On the **iOS App 1.0** page, in **In-App Purchases and Subscriptions**, click **+** and select all four. Do the same on the Mac version if it's submitted separately.
    - **App Review notes** (same page, App Review Information): *"Settings › Support Long Game opens the tip jar. Tips are optional consumables and change nothing in the app."*
