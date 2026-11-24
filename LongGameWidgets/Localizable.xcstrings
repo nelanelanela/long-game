@@ -32,10 +32,19 @@
     "%@ h · %lld%% of the long game" : {
 
     },
+    "%@ h a week" : {
+
+    },
     "%@ hours" : {
 
     },
+    "%@ hours a week" : {
+
+    },
     "%@ hours came before" : {
+
+    },
+    "%@ hours so far" : {
 
     },
     "%@ hours to go." : {
@@ -377,6 +386,12 @@
     "at %@ h" : {
 
     },
+    "At this pace, you reach 10,000 h after %@" : {
+
+    },
+    "At this pace, you reach 10,000 h around %@" : {
+
+    },
     "At your actual pace: %@" : {
 
     },
@@ -437,6 +452,21 @@
     "Finish" : {
 
     },
+    "Finish line %@" : {
+
+    },
+    "finish line after %@" : {
+
+    },
+    "finish line around %@" : {
+
+    },
+    "finish line reached" : {
+
+    },
+    "Finish line reached" : {
+
+    },
     "Finish session" : {
 
     },
@@ -473,6 +503,9 @@
     "just under %@" : {
 
     },
+    "Keep that pace, or change it." : {
+
+    },
     "Last %@:" : {
 
     },
@@ -483,6 +516,9 @@
 
     },
     "Last week, day by day: %@." : {
+
+    },
+    "Last year: %@ h a week." : {
 
     },
     "light rain" : {
@@ -546,6 +582,9 @@
 
     },
     "Now · %@" : {
+
+    },
+    "Now choose a pace for each week." : {
 
     },
     "Now, %@. Session running." : {
@@ -620,6 +659,9 @@
           }
         }
       }
+    },
+    "Pick a pace you can keep." : {
+
     },
     "Played" : {
 
@@ -698,7 +740,16 @@
     "Sign in to iCloud in the Settings app to keep a copy." : {
 
     },
+    "since %@" : {
+
+    },
+    "Since %@" : {
+
+    },
     "snow" : {
+
+    },
+    "So far: %@ h." : {
 
     },
     "some" : {
@@ -714,6 +765,9 @@
 
     },
     "Started on %@" : {
+
+    },
+    "Starting from zero." : {
 
     },
     "Starts a session for your craft by name." : {
@@ -780,6 +834,12 @@
     "there" : {
 
     },
+    "This screen is about the next 12 months" : {
+
+    },
+    "This screen is about the time before today" : {
+
+    },
     "This week" : {
 
     },
@@ -793,6 +853,9 @@
 
     },
     "This week, %@ of %@ hours. The long game, %@ hours, %lld%%." : {
+
+    },
+    "This year so far: %@ h a week." : {
 
     },
     "three quarters of the way" : {
@@ -872,6 +935,9 @@
     "You wrote this %@ hours ago" : {
 
     },
+    "You're already past 10,000 h" : {
+
+    },
     "You're already playing at this pace" : {
 
     },
@@ -899,6 +965,12 @@
 
     },
     "Your actual pace shows after two weeks of playing." : {
+
+    },
+    "Your game" : {
+
+    },
+    "Your game: %@." : {
 
     },
     "Your session is already running." : {
