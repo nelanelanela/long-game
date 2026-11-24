@@ -333,16 +333,20 @@ struct HomeView: View {
         .accessibilityHidden(celebrating != nil)
         // A full-screen cover rather than an overlay, so it can ask for a white clock and battery over its dark sky
         // (as the Timer does) while everything in it keeps the app's own look.
-        .fullScreenCover(isPresented: Binding(get: { celebrating != nil }, set: { if !$0 { celebrating = nil } })) {
-            if let hours = celebrating {
-                celebrationView(hours: hours)
-                    .lgAppLook()
-                    .opacity(celebrationShown ? 1 : 0)
-                    .preferredColorScheme(.dark)
-                    .presentationBackground(.clear)
-                    .onAppear { withAnimation(.easeInOut(duration: 0.25)) { celebrationShown = true } }
-                    // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
-                    .accessibilityAddTraits(.isModal)
+        // On its own empty view: a second full-screen cover on the same view as the Timer's closed the Timer
+        // straight after Save, before its Saved moment.
+        .background {
+            Color.clear.fullScreenCover(isPresented: Binding(get: { celebrating != nil }, set: { if !$0 { celebrating = nil } })) {
+                if let hours = celebrating {
+                    celebrationView(hours: hours)
+                        .lgAppLook()
+                        .opacity(celebrationShown ? 1 : 0)
+                        .preferredColorScheme(.dark)
+                        .presentationBackground(.clear)
+                        .onAppear { withAnimation(.easeInOut(duration: 0.25)) { celebrationShown = true } }
+                        // A full-screen moment: VoiceOver stays in it instead of wandering into Home underneath.
+                        .accessibilityAddTraits(.isModal)
+                }
             }
         }
         .animation(.easeInOut(duration: reduceMotion ? 0.1 : 0.25), value: toast)
