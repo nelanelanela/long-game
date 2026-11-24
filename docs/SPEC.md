@@ -275,7 +275,7 @@ When the app opens after a gap of 7 days or more with no session, it asks once w
 
 ### 13 · Meet your future self — sheet (`design/FutureSelf.dc.html`)
 
-- Opened from the Home row. Also shown once, automatically, the first time Home appears after onboarding.
+- Opened only from the Home row; it never opens on its own.
 - Tall sheet. Top: the sun fully risen above the animated sea on a warm gradient; on open the sun rises into place (1.6 s ease-out).
 - Title "Meet your future self". Text:
   - "Long Game is a projection of you into the future. Every hour you add brings that person a little closer."

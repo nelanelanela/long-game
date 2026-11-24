@@ -258,7 +258,6 @@ struct HomeView: View {
             fillSessionPictures()
             if showTimer && !timer.isActive { showTimer = false }
             if timer.finishRequested { openTimer(total: s.total) }
-            showFutureSelfOnce()
             showTargetSheetOnce()
             syncIconQuietly(total: s.total)
             if !checkMilestones(total: s.total) { checkLetters(total: s.total) }
@@ -1395,15 +1394,6 @@ struct HomeView: View {
                                                   save: { try? context.save() }) else { return }
             if sheet == nil && !showTimer { sheet = .notifyAsk }
         }
-    }
-
-    /// The first time Home appears after onboarding, "Meet your future self" opens on its own, once.
-    private func showFutureSelfOnce() {
-        guard let settings = settingsRows.first, !settings.futureSelfShown,
-              sheet == nil, catchUpGap == nil, !showTimer else { return }
-        settings.futureSelfShown = true
-        try? context.save()
-        sheet = .futureSelf
     }
 
     /// Saves a new year of pace: 12 months from today, the old one moves into the history.

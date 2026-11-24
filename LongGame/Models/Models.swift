@@ -147,7 +147,7 @@ final class AppSettings {
         get { AppAppearance(rawValue: appearanceRaw) ?? .automatic }
         set { appearanceRaw = newValue.rawValue }
     }
-    /// "Meet your future self" opens once on its own, the first time Home appears after onboarding.
+    /// No longer used: "Meet your future self" used to open once on its own. Kept so existing stores still load.
     var futureSelfShown: Bool = false
     /// Tips unlock nothing; these only decide whether to say thank you and when to stop asking.
     var lastTipAt: Date?

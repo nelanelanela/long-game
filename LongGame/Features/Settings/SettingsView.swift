@@ -608,18 +608,6 @@ struct SettingsView: View {
                 }
                 Divider().overlay(LGColor.divider)
                 VStack(alignment: .leading, spacing: 2) {
-                    Button("Show Meet your future self again") {
-                        settings?.futureSelfShown = false
-                        try? context.save()
-                        (closeAll ?? { dismiss() })()
-                    }
-                    .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
-                    Text("Back on Home the sheet opens by itself, as it does the first time after onboarding.")
-                        .lgText(.caption, color: LGColor.inkMuted)
-                        .padding(.bottom, 12)
-                }
-                Divider().overlay(LGColor.divider)
-                VStack(alignment: .leading, spacing: 2) {
                     Button("Year of pace ends in 10 days") { pretendYearOfPaceEnds(inDays: 10) }
                         .lgText(.rowStrong).frame(minHeight: 54, alignment: .leading)
                     Button("Year of pace ended yesterday") { pretendYearOfPaceEnds(inDays: -1) }
