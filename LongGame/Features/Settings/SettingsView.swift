@@ -2,13 +2,17 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-/// Data & storage and the screen pushed from it, built by Settings (the root of the stack). When Data & storage built
-/// Your photos with its own `NavigationLink { … }`, iOS 26 made the two screens rebuild each other for ever: the app
-/// froze and iOS closed it. Both use routes: mixing a route with a `NavigationLink { … }` screen under it makes
-/// SwiftUI drop that screen, so Your photos bounced back to a fresh Data & storage.
+/// The Settings screens that open another screen of their own, and those screens, all built by Settings (the root of
+/// the stack). When Data & storage built Your photos with its own `NavigationLink { … }`, iOS 26 made the two screens
+/// rebuild each other for ever: the app froze and iOS closed it. Both levels use routes: mixing a route with a
+/// `NavigationLink { … }` screen under it makes SwiftUI drop that screen, so Your photos bounced back to a fresh
+/// Data & storage.
 enum SettingsRoute: Hashable {
     case dataStorage
     case yourPhotos
+    case archivedCrafts
+    /// One archived craft, by its id.
+    case archivedCraft(UUID)
 }
 
 struct SettingsView: View {
@@ -114,6 +118,9 @@ struct SettingsView: View {
             switch route {
             case .dataStorage: DataStorageView(craft: craft)
             case .yourPhotos: YourPhotosView()
+            case .archivedCrafts: ArchivedCraftsView(crafts: archived)
+            case .archivedCraft(let id):
+                if let craft = allCrafts.first(where: { $0.id == id }) { ArchivedCraftDetail(craft: craft) }
             }
         }
         .onAppear { ensureSettings() }
@@ -475,9 +482,7 @@ struct SettingsView: View {
                     row("Your estimates", detail: "\(craft.startYear)–\(Calendar.current.component(.year, from: craft.createdAt))")
                 }
                 Divider().overlay(LGColor.divider)
-                NavigationLink {
-                    ArchivedCraftsView(crafts: archived)
-                } label: {
+                NavigationLink(value: SettingsRoute.archivedCrafts) {
                     row("Archived crafts", detail: archived.isEmpty ? "None" : "\(archived.count)")
                 }
                 Divider().overlay(LGColor.divider)

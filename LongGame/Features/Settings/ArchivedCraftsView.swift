@@ -27,7 +27,7 @@ struct ArchivedCraftsView: View {
                 } else {
                     VStack(spacing: 10) {
                         ForEach(crafts, id: \.persistentModelID) { craft in
-                            NavigationLink { ArchivedCraftDetail(craft: craft) } label: {
+                            NavigationLink(value: SettingsRoute.archivedCraft(craft.id)) {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(craft.name).lgText(.rowStrong)
