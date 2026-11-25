@@ -22,6 +22,7 @@ final class TipStore {
     @ObservationIgnored var onTip: ((Date) -> Void)?
 
     @ObservationIgnored private var updatesTask: Task<Void, Never>?
+    @ObservationIgnored private var storefrontTask: Task<Void, Never>?
     @ObservationIgnored private var handled: Set<UInt64> = []
 
     /// Starts listening for transactions and saves tips into Settings. Safe to call more than once.
@@ -49,14 +50,26 @@ final class TipStore {
                 await self?.finish(result, thankYou: true)
             }
         }
+        // The person's App Store country can change (moving, switching account). Prices and currency
+        // come from that store, so fetch them again instead of showing the old country's prices.
+        storefrontTask = Task { [weak self] in
+            for await _ in Storefront.updates {
+                guard let self else { return }
+                self.products = [:]
+                self.loading = .idle
+                await self.loadProducts()
+            }
+        }
     }
 
     func loadProducts() async {
         guard loading != .loading else { return }
         loading = .loading
         do {
+            // Always asks the App Store afresh (it is quick), so the price shown is the one in the
+            // person's current store, the same one the purchase sheet will show.
             let found = try await Product.products(for: TipTier.allCases.map(\.id))
-            products = Dictionary(uniqueKeysWithValues: found.map { ($0.id, $0) })
+            products = Dictionary(found.map { ($0.id, $0) }, uniquingKeysWith: { _, new in new })
             loading = products.isEmpty ? .unavailable : .loaded
         } catch {
             loading = .unavailable
