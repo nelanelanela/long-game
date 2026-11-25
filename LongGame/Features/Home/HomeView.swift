@@ -1624,8 +1624,12 @@ struct HomeView: View {
               !showSettings else { return }
         let due = !Milestones.newlyCrossed(total: total, seen: settings.milestonesSeen)
             .filter { $0 >= IconPlan.heldBelow }.isEmpty
+        // The stored stage counts only if it matches the icon really on screen (it can be stale, for example after
+        // Delete everything recreated Settings over a grown icon).
+        let stored = settings.appliedIconStage
+        let applied = UIApplication.shared.alternateIconName == stored?.alternateIconName ? stored : nil
         if let stage = IconPlan.quietStage(totalHours: total, growsWithYou: settings.iconGrows,
-                                           applied: settings.appliedIconStage,
+                                           applied: applied,
                                            celebrationPending: due || iconHeld || celebrating != nil) {
             AppIconManager.apply(stage, settings: settings, context: context, timerRunning: timer.isActive)
         }

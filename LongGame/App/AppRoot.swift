@@ -14,6 +14,7 @@ struct AppRoot: View {
     @Environment(ICloudMonitor.self) private var monitor
     @Environment(TimerStore.self) private var timer
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     private enum Phase: Equatable {
         case undecided
@@ -46,6 +47,15 @@ struct AppRoot: View {
                 NavigationStack { HomeView(craft: active) }
             } else {
                 OnboardingFlow(showIntro: crafts.isEmpty || playIntro)
+                    // No game any more: back to the plain icon until a new craft is chosen. A short wait so the
+                    // sheet or alert that led here has fully closed (iOS refuses the change while one is closing).
+                    .task {
+                        try? await Task.sleep(for: .seconds(0.8))
+                        AppIconManager.showStartIcon(context: context)
+                    }
+                    .onChange(of: scenePhase) { _, phase in
+                        if phase == .active { AppIconManager.showStartIcon(context: context) }
+                    }
             }
         }
         .syncsWidgets()
