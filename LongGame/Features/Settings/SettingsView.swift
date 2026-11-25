@@ -2,6 +2,15 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
+/// Data & storage and the screen pushed from it, built by Settings (the root of the stack). When Data & storage built
+/// Your photos with its own `NavigationLink { … }`, iOS 26 made the two screens rebuild each other for ever: the app
+/// froze and iOS closed it. Both use routes: mixing a route with a `NavigationLink { … }` screen under it makes
+/// SwiftUI drop that screen, so Your photos bounced back to a fresh Data & storage.
+enum SettingsRoute: Hashable {
+    case dataStorage
+    case yourPhotos
+}
+
 struct SettingsView: View {
     let craft: Craft
     /// Closes Settings and History together, back to Home (the debug buttons need Home on screen).
@@ -101,6 +110,12 @@ struct SettingsView: View {
         .animation(.easeInOut(duration: 0.25), value: toast)
         .lgScreen()
         .lgHidesNavigationBar()
+        .navigationDestination(for: SettingsRoute.self) { route in
+            switch route {
+            case .dataStorage: DataStorageView(craft: craft)
+            case .yourPhotos: YourPhotosView()
+            }
+        }
         .onAppear { ensureSettings() }
         .task { notificationsDenied = await Notifications.permission() == .denied }
         #if DEBUG
@@ -273,7 +288,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 6) {
             groupLabel("Your data")
             card {
-                NavigationLink { DataStorageView(craft: craft) } label: {
+                NavigationLink(value: SettingsRoute.dataStorage) {
                     HStack(spacing: 12) {
                         Image(systemName: "icloud")
                             .font(.system(size: 15, weight: .semibold))

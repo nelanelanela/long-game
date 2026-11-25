@@ -118,7 +118,7 @@ struct DataStorageView: View {
             SettingsGroupLabel(title: "Storage")
             SettingsCard {
                 VStack(spacing: 0) {
-                    NavigationLink { YourPhotosView() } label: { yourPhotosRow }
+                    NavigationLink(value: SettingsRoute.yourPhotos) { yourPhotosRow }
                         .buttonStyle(.plain)
                     Divider().overlay(LGColor.divider)
                     defaultPicturesRow
