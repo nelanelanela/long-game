@@ -21,6 +21,7 @@ struct YourPhotosView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                bar
                 header
                 if stats == nil {
                     ProgressView().frame(maxWidth: .infinity).padding(.top, 40)
@@ -37,7 +38,9 @@ struct YourPhotosView: View {
             .padding(.bottom, 32)
         }
         .lgScreen()
-        .safeAreaInset(edge: .top, spacing: 0) { bar }
+        // The bar sits inside the scroll view, like Data & storage. Pinning it with `safeAreaInset(edge: .top)` while
+        // the navigation bar is hidden made iOS 26 lay this screen and the one under it out again and again, for
+        // ever: the screen froze and iOS closed the app.
         .lgHidesNavigationBar()
         .task(id: photoCount) { stats = await PhotoLibrary.loadStats(container: store.container) }
         .confirmationDialog(title(for: asking), isPresented: Binding(get: { asking != nil }, set: { if !$0 { asking = nil } }),
@@ -66,8 +69,6 @@ struct YourPhotosView: View {
             Color.clear.frame(width: 34, height: 44)
         }
         .frame(height: 44)
-        .padding(.horizontal, 20).padding(.top, 8)
-        .background(LGColor.background)
     }
 
     private var header: some View {
